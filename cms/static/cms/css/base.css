@@ -7,6 +7,14 @@ body{
     flex-direction: column;
 }
 
+.content{
+    display: flex; 
+    width: calc(100% - 180px);
+    padding: 20px 90px; 
+    justify-content: space-between; 
+    max-width: 1200px;
+}
+
 p.title{
     font-size: 4.5vh;
     font-weight: bold;
