@@ -12,8 +12,9 @@ class PageSerializer(serializers.ModelSerializer):
         fields = ("title", "components")
 
     def get_components(self, page):
-        components = [
-            get_component(component) for component in page.components.all()
-        ]
+        components = [get_component(component.name) for component in page.components.all()]
+
+        for component in components:
+            component.template.file = "cms/" + component.template.file
 
         return components

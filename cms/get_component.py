@@ -1,14 +1,12 @@
-from .models import Component
+# from .models import ComponentsName
 
-def get_component(base_component: Component):
+
+def get_component(components_name):
     component = None
-    if base_component.excomponent.first() is not None:
-        component = base_component.excomponent.first()
+    if components_name.navbar_set.first() is not None:
+        component = components_name.navbar_set.first()
 
-    elif base_component.navcomponent.first() is not None:
-        component = base_component.navcomponent.first()
-
-    if component is not None:
-        component.template = "cms/" + component.template
+    if components_name.examplecomponent_set.first() is not None:
+        component = components_name.examplecomponent_set.first()
 
     return component

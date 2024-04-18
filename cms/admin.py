@@ -1,37 +1,53 @@
 from adminsortable2.admin import SortableAdminBase, SortableStackedInline
 from django.contrib import admin
 from django.contrib.admin.decorators import register
-from .get_component import get_component
-from .models import Component, ExampleComponent, Navbar, Page
+from django.utils.safestring import mark_safe
+
+from .models import Component, ComponentsName, ExampleComponent, Navbar, Page, Template
 
 
-class BaseComponentInline(admin.StackedInline):
-    extra = 0
-    max_num = 1
-    
-    def has_add_permission(self, request, obj):
-        return get_component(obj) is None
-
-class NavComponentInline(BaseComponentInline):
-    model = Navbar
-    fields = ["template", "title"]
+@register(ComponentsName)
+class ComponentsNameAdmin(admin.ModelAdmin):
+    list_display = ["name"]
 
 
-class ExampleComponentInline(BaseComponentInline):
-    model = ExampleComponent
-    fields = ["template", "title", "body", "image1", "image2"]  
+@register(Template)
+class TemplateAdmin(admin.ModelAdmin):
+    list_display = ["name", "file"]
+
+
+@register(Navbar)
+class NavbarAdmin(admin.ModelAdmin):
+    list_display = ["template", "title"]
+
+
+@register(ExampleComponent)
+class ExampleComponenAdmin(admin.ModelAdmin):
+    list_display = ["template", "title", "body", "image1_show", "image2_show"]
+
+    def image1_show(self, obj):
+        if obj.image1:
+            return mark_safe(f"<img src='{obj.image1.url}' width='120' />")
+        return "None"
+
+    def image2_show(self, obj):
+        if obj.image2:
+            return mark_safe(f"<img src='{obj.image2.url}' width='120' />")
+        return "None"
+
+    image1_show.__name__ = "Первое изображение"
+    image2_show.__name__ = "Второе изображение"
 
 
 @register(Component)
 class ComponentAdmin(SortableAdminBase, admin.ModelAdmin):
-    inlines = [NavComponentInline, ExampleComponentInline]
     list_display = ["page", "name"]
 
 
 class PageComponentInline(SortableStackedInline, admin.StackedInline):
     model = Component
     extra = 0
-    show_change_link = True
+    # show_change_link = True
 
 
 @register(Page)

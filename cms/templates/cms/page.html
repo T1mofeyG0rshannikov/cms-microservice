@@ -8,7 +8,7 @@
 </head>
 <body>
     {% for component in page.components %}
-        {% with template_name=component.template%}
+        {% with template_name=component.template.file%}
             {% template_exists template_name as exist %}
                 {% if exist %}
                     {% include template_name with component=component %}
