@@ -1,0 +1,20 @@
+<div style="display: flex; padding: 20px 90px; justify-content: space-between; max-width: 1200px;">
+    <div style="flex: 0 0 55%;">
+        <p class="title">{{ component.title }}</p>
+
+        <a>{{ component.body }}</a>
+        <button><a>Начать сейчас</a></button>
+    </div>
+
+    <div style="flex: 0 0 35%; display: flex; justify-content: center; align-items: center;">
+        <div class="images-container">
+            <div style="width: 60%; position: absolute; right: 0px; z-index: 1;" class="image-wrapper">
+                <img src="{{ component.image1.url }}">
+            </div>
+
+            <div style="position: absolute; width: 85%; bottom: 0px;" class="image-wrapper">
+                <img src="{{ component.image2.url }}">
+            </div>
+        </div>
+    </div>
+</div>

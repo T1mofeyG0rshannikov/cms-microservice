@@ -1,0 +1,19 @@
+{% load template_exist %}
+{% load static %}
+<html lang="ru">
+<head>
+    <title>{{ page.title }}</title>
+    <link rel="stylesheet" href="{% static 'cms/css/base.css' %}">
+    <meta name="viewport" content="width=device-width">
+</head>
+<body>
+    {% for component in page.components %}
+        {% with template_name=component.template%}
+            {% template_exists template_name as exist %}
+                {% if exist %}
+                    {% include template_name with component=component %}
+                {% endif %}
+        {% endwith %}
+    {% endfor %}
+</body>
+</html>
