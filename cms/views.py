@@ -20,5 +20,4 @@ class ShowPage(View):
 
 class ShowTemplates(View):
     def get(self, request):
-        # print()
         return HttpResponse(json.dumps(TemplateSerializer(Template.objects.all(), many=True).data))

@@ -12,7 +12,7 @@ class TemplateAdmin(admin.ModelAdmin):
 
 class BaseBlockAdmin(admin.ModelAdmin):
     list_display = ["name", "template"]
-    exclude = ["blocks_name", "common_block"]
+    exclude = ["block_relation"]
 
 
 @register(Navbar)
