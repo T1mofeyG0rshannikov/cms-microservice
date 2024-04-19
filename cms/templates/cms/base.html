@@ -1,19 +1,19 @@
 <div class="content">
     <div style="flex: 0 0 55%;">
-        <p class="title">{{ component.title }}</p>
+        <p class="title">{{ block.title }}</p>
 
-        <a>{{ component.body }}</a>
+        <a>{{ block.body }}</a>
         <button><a>Начать сейчас</a></button>
     </div>
 
     <div style="flex: 0 0 35%; display: flex; justify-content: center; align-items: center;">
         <div class="images-container">
             <div style="width: 60%; position: absolute; right: 0px; z-index: 1;" class="image-wrapper">
-                <img src="{{ component.image1.url }}">
+                <img src="{{ block.image1.url }}">
             </div>
 
             <div style="position: absolute; width: 85%; bottom: 0px;" class="image-wrapper">
-                <img src="{{ component.image2.url }}">
+                <img src="{{ block.image2.url }}">
             </div>
         </div>
     </div>

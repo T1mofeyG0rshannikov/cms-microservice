@@ -7,11 +7,11 @@
     <meta name="viewport" content="width=device-width">
 </head>
 <body>
-    {% for component in page.components %}
-        {% with template_name=component.template.file%}
+    {% for block in page.blocks %}
+        {% with template_name=block.template.file%}
             {% template_exists template_name as exist %}
                 {% if exist %}
-                    {% include template_name with component=component %}
+                    {% include template_name with block=block %}
                 {% endif %}
         {% endwith %}
     {% endfor %}

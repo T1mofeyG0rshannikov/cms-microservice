@@ -1,20 +1,26 @@
 from rest_framework import serializers
 
-from .get_component import get_component
-from .models import Page
+from .get_block import get_block
+from .models import Page, Template
 
 
 class PageSerializer(serializers.ModelSerializer):
-    components = serializers.SerializerMethodField()
+    blocks = serializers.SerializerMethodField()
 
     class Meta:
         model = Page
-        fields = ("title", "components")
+        fields = ("title", "blocks")
 
-    def get_components(self, page):
-        components = [get_component(component.name) for component in page.components.all()]
+    def get_blocks(self, page):
+        blocks = list(filter(lambda c: c is not None, [get_block(block.name) for block in page.blocks.all()]))
 
-        for component in components:
-            component.template.file = "cms/" + component.template.file
+        for block in blocks:
+            block.template.file = "cms/" + block.template.file
 
-        return components
+        return blocks
+
+
+class TemplateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Template
+        fields = ("name", "file")
