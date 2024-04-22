@@ -13,7 +13,7 @@ class ShowPage(View):
         try:
             page = Page.objects.prefetch_related("blocks").get(url=page_url)
             serialized_page = PageSerializer(page).data
-            return render(request, "cms/page.html", {"page": serialized_page})
+            return render(request, "blocks/page.html", {"page": serialized_page})
         except Page.DoesNotExist:
             raise Http404("Page does not exist")
 

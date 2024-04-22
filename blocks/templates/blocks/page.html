@@ -3,17 +3,20 @@
 <html lang="ru">
 <head>
     <title>{{ page.title }}</title>
-    <link rel="stylesheet" href="{% static 'cms/css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'blocks/css/text2photos.css' %}">
+    <link rel="stylesheet" href="{% static 'blocks/css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'blocks/css/nav.css' %}">
     <meta name="viewport" content="width=device-width">
 </head>
 <body>
     {% for block in page.blocks %}
         {% with template_name=block.template.file%}
             {% template_exists template_name as exist %}
-                {% if exist %}
+                {% if exist %} 
                     {% include template_name with block=block %}
-                {% endif %}
+                {% endif%}
         {% endwith %}
     {% endfor %}
+    <script src="{% static 'blocks/js/load-styles.js'%}"></script>
 </body>
 </html>

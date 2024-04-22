@@ -1,6 +1,6 @@
 body{
     margin: 0 auto;
-    background-color: rgb(250, 250, 250);
+    background-color: var(--background-color);
     font-family: Tahoma, Verdana, sans-serif;
     display: flex;
     align-items: center;
@@ -10,14 +10,14 @@ body{
 .content{
     display: flex; 
     width: calc(100% - 180px);
-    padding: 20px 90px; 
     justify-content: space-between; 
     max-width: 1200px;
 }
 
 p.title{
-    font-size: 4.5vh;
-    font-weight: bold;
+    color: var(--header-color);
+    font-size: var(--header-font-size);
+    font-weight: var(--header-font-weight);
 }
 
 .image-wrapper{
@@ -33,20 +33,23 @@ p.title{
     height: 100%;
 }
 
-button{
-    padding: 10px 15px;
-    border: navajowhite;
-    background: rgb(120, 180, 80);
+.content button{
+    padding: 15px 20px;
+    border: none;
+    background-color: var(--main-color);
     border-radius: 5px;
-    color: white;
-    font-size: 14px;
+    color: var(--main-text-inverted-color);
+    font-size: var(--main-text-font-size);
+    font-weight: var(--main-text-font-weight);
     margin-top: 50px;
 }
 
 a{
     display: block;
     margin: 10px 0px;
-    font-size: 2.5vh;
+    color: var(--main-text-color);
+    font-size: var(--main-text-font-size);
+    font-weight: var(--main-text-font-weight);
 }
 
 .images-container{

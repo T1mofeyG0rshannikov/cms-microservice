@@ -4,7 +4,10 @@ from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
-    path("", include("cms.urls")),
+    path("", include("blocks.urls")),
+    path("color-styles/", include("color_styles.urls")),
+    path("text-styles/", include("text_styles.urls")),
+    path("styles/", include("other_styles.urls")),
     path("admin/", admin.site.urls),
 ]
 

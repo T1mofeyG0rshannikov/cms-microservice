@@ -30,7 +30,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "adminsortable2",
-    "cms",
+    "colorfield",
+    "blocks",
+    "color_styles",
+    "text_styles",
+    "other_styles"
 ]
 
 MIDDLEWARE = [

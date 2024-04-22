@@ -15,7 +15,7 @@ class PageSerializer(serializers.ModelSerializer):
         blocks = list(filter(lambda c: c is not None, [get_block(block.name) for block in page.blocks.all()]))
 
         for block in blocks:
-            block.template.file = "cms/" + block.template.file
+            block.template.file = "blocks/" + block.template.file
 
         return blocks
 
