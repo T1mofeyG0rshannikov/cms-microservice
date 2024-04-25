@@ -1,23 +1,13 @@
 document.addEventListener("DOMContentLoaded", function() {
-    fetch("/color-styles/backgroundcolor").
+    fetch("/styles/colors").
     then(response => response.json()).
     then(response => {
-        document.documentElement.style.setProperty("--background-color", response)
+        document.documentElement.style.setProperty("--background-color", response.backgroundcolor)
+        document.documentElement.style.setProperty("--main-color", response.maincolor)
+        document.documentElement.style.setProperty("--secondary-color", response.secondarycolor)
     })
 
-    fetch("/color-styles/maincolor").
-    then(response => response.json()).
-    then(response => {
-        document.documentElement.style.setProperty("--main-color", response)
-    })
-
-    fetch("/color-styles/secondarycolor").
-    then(response => response.json()).
-    then(response => {
-        document.documentElement.style.setProperty("--secondary-color", response)
-    })
-
-    fetch("/text-styles/header").
+    fetch("/styles/header").
     then(response => response.json()).
     then(response => {
         //console.log(response);
@@ -30,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function() {
         document.documentElement.style.setProperty("--header-font-size-mobile", response.fontSizeMobile)
     })
 
-    fetch("/text-styles/main-text").
+    fetch("/styles/main-text").
     then(response => response.json()).
     then(response => {
         //console.log(response);
@@ -43,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function() {
         document.documentElement.style.setProperty("--main-text-font-size-mobile", response.fontSizeMobile)
     })
 
-    fetch("/text-styles/subheader").
+    fetch("/styles/subheader").
     then(response => response.json()).
     then(response => {
         //console.log(response);
@@ -56,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function() {
         document.documentElement.style.setProperty("--subheader-font-size-mobile", response.fontSizeMobile)
     })
 
-    fetch("/text-styles/explanation-text").
+    fetch("/styles/explanation-text").
     then(response => response.json()).
     then(response => {
         //console.log(response);

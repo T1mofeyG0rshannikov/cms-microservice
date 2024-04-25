@@ -32,9 +32,7 @@ INSTALLED_APPS = [
     "adminsortable2",
     "colorfield",
     "blocks",
-    "color_styles",
-    "text_styles",
-    "other_styles"
+    "styles"
 ]
 
 MIDDLEWARE = [
