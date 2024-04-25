@@ -25,8 +25,8 @@ class Cover(BaseBlock, ButtonMixin):
     text = models.TextField(verbose_name=u"Текст", max_length=500)
     image_desctop = models.ImageField(verbose_name=u"Картинка(десктоп)", upload_to="images/covers/")
     image_mobile = models.ImageField(verbose_name=u"Картинка(смартфон)", upload_to="images/covers/")
-    second_button_text = models.CharField(verbose_name=u"Текст второй кнопки", max_length=20, null=True)
-    second_button_ref = models.CharField(verbose_name=u"Ссылка для второй кнопки", max_length=20, null=True)
+    second_button_text = models.CharField(verbose_name=u"Текст второй кнопки", max_length=20)
+    second_button_ref = models.CharField(verbose_name=u"Ссылка для второй кнопки", max_length=20)
     
     class Meta:
         verbose_name = u"Обложка"

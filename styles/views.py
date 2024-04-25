@@ -1,18 +1,13 @@
 from django.http import JsonResponse
 from django.views.generic import View
-from .serializers import HeaderSerializer, SubheaderSerializer, MainTextSerializer, ExplanationTextSerializer
+from .serializers import HeaderSerializer, SubheaderSerializer, MainTextSerializer, ExplanationTextSerializer, ColorsSerializer, MarginBlockSerializer, IconSizeSerializer
 from .models.common import GlobalStyles
 
 
 class GetColorStyles(View):
     def get(self, request):
         color_styles = GlobalStyles.objects.first().colorstyles_set.first()
-    
-        return JsonResponse({
-            'backgroundcolor': color_styles.background_color,
-            'maincolor': color_styles.main_color,
-            'secondarycolor': color_styles.secondary_color
-        })
+        return JsonResponse(ColorsSerializer(color_styles).data)
 
 
 class GetHeaderStyles(View):
@@ -39,9 +34,9 @@ class GetExplanationTextStyles(View):
 class GetMarginBlock(View):
     def get(self, request):
         margins = GlobalStyles.objects.first().marginblock_set.first()
-        return JsonResponse({"top": margins.margin_top, "bottom": margins.margin_bottom})
+        return JsonResponse(MarginBlockSerializer(margins).data)
 
 class GetIconSize(View):
     def get(self, request):
         icon_size = GlobalStyles.objects.first().iconsize_set.first()
-        return JsonResponse({"height": icon_size.height, "width": icon_size.width})
+        return JsonResponse(IconSizeSerializer(icon_size).data)

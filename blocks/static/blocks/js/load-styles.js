@@ -2,15 +2,14 @@ document.addEventListener("DOMContentLoaded", function() {
     fetch("/styles/colors").
     then(response => response.json()).
     then(response => {
-        document.documentElement.style.setProperty("--background-color", response.backgroundcolor)
-        document.documentElement.style.setProperty("--main-color", response.maincolor)
-        document.documentElement.style.setProperty("--secondary-color", response.secondarycolor)
+        document.documentElement.style.setProperty("--background-color", response.background_color)
+        document.documentElement.style.setProperty("--main-color", response.main_color)
+        document.documentElement.style.setProperty("--secondary-color", response.secondary_color)
     })
 
     fetch("/styles/header").
     then(response => response.json()).
     then(response => {
-        //console.log(response);
         document.documentElement.style.setProperty("--header-color", response.color)
         document.documentElement.style.setProperty("--header-inverted-color", response.fontColorInverted)
         document.documentElement.style.setProperty("--header-font", response.font)
@@ -23,7 +22,6 @@ document.addEventListener("DOMContentLoaded", function() {
     fetch("/styles/main-text").
     then(response => response.json()).
     then(response => {
-        //console.log(response);
         document.documentElement.style.setProperty("--main-text-color", response.color)
         document.documentElement.style.setProperty("--main-text-inverted-color", response.fontColorInverted)
         document.documentElement.style.setProperty("--main-text-font", response.font)
@@ -36,7 +34,6 @@ document.addEventListener("DOMContentLoaded", function() {
     fetch("/styles/subheader").
     then(response => response.json()).
     then(response => {
-        //console.log(response);
         document.documentElement.style.setProperty("--subheader-color", response.color)
         document.documentElement.style.setProperty("--subheader-inverted-color", response.fontColorInverted)
         document.documentElement.style.setProperty("--subheader-font", response.font)
@@ -49,7 +46,6 @@ document.addEventListener("DOMContentLoaded", function() {
     fetch("/styles/explanation-text").
     then(response => response.json()).
     then(response => {
-        //console.log(response);
         document.documentElement.style.setProperty("--explanation-text-color", response.color)
         document.documentElement.style.setProperty("--explanation-text-inverted-color", response.fontColorInverted)
         document.documentElement.style.setProperty("--explanation-text-font", response.font)
@@ -62,15 +58,13 @@ document.addEventListener("DOMContentLoaded", function() {
     fetch("/styles/margin-block").
     then(response => response.json()).
     then(response => {
-        //console.log(response);
-        document.documentElement.style.setProperty("--padding-block-top", response.top)
-        document.documentElement.style.setProperty("--padding-block-bottom", response.bottom)
+        document.documentElement.style.setProperty("--padding-block-top", response.margin_top)
+        document.documentElement.style.setProperty("--padding-block-bottom", response.margin_bottom)
     })
 
     fetch("/styles/icon-size").
     then(response => response.json()).
     then(response => {
-        //console.log(response);
         document.documentElement.style.setProperty("--icon-width", response.width)
         document.documentElement.style.setProperty("--icon-height", response.height)
     })

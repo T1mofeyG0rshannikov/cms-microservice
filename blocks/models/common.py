@@ -88,8 +88,8 @@ class BaseBlock(models.Model):
         super().save(*args, **kwargs)
 
 class ButtonMixin(models.Model):
-    button_text = models.CharField(verbose_name=u"Текст кнопки", max_length=20, null=True)
-    button_ref = models.CharField(verbose_name=u"Ссылка для кнопки", max_length=20, null=True)
+    button_text = models.CharField(verbose_name=u"Текст кнопки", max_length=20)
+    button_ref = models.CharField(verbose_name=u"Ссылка для кнопки", max_length=20)
     
     class Meta:
         abstract = True
