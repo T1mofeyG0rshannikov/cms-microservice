@@ -6,5 +6,8 @@ def get_block(blocks_name):
 
     if blocks_name.exampleblock_set.first() is not None:
         block = blocks_name.exampleblock_set.first()
+        
+    if blocks_name.cover_set.first() is not None:
+        block = blocks_name.cover_set.first()
 
     return block

@@ -38,10 +38,14 @@ p.title{
     border: none;
     background-color: var(--main-color);
     border-radius: 5px;
+    margin-top: 50px;
+}
+
+.content button a{
     color: var(--main-text-inverted-color);
+    text-decoration: none;
     font-size: var(--main-text-font-size);
     font-weight: var(--main-text-font-weight);
-    margin-top: 50px;
 }
 
 a{

@@ -2,7 +2,8 @@ from adminsortable2.admin import SortableAdminBase, SortableStackedInline
 from django.contrib import admin
 from django.contrib.admin.decorators import register
 
-from .models import Block, ExampleBlock, Navbar, Page, Template
+from .models.common import Block, Page, Template
+from .models.blocks import ExampleBlock, Navbar, Cover
 
 
 @register(Template)
@@ -36,6 +37,9 @@ class ExampleComponenAdmin(BaseBlockAdmin):
     image1_show.__name__ = "Первое изображение"
     image2_show.__name__ = "Второе изображение"'''
 
+@register(Cover)
+class CoverAdmin(BaseBlockAdmin):
+    pass
 
 class PageBlockInline(SortableStackedInline, admin.StackedInline):
     model = Block

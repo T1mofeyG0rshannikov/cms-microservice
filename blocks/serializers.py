@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from .get_block import get_block
-from .models import Page, Template
+from .models.common import Page, Template
 
 
 class PageSerializer(serializers.ModelSerializer):

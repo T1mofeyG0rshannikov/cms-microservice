@@ -1,11 +1,7 @@
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.views.generic import View
-from .models.colors import ColorStyles
-from .models.texts import HeaderText, MainText, SubheaderText, ExplanationText
 from .serializers import HeaderSerializer, SubheaderSerializer, MainTextSerializer, ExplanationTextSerializer
-from .models.other_styles import MarginBlock, IconSize
 from .models.common import GlobalStyles
-import json
 
 
 class GetColorStyles(View):
@@ -18,7 +14,7 @@ class GetColorStyles(View):
             'secondarycolor': color_styles.secondary_color
         })
 
-    
+
 class GetHeaderStyles(View):
     def get(self, request):
         header_styles = GlobalStyles.objects.first().headertext_set.first()

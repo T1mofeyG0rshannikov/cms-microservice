@@ -34,3 +34,10 @@ header h1{
     font-weight: var(--header-font-weight);
     color: var(--header-inverted-color);
 }
+
+@media screen and (max-width: 760px) {
+    header h1{
+        font-size: var(--header-font-size-mobile);
+        font-weight: var(--header-font-weight-mobile);
+    }
+}

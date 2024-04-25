@@ -1,10 +1,8 @@
-import json
-
-from django.http import Http404, HttpResponse
+from django.http import Http404, JsonResponse
 from django.shortcuts import render
 from django.views.generic import View
 
-from .models import Page, Template
+from .models.common import Page, Template
 from .serializers import PageSerializer, TemplateSerializer
 
 
@@ -20,4 +18,4 @@ class ShowPage(View):
 
 class ShowTemplates(View):
     def get(self, request):
-        return HttpResponse(json.dumps(TemplateSerializer(Template.objects.all(), many=True).data))
+        return JsonResponse(TemplateSerializer(Template.objects.all(), many=True).data)

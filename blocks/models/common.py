@@ -3,7 +3,7 @@ from django.db import models
 
 from utils.errors import Errors
 
-from .validators import validate_html_filename
+from ..validators import validate_html_filename
 
 
 class Page(models.Model):
@@ -87,21 +87,9 @@ class BaseBlock(models.Model):
         self.block_relation = block_relation
         super().save(*args, **kwargs)
 
-
-class ExampleBlock(BaseBlock):
-    title = models.CharField(verbose_name="Заголовок", max_length=100)
-    body = models.TextField(verbose_name="Основной текст", max_length=1000)
-    image1 = models.ImageField(verbose_name="Первое изображение", upload_to="images/")
-    image2 = models.ImageField(verbose_name="Второе изображение", upload_to="images/")
-
+class ButtonMixin(models.Model):
+    button_text = models.CharField(verbose_name=u"Текст кнопки", max_length=20, null=True)
+    button_ref = models.CharField(verbose_name=u"Ссылка для кнопки", max_length=20, null=True)
+    
     class Meta:
-        verbose_name = "Контентный блок"
-        verbose_name_plural = "Контентные блоки"
-
-
-class Navbar(BaseBlock):
-    title = models.CharField(verbose_name="Заголовок", max_length=100)
-
-    class Meta:
-        verbose_name = "навбар"
-        verbose_name_plural = "навбар`ы"
+        abstract = True

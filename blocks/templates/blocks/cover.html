@@ -1,0 +1,36 @@
+<!--<div class="block-wrapper"> -->
+
+<div class="cover">
+    <div class="inner">
+        <h1>{{ block.title }}</h1>
+    
+        <p>{{ block.text }}</p>
+    
+        <div class="button-wrapper">
+            <button><a href="{{block.button_ref}}">{{ block.button_text }}</a></button>
+            <button><a href="{{block.second_button_ref}}">{{ block.second_button_text }}</a></button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .cover{
+        background: url("{{block.image_desctop.url}}") no-repeat 50% 50%/cover;
+    }
+
+    @media screen and (max-width: 760px) {
+        .cover {
+            background: url("{{block.image_mobile.url}}") no-repeat 50% 50%/cover;
+            height: auto;
+        }
+
+        .button-wrapper {
+            flex-direction: column;
+        }
+
+        .cover .inner{
+            padding: 50px 20px;
+            width: calc(100% - 40px);
+        }
+    }
+</style>
