@@ -7,17 +7,25 @@
     <link rel="stylesheet" href="{% static 'blocks/css/base.css' %}">
     <link rel="stylesheet" href="{% static 'blocks/css/nav.css' %}">
     <link rel="stylesheet" href="{% static 'blocks/css/cover.css' %}">
+
+    {% for font in fonts %}
+        <style>
+            @import url('{{font.link}}');
+        </style>
+    {% endfor %}
+
     <meta name="viewport" content="width=device-width">
+    <script src="{% static 'blocks/js/load-styles.js'%}"></script>
 </head>
 <body>
     {% for block in page.blocks %}
         {% with template_name=block.template.file%}
             {% template_exists template_name as exist %}
-                {% if exist %} 
+                {% if exist %}
                     {% include template_name with block=block %}
                 {% endif%}
         {% endwith %}
     {% endfor %}
-    <script src="{% static 'blocks/js/load-styles.js'%}"></script>
+    <script src="{% static 'blocks/js/scroll-to-anchor.js'%}"></script>
 </body>
 </html>

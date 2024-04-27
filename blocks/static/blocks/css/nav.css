@@ -27,12 +27,14 @@ header button{
     color: var(--main-text-inverted-color);
     font-size: var(--main-text-font-size);
     font-weight: var(--main-text-font-weight);
+    font-family: var(--main-text-font-family);
 }
 
 header h1{
     font-size: var(--header-font-size);
     font-weight: var(--header-font-weight);
     color: var(--header-inverted-color);
+    font-family: var(--header-font-family);
 }
 
 @media screen and (max-width: 760px) {

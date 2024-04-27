@@ -14,6 +14,7 @@
     font-weight: var(--header-font-weight);
     color: var(--header-inverted-color);
     text-align: center;
+    font-family: var(--header-font-family);
 }
 
 .cover .button-wrapper{
@@ -24,9 +25,15 @@
 .cover button{
     margin: 15px;
     padding: 10px 20px;
-    border: none;
-    background-color: var(--main-color);
-    border-radius: 5px;
+    border: 1px solid var(--secondary-color);
+    background-color: var(--secondary-color);
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.cover #white-button{
+    background-color: transparent;
+    border: 1px solid white;
 }
 
 .cover button a{
@@ -34,6 +41,7 @@
     text-decoration: none;
     font-size: var(--main-text-font-size);
     font-weight: var(--main-text-font-weight);
+    font-family: var(--main-text-font-family);
 }
 
 .cover .inner{
@@ -45,6 +53,7 @@
     font-size: var(--main-text-font-size);
     font-weight: var(--main-text-font-weight);
     text-align: center;
+    font-family: var(--main-text-font-family);
 }
 
 @media screen and (max-width: 760px) {

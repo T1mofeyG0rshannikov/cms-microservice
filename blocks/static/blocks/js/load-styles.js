@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function() {
     then(response => {
         document.documentElement.style.setProperty("--header-color", response.color)
         document.documentElement.style.setProperty("--header-inverted-color", response.fontColorInverted)
-        document.documentElement.style.setProperty("--header-font", response.font)
+        document.documentElement.style.setProperty("--header-font-family", response.font.name)
         document.documentElement.style.setProperty("--header-font-weight", response.fontWeight)
         document.documentElement.style.setProperty("--header-font-weight-mobile", response.fontWeightMobile)
         document.documentElement.style.setProperty("--header-font-size", response.fontSize)
@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function() {
     then(response => {
         document.documentElement.style.setProperty("--main-text-color", response.color)
         document.documentElement.style.setProperty("--main-text-inverted-color", response.fontColorInverted)
-        document.documentElement.style.setProperty("--main-text-font", response.font)
+        document.documentElement.style.setProperty("--main-text-font-family", response.font.name)
         document.documentElement.style.setProperty("--main-text-font-weight", response.fontWeight)
         document.documentElement.style.setProperty("--main-text-font-weight-mobile", response.fontWeightMobile)
         document.documentElement.style.setProperty("--main-text-font-size", response.fontSize)
@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function() {
     then(response => {
         document.documentElement.style.setProperty("--subheader-color", response.color)
         document.documentElement.style.setProperty("--subheader-inverted-color", response.fontColorInverted)
-        document.documentElement.style.setProperty("--subheader-font", response.font)
+        document.documentElement.style.setProperty("--subheader-font-family", response.font.name)
         document.documentElement.style.setProperty("--subheader-font-weight", response.fontWeight)
         document.documentElement.style.setProperty("--subheader-font-weight-mobile", response.fontWeightMobile)
         document.documentElement.style.setProperty("--subheader-font-size", response.fontSize)
@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function() {
     then(response => {
         document.documentElement.style.setProperty("--explanation-text-color", response.color)
         document.documentElement.style.setProperty("--explanation-text-inverted-color", response.fontColorInverted)
-        document.documentElement.style.setProperty("--explanation-text-font", response.font)
+        document.documentElement.style.setProperty("--explanation-text-font-family", response.font.name)
         document.documentElement.style.setProperty("--explanation-text-font-weight", response.fontWeight)
         document.documentElement.style.setProperty("--explanation-text-font-weight-mobile", response.fontWeightMobile)
         document.documentElement.style.setProperty("--explanation-text-font-size", response.fontSize)

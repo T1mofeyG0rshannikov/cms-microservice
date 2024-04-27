@@ -1,11 +1,11 @@
 <div class="block-wrapper">
-    
-<div class="content">
+
+<div id="{{ block.ancor }}" class="content">
     <div style="flex: 0 0 55%;">
         <p class="title">{{ block.title }}</p>
 
-        <a>{{ block.body }}</a>
-        <button><a href="{{block.button_ref}}">{{ block.button_text }}</a></button>
+        <a style="line-height: 140%">>{{ block.body|safe }}</a>
+        <button onclick="smoothScroll('{{block.button_ref}}')"><a>{{ block.button_text }}</a></button>
     </div>
 
     <div style="flex: 0 0 35%; display: flex; justify-content: center; align-items: center;">

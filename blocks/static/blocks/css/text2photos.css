@@ -1,16 +1,7 @@
-body{
-    margin: 0 auto;
-    background-color: var(--background-color);
-    font-family: Tahoma, Verdana, sans-serif;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-}
-
 .content{
-    display: flex; 
+    display: flex;
     width: calc(100% - 180px);
-    justify-content: space-between; 
+    justify-content: space-between;
     max-width: 1200px;
 }
 
@@ -18,6 +9,7 @@ p.title{
     color: var(--header-color);
     font-size: var(--header-font-size);
     font-weight: var(--header-font-weight);
+    font-family: var(--header-font-family);
 }
 
 .image-wrapper{
@@ -34,11 +26,12 @@ p.title{
 }
 
 .content button{
-    padding: 15px 20px;
+    padding: 10px 20px;
     border: none;
     background-color: var(--main-color);
     border-radius: 5px;
     margin-top: 50px;
+    cursor: pointer;
 }
 
 .content button a{
@@ -46,6 +39,7 @@ p.title{
     text-decoration: none;
     font-size: var(--main-text-font-size);
     font-weight: var(--main-text-font-weight);
+    font-family: var(--main-text-font-family);
 }
 
 a{
@@ -54,6 +48,7 @@ a{
     color: var(--main-text-color);
     font-size: var(--main-text-font-size);
     font-weight: var(--main-text-font-weight);
+    font-family: var(--main-text-font-family);
 }
 
 .images-container{

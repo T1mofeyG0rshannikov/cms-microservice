@@ -31,8 +31,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "adminsortable2",
     "colorfield",
+    "ckeditor",
     "blocks",
-    "styles"
+    "styles",
 ]
 
 MIDDLEWARE = [

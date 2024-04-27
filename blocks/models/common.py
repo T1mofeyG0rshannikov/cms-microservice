@@ -22,13 +22,15 @@ class Page(models.Model):
 class BlockRelationship(models.Model):
     block_name = models.CharField(verbose_name="Имя компонента", max_length=50, unique=True)
     block_id = models.PositiveIntegerField()
-    
+
     def __str__(self):
         return self.block_name
 
 
 class Block(models.Model):
-    name = models.ForeignKey(BlockRelationship, verbose_name="Блок", on_delete=models.CASCADE, related_name="page_block")
+    name = models.ForeignKey(
+        BlockRelationship, verbose_name="Блок", on_delete=models.CASCADE, related_name="page_block"
+    )
     page = models.ForeignKey(Page, related_name="blocks", verbose_name="Страница", on_delete=models.CASCADE)
 
     my_order = models.PositiveIntegerField(
@@ -68,6 +70,7 @@ class Template(models.Model):
 class BaseBlock(models.Model):
     name = models.CharField(verbose_name="Имя", max_length=50, unique=True)
     template = models.ForeignKey(Template, verbose_name="html шаблон", on_delete=models.CASCADE)
+    ancor = models.CharField(verbose_name="Якорь", max_length=50, null=True, blank=True)
     block_relation = models.ForeignKey(BlockRelationship, on_delete=models.SET_NULL, null=True)
 
     class Meta:
@@ -79,17 +82,15 @@ class BaseBlock(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
-        block_relation, _ = BlockRelationship.objects.update_or_create(
-            block_name=self.name,
-            block_id=self.id
-        )
+        block_relation, _ = BlockRelationship.objects.update_or_create(block_name=self.name, block_id=self.id)
 
         self.block_relation = block_relation
         super().save(*args, **kwargs)
 
+
 class ButtonMixin(models.Model):
-    button_text = models.CharField(verbose_name=u"Текст кнопки", max_length=20)
-    button_ref = models.CharField(verbose_name=u"Ссылка для кнопки", max_length=20)
-    
+    button_text = models.CharField(verbose_name="Текст кнопки", max_length=20)
+    button_ref = models.CharField(verbose_name="Ссылка для кнопки", max_length=20)
+
     class Meta:
         abstract = True
