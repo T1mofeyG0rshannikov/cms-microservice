@@ -48,7 +48,7 @@
     max-width: 800px;
 }
 
-.cover p{
+.cover a{
     color: var(--main-text-inverted-color);
     font-size: var(--main-text-font-size);
     font-weight: var(--main-text-font-weight);
@@ -70,7 +70,7 @@
         width: calc(100% - 40px);
     }
 
-    .cover p{
+    .cover a{
         font-size: var(--main-text-font-size-mobile);
         font-weight: var(--main-text-font-weight-mobile);
     }

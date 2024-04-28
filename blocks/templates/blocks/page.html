@@ -7,25 +7,61 @@
     <link rel="stylesheet" href="{% static 'blocks/css/base.css' %}">
     <link rel="stylesheet" href="{% static 'blocks/css/nav.css' %}">
     <link rel="stylesheet" href="{% static 'blocks/css/cover.css' %}">
-
-    {% for font in fonts %}
-        <style>
-            @import url('{{font.link}}');
-        </style>
-    {% endfor %}
-
     <meta name="viewport" content="width=device-width">
     <script src="{% static 'blocks/js/load-styles.js'%}"></script>
 </head>
 <body>
     {% for block in page.blocks %}
-        {% with template_name=block.template.file%}
+        {% with template_name=block.content.template.file%}
             {% template_exists template_name as exist %}
                 {% if exist %}
-                    {% include template_name with block=block %}
+                    {% with forloop.counter as id %}
+                        <div class="block-wrapper" id="block{{id}}">
+                            {% include template_name with block=block.content styles=block.styles %}
+                            {% with block.styles as styles %}
+                                <style>
+
+                                    #block{{id}} img{
+                                        filter: brightness({{ styles.photo_darkness }}%);
+                                    }
+
+                                    #block{{id}}{
+                                        background-color: {{styles.background_color}};
+                                        padding-top: {{styles.margin_top}};
+                                        padding-bottom: {{styles.margin_bottom}};
+                                    }
+
+                                    #block{{id}} h1{
+                                        font-size: {{styles.header_size}};
+                                        font-weight: {{styles.header_thickness}};
+                                        color: {{styles.header_color}};
+                                    }
+
+                                    #block{{id}} a{
+                                        font-size: {{styles.main_text_size}};
+                                        font-weight: {{styles.main_text_thickness}};
+                                        color: {{styles.main_text_color}};
+                                    }
+
+                                    @media screen and (max-width: 760px) {
+                                        #block{{id}} h1{
+                                            font-size: {{styles.header_size_mobile}};
+                                            font-weight: {{styles.header_thickness_mobile}};
+                                        }
+
+                                        #block{{id}} a{
+                                            font-size: {{styles.main_text_size_mobile}};
+                                            font-weight: {{styles.main_text_thickness_mobile}};
+                                        }
+                                    }
+                                </style>
+                            {% endwith %}
+                        </div>
+                    {% endwith %}
                 {% endif%}
         {% endwith %}
     {% endfor %}
     <script src="{% static 'blocks/js/scroll-to-anchor.js'%}"></script>
+    <script src="{% static 'blocks/js/import-fonts.js'%}"></script>
 </body>
 </html>

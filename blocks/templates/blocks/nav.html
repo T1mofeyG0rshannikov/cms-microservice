@@ -1,8 +1,19 @@
+<div class="block-wrapper" id="block{{id}}">
+
 <header id="{{ block.ancor }}">
     <div class="inner">
         <h1>{{ block.title }}</h1>
         <button onclick="smoothScroll('{{block.button_ref}}')">
-            Регистрация
+            <a>Регистрация</a>
         </button>
     </div>
+    <style>
+        header{
+            background-color: {{styles.background_color}};
+            padding-top: {{styles.margin_top}};
+            padding-bottom: {{styles.margin_bottom}};
+        }
+    </style>
 </header>
+
+</div>

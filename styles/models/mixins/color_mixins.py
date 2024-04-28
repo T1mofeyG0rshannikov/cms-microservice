@@ -1,8 +1,6 @@
 from colorfield.fields import ColorField
 from django.db import models
 
-from .common import Font
-
 
 class ColorMixin(models.Model):
     color = ColorField(verbose_name="Цвет", default="#FFFFFF")
@@ -12,13 +10,6 @@ class ColorMixin(models.Model):
 
     def __str__(self):
         return self._meta.verbose_name
-
-
-class FontMixin(models.Model):
-    font = models.ForeignKey(Font, verbose_name="Шрифт для текста", on_delete=models.SET_NULL, null=True)
-
-    class Meta:
-        abstract = True
 
 
 class ThicknessOfTextMixin(models.Model):
@@ -60,4 +51,12 @@ class InvertedTextColorMixin(ColorMixin):
 
     class Meta:
         verbose_name = "Инвертированный цвет текста"
+        abstract = True
+
+
+class MarginMixin(models.Model):
+    margin_top = models.CharField(verbose_name="Отступ сверху", max_length=20, null=True, blank=True)
+    margin_bottom = models.CharField(verbose_name="Отступ снизу", max_length=20, null=True, blank=True)
+
+    class Meta:
         abstract = True

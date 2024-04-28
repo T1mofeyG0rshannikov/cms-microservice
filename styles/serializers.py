@@ -1,12 +1,14 @@
 from rest_framework import serializers
 
-from .models.colors import ColorStyles
-from .models.common import Font
+from .models.colors.colors import ColorStyles
+from .models.font import Font
 from .models.other_styles import IconSize, MarginBlock
 from .models.texts import ExplanationText, HeaderText, MainText, SubheaderText
 
 
 class FontSerializer(serializers.ModelSerializer):
+    link = serializers.CharField(required=False)
+
     class Meta:
         model = Font
         fields = ("name", "link")

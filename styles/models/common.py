@@ -1,5 +1,9 @@
 from django.db import models
 
+from blocks.models.blocks import Cover, ExampleBlock, Navbar
+
+from .abstract_classes import BaseCustomStyles
+
 
 class GlobalStyles(models.Model):
     class Meta:
@@ -10,23 +14,13 @@ class GlobalStyles(models.Model):
         return self._meta.verbose_name
 
 
-class BaseStyles(models.Model):
-    global_styles = models.ForeignKey(GlobalStyles, on_delete=models.SET_NULL, null=True)
-
-    class Meta:
-        abstract = True
-
-    def __str__(self):
-        return self._meta.verbose_name
+class NavbarCustomStyles(BaseCustomStyles):
+    block = models.ForeignKey(Navbar, on_delete=models.SET_NULL, null=True)
 
 
-class Font(models.Model):
-    name = models.CharField(verbose_name="Имя шрифта", max_length=50)
-    link = models.CharField(verbose_name="Ссылка для подключения", max_length=250, null=True, blank=True)
+class ContentCustomStyles(BaseCustomStyles):
+    block = models.ForeignKey(ExampleBlock, on_delete=models.SET_NULL, null=True)
 
-    class Meta:
-        verbose_name = "Шрифт"
-        verbose_name_plural = "Шрифты"
 
-    def __str__(self):
-        return self.name
+class CoverCustomStyles(BaseCustomStyles):
+    block = models.ForeignKey(Cover, on_delete=models.SET_NULL, null=True)

@@ -1,9 +1,19 @@
 from adminsortable2.admin import SortableAdminBase, SortableStackedInline
 from django.contrib import admin
 from django.contrib.admin.decorators import register
+from django.contrib.admin.views.main import ChangeList
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 
-from .models.common import Block, Page, Template
-from .models.blocks import ExampleBlock, Navbar, Cover
+from styles.admin import (
+    ContentCustomStylesInline,
+    CoverCustomStylesInline,
+    NavbarCustomStylesInline,
+)
+
+from .get_block import get_block
+from .models.blocks import Cover, ExampleBlock, Navbar
+from .models.common import Block, BlockRelationship, Page, Template
 
 
 @register(Template)
@@ -18,12 +28,12 @@ class BaseBlockAdmin(admin.ModelAdmin):
 
 @register(Navbar)
 class NavbarAdmin(BaseBlockAdmin):
-    pass
+    inlines = [NavbarCustomStylesInline]
 
 
 @register(ExampleBlock)
 class ExampleComponenAdmin(BaseBlockAdmin):
-    pass
+    inlines = [ContentCustomStylesInline]
     '''def image1_show(self, obj):
         if obj.image1:
             return mark_safe(f"<img src='{obj.image1.url}' width='120' />")
@@ -37,9 +47,33 @@ class ExampleComponenAdmin(BaseBlockAdmin):
     image1_show.__name__ = "Первое изображение"
     image2_show.__name__ = "Второе изображение"'''
 
+
 @register(Cover)
 class CoverAdmin(BaseBlockAdmin):
-    pass
+    inlines = [CoverCustomStylesInline]
+
+
+class FooChangeList(ChangeList):
+    def url_for_result(self, result):
+        pk = getattr(result, self.pk_attname)
+        return "/foos/foo/"
+
+
+@register(BlockRelationship)
+class BlockRelationAdmin(admin.ModelAdmin):
+    list_display = ["name", "content"]
+
+    def content(self, block):
+        return format_html(f"<a href='admin/styles'>Контент</a>")
+
+    def name(self, block):
+        return str(get_block(block))
+
+    def get_changelist(self, request, **kwargs):
+        return FooChangeList
+
+    # inlines = [NavbarAdminInline]
+
 
 class PageBlockInline(SortableStackedInline, admin.StackedInline):
     model = Block

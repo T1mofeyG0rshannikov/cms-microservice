@@ -1,6 +1,15 @@
 from django.urls import path
-from .views import GetColorStyles, GetHeaderStyles, GetMainTextStyles, GetExplanationTextStyles, GetSubheaerStyles, GetMarginBlock, GetIconSize
 
+from .views import (
+    GetColorStyles,
+    GetExplanationTextStyles,
+    GetFonts,
+    GetHeaderStyles,
+    GetIconSize,
+    GetMainTextStyles,
+    GetMarginBlock,
+    GetSubheaerStyles,
+)
 
 urlpatterns = [
     path("colors", GetColorStyles.as_view()),
@@ -10,4 +19,5 @@ urlpatterns = [
     path("subheader", GetSubheaerStyles.as_view()),
     path("margin-block", GetMarginBlock.as_view()),
     path("icon-size", GetIconSize.as_view()),
+    path("fonts", GetFonts.as_view()),
 ]

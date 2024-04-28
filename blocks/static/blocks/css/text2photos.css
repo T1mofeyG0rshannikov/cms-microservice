@@ -1,11 +1,24 @@
 .content{
     display: flex;
+    justify-content: center;
+    width: 100%;
+    background-color: var(--background-color);
+}
+
+.content .inner{
+    display: flex;
     width: calc(100% - 180px);
     justify-content: space-between;
     max-width: 1200px;
 }
 
-p.title{
+.content a{
+    font-size: var(--main-text-font-size);
+    font-weight: var(--main-text-font-weight);
+    font-family: var(--main-text-font-family);
+}
+
+h1{
     color: var(--header-color);
     font-size: var(--header-font-size);
     font-weight: var(--header-font-weight);
@@ -37,18 +50,12 @@ p.title{
 .content button a{
     color: var(--main-text-inverted-color);
     text-decoration: none;
-    font-size: var(--main-text-font-size);
-    font-weight: var(--main-text-font-weight);
-    font-family: var(--main-text-font-family);
 }
 
 a{
     display: block;
     margin: 10px 0px;
     color: var(--main-text-color);
-    font-size: var(--main-text-font-size);
-    font-weight: var(--main-text-font-weight);
-    font-family: var(--main-text-font-family);
 }
 
 .images-container{

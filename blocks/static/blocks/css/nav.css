@@ -5,7 +5,7 @@ header{
     display: flex;
     justify-content: center;
     color: var(--header-inverted-color);
-    width: 100%;
+    width: 100vw;
     height: 100px;
 }
 
@@ -24,10 +24,13 @@ header button{
     padding: 13px 18px;
     border: none;
     border-radius: 5px;
-    color: var(--main-text-inverted-color);
     font-size: var(--main-text-font-size);
     font-weight: var(--main-text-font-weight);
     font-family: var(--main-text-font-family);
+}
+
+header button a{
+    color: var(--main-text-inverted-color);
 }
 
 header h1{

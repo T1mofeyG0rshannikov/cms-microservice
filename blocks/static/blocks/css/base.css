@@ -9,6 +9,7 @@ body{
 .block-wrapper{
     display: flex;
     justify-content: center;
-    padding-top: var(--padding-block-top);
-    padding-bottom: var(--padding-block-bottom);
+    width: 100%;
+    /*padding-top: var(--padding-block-top);
+    padding-bottom: var(--padding-block-bottom);*/
 }

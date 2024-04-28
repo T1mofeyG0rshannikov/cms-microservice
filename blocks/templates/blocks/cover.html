@@ -1,10 +1,8 @@
-<!--<div class="block-wrapper"> -->
-
 <div id="{{ block.ancor }}" class="cover">
     <div class="inner">
         <h1>{{ block.title }}</h1>
 
-        <p style="line-height: 140%">{{ block.text|safe }}</p>
+        <a style="line-height: 140%">{{ block.text|safe }}</a>
 
         <div class="button-wrapper">
             <button onclick="smoothScroll('{{block.button_ref}}')"><a href="{{block.button_ref}}">{{ block.button_text }}</a></button>

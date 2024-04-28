@@ -23,6 +23,10 @@ class BlockRelationship(models.Model):
     block_name = models.CharField(verbose_name="Имя компонента", max_length=50, unique=True)
     block_id = models.PositiveIntegerField()
 
+    class Meta:
+        verbose_name = "Блок"
+        verbose_name_plural = "Блоки"
+
     def __str__(self):
         return self.block_name
 
