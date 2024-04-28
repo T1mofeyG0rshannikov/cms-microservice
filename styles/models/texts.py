@@ -10,6 +10,20 @@ from .mixins.text_mixins import (
 )
 
 
+class BaseText(
+    BaseStyles,
+    FontMixin,
+    SizeOfTextMixin,
+    SizeOfTextMobileMixin,
+    ThicknessOfTextMixin,
+    ThicknessOfTextMobileMixin,
+    TextColorMinin,
+    InvertedTextColorMixin,
+):
+    class Meta:
+        abstract = True
+
+
 class HeaderText(
     BaseStyles,
     FontMixin,

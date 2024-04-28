@@ -3,7 +3,6 @@ from rest_framework import serializers
 from .models.colors.colors import ColorStyles
 from .models.font import Font
 from .models.other_styles import IconSize, MarginBlock
-from .models.texts import ExplanationText, HeaderText, MainText, SubheaderText
 
 
 class FontSerializer(serializers.ModelSerializer):
@@ -14,48 +13,14 @@ class FontSerializer(serializers.ModelSerializer):
         fields = ("name", "link")
 
 
-class HeaderSerializer(serializers.ModelSerializer):
-    font = serializers.SerializerMethodField()
-
-    class Meta:
-        model = HeaderText
-        fields = ("font", "fontSize", "fontSizeMobile", "fontWeight", "fontWeightMobile", "color", "fontColorInverted")
-
-    def get_font(self, header_serializer):
-        return FontSerializer(header_serializer.font).data
-
-
-class SubheaderSerializer(serializers.ModelSerializer):
-    font = serializers.SerializerMethodField()
-
-    class Meta:
-        model = SubheaderText
-        fields = ("font", "fontSize", "fontSizeMobile", "fontWeight", "fontWeightMobile", "color", "fontColorInverted")
-
-    def get_font(self, header_serializer):
-        return FontSerializer(header_serializer.font).data
-
-
-class MainTextSerializer(serializers.ModelSerializer):
-    font = serializers.SerializerMethodField()
-
-    class Meta:
-        model = MainText
-        fields = ("font", "fontSize", "fontSizeMobile", "fontWeight", "fontWeightMobile", "color", "fontColorInverted")
-
-    def get_font(self, header_serializer):
-        return FontSerializer(header_serializer.font).data
-
-
-class ExplanationTextSerializer(serializers.ModelSerializer):
-    font = serializers.SerializerMethodField()
-
-    class Meta:
-        model = ExplanationText
-        fields = ("font", "fontSize", "fontSizeMobile", "fontWeight", "fontWeightMobile", "color", "fontColorInverted")
-
-    def get_font(self, header_serializer):
-        return FontSerializer(header_serializer.font).data
+class TextSerializer(serializers.Serializer):
+    font = FontSerializer()
+    fontSize = serializers.CharField()
+    fontSizeMobile = serializers.CharField()
+    fontWeight = serializers.CharField()
+    fontWeightMobile = serializers.CharField()
+    color = serializers.CharField()
+    fontColorInverted = serializers.CharField()
 
 
 class ColorsSerializer(serializers.ModelSerializer):
@@ -74,3 +39,27 @@ class MarginBlockSerializer(serializers.ModelSerializer):
     class Meta:
         model = MarginBlock
         fields = ("margin_top", "margin_bottom")
+
+
+class CustomStylesSerializer(serializers.Serializer):
+    background_color = serializers.CharField()
+    photo_darkness = serializers.SerializerMethodField()
+
+    header_size = serializers.CharField()
+    header_size_mobile = serializers.CharField()
+    header_thickness = serializers.CharField()
+    header_thickness_mobile = serializers.CharField()
+    header_color = serializers.CharField()
+
+    main_text_size = serializers.CharField()
+    main_text_size_mobile = serializers.CharField()
+    main_text_thickness = serializers.CharField()
+    main_text_thickness_mobile = serializers.CharField()
+    main_text_color = serializers.CharField()
+
+    def get_photo_darkness(self, obj):
+        photo_darkness = obj.photo_darkness
+        if photo_darkness is not None:
+            photo_darkness = 100 - photo_darkness
+
+        return photo_darkness

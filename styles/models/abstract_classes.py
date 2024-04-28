@@ -6,7 +6,7 @@ from .mixins.margin_mixin import MarginMixin
 
 
 class BaseCustomStyles(MarginMixin):
-    background_color = ColorField(verbose_name="Цвет фона", default="#FFFFFF", null=True, blank=True)
+    background_color = ColorField(verbose_name="Цвет фона", null=True, blank=True)
     photo_darkness = models.PositiveIntegerField(
         verbose_name="Затемнение фото в процентах",
         validators=[MinValueValidator(0), MaxValueValidator(100)],
@@ -22,7 +22,7 @@ class BaseCustomStyles(MarginMixin):
     header_thickness_mobile = models.CharField(
         verbose_name="толщина заголовка (смартфон)", max_length=50, null=True, blank=True
     )
-    header_color = ColorField(verbose_name="Цвет заголовка", default="#FFFFFF", null=True, blank=True)
+    header_color = ColorField(verbose_name="Цвет заголовка", null=True, blank=True)
 
     main_text_size = models.CharField(verbose_name="размер основного текста", max_length=50, null=True, blank=True)
     main_text_size_mobile = models.CharField(
@@ -34,7 +34,7 @@ class BaseCustomStyles(MarginMixin):
     main_text_thickness_mobile = models.CharField(
         verbose_name="толщина основного текста (смартфон)", max_length=50, null=True, blank=True
     )
-    main_text_color = ColorField(verbose_name="Цвет основного текста", default="#FFFFFF", null=True, blank=True)
+    main_text_color = ColorField(verbose_name="Цвет основного текста", null=True, blank=True)
 
     class Meta:
         verbose_name = "Кастомные стили"

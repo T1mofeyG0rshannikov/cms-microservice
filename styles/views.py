@@ -7,13 +7,10 @@ from .models.common import GlobalStyles
 from .models.font import Font
 from .serializers import (
     ColorsSerializer,
-    ExplanationTextSerializer,
     FontSerializer,
-    HeaderSerializer,
     IconSizeSerializer,
-    MainTextSerializer,
     MarginBlockSerializer,
-    SubheaderSerializer,
+    TextSerializer,
 )
 
 
@@ -26,25 +23,25 @@ class GetColorStyles(View):
 class GetHeaderStyles(View):
     def get(self, request):
         header_styles = GlobalStyles.objects.first().headertext_set.first()
-        return JsonResponse(HeaderSerializer(header_styles).data)
+        return JsonResponse(TextSerializer(header_styles).data)
 
 
 class GetMainTextStyles(View):
     def get(self, request):
         main_text_styles = GlobalStyles.objects.first().maintext_set.first()
-        return JsonResponse(MainTextSerializer(main_text_styles).data)
+        return JsonResponse(TextSerializer(main_text_styles).data)
 
 
 class GetSubheaerStyles(View):
     def get(self, request):
         header_styles = GlobalStyles.objects.first().subheadertext_set.first()
-        return JsonResponse(SubheaderSerializer(header_styles).data)
+        return JsonResponse(TextSerializer(header_styles).data)
 
 
 class GetExplanationTextStyles(View):
     def get(self, request):
         explanation_text_styles = GlobalStyles.objects.first().explanationtext_set.first()
-        return JsonResponse(ExplanationTextSerializer(explanation_text_styles).data)
+        return JsonResponse(TextSerializer(explanation_text_styles).data)
 
 
 class GetMarginBlock(View):

@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from styles.serializers import CustomStylesSerializer
+
 from .get_block import get_block
 from .get_custom_styles import get_custom_styles
 from .models.common import Page, Template
@@ -13,20 +15,23 @@ class PageSerializer(serializers.ModelSerializer):
         fields = ("title", "blocks")
 
     def get_blocks(self, page):
-        blocks = list(filter(lambda c: c is not None, [get_block(block.name) for block in page.blocks.all()]))
+        return BlockSerializer(page.blocks.all(), many=True).data
 
-        for block in blocks:
-            block.template.file = "blocks/" + block.template.file
 
-        for i in range(len(blocks)):
-            styles = get_custom_styles(blocks[i]).__dict__
+class BlockSerializer(serializers.Serializer):
+    content = serializers.SerializerMethodField()
+    styles = serializers.SerializerMethodField()
 
-            if styles["photo_darkness"] is not None:
-                styles["photo_darkness"] = 100 - styles["photo_darkness"]
+    def get_content(self, block):
+        content = get_block(block.name)
 
-            blocks[i] = {"content": blocks[i], "styles": styles}
+        if content is not None:
+            content.template.file = "blocks/" + content.template.file
 
-        return blocks
+        return content
+
+    def get_styles(self, block):
+        return CustomStylesSerializer(get_custom_styles(self.get_content(block))).data
 
 
 class TemplateSerializer(serializers.ModelSerializer):
