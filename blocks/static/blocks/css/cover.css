@@ -10,11 +10,8 @@
 }
 
 .cover h1{
-    font-size: var(--header-font-size);
-    font-weight: var(--header-font-weight);
     color: var(--header-inverted-color);
     text-align: center;
-    font-family: var(--header-font-family);
 }
 
 .cover .button-wrapper{
@@ -39,9 +36,6 @@
 .cover button a{
     color: var(--main-text-inverted-color);
     text-decoration: none;
-    font-size: var(--main-text-font-size);
-    font-weight: var(--main-text-font-weight);
-    font-family: var(--main-text-font-family);
 }
 
 .cover .inner{
@@ -50,10 +44,7 @@
 
 .cover a{
     color: var(--main-text-inverted-color);
-    font-size: var(--main-text-font-size);
-    font-weight: var(--main-text-font-weight);
     text-align: center;
-    font-family: var(--main-text-font-family);
 }
 
 @media screen and (max-width: 760px) {
@@ -68,20 +59,5 @@
     .cover .inner{
         padding: 50px 20px;
         width: calc(100% - 40px);
-    }
-
-    .cover a{
-        font-size: var(--main-text-font-size-mobile);
-        font-weight: var(--main-text-font-weight-mobile);
-    }
-
-    .cover button a{
-        font-size: var(--main-text-font-size-mobile);
-        font-weight: var(--main-text-font-weight-mobile);
-    }
-
-    .cover h1{
-        font-size: var(--header-font-size-mobile);
-        font-weight: var(--header-font-weight-mobile);
     }
 }

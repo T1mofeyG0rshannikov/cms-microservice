@@ -10,6 +10,32 @@ body{
     display: flex;
     justify-content: center;
     width: 100%;
-    /*padding-top: var(--padding-block-top);
-    padding-bottom: var(--padding-block-bottom);*/
+    padding-top: var(--padding-block-top);
+    padding-bottom: var(--padding-block-bottom);
+}
+
+a{
+    color: var(--main-text-color);
+    font-size: var(--main-text-font-size);
+    font-weight: var(--main-text-font-weight);
+    font-family: var(--main-text-font-family);
+}
+
+h1{
+    font-size: var(--header-font-size);
+    font-weight: var(--header-font-weight);
+    color: var(--header-color);
+    font-family: var(--header-font-family);
+}
+
+@media screen and (max-width: 760px) {
+    a{
+        font-size: var(--main-text-font-size-mobile);
+        font-weight: var(--main-text-font-weight-mobile);
+    }
+
+    h1{
+        font-size: var(--header-font-size-mobile);
+        font-weight: var(--header-font-weight-mobile);
+    }
 }

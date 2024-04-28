@@ -24,9 +24,6 @@ header button{
     padding: 13px 18px;
     border: none;
     border-radius: 5px;
-    font-size: var(--main-text-font-size);
-    font-weight: var(--main-text-font-weight);
-    font-family: var(--main-text-font-family);
 }
 
 header button a{
@@ -34,15 +31,5 @@ header button a{
 }
 
 header h1{
-    font-size: var(--header-font-size);
-    font-weight: var(--header-font-weight);
     color: var(--header-inverted-color);
-    font-family: var(--header-font-family);
-}
-
-@media screen and (max-width: 760px) {
-    header h1{
-        font-size: var(--header-font-size-mobile);
-        font-weight: var(--header-font-weight-mobile);
-    }
 }
