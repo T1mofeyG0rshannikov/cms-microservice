@@ -1,4 +1,4 @@
-from styles.models.common import BaseCustomStyles
+from styles.models.styles.styles import BaseCustomStyles
 
 
 def get_custom_styles(block):

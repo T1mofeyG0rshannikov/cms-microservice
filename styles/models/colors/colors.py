@@ -1,6 +1,6 @@
 from colorfield.fields import ColorField
 
-from styles.models.base_styles import BaseStyles
+from styles.models.styles.base_styles import BaseStyles
 
 from .base_color import BaseColor
 

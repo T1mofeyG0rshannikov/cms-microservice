@@ -3,8 +3,8 @@ import json
 from django.http import HttpResponse, JsonResponse
 from django.views.generic import View
 
-from .models.common import GlobalStyles
-from .models.font import Font
+from .models.styles.styles import GlobalStyles
+from .models.texts.font import Font
 from .serializers import (
     ColorsSerializer,
     FontSerializer,

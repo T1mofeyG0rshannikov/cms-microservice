@@ -2,15 +2,15 @@ from django.contrib import admin
 from django.contrib.admin.decorators import register
 
 from .models.colors.colors import ColorStyles
-from .models.common import (
+from .models.other import IconSize, MarginBlock
+from .models.styles.styles import (
     ContentCustomStyles,
     CoverCustomStyles,
     GlobalStyles,
     NavbarCustomStyles,
 )
-from .models.font import Font
-from .models.other_styles import IconSize, MarginBlock
-from .models.texts import ExplanationText, HeaderText, MainText, SubheaderText
+from .models.texts.font import Font
+from .models.texts.texts import ExplanationText, HeaderText, MainText, SubheaderText
 
 
 class StyleInline(admin.StackedInline):

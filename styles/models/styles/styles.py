@@ -2,7 +2,7 @@ from django.db import models
 
 from blocks.models.blocks import Cover, ExampleBlock, Navbar
 
-from .abstract_classes import BaseCustomStyles
+from .base_custom_styles import BaseCustomStyles
 
 
 class GlobalStyles(models.Model):

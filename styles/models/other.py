@@ -1,7 +1,7 @@
 from django.db import models
 
-from .base_styles import BaseStyles
 from .mixins.margin_mixin import MarginMixin
+from .styles.base_styles import BaseStyles
 
 
 class MarginBlock(MarginMixin, BaseStyles):

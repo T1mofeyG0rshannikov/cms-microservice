@@ -1,6 +1,5 @@
-from .base_styles import BaseStyles
-from .mixins.font_mixins import FontMixin
-from .mixins.text_mixins import (
+from styles.models.mixins.font_mixins import FontMixin
+from styles.models.mixins.text_mixins import (
     InvertedTextColorMixin,
     SizeOfTextMixin,
     SizeOfTextMobileMixin,
@@ -8,20 +7,7 @@ from .mixins.text_mixins import (
     ThicknessOfTextMixin,
     ThicknessOfTextMobileMixin,
 )
-
-
-class BaseText(
-    BaseStyles,
-    FontMixin,
-    SizeOfTextMixin,
-    SizeOfTextMobileMixin,
-    ThicknessOfTextMixin,
-    ThicknessOfTextMobileMixin,
-    TextColorMinin,
-    InvertedTextColorMixin,
-):
-    class Meta:
-        abstract = True
+from styles.models.styles.base_styles import BaseStyles
 
 
 class HeaderText(

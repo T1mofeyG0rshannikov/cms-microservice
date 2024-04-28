@@ -1,6 +1,6 @@
 from django.db import models
 
-from .common import GlobalStyles
+from styles.models.styles.styles import GlobalStyles
 
 
 class BaseStyles(models.Model):

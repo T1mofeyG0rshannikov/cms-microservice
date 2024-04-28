@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
 from .models.colors.colors import ColorStyles
-from .models.font import Font
-from .models.other_styles import IconSize, MarginBlock
+from .models.other import IconSize, MarginBlock
+from .models.texts.font import Font
 
 
 class FontSerializer(serializers.ModelSerializer):
