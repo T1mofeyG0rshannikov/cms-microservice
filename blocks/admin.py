@@ -1,9 +1,6 @@
 from adminsortable2.admin import SortableAdminBase, SortableStackedInline
 from django.contrib import admin
 from django.contrib.admin.decorators import register
-from django.contrib.admin.views.main import ChangeList
-from django.utils.html import format_html
-from django.utils.safestring import mark_safe
 
 from styles.admin import (
     ContentCustomStylesInline,
@@ -11,9 +8,14 @@ from styles.admin import (
     NavbarCustomStylesInline,
 )
 
-from .get_block import get_block
+# from .get_block import get_block
 from .models.blocks import Cover, ExampleBlock, Navbar
-from .models.common import Block, BlockRelationship, Page, Template
+
+# from .models.common import Block, BlockRelationship, Page, Template
+from .models.common import Block, Page, Template
+
+# from django.contrib.admin.views.main import ChangeList
+# from django.utils.html import format_html
 
 
 @register(Template)
@@ -22,6 +24,7 @@ class TemplateAdmin(admin.ModelAdmin):
 
 
 class BaseBlockAdmin(admin.ModelAdmin):
+    change_form_template = "blocks/change_form.html"
     list_display = ["name", "template"]
     exclude = ["block_relation"]
 
@@ -53,12 +56,13 @@ class CoverAdmin(BaseBlockAdmin):
     inlines = [CoverCustomStylesInline]
 
 
+"""
 class FooChangeList(ChangeList):
     def url_for_result(self, result):
         pk = getattr(result, self.pk_attname)
         return "/foos/foo/"
-
-
+"""
+"""
 @register(BlockRelationship)
 class BlockRelationAdmin(admin.ModelAdmin):
     list_display = ["name", "content"]
@@ -69,10 +73,11 @@ class BlockRelationAdmin(admin.ModelAdmin):
     def name(self, block):
         return str(get_block(block))
 
-    def get_changelist(self, request, **kwargs):
-        return FooChangeList
+    #def get_changelist(self, request, **kwargs):
+    #    return FooChangeList
 
     # inlines = [NavbarAdminInline]
+"""
 
 
 class PageBlockInline(SortableStackedInline, admin.StackedInline):
