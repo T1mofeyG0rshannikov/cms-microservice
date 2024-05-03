@@ -21,7 +21,7 @@ class Page(models.Model):
 
 class BlockRelationship(models.Model):
     block_name = models.CharField(verbose_name="Имя компонента", max_length=50, unique=True)
-    block_id = models.PositiveIntegerField()
+    block = models.CharField(max_length=50)
 
     class Meta:
         verbose_name = "Блок"
@@ -86,7 +86,9 @@ class BaseBlock(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
-        block_relation, _ = BlockRelationship.objects.update_or_create(block_name=self.name, block_id=self.id)
+        block_relation, _ = BlockRelationship.objects.update_or_create(
+            block=f"{type(self).__name__}{self.id}", defaults={"block_name": self.name}
+        )
 
         self.block_relation = block_relation
         super().save(*args, **kwargs)

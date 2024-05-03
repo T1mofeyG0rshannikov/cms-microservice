@@ -2,6 +2,8 @@
     display: flex;
     justify-content: center;
     width: 100%;
+    padding-top: var(--padding-block-top);
+    padding-bottom: var(--padding-block-bottom);
 }
 
 .content .inner{
@@ -48,4 +50,12 @@ a{
     position: relative;
     width: 100%;
     aspect-ratio: 4/5;
+}
+
+.content .right-text{
+    flex: 0 0 55%;
+}
+
+.content .left-text{
+    flex: 0 0 55%;
 }

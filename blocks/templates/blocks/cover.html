@@ -13,22 +13,17 @@
 
 <style>
     .cover{
-        background: url("{{block.image_desctop.url}}") no-repeat 50% 50%/cover;
+        background: url("{{block.image_desctop.url}}") no-repeat 50% 50%/cover, linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4));
     }
 
     @media screen and (max-width: 760px) {
         .cover {
-            background: url("{{block.image_mobile.url}}") no-repeat 50% 50%/cover;
+            background: url("{{block.image_mobile.url}}") no-repeat 50% 50%/cover, linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4));
             height: auto;
         }
 
         .button-wrapper {
             flex-direction: column;
-        }
-
-        .cover .inner{
-            padding: 50px 20px;
-            width: calc(100% - 40px);
         }
     }
 </style>

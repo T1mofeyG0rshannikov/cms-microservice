@@ -1,12 +1,12 @@
 header{
-    /*padding-top: var(--padding-block-top);*/
-    /*padding-bottom: var(--padding-block-bottom);*/
     background-color: var(--main-color);
     display: flex;
     justify-content: center;
     color: var(--header-inverted-color);
     width: 100vw;
     height: 100px;
+    padding-top: var(--padding-block-top);
+    padding-bottom: var(--padding-block-bottom);
 }
 
 header .inner{

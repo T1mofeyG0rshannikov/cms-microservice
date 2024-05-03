@@ -1,6 +1,6 @@
 <div id="{{ block.ancor }}" class="content">
     <div class="inner">
-        <div style="flex: 0 0 55%;">
+        <div class="right-text">
             <h1 class="title">{{ block.title }}</h1>
 
             <a style="line-height: 140%">{{ block.body|safe }}</a>
@@ -19,4 +19,32 @@
             </div>
         </div>
     </div>
+    <style>
+        @media screen and (max-width: 760px) {
+            .content .inner{
+                flex-direction: column;
+                width: calc(100% - 80px);
+            }
+
+            .content .right-text{
+                flex: none;
+                align-items: center;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .content p, h1{
+                text-align: center;
+            }
+
+            .content button{
+                margin-top: 30px;
+            }
+
+            .content .images-container{
+                margin-top: 40px;
+                width: 55%;
+            }
+        }
+    </style>
 </div>

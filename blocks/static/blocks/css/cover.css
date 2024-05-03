@@ -7,6 +7,8 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    padding-top: var(--padding-block-top);
+    padding-bottom: var(--padding-block-bottom);
 }
 
 .cover h1{
@@ -57,7 +59,7 @@
     }
 
     .cover .inner{
-        padding: 50px 20px;
+        padding: 100px 20px;
         width: calc(100% - 40px);
     }
 }
