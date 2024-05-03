@@ -21,7 +21,6 @@ header .inner{
 header button{
     background-color: var(--secondary-color);
     margin-left: 40px;
-    padding: 13px 18px;
     border: none;
     border-radius: 5px;
 }

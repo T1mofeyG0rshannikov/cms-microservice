@@ -23,7 +23,6 @@
 
 .cover button{
     margin: 15px;
-    padding: 10px 20px;
     border: 1px solid var(--secondary-color);
     background-color: var(--secondary-color);
     border-radius: 7px;
@@ -61,5 +60,9 @@
     .cover .inner{
         padding: 100px 20px;
         width: calc(100% - 40px);
+    }
+
+    .cover button{
+        margin: 10px;
     }
 }

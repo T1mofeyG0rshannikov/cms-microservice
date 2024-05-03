@@ -7,7 +7,7 @@
             <button onclick="smoothScroll('{{block.button_ref}}')"><a>{{ block.button_text }}</a></button>
         </div>
 
-        <div style="flex: 0 0 35%; display: flex; justify-content: center; align-items: center;">
+        <div class="left-block">
             <div class="images-container">
                 <div style="width: 60%; position: absolute; right: 0px; z-index: 1;" class="image-wrapper">
                     <img src="{{ block.image1.url }}">
@@ -23,6 +23,7 @@
         @media screen and (max-width: 760px) {
             .content .inner{
                 flex-direction: column;
+                justify-content: start;
                 width: calc(100% - 80px);
             }
 
@@ -43,7 +44,11 @@
 
             .content .images-container{
                 margin-top: 40px;
-                width: 55%;
+                width: 65%;
+            }
+
+            .content .left-block{
+                flex: none;
             }
         }
     </style>

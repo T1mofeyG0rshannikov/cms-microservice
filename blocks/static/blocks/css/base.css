@@ -26,6 +26,10 @@ h1{
     font-family: var(--header-font-family);
 }
 
+button{
+    padding: 3px 20px;
+}
+
 @media screen and (max-width: 760px) {
     a{
         font-size: var(--main-text-font-size-mobile);
@@ -35,5 +39,9 @@ h1{
     h1{
         font-size: var(--header-font-size-mobile);
         font-weight: var(--header-font-weight-mobile);
+    }
+
+    button{
+        padding: 10px 20px;
     }
 }
