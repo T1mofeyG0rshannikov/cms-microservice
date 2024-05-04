@@ -38,15 +38,17 @@
     margin-bottom: 0px;
 }
 
-.content button a{
-    color: var(--main-text-inverted-color);
-    text-decoration: none;
-}
 
-a, p{
+.content a, .content p{
     display: block;
     margin: var(--margin-inside-block-desctop) 0px;
     color: var(--main-text-color);
+}
+
+.content button a{
+    margin: 0px;
+    color: var(--main-text-inverted-color);
+    text-decoration: none;
 }
 
 .images-container{
@@ -71,5 +73,7 @@ a, p{
 }
 
 @media screen and (max-width: 760px) {
- 
+    .content a, .content p{
+        margin: var(--margin-inside-block-mobile) 0px;
+    }
 }
