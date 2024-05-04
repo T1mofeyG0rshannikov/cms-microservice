@@ -1,3 +1,8 @@
+:root{
+    --margin-inside-block-desctop: 15px;
+    --margin-inside-block-mobile: 10px;
+}
+
 body{
     margin: 0 auto;
     background-color: var(--background-color);
@@ -17,6 +22,7 @@ a{
     font-size: var(--main-text-font-size);
     font-weight: var(--main-text-font-weight);
     font-family: var(--main-text-font-family);
+    margin: var(--margin-inside-block-desctop) 0px;
 }
 
 h1{
@@ -24,24 +30,29 @@ h1{
     font-weight: var(--header-font-weight);
     color: var(--header-color);
     font-family: var(--header-font-family);
+    margin: var(--margin-inside-block-desctop) 0px;
 }
 
 button{
     padding: 3px 20px;
+    margin: var(--margin-inside-block-desctop) 0px;
 }
 
 @media screen and (max-width: 760px) {
     a{
         font-size: var(--main-text-font-size-mobile);
         font-weight: var(--main-text-font-weight-mobile);
+        margin: var(--margin-inside-block-mobile) 0px;
     }
 
     h1{
         font-size: var(--header-font-size-mobile);
         font-weight: var(--header-font-weight-mobile);
+        margin: var(--margin-inside-block-mobile) 0px;
     }
 
     button{
         padding: 10px 20px;
+        margin: var(--margin-inside-block-mobile) 0px;
     }
 }

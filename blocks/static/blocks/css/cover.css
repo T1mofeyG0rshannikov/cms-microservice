@@ -22,7 +22,7 @@
 }
 
 .cover button{
-    margin: 15px;
+    margin: var(--margin-inside-block-desctop);
     border: 1px solid var(--secondary-color);
     background-color: var(--secondary-color);
     border-radius: 7px;
@@ -63,6 +63,6 @@
     }
 
     .cover button{
-        margin: 10px;
+        margin: var(--margin-inside-block-mobile);
     }
 }
