@@ -1,6 +1,5 @@
 .cover{
     width: 100%;
-    height: 450px;
     background-color: rgba(0,0,0,.3)!important;
     background-blend-mode: multiply;
     display: flex;
@@ -13,6 +12,7 @@
 
 .cover h1{
     color: var(--header-inverted-color);
+    margin-top: 0px;
     text-align: center;
 }
 
@@ -22,7 +22,7 @@
 }
 
 .cover button{
-    margin: var(--margin-inside-block-desctop);
+    margin: var(--margin-inside-block-desctop) 10px 0px 10px;
     border: 1px solid var(--secondary-color);
     background-color: var(--secondary-color);
     border-radius: 7px;
@@ -43,7 +43,7 @@
     max-width: 800px;
 }
 
-.cover a{
+.cover a, .cover p{
     color: var(--main-text-inverted-color);
     text-align: center;
 }
@@ -63,6 +63,6 @@
     }
 
     .cover button{
-        margin: var(--margin-inside-block-mobile);
+        margin: var(--margin-inside-block-mobile) 0px;
     }
 }

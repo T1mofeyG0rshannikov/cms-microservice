@@ -1,6 +1,6 @@
 :root{
-    --margin-inside-block-desctop: 15px;
-    --margin-inside-block-mobile: 10px;
+    --margin-inside-block-desctop: 25px;
+    --margin-inside-block-mobile: 12px;
 }
 
 body{
@@ -17,7 +17,7 @@ body{
     width: 100%;
 }
 
-a{
+a, p{
     color: var(--main-text-color);
     font-size: var(--main-text-font-size);
     font-weight: var(--main-text-font-weight);
@@ -34,12 +34,16 @@ h1{
 }
 
 button{
-    padding: 3px 20px;
+    padding: 16px 22px;
     margin: var(--margin-inside-block-desctop) 0px;
 }
 
+button a{
+    margin: 0px;
+}
+
 @media screen and (max-width: 760px) {
-    a{
+    a, p{
         font-size: var(--main-text-font-size-mobile);
         font-weight: var(--main-text-font-weight-mobile);
         margin: var(--margin-inside-block-mobile) 0px;

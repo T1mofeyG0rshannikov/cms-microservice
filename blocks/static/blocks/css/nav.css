@@ -4,7 +4,6 @@ header{
     justify-content: center;
     color: var(--header-inverted-color);
     width: 100vw;
-    height: 100px;
     padding-top: var(--padding-block-top);
     padding-bottom: var(--padding-block-bottom);
 }
@@ -20,7 +19,7 @@ header .inner{
 
 header button{
     background-color: var(--secondary-color);
-    margin-left: 40px;
+    margin: 0px 0px 0px 40px;
     border: none;
     border-radius: 5px;
 }
@@ -31,4 +30,5 @@ header button a{
 
 header h1{
     color: var(--header-inverted-color);
+    margin: 0px;
 }
