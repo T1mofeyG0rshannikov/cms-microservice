@@ -49,20 +49,24 @@
 }
 
 @media screen and (max-width: 760px) {
-    .cover {
-        height: auto;
-    }
-
     .button-wrapper {
         flex-direction: column;
     }
 
     .cover .inner{
-        padding: 100px 20px;
         width: calc(100% - 40px);
     }
 
     .cover button{
         margin: var(--margin-inside-block-mobile) 0px;
+        margin-bottom: 0px;
+    }
+
+    .cover p{
+        padding: var(--margin-inside-block-mobile) 0px;
+    }
+
+    .cover a{
+        display: block;
     }
 }

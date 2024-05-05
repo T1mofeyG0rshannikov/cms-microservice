@@ -56,7 +56,7 @@ button a{
     }
 
     button{
-        padding: 10px 20px;
+        padding: 15px 22px;
         margin: var(--margin-inside-block-mobile) 0px;
     }
 }

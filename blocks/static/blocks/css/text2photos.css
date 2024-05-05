@@ -45,6 +45,10 @@
     color: var(--main-text-color);
 }
 
+.content a{
+    margin: 0px;
+}
+
 .content button a{
     margin: 0px;
     color: var(--main-text-inverted-color);
@@ -70,10 +74,15 @@
     display: flex; 
     justify-content: center; 
     align-items: center;
+    margin-top: var(--margin-inside-block-desctop);
 }
 
 @media screen and (max-width: 760px) {
     .content a, .content p{
         margin: var(--margin-inside-block-mobile) 0px;
+    }
+
+    .content a{
+        margin: 0px;
     }
 }
