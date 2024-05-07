@@ -29,5 +29,12 @@
             gap: 10px;
             grid-template-columns: repeat({{styles.columns}}, 250px);
         }
+
+        @media screen and (max-width: 760px) {
+            .features-container{
+                gap: 0px;
+                grid-template-columns: repeat(1, 1fr);
+            }
+        }
     </style>
 </div>

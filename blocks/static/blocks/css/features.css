@@ -66,3 +66,18 @@
 button{
     margin-bottom: 0px;
 }
+
+@media screen and (max-width: 760px) {
+    .features{
+        width: calc(100% - 40px);
+        padding: 0px 40px;
+    }
+    .features-container{
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .feature{
+        width: 90%;
+        margin: var(--margin-inside-block-mobile) 5%!important;
+    }
+}

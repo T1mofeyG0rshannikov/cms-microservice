@@ -36,7 +36,6 @@
     margin-bottom: 0px;
 }
 
-
 .content a, .content p{
     display: block;
     margin: var(--margin-inside-block-desctop) 0px;
@@ -76,5 +75,22 @@
 
     .content a{
         margin: 0px;
+    }
+
+    .content p, h1{
+        text-align: center;
+    }
+
+    .content button{
+        margin-top: var(--margin-inside-block-mobile);
+    }
+
+    .content .images-container{
+        margin-top: var(--margin-inside-block-mobile);
+        width: 100%;
+    }
+
+    .content .left-block{
+        flex: none;
     }
 }
