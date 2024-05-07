@@ -26,7 +26,7 @@ class TextSerializer(serializers.Serializer):
 class ColorsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ColorStyles
-        fields = ("background_color", "main_color", "secondary_color")
+        fields = ("background_color", "main_color", "secondary_color", "second_background_color")
 
 
 class IconSizeSerializer(serializers.ModelSerializer):
@@ -56,6 +56,8 @@ class CustomStylesSerializer(serializers.Serializer):
     main_text_thickness = serializers.CharField()
     main_text_thickness_mobile = serializers.CharField()
     main_text_color = serializers.CharField()
+
+    columns = serializers.CharField(required=False)
 
     def get_photo_darkness(self, obj):
         photo_darkness = obj.photo_darkness

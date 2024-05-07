@@ -1,6 +1,6 @@
 from django.db import models
 
-from blocks.models.blocks import Cover, ExampleBlock, Navbar
+from blocks.models.blocks import Cover, ExampleBlock, FeaturesBlock, Navbar
 
 from .base_custom_styles import BaseCustomStyles
 
@@ -24,3 +24,8 @@ class ContentCustomStyles(BaseCustomStyles):
 
 class CoverCustomStyles(BaseCustomStyles):
     block = models.ForeignKey(Cover, on_delete=models.SET_NULL, null=True)
+
+
+class FeaturesCustomStyles(BaseCustomStyles):
+    block = models.ForeignKey(FeaturesBlock, on_delete=models.SET_NULL, null=True)
+    columns = models.PositiveIntegerField(verbose_name="Количество колонок", default=4)

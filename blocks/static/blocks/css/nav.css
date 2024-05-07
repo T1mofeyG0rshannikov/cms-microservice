@@ -21,11 +21,6 @@ header button{
     background-color: var(--secondary-color);
     margin: 0px 0px 0px 40px;
     border: none;
-    border-radius: 5px;
-}
-
-header button a{
-    color: var(--main-text-inverted-color);
 }
 
 header h1{

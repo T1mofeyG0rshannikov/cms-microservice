@@ -1,0 +1,33 @@
+{% load icon %}
+
+<div class="features">
+    <h1>{{block.title}}</h1>
+
+    <a>{{block.introductory_text}}</a>
+
+    <div class="features-container">
+        {% for feature in block.features.all %}
+            <div class="feature">
+                <div class="icon-wrapper">
+                    <div class="icon">
+                        {% icon feature.icon '#ff0000' %}
+                    </div>
+                </div>
+
+                <h3>{{ feature.title }}</h3>
+
+                <p>{{ feature.description }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <button><a>{{ block.button_text }}</a></button>
+
+    <style>
+        .features-container{
+            display: grid;
+            gap: 10px;
+            grid-template-columns: repeat({{styles.columns}}, 250px);
+        }
+    </style>
+</div>

@@ -1,5 +1,7 @@
 {% extends "admin/base_site.html" %}
 {% load i18n admin_urls static admin_modify %}
+{% load template_exist %}
+{% load is_custom_styles  %}
 
 {% block extrahead %}{{ block.super }}
 <script src="{% url 'admin:jsi18n' %}"></script>
@@ -76,6 +78,14 @@
   {% for fieldset in adminform %}
     {% include "admin/includes/fieldset.html" %}
   {% endfor %}
+
+  {% for inline_admin_formset in inline_admin_formsets %}
+      {% is_custom_styles inline_admin_formset.opts.model as styles %}
+      {% if not styles %}
+        {% include inline_admin_formset.opts.template %}
+      {% endif %}
+
+  {% endfor %}
 </div>
 
 {% endblock %}
@@ -87,7 +97,10 @@
 <!-- стили -->
 <div id="styles-form" style="display: none;">
   {% for inline_admin_formset in inline_admin_formsets %}
-      {% include inline_admin_formset.opts.template %}
+      {% is_custom_styles inline_admin_formset.opts.model as styles %}
+      {% if styles %}
+        {% include inline_admin_formset.opts.template %}
+      {% endif %}
   {% endfor %}
 </div>
 

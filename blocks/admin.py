@@ -5,17 +5,13 @@ from django.contrib.admin.decorators import register
 from styles.admin import (
     ContentCustomStylesInline,
     CoverCustomStylesInline,
+    FeaturesCustomStylesInline,
     NavbarCustomStylesInline,
 )
 
-# from .get_block import get_block
-from .models.blocks import Cover, ExampleBlock, Navbar
-
-# from .models.common import Block, BlockRelationship, Page, Template
+from .models.blocks import Cover, ExampleBlock, FeaturesBlock, Navbar
+from .models.blocks_components import Feature
 from .models.common import Block, Page, Template
-
-# from django.contrib.admin.views.main import ChangeList
-# from django.utils.html import format_html
 
 
 @register(Template)
@@ -54,6 +50,16 @@ class ExampleComponenAdmin(BaseBlockAdmin):
 @register(Cover)
 class CoverAdmin(BaseBlockAdmin):
     inlines = [CoverCustomStylesInline]
+
+
+class FeatureInline(admin.StackedInline):
+    model = Feature
+    extra = 0
+
+
+@register(FeaturesBlock)
+class FeaturesBlockAdmin(BaseBlockAdmin):
+    inlines = [FeatureInline, FeaturesCustomStylesInline]
 
 
 """

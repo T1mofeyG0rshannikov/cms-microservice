@@ -33,8 +33,6 @@
 .content button{
     border: none;
     background-color: var(--main-color);
-    border-radius: 5px;
-    cursor: pointer;
     margin-bottom: 0px;
 }
 
@@ -47,12 +45,6 @@
 
 .content a{
     margin: 0px;
-}
-
-.content button a{
-    margin: 0px;
-    color: var(--main-text-inverted-color);
-    text-decoration: none;
 }
 
 .images-container{
@@ -70,9 +62,9 @@
 }
 
 .left-block{
-    flex: 0 0 35%; 
-    display: flex; 
-    justify-content: center; 
+    flex: 0 0 35%;
+    display: flex;
+    justify-content: center;
     align-items: center;
     margin-top: var(--margin-inside-block-desctop);
 }

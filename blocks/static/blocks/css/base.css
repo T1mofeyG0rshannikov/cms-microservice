@@ -33,13 +33,25 @@ h1{
     margin: var(--margin-inside-block-desctop) 0px;
 }
 
+h3{
+    font-size: var(--subheader-font-size);
+    font-weight: var(--subheader-font-weight);
+    color: var(--subheader-сolor);
+    font-family: var(--subheader-font-family);
+    margin: var(--margin-inside-block-desctop) 0px;
+}
+
 button{
     padding: 16px 22px;
     margin: var(--margin-inside-block-desctop) 0px;
+    cursor: pointer;
+    border-radius: 5px;
 }
 
 button a{
     margin: 0px;
+    color: var(--main-text-inverted-color)!important;
+    text-decoration: none;
 }
 
 @media screen and (max-width: 760px) {
@@ -52,6 +64,12 @@ button a{
     h1{
         font-size: var(--header-font-size-mobile);
         font-weight: var(--header-font-weight-mobile);
+        margin: var(--margin-inside-block-mobile) 0px;
+    }
+
+    h3{
+        font-size: var(--subheader-font-size-mobile);
+        font-weight: var(--subheader-font-weight-mobile);
         margin: var(--margin-inside-block-mobile) 0px;
     }
 

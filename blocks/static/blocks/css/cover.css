@@ -25,18 +25,11 @@
     margin: var(--margin-inside-block-desctop) 10px 0px 10px;
     border: 1px solid var(--secondary-color);
     background-color: var(--secondary-color);
-    border-radius: 7px;
-    cursor: pointer;
 }
 
 .cover #white-button{
     background-color: transparent;
     border: 1px solid white;
-}
-
-.cover button a{
-    color: var(--main-text-inverted-color);
-    text-decoration: none;
 }
 
 .cover .inner{

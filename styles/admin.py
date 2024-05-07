@@ -6,6 +6,7 @@ from .models.other import IconSize, MarginBlock
 from .models.styles.styles import (
     ContentCustomStyles,
     CoverCustomStyles,
+    FeaturesCustomStyles,
     GlobalStyles,
     NavbarCustomStyles,
 )
@@ -28,6 +29,10 @@ class ContentCustomStylesInline(StyleInline):
 
 class CoverCustomStylesInline(StyleInline):
     model = CoverCustomStyles
+
+
+class FeaturesCustomStylesInline(StyleInline):
+    model = FeaturesCustomStyles
 
 
 class ColorStylesInline(StyleInline):

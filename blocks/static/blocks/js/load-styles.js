@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", function() {
     then(response => response.json()).
     then(response => {
         document.documentElement.style.setProperty("--background-color", response.background_color)
+        document.documentElement.style.setProperty("--second-background-color", response.second_background_color)
         document.documentElement.style.setProperty("--main-color", response.main_color)
         document.documentElement.style.setProperty("--secondary-color", response.secondary_color)
     })
