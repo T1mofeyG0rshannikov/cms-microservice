@@ -15,17 +15,17 @@ class GlobalStyles(models.Model):
 
 
 class NavbarCustomStyles(BaseCustomStyles):
-    block = models.ForeignKey(Navbar, on_delete=models.SET_NULL, null=True)
+    block = models.OneToOneField(Navbar, on_delete=models.SET_NULL, null=True)
 
 
 class ContentCustomStyles(BaseCustomStyles):
-    block = models.ForeignKey(ExampleBlock, on_delete=models.SET_NULL, null=True)
+    block = models.OneToOneField(ExampleBlock, on_delete=models.SET_NULL, null=True)
 
 
 class CoverCustomStyles(BaseCustomStyles):
-    block = models.ForeignKey(Cover, on_delete=models.SET_NULL, null=True)
+    block = models.OneToOneField(Cover, on_delete=models.SET_NULL, null=True)
 
 
 class FeaturesCustomStyles(BaseCustomStyles):
-    block = models.ForeignKey(FeaturesBlock, on_delete=models.SET_NULL, null=True)
+    block = models.OneToOneField(FeaturesBlock, on_delete=models.SET_NULL, null=True)
     columns = models.PositiveIntegerField(verbose_name="Количество колонок", default=4)
