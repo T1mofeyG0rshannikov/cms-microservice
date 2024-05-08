@@ -66,6 +66,8 @@ button{
     .features{
         width: calc(100% - 40px);
         padding: 0px 40px;
+        padding-top: var(--padding-block-top);
+        padding-bottom: var(--padding-block-bottom);
     }
     .features-container{
         grid-template-columns: repeat(1, 1fr);
