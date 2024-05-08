@@ -42,6 +42,9 @@ class MarginBlockSerializer(serializers.ModelSerializer):
 
 
 class CustomStylesSerializer(serializers.Serializer):
+    margin_top = serializers.CharField()
+    margin_bottom = serializers.CharField()
+
     background_color = serializers.CharField()
     photo_darkness = serializers.SerializerMethodField()
 

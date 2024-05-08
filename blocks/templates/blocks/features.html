@@ -24,9 +24,14 @@
     <button><a>{{ block.button_text }}</a></button>
 
     <style>
+        .features{
+            padding-top: {{styles.margin_top}};
+            padding-bottom: {{styles.margin_bottom}};
+        }
+
         .features-container{
             display: grid;
-            gap: 10px;
+            gap: 50px;
             grid-template-columns: repeat({{styles.columns}}, 250px);
         }
 
