@@ -58,6 +58,8 @@ class CustomStylesSerializer(serializers.Serializer):
     main_text_color = serializers.CharField()
 
     columns = serializers.CharField(required=False)
+    icon_color = serializers.CharField(required=False)
+    icon_background_color = serializers.CharField(required=False)
 
     def get_photo_darkness(self, obj):
         photo_darkness = obj.photo_darkness

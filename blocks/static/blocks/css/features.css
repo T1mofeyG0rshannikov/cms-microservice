@@ -21,10 +21,6 @@
     line-height: 140%;
 }
 
-.features svg{
-    fill: var(--main-color);
-}
-
 .features .feature{
     margin: var(--margin-inside-block-desctop) 0px;
     display: flex;
@@ -35,7 +31,6 @@
 
 .features .feature .icon-wrapper{
     border-radius: 50%;
-    border: 3px solid var(--main-color);
     display: flex;
     justify-content: center;
     align-items: center;

@@ -1,3 +1,4 @@
+from colorfield.fields import ColorField
 from django.db import models
 
 from blocks.models.blocks import Cover, ExampleBlock, FeaturesBlock, Navbar
@@ -29,3 +30,5 @@ class CoverCustomStyles(BaseCustomStyles):
 class FeaturesCustomStyles(BaseCustomStyles):
     block = models.OneToOneField(FeaturesBlock, on_delete=models.SET_NULL, null=True)
     columns = models.PositiveIntegerField(verbose_name="Количество колонок", default=4)
+    icon_color = ColorField(verbose_name="Цвет иконок", default="#689F38")
+    icon_background_color = ColorField(verbose_name="Цвет фона иконок", default="#FFFFFF")

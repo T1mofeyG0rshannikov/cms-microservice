@@ -10,7 +10,7 @@
             <div class="feature">
                 <div class="icon-wrapper">
                     <div class="icon">
-                        {% icon feature.icon '#ff0000' %}
+                        {% icon feature.icon styles.icon_color %}
                     </div>
                 </div>
 
@@ -28,6 +28,15 @@
             display: grid;
             gap: 10px;
             grid-template-columns: repeat({{styles.columns}}, 250px);
+        }
+
+        .features .feature .icon-wrapper{
+            background-color: {{styles.icon_background_color}};
+            border: 3px solid {{styles.icon_color}};
+        }
+
+        .feature svg{
+            fill: {{styles.icon_color}};
         }
 
         @media screen and (max-width: 760px) {
