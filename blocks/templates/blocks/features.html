@@ -1,54 +1,57 @@
 {% load icon %}
 
 <div class="features">
-    <h1>{{block.title}}</h1>
+    <div class="inner">
+        <h1>{{block.title}}</h1>
 
-    <a>{{block.introductory_text}}</a>
+        <a>{{block.introductory_text}}</a>
 
-    <div class="features-container">
-        {% for feature in block.features.all %}
-            <div class="feature">
-                <div class="icon-wrapper">
-                    <div class="icon">
-                        {% icon feature.icon styles.icon_color %}
+        <div class="features-container">
+            {% for feature in block.features.all %}
+                <div class="feature">
+                    <div class="icon-wrapper">
+
+                            <img class="icon" src="{{feature.icon.url}}" />
+
                     </div>
+
+                    <h3>{{ feature.title }}</h3>
+
+                    <span>{{ feature.description }}</span>
                 </div>
+            {% endfor %}
+        </div>
 
-                <h3>{{ feature.title }}</h3>
+        <button><a>{{ block.button_text }}</a></button>
 
-                <p>{{ feature.description }}</p>
-            </div>
-        {% endfor %}
-    </div>
-
-    <button><a>{{ block.button_text }}</a></button>
-
-    <style>
-        .features{
-            padding-top: {{styles.margin_top}};
-            padding-bottom: {{styles.margin_bottom}};
-        }
-
-        .features-container{
-            display: grid;
-            gap: 50px;
-            grid-template-columns: repeat({{styles.columns}}, 250px);
-        }
-
-        .features .feature .icon-wrapper{
-            background-color: {{styles.icon_background_color}};
-            border: 3px solid {{styles.icon_color}};
-        }
-
-        .feature svg{
-            fill: {{styles.icon_color}};
-        }
-
-        @media screen and (max-width: 760px) {
-            .features-container{
-                gap: 0px;
-                grid-template-columns: repeat(1, 1fr);
+        <style>
+            .features{
+                padding-top: {{styles.margin_top}};
+                padding-bottom: {{styles.margin_bottom}};
             }
-        }
-    </style>
+
+            .features-container{
+                display: grid;
+                grid-column-gap: 50px;
+                grid-template-columns: {{styles.columns}};
+            }
+
+            .features .feature .icon-wrapper{
+                background-color: {{styles.icon_background_color}};
+                border: 3px solid {{styles.icon_color}};
+                width: {{styles.icon_width}};
+                height: {{styles.icon_height}};
+            }
+
+            .feature svg{
+                fill: {{styles.icon_color}};
+            }
+
+            @media screen and (max-width: 760px) {
+                .features-container{
+                    grid-template-columns: repeat(1, 1fr);
+                }
+            }
+        </style>
+    </div>
 </div>

@@ -54,6 +54,14 @@ button a{
     text-decoration: none;
 }
 
+span{
+    color: var(--explanation-text-color);
+    font-size: var(--explanation-text-font-size);
+    font-weight: var(--explanation-text-font-weight);
+    font-family: var(--explanation-text-font-family);
+    line-height: 140%;
+}
+
 @media screen and (max-width: 760px) {
     a, p{
         font-size: var(--main-text-font-size-mobile);
@@ -76,5 +84,10 @@ button a{
     button{
         padding: 15px 22px;
         margin: var(--margin-inside-block-mobile) 0px;
+    }
+
+    span{
+        font-size: var(--explanation-text-font-size-mobile);
+        font-weight: var(--explanation-text-font-weight-mobile);
     }
 }

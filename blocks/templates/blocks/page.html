@@ -21,7 +21,6 @@
                             {% include template_name with block=block.content styles=block.styles %}
                             {% with block.styles as styles %}
                                 <style>
-
                                     #block{{id}} img{
                                         filter: brightness({{ styles.photo_darkness }}%);
                                     }
@@ -34,6 +33,18 @@
                                         font-size: {{styles.header_size}};
                                         font-weight: {{styles.header_thickness}};
                                         color: {{styles.header_color}};
+                                    }
+
+                                    #block{{id}} h3{
+                                        font-size: {{styles.subheader_size}};
+                                        font-weight: {{styles.subheader_thickness}};
+                                        color: {{styles.subheader_color}};
+                                    }
+
+                                    #block{{id}} span{
+                                        font-size: {{styles.explanation_text_size}};
+                                        font-weight: {{styles.explanation_text_thickness}};
+                                        color: {{styles.explanation_text_color}};
                                     }
 
                                     #block{{id}} a, #block{{id}} p{
@@ -51,6 +62,16 @@
                                         #block{{id}} a, #block{{id}} p{
                                             font-size: {{styles.main_text_size_mobile}};
                                             font-weight: {{styles.main_text_thickness_mobile}};
+                                        }
+
+                                        #block{{id}} span{
+                                            font-size: {{styles.explanation_text_size_mobile}};
+                                            font-weight: {{styles.explanation_text_thickness_mobile}};
+                                        }
+
+                                        #block{{id}} h3{
+                                            font-size: {{styles.subheader_size_mobile}};
+                                            font-weight: {{styles.subheader_thickness_mobile}};
                                         }
                                     }
                                 </style>

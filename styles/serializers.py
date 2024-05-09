@@ -54,15 +54,44 @@ class CustomStylesSerializer(serializers.Serializer):
     header_thickness_mobile = serializers.CharField()
     header_color = serializers.CharField()
 
+    subheader_size = serializers.CharField(required=False)
+    subheader_size_mobile = serializers.CharField(required=False)
+    subheader_thickness = serializers.CharField(required=False)
+    subheader_thickness_mobile = serializers.CharField(required=False)
+    subheader_color = serializers.CharField(required=False)
+
     main_text_size = serializers.CharField()
     main_text_size_mobile = serializers.CharField()
     main_text_thickness = serializers.CharField()
     main_text_thickness_mobile = serializers.CharField()
     main_text_color = serializers.CharField()
 
-    columns = serializers.CharField(required=False)
+    explanation_text_size = serializers.CharField(required=False)
+    explanation_text_size_mobile = serializers.CharField(required=False)
+    explanation_text_thickness = serializers.CharField(required=False)
+    explanation_text_thickness_mobile = serializers.CharField(required=False)
+    explanation_text_color = serializers.CharField(required=False)
+
+    columns = serializers.SerializerMethodField(required=False)
     icon_color = serializers.CharField(required=False)
     icon_background_color = serializers.CharField(required=False)
+
+    cover_darkness = serializers.SerializerMethodField(required=False)
+
+    icon_width = serializers.CharField(required=False)
+    icon_height = serializers.CharField(required=False)
+
+    def get_columns(self, obj):
+        try:
+            return " ".join(["1fr" for i in range(obj.columns)])
+        except AttributeError:
+            return None
+
+    def get_cover_darkness(self, obj):
+        if obj.photo_darkness is None:
+            return None
+
+        return obj.photo_darkness / 100
 
     def get_photo_darkness(self, obj):
         photo_darkness = obj.photo_darkness

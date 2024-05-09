@@ -1,3 +1,5 @@
+{% load static %}
+
 <div id="{{ block.ancor }}" class="cover">
     <div class="inner">
         <h1>{{ block.title }}</h1>
@@ -9,19 +11,26 @@
             <button onclick="smoothScroll('{{block.second_button_ref}}')" id="white-button"><a>{{ block.second_button_text }}</a></button>
         </div>
     </div>
+    <script src="{% static 'blocks/js/cover.js' %}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async function() {
+            setCoverDarkness("{{block.ancor}}", "{{styles.photo_darkness}}")
+        })
+    </script>
 </div>
 
 <style>
     .cover{
-        background: url("{{block.image_desctop.url}}") no-repeat 50% 50%/cover, linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4));
+        background: url("{{block.image_desctop.url}}") no-repeat 50% 50%/cover;
+        background-color: rgba(0,0,0, {{styles.cover_darkness}})!important;
+        padding-top: {{styles.margin_top}};
+        padding-bottom: {{styles.margin_bottom}};
     }
 
     @media screen and (max-width: 760px) {
         .cover {
-            background: url("{{block.image_mobile.url}}") no-repeat 50% 50%/cover, linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4));
+            background: url("{{block.image_mobile.url}}") no-repeat 50% 50%/cover;
             height: auto;
-            padding-top: {{styles.margin_top}};
-            padding-bottom: {{styles.margin_bottom}};
         }
 
         .button-wrapper {
