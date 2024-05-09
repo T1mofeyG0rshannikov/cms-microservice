@@ -1,7 +1,7 @@
 from colorfield.fields import ColorField
 from django.db import models
 
-from blocks.models.blocks import Cover, ExampleBlock, FeaturesBlock, Navbar
+from blocks.models.blocks import ContentBlock, Cover, FeaturesBlock, Navbar
 
 from .base_custom_styles import BaseCustomStyles
 
@@ -20,7 +20,8 @@ class NavbarCustomStyles(BaseCustomStyles):
 
 
 class ContentCustomStyles(BaseCustomStyles):
-    block = models.OneToOneField(ExampleBlock, on_delete=models.SET_NULL, null=True)
+    block = models.OneToOneField(ContentBlock, on_delete=models.SET_NULL, null=True)
+    border_radius = models.CharField(verbose_name="Радиус скругления картинки", null=True, blank=True, max_length=50)
 
 
 class CoverCustomStyles(BaseCustomStyles):

@@ -5,7 +5,7 @@ from .common import BaseBlock, ButtonMixin
 from .mixins import TitleMixin
 
 
-class ExampleBlock(BaseBlock, ButtonMixin, TitleMixin):
+class ContentBlock(BaseBlock, ButtonMixin, TitleMixin):
     body = RichTextField(verbose_name="Основной текст", max_length=1000)
     image1 = models.ImageField(verbose_name="Первое изображение", upload_to="images/")
     image2 = models.ImageField(verbose_name="Второе изображение", upload_to="images/")
@@ -34,7 +34,7 @@ class Cover(BaseBlock, ButtonMixin, TitleMixin):
 
 
 class FeaturesBlock(BaseBlock, ButtonMixin, TitleMixin):
-    introductory_text = models.TextField(verbose_name="Вводный текст", max_length=300)
+    introductory_text = RichTextField(verbose_name="Вводный текст", max_length=300)
 
     class Meta:
         verbose_name = "Блок с фичами"

@@ -9,7 +9,7 @@ from styles.admin import (
     NavbarCustomStylesInline,
 )
 
-from .models.blocks import Cover, ExampleBlock, FeaturesBlock, Navbar
+from .models.blocks import ContentBlock, Cover, FeaturesBlock, Navbar
 from .models.blocks_components import Feature
 from .models.common import Block, Page, Template
 
@@ -30,8 +30,8 @@ class NavbarAdmin(BaseBlockAdmin):
     inlines = [NavbarCustomStylesInline]
 
 
-@register(ExampleBlock)
-class ExampleComponenAdmin(BaseBlockAdmin):
+@register(ContentBlock)
+class ContentComponenAdmin(BaseBlockAdmin):
     inlines = [ContentCustomStylesInline]
     '''def image1_show(self, obj):
         if obj.image1:

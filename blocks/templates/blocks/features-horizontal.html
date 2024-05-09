@@ -4,7 +4,7 @@
     <div class="inner">
         <h1>{{block.title}}</h1>
 
-        <a>{{block.introductory_text}}</a>
+        <a>{{ block.introductory_text|safe }}</a>
 
         <div class="features-container">
             {% for feature in block.features.all %}
@@ -43,7 +43,6 @@
                 max-width: var(--icon-width);
                 max-height: var(--icon-height);
                 margin-right: 10px;
-                filter: drop-shadow(2px 2px 3px rgb(180, 180, 180))
             }
 
             #block{{id}} .features .feature .icon-wrapper{

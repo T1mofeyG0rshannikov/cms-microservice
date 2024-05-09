@@ -81,6 +81,8 @@ class CustomStylesSerializer(serializers.Serializer):
     icon_width = serializers.CharField(required=False)
     icon_height = serializers.CharField(required=False)
 
+    border_radius = serializers.CharField(required=False)
+
     def get_columns(self, obj):
         try:
             return " ".join(["1fr" for i in range(obj.columns)])

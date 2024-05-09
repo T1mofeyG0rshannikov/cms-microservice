@@ -20,19 +20,24 @@
         </div>
     </div>
     <style>
-        .content{
+        #block{{id}} .content{
             padding-top: {{styles.margin_top}};
             padding-bottom: {{styles.margin_bottom}};
         }
 
+        #block{{id}} .content .image-wrapper{
+            overflow: hidden;
+            border-radius: {{styles.border_radius}};
+        }
+
         @media screen and (max-width: 760px) {
-            .content .inner{
+            #block{{id}} .content .inner{
                 flex-direction: column-reverse;
                 justify-content: start;
                 width: calc(100% - 40px);
             }
 
-            .content .left-text{
+            #block{{id}} .content .left-text{
                 flex: none;
                 align-items: center;
                 display: flex;
