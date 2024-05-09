@@ -34,7 +34,7 @@ class Cover(BaseBlock, ButtonMixin, TitleMixin):
 
 
 class FeaturesBlock(BaseBlock, ButtonMixin, TitleMixin):
-    introductory_text = models.CharField(verbose_name="Вводный текст", max_length=200)
+    introductory_text = models.TextField(verbose_name="Вводный текст", max_length=300)
 
     class Meta:
         verbose_name = "Блок с фичами"

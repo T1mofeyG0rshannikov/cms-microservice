@@ -5,7 +5,6 @@ from .mixins import TitleMixin
 
 
 class Feature(TitleMixin):
-    # icon = models.FileField(verbose_name="Иконка", upload_to="features")
     icon = models.ImageField(verbose_name="Иконка", upload_to="features")
     description = models.TextField(verbose_name="Пояснение")
     block = models.ForeignKey(
@@ -13,4 +12,4 @@ class Feature(TitleMixin):
     )
 
     def __str__(self):
-        return self.title
+        return self.description

@@ -13,14 +13,10 @@
                         <img class="icon" src="{{feature.icon.url}}" />
                     </div>
 
-                    <h3>{{ feature.title }}</h3>
-
-                    <span>{{ feature.description }}</span>
+                    <span style="margin-top: 15px;">{{ feature.description }}</span>
                 </div>
             {% endfor %}
         </div>
-
-        <button><a>{{ block.button_text }}</a></button>
 
         <style>
             #block{{id}} .features{

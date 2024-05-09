@@ -13,14 +13,10 @@
                         <img class="icon" src="{{feature.icon.url}}" />
                     </div>
 
-                    <h3>{{ feature.title }}</h3>
-
                     <span>{{ feature.description }}</span>
                 </div>
             {% endfor %}
         </div>
-
-        <button><a>{{ block.button_text }}</a></button>
 
         <style>
             #block{{id}} .features{
@@ -36,14 +32,36 @@
                 grid-template-columns: {{styles.columns}};
             }
 
+            #block{{id}} .features .feature span{
+                text-align: left;
+            }
+
             #block{{id}} .features .feature .icon-wrapper{
                 background-color: {{styles.icon_background_color}};
-                width: {{styles.icon_width}};
-                height: {{styles.icon_height}};
+                min-width: var(--icon-width);
+                min-height: var(--icon-height);
+                max-width: var(--icon-width);
+                max-height: var(--icon-height);
+                margin-right: 10px;
+                filter: drop-shadow(2px 2px 3px rgb(180, 180, 180))
+            }
+
+            #block{{id}} .features .feature .icon-wrapper{
+                background-color: {{styles.icon_background_color}};
+                min-width: {{styles.icon_width}};
+                min-height: {{styles.icon_height}};
+                max-width: {{styles.icon_width}};
+                max-height: {{styles.icon_height}};
             }
 
             #block{{id}} .feature svg{
                 fill: {{styles.icon_color}};
+            }
+
+            #block{{id}} .feature{
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
             }
 
             @media screen and (max-width: 760px) {

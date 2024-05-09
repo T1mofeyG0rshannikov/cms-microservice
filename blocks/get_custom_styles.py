@@ -8,9 +8,9 @@ def get_custom_styles(block):
         if (f.one_to_many or f.one_to_one) and isinstance(f.field.model.objects.first(), BaseCustomStyles)
     ]
 
-    if styles:
-        style = [style for style in styles if style is not None][0]
-    else:
-        style = None
+    styles = [style for style in styles if style is not None]
 
-    return style
+    if len(styles) > 0:
+        return styles[0]
+
+    return None
