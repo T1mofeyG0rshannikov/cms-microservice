@@ -1,8 +1,8 @@
 from ckeditor.fields import RichTextField
 from django.db import models
 
-from .common import BaseBlock, ButtonMixin
-from .mixins import TitleMixin
+from .common import BaseBlock
+from .mixins import ButtonMixin, TitleMixin
 
 
 class ContentBlock(BaseBlock, ButtonMixin, TitleMixin):
@@ -15,7 +15,15 @@ class ContentBlock(BaseBlock, ButtonMixin, TitleMixin):
         verbose_name_plural = "Контентные блоки"
 
 
-class Navbar(BaseBlock, TitleMixin):
+class Navbar(BaseBlock):
+    logo = models.ImageField(verbose_name="Лого", upload_to="images/logos/", null=True)
+    logo_mobile = models.ImageField(verbose_name="Лого(смартфон)", upload_to="images/logos/", null=True)
+
+    register_button_text = models.CharField(verbose_name="Текст кнопки регистрации", max_length=50, null=True)
+    register_button_href = models.CharField(verbose_name="Сслыка кнопки регистрации", max_length=50, null=True)
+
+    login_button_text = models.CharField(verbose_name="Текст кнопки входа", max_length=50, null=True)
+
     class Meta:
         verbose_name = "навбар"
         verbose_name_plural = "навбар`ы"

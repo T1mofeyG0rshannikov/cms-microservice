@@ -1,11 +1,43 @@
-<div class="block-wrapper" id="block{{id}}">
+{% load static %}
+
 
 <header id="{{ block.ancor }}">
-    <div class="inner">
-        <h1>{{ block.title }}</h1>
-        <button onclick="smoothScroll('{{block.button_ref}}')">
-            <a>Регистрация</a>
+    <aside id="aside-menu">
+        {% for item in block.menu_items.all %}
+            <a onclick="smoothScroll('{{ item.button_ref }}')">{{ item.button_text }}</a>
+        {% endfor %}
+
+        <button onclick="smoothScroll('{{ block.register_button_href }}')">
+            <a>{{ block.register_button_text }}</a>
         </button>
+
+        <button id="login-button" onclick="smoothScroll('{{ block.login_button_href }}')">
+            <a>{{ block.login_button_text }}</a>
+        </button>
+    </aside>
+
+    <div class="inner">
+        <img class="logo"/>
+
+        <div class="nav-content">
+            <nav>
+                {% for item in block.menu_items.all %}
+                    <a onclick="smoothScroll('{{ item.button_ref }}')">{{ item.button_text }}</a>
+                {% endfor %}
+            </nav>
+
+            <button onclick="smoothScroll('{{ block.register_button_href }}')">
+                <a>{{ block.register_button_text }}</a>
+            </button>
+
+            <button id="login-button" onclick="smoothScroll('{{ block.login_button_href }}')">
+                <a>{{ block.login_button_text }}</a>
+            </button>
+        </div>
+
+        <div class="burger">
+            <img src={% static 'blocks/images/menu.png' %} />
+        </div>
     </div>
     <style>
         header{
@@ -13,7 +45,17 @@
             padding-top: {{styles.margin_top}};
             padding-bottom: {{styles.margin_bottom}};
         }
-    </style>
-</header>
 
-</div>
+        header .logo{
+            content: url("{{block.logo.url}}")
+        }
+
+        @media (pointer:none), (pointer:coarse) {
+            header .logo{
+                content: url("{{ block.logo_mobile.url }}")
+            }
+        }
+    </style>
+
+    <script src="{% static 'blocks/js/nav.js' %}" ></script>
+</header>

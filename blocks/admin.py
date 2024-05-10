@@ -10,7 +10,7 @@ from styles.admin import (
 )
 
 from .models.blocks import ContentBlock, Cover, FeaturesBlock, Navbar
-from .models.blocks_components import Feature
+from .models.blocks_components import Feature, NavMenuItem
 from .models.common import Block, Page, Template
 
 
@@ -25,9 +25,15 @@ class BaseBlockAdmin(admin.ModelAdmin):
     exclude = ["block_relation"]
 
 
+class NavMenuItemAdmin(admin.StackedInline):
+    model = NavMenuItem
+    extra = 0
+
+
 @register(Navbar)
 class NavbarAdmin(BaseBlockAdmin):
-    inlines = [NavbarCustomStylesInline]
+    inlines = [NavMenuItemAdmin, NavbarCustomStylesInline]
+    # inlines = [NavbarCustomStylesInline]
 
 
 @register(ContentBlock)

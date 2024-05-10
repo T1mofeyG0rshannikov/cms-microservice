@@ -6,6 +6,7 @@ header{
     width: 100vw;
     padding-top: var(--padding-block-top);
     padding-bottom: var(--padding-block-bottom);
+    position: relative;
 }
 
 header .inner{
@@ -13,15 +14,97 @@ header .inner{
     justify-content: space-between;
     align-items: center;
     max-width: 1200px;
+    width: calc(100% - 80px);
 }
 
 header button{
     background-color: var(--secondary-color);
-    margin: 0px 0px 0px 40px;
+    margin: 0px 0px 0px 20px;
     border: none;
+    padding: 8px 22px;
+    width: 150px;
 }
 
 header h1{
     color: var(--header-inverted-color);
     margin: 0px;
+}
+
+header .logo{
+    height: 40px;
+    margin-right: 40px;
+}
+
+header a{
+    color: var(--main-text-inverted-color);
+}
+
+header nav{
+    display: flex;
+    align-items: center;
+}
+
+header nav a{
+    margin: 0px 10px;
+    cursor: pointer;
+}
+
+#login-button{
+    background-color: transparent;
+    border: 1px solid white;
+}
+
+header .burger{
+    width: 40px;
+    height: 41px;
+    border: 2px solid white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+header .burger img{
+    width: 25px;
+    height: 25px;
+}
+
+header .burger{
+    display: none;
+}
+
+.nav-content{
+    display: flex;
+}
+
+#aside-menu{
+    background-color: var(--main-color);
+    display: none;
+    height: 100vh;
+    width: 230px;
+    position: absolute;
+    padding: 0px 30px;
+    right: 0px;
+    z-index: 2;
+    top: 65px;
+    flex-direction: column;
+    /*align-items: center;*/
+}
+
+#aside-menu *{
+    margin: var(--margin-inside-block-mobile) 0px;
+}
+
+#aside-menu button{
+    width: 100%
+}
+
+@media (pointer:none), (pointer:coarse) {
+    header .burger{
+        display: flex;
+    }
+
+    .nav-content{
+        display: none;
+    }
 }

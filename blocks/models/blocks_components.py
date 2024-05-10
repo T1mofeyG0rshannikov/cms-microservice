@@ -1,7 +1,11 @@
 from django.db import models
 
-from .blocks import FeaturesBlock
-from .mixins import TitleMixin
+from .blocks import FeaturesBlock, Navbar
+from .mixins import ButtonMixin, TitleMixin
+
+
+class NavMenuItem(ButtonMixin):
+    navbar = models.ForeignKey(Navbar, on_delete=models.SET_NULL, null=True, related_name="menu_items")
 
 
 class Feature(TitleMixin):
