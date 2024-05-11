@@ -16,9 +16,6 @@ class ContentBlock(BaseBlock, ButtonMixin, TitleMixin):
 
 
 class Navbar(BaseBlock):
-    logo = models.ImageField(verbose_name="Лого", upload_to="images/logos/", null=True)
-    logo_mobile = models.ImageField(verbose_name="Лого(смартфон)", upload_to="images/logos/", null=True)
-
     register_button_text = models.CharField(verbose_name="Текст кнопки регистрации", max_length=50, null=True)
     register_button_href = models.CharField(verbose_name="Сслыка кнопки регистрации", max_length=50, null=True)
 

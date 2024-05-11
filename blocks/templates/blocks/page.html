@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{% static 'blocks/css/cover.css' %}">
     <link rel="stylesheet" href="{% static 'blocks/css/features.css' %}">
     <meta name="viewport" content="width=device-width">
+    <link rel="icon" href="{{settings.icon}}">
     <script src="{% static 'blocks/js/load-styles.js'%}"></script>
 </head>
 <body>
@@ -18,7 +19,7 @@
                 {% if exist %}
                     {% with forloop.counter as id %}
                         <div class="block-wrapper" id="block{{id}}">
-                            {% include template_name with block=block.content styles=block.styles %}
+                            {% include template_name with block=block.content styles=block.styles settings=settings %}
                             {% with block.styles as styles %}
                                 <style>
                                     #block{{id}} img{

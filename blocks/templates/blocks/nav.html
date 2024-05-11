@@ -47,12 +47,15 @@
         }
 
         header .logo{
-            content: url("{{block.logo.url}}")
+            content: url("{{settings.logo.image}}");
+            height: {{settings.logo.height}};
+            width: {{settings.logo.width}};
         }
 
         @media (pointer:none), (pointer:coarse) {
             header .logo{
-                content: url("{{ block.logo_mobile.url }}")
+                height: {{settings.logo.height_mobile}};
+                width: {{settings.logo.width_mobile}};
             }
         }
     </style>

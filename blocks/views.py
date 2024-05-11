@@ -9,6 +9,7 @@ from django.views.generic import View
 from .clone_page import clone_page
 from .models.common import Page, Template
 from .serializers import PageSerializer, TemplateSerializer
+from settings.get_settings import get_settings
 
 
 class ShowPage(View):
@@ -16,8 +17,10 @@ class ShowPage(View):
         try:
             page = Page.objects.prefetch_related("blocks").get(url=page_url)
             serialized_page = PageSerializer(page).data
+            
+            settings = get_settings()
 
-            return render(request, "blocks/page.html", {"page": serialized_page})
+            return render(request, "blocks/page.html", {"page": serialized_page, "settings": settings})
         except Page.DoesNotExist:
             raise Http404("Page does not exist")
 
