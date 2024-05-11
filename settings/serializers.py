@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from .models import Logo
 
 
@@ -14,8 +15,11 @@ class LogoSerializer(serializers.ModelSerializer):
 
 
 class SettingsSerializer(serializers.Serializer):
-    logo = LogoSerializer()
+    logo = serializers.SerializerMethodField()
     icon = serializers.SerializerMethodField()
-    
+
+    def get_logo(self, obj):
+        return LogoSerializer(obj.logo.first()).data
+
     def get_icon(self, obj):
-        return obj["icon"].image.url
+        return obj.icon.first().image.url

@@ -1,27 +1,41 @@
 from django.db import models
 
 
+class SiteSettings(models.Model):
+    class Meta:
+        verbose_name = "Настройки сайта"
+        verbose_name_plural = "Настройки сайта"
+
+    def __str__(self):
+        return self._meta.verbose_name
+
+
 class Logo(models.Model):
-    image = models.ImageField(verbose_name=u"Изображение", upload_to="images/logo")
-    width = models.CharField(verbose_name=u"Ширина", max_length=20)
-    height = models.CharField(verbose_name=u"Высота", max_length=20)
+    image = models.ImageField(verbose_name="Изображение", upload_to="images/logo")
+    width = models.CharField(verbose_name="Ширина", max_length=20)
+    height = models.CharField(verbose_name="Высота", max_length=20)
 
-    width_mobile = models.CharField(verbose_name=u"Ширина(смартфон)", max_length=20)
-    height_mobile = models.CharField(verbose_name=u"Высота(смартфон)", max_length=20)
+    width_mobile = models.CharField(verbose_name="Ширина(смартфон)", max_length=20)
+    height_mobile = models.CharField(verbose_name="Высота(смартфон)", max_length=20)
+
+    settings = models.ForeignKey(SiteSettings, on_delete=models.CASCADE, related_name="logo")
 
     def __str__(self):
-        return u"Логотип"
+        return "Логотип"
 
     class Meta:
-        verbose_name = u"Логотип"
-        verbose_name_plural = u"Логотип"
-        
+        verbose_name = "Логотип"
+        verbose_name_plural = "Логотип"
+
+
 class Icon(models.Model):
-    image = models.ImageField(verbose_name=u"Изображение", upload_to="images/icon")
-    
+    image = models.ImageField(verbose_name="Изображение", upload_to="images/icon")
+
+    settings = models.ForeignKey(SiteSettings, on_delete=models.CASCADE, related_name="icon")
+
     def __str__(self):
-        return u"Иконка"
+        return "Иконка"
 
     class Meta:
-        verbose_name = u"Иконка"
-        verbose_name_plural = u"Иконка"
+        verbose_name = "Иконка"
+        verbose_name_plural = "Иконка"
