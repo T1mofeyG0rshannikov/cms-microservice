@@ -2,11 +2,11 @@
     <div class="inner">
         <div class="left-block">
             <div class="images-container">
-                <div style="width: 60%; position: absolute; right: 0px; z-index: 1;" class="image-wrapper">
+                <div style="width: 60%; position: absolute; right: 0px; bottom: 0px; z-index: 1;" class="image-wrapper">
                     <img src="{{ block.image1.url }}">
                 </div>
 
-                <div style="position: absolute; width: 85%; bottom: 0px;" class="image-wrapper">
+                <div style="position: absolute; width: 85%;" class="image-wrapper">
                     <img src="{{ block.image2.url }}">
                 </div>
             </div>
@@ -51,6 +51,7 @@
 
             #block{{id}} .content .images-container{
                 margin-top: 0px;
+                margin-bottom: var(--margin-inside-block-mobile);
             }
 
         }
