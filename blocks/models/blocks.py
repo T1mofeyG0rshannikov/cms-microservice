@@ -7,8 +7,8 @@ from .mixins import ButtonMixin, TitleMixin
 
 class ContentBlock(BaseBlock, ButtonMixin, TitleMixin):
     body = RichTextField(verbose_name="Основной текст", max_length=1000)
-    image1 = models.ImageField(verbose_name="Первое изображение", upload_to="images/")
-    image2 = models.ImageField(verbose_name="Второе изображение", upload_to="images/")
+    image1 = models.ImageField(verbose_name="Первое изображение", upload_to="images/", null=True, blank=True)
+    image2 = models.ImageField(verbose_name="Второе изображение", upload_to="images/", null=True, blank=True)
 
     class Meta:
         verbose_name = "Контентный блок"

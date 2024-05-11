@@ -1,0 +1,71 @@
+<div id="{{ block.ancor }}" class="content">
+    <div class="inner">
+        <h1 class="title">{{ block.title }}</h1>
+
+        <a style="line-height: 140%">{{ block.body|safe }}</a>
+    </div>
+    <style>
+        #block{{id}} .content h1{
+            color: var(--header-inverted-color);
+        }
+
+        #block{{id}} .content .inner{
+            flex-direction: column;
+            max-width: 800px;
+        }
+
+        #block{{id}} .content{
+            text-align: center;
+        }
+
+        #block{{id}} .content a, #block{{id}} .content p{
+            color: var(--main-text-inverted-color);
+        }
+
+        #block{{id}} .content p{
+            margin-bottom: 0px;
+        }
+
+        #block{{id}} .content{
+            padding-top: {{styles.margin_top}};
+            padding-bottom: {{styles.margin_bottom}};
+            background-color: var(--main-color);
+        }
+
+        @media screen and (max-width: 760px) {
+            #block{{id}} .content .inner{
+                flex-direction: column;
+                justify-content: start;
+                width: calc(100% - 40px);
+            }
+
+            #block{{id}} .content .right-text{
+                flex: none;
+                align-items: center;
+                display: flex;
+                flex-direction: column;
+            }
+        }
+    </style>
+    {% if block.image1 %}
+        <style>
+            #block{{id}} .content{
+                background-blend-mode: multiply;
+                background: url("{{block.image1.url}}") no-repeat 50% 50%/cover;
+                background-color: rgba(0,0,0, {{styles.background_image_darkness}})!important;
+            }
+        </style>
+    {% endif %}
+
+    {% if block.image2 %}
+        <style>
+            @media screen and (max-width: 760px) {
+                #block{{id}} .content{
+                    background-blend-mode: multiply;
+                    background: url("{{block.image2.url}}") no-repeat 50% 50%/cover;
+                    background-color: rgba(0,0,0, {{styles.background_image_darkness}})!important;
+                }
+            }
+        </style>
+    {% endif %}
+</div>

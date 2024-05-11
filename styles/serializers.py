@@ -76,7 +76,7 @@ class CustomStylesSerializer(serializers.Serializer):
     icon_color = serializers.CharField(required=False)
     icon_background_color = serializers.CharField(required=False)
 
-    cover_darkness = serializers.SerializerMethodField(required=False)
+    background_image_darkness = serializers.SerializerMethodField(required=False)
 
     icon_width = serializers.CharField(required=False)
     icon_height = serializers.CharField(required=False)
@@ -89,7 +89,7 @@ class CustomStylesSerializer(serializers.Serializer):
         except AttributeError:
             return None
 
-    def get_cover_darkness(self, obj):
+    def get_background_image_darkness(self, obj):
         if obj.photo_darkness is None:
             return None
 
