@@ -8,7 +8,7 @@ from ..validators import validate_html_filename
 
 class Page(models.Model):
     title = models.CharField(verbose_name="Заголовок", max_length=50)
-    url = models.CharField(max_length=50, unique=True)
+    url = models.CharField(max_length=50)
 
     class Meta:
         verbose_name = "Страница"

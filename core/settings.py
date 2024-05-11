@@ -121,3 +121,5 @@ STATICFILES_DIR = os.path.join(BASE_DIR, "static")
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "static")
+
+# SECURE_CROSS_ORIGIN_OPENER_POLICY=None

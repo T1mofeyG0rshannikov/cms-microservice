@@ -1,6 +1,7 @@
 from adminsortable2.admin import SortableAdminBase, SortableStackedInline
 from django.contrib import admin
 from django.contrib.admin.decorators import register
+from django.utils.safestring import mark_safe
 
 from styles.admin import (
     ContentCustomStylesInline,
@@ -39,18 +40,6 @@ class NavbarAdmin(BaseBlockAdmin):
 @register(ContentBlock)
 class ContentComponenAdmin(BaseBlockAdmin):
     inlines = [ContentCustomStylesInline]
-    '''def image1_show(self, obj):
-        if obj.image1:
-            return mark_safe(f"<img src='{obj.image1.url}' width='120' />")
-        return "None"
-
-    def image2_show(self, obj):
-        if obj.image2:
-            return mark_safe(f"<img src='{obj.image2.url}' width='120' />")
-        return "None"
-
-    image1_show.__name__ = "Первое изображение"
-    image2_show.__name__ = "Второе изображение"'''
 
 
 @register(Cover)
@@ -99,6 +88,14 @@ class PageBlockInline(SortableStackedInline, admin.StackedInline):
 
 @register(Page)
 class PageAdmin(SortableAdminBase, admin.ModelAdmin):
-    list_display = ["url", "title"]
+    list_display = ["url", "title", "your_custom_button"]
+    change_list_template = "blocks/change_list_page.html"
 
     inlines = [PageBlockInline]
+
+    def your_custom_button(self, obj):
+        return mark_safe(f'<button class="copy-button" onclick="clonePage({obj.id})">Копировать</button>')
+
+    your_custom_button.allow_tags = True
+
+    your_custom_button.short_description = ""

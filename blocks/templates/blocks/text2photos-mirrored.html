@@ -32,7 +32,7 @@
 
         @media screen and (max-width: 760px) {
             #block{{id}} .content .inner{
-                flex-direction: column-reverse;
+                flex-direction: column;
                 justify-content: start;
                 width: calc(100% - 40px);
             }
@@ -43,6 +43,16 @@
                 display: flex;
                 flex-direction: column;
             }
+
+            #block{{id}} .content .left-block{
+                margin-top: 0px;
+                margin-bottom: var(--margin-inside-block-mobile);
+            }
+
+            #block{{id}} .content .images-container{
+                margin-top: 0px;
+            }
+
         }
     </style>
 </div>
