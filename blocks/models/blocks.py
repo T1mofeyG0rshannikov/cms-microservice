@@ -47,7 +47,7 @@ class FeaturesBlock(BaseBlock, ButtonMixin, TitleMixin):
 
 
 class RegisterBlock(BaseBlock, TitleMixin):
-    explanation_text = RichTextField(verbose_name="текст пояснений", max_length=1000)
+    explanation_text = RichTextField(verbose_name="текст пояснений", max_length=1000, null=True, blank=True)
     warning_text = models.CharField(verbose_name="текст предупреждения", max_length=500)
 
     class Meta:
