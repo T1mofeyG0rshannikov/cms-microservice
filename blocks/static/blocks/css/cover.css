@@ -45,10 +45,6 @@
         flex-direction: column;
     }
 
-    .cover .inner{
-        width: calc(100% - 40px);
-    }
-
     .cover button{
         margin: var(--margin-inside-block-mobile) 0px;
         margin-bottom: 0px;

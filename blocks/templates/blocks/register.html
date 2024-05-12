@@ -1,0 +1,31 @@
+<div id="{{ block.ancor }}" class="register">
+    <div class="inner">
+        <div class="text">
+            <h1>{{ block.title }}</h1>
+
+            <a>{{ block.explanation_text|safe }}</a>
+        </div>
+
+        <form>
+            <input placeholder="Ваше имя" />
+            <input id="phone" name="phone" placeholder="+7 (495) 888-00-00" />
+            <input placeholder="E-mail" />
+            <input type="submit" value="Регистрация" />
+        </form>
+
+        <script>
+            $(function(){
+                $("#phone").mask("+7 (999) 999-99-99");
+            });
+        </script>
+
+        <span>{{ block.warning_text }}</span>
+
+        <style>
+
+            @media screen and (max-width: 760px) {
+
+            }
+        </style>
+    </div>
+</div>

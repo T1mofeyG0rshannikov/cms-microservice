@@ -44,3 +44,22 @@ class InvertedTextColorMixin(ColorMixin):
     class Meta:
         verbose_name = "Инвертированный цвет текста"
         abstract = True
+
+
+class ExplanationTextStylesMixin(models.Model):
+    explanation_text_size = models.CharField(
+        verbose_name="размер текста пояснений", max_length=50, null=True, blank=True
+    )
+    explanation_text_size_mobile = models.CharField(
+        verbose_name="размер текста пояснений (смартфон)", max_length=50, null=True, blank=True
+    )
+    explanation_text_thickness = models.CharField(
+        verbose_name="толщина текста пояснений", max_length=50, null=True, blank=True
+    )
+    explanation_text_thickness_mobile = models.CharField(
+        verbose_name="толщина текста пояснений (смартфон)", max_length=50, null=True, blank=True
+    )
+    explanation_text_color = ColorField(verbose_name="Цвет текста пояснений", null=True, blank=True)
+
+    class Meta:
+        abstract = True

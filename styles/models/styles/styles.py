@@ -1,7 +1,14 @@
 from colorfield.fields import ColorField
 from django.db import models
 
-from blocks.models.blocks import ContentBlock, Cover, FeaturesBlock, Navbar
+from blocks.models.blocks import (
+    ContentBlock,
+    Cover,
+    FeaturesBlock,
+    Navbar,
+    RegisterBlock,
+)
+from styles.models.mixins.text_mixins import ExplanationTextStylesMixin
 
 from .base_custom_styles import BaseCustomStyles
 
@@ -28,7 +35,7 @@ class CoverCustomStyles(BaseCustomStyles):
     block = models.OneToOneField(Cover, on_delete=models.SET_NULL, null=True)
 
 
-class FeaturesCustomStyles(BaseCustomStyles):
+class FeaturesCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
     block = models.OneToOneField(FeaturesBlock, on_delete=models.SET_NULL, null=True)
     columns = models.PositiveIntegerField(verbose_name="Количество колонок", default=4)
     icon_color = ColorField(verbose_name="Цвет иконок", default="#689F38")
@@ -36,20 +43,6 @@ class FeaturesCustomStyles(BaseCustomStyles):
 
     icon_width = models.CharField(verbose_name="Ширина иконок", max_length=20, null=True, blank=True)
     icon_height = models.CharField(verbose_name="Высота иконок", max_length=20, null=True, blank=True)
-
-    explanation_text_size = models.CharField(
-        verbose_name="размер текста пояснений", max_length=50, null=True, blank=True
-    )
-    explanation_text_size_mobile = models.CharField(
-        verbose_name="размер текста пояснений (смартфон)", max_length=50, null=True, blank=True
-    )
-    explanation_text_thickness = models.CharField(
-        verbose_name="толщина текста пояснений", max_length=50, null=True, blank=True
-    )
-    explanation_text_thickness_mobile = models.CharField(
-        verbose_name="толщина текста пояснений (смартфон)", max_length=50, null=True, blank=True
-    )
-    explanation_text_color = ColorField(verbose_name="Цвет текста пояснений", null=True, blank=True)
 
     subheader_size = models.CharField(verbose_name="размер подзаголовка", max_length=50, null=True, blank=True)
     subheader_size_mobile = models.CharField(
@@ -60,3 +53,7 @@ class FeaturesCustomStyles(BaseCustomStyles):
         verbose_name="толщина подзаголовка (смартфон)", max_length=50, null=True, blank=True
     )
     subheader_color = ColorField(verbose_name="Цвет подзаголовка", null=True, blank=True)
+
+
+class RegisterCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
+    block = models.OneToOneField(RegisterBlock, on_delete=models.SET_NULL, null=True)

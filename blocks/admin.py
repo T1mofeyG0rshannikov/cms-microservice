@@ -10,7 +10,7 @@ from styles.admin import (
     NavbarCustomStylesInline,
 )
 
-from .models.blocks import ContentBlock, Cover, FeaturesBlock, Navbar
+from .models.blocks import ContentBlock, Cover, FeaturesBlock, Navbar, RegisterBlock
 from .models.blocks_components import Feature, NavMenuItem
 from .models.common import Block, Page, Template
 
@@ -34,7 +34,6 @@ class NavMenuItemAdmin(admin.StackedInline):
 @register(Navbar)
 class NavbarAdmin(BaseBlockAdmin):
     inlines = [NavMenuItemAdmin, NavbarCustomStylesInline]
-    # inlines = [NavbarCustomStylesInline]
 
 
 @register(ContentBlock)
@@ -55,6 +54,11 @@ class FeatureInline(admin.StackedInline):
 @register(FeaturesBlock)
 class FeaturesBlockAdmin(BaseBlockAdmin):
     inlines = [FeatureInline, FeaturesCustomStylesInline]
+
+
+@register(RegisterBlock)
+class RegisterBlockAdmin(BaseBlockAdmin):
+    pass
 
 
 """

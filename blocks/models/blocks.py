@@ -44,3 +44,12 @@ class FeaturesBlock(BaseBlock, ButtonMixin, TitleMixin):
     class Meta:
         verbose_name = "Блок с фичами"
         verbose_name_plural = "Блоки с фичами"
+
+
+class RegisterBlock(BaseBlock, TitleMixin):
+    explanation_text = RichTextField(verbose_name="текст пояснений", max_length=1000)
+    warning_text = models.CharField(verbose_name="текст предупреждения", max_length=500)
+
+    class Meta:
+        verbose_name = "Блок регистрации"
+        verbose_name_plural = "Блоки регистрации"

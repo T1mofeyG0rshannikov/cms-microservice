@@ -94,9 +94,4 @@ button{
         font-size: var(--explanation-text-font-size-mobile);
         font-weight: var(--explanation-text-font-weight-mobile);
     }
-
-    .features .inner{
-        width: calc(100% - 40px);
-        padding: 0px 20px;
-    }
 }
