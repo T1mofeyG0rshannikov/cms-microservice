@@ -1,0 +1,31 @@
+<div id="{{ block.ancor }}" class="subscribes">
+    <div class="inner">
+
+        <h1>{{ block.title }}</h1>
+
+        <a>{{ block.text|safe }}</a>
+
+        <div class="button-container">
+            {% for social in block.buttons.all %}
+                <a style="background-color: {{ social.background_color }};" class="social-button" target="_blank" href='{{social.ref}}'>
+
+                    <img src="{{social.icon.url}}" />
+                    {{ social.text }}
+
+                </a>
+            {% endfor %}
+        </div>
+
+        <style>
+            #block{{id}} .subscribes{
+                background-color: {{styles.background_color}};
+                padding-top: {{styles.margin_top}};
+                padding-bottom: {{styles.margin_bottom}};
+            }
+
+            @media screen and (max-width: 760px) {
+
+            }
+        </style>
+    </div>
+</div>

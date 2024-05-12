@@ -11,8 +11,15 @@ from styles.admin import (
     RegisterCustomStylesInline,
 )
 
-from .models.blocks import ContentBlock, Cover, FeaturesBlock, Navbar, RegisterBlock
-from .models.blocks_components import Feature, NavMenuItem
+from .models.blocks import (
+    ContentBlock,
+    Cover,
+    FeaturesBlock,
+    Navbar,
+    RegisterBlock,
+    SocialMediaBlock,
+)
+from .models.blocks_components import Feature, NavMenuItem, SocialMediaButton
 from .models.common import Block, Page, Template
 
 
@@ -60,6 +67,16 @@ class FeaturesBlockAdmin(BaseBlockAdmin):
 @register(RegisterBlock)
 class RegisterBlockAdmin(BaseBlockAdmin):
     inlines = [RegisterCustomStylesInline]
+
+
+class SocialMediaButtonInline(admin.StackedInline):
+    model = SocialMediaButton
+    extra = 0
+
+
+@register(SocialMediaBlock)
+class SocialMediaBlockAdmin(BaseBlockAdmin):
+    inlines = [SocialMediaButtonInline]
 
 
 """

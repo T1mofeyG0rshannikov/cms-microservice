@@ -53,3 +53,11 @@ class RegisterBlock(BaseBlock, TitleMixin):
     class Meta:
         verbose_name = "Блок регистрации"
         verbose_name_plural = "Блоки регистрации"
+
+
+class SocialMediaBlock(BaseBlock, TitleMixin):
+    text = RichTextField(verbose_name="Вводный текст", max_length=1000, null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Блок подписок на соц сети"
+        verbose_name_plural = "Блоки подписок на соц сети"
