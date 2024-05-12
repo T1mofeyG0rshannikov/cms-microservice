@@ -2,7 +2,7 @@
     border-radius: 7px;
     display: inline-flex;
     align-items: center;
-    padding: 7px 10px;
+    padding: 7px 12px;
     margin: 0px 7px;
 }
 
@@ -10,6 +10,10 @@
     color: var(--main-text-inverted-color);
     margin: 0px;
     text-decoration: none;
+}
+
+.subscribes .inner{
+    max-width: 800px;
 }
 
 .subscribes .social-button img{

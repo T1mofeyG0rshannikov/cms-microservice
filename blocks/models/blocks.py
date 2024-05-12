@@ -61,3 +61,9 @@ class SocialMediaBlock(BaseBlock, TitleMixin):
     class Meta:
         verbose_name = "Блок подписок на соц сети"
         verbose_name_plural = "Блоки подписок на соц сети"
+
+
+class QuestionsBlock(BaseBlock):
+    class Meta:
+        verbose_name = "Блок с вопросами"
+        verbose_name_plural = "Блоки с вопросами"

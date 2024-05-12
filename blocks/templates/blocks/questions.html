@@ -1,0 +1,48 @@
+{% load static %}
+
+<div id="{{ block.ancor }}" class="questions">
+    <div class="inner">
+        {% for question in block.questions.all %}
+            {% with forloop.counter as id %}
+            <div class="question">
+                <div class="title">
+                    <h3>{{ question.title }}</h3>
+
+                    <img onclick="openQuestion({{id}})" src="{% static "blocks/images/triangle.png" %}"/>
+                </div>
+
+                <a style="display: none;">{{ question.text|safe }}</a>
+            </div>
+            {% endwith %}
+        {% endfor %}
+
+        <script>
+            function openQuestion(id){
+                const question = document.querySelectorAll(".question")[id - 1];
+                question.querySelector("a").style.display = "block";
+
+                question.querySelector("img").outerHTML = `<img onclick="closeQuestion(${id})" src="static/blocks/images/triangle-reverse.png"/>`
+            }
+
+            function closeQuestion(id){
+                const question = document.querySelectorAll(".question")[id - 1];
+                question.querySelector("a").style.display = "none";
+
+                question.querySelector("img").outerHTML = `<img onclick="openQuestion(${id})" src="static/blocks/images/triangle.png"/>`
+            }
+        </script>
+
+        <style>
+            #block{{id}} .questions{
+                background-color: {{styles.background_color}};
+                width: 100%;
+                padding-top: {{styles.margin_top}};
+                padding-bottom: {{styles.margin_bottom}};
+            }
+
+            @media screen and (max-width: 760px) {
+
+            }
+        </style>
+    </div>
+</div>

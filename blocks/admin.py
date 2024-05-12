@@ -8,7 +8,9 @@ from styles.admin import (
     CoverCustomStylesInline,
     FeaturesCustomStylesInline,
     NavbarCustomStylesInline,
+    QuestionsCustomStylesInline,
     RegisterCustomStylesInline,
+    SocialCustomStylesInline,
 )
 
 from .models.blocks import (
@@ -16,10 +18,11 @@ from .models.blocks import (
     Cover,
     FeaturesBlock,
     Navbar,
+    QuestionsBlock,
     RegisterBlock,
     SocialMediaBlock,
 )
-from .models.blocks_components import Feature, NavMenuItem, SocialMediaButton
+from .models.blocks_components import Feature, NavMenuItem, Question, SocialMediaButton
 from .models.common import Block, Page, Template
 
 
@@ -76,7 +79,17 @@ class SocialMediaButtonInline(admin.StackedInline):
 
 @register(SocialMediaBlock)
 class SocialMediaBlockAdmin(BaseBlockAdmin):
-    inlines = [SocialMediaButtonInline]
+    inlines = [SocialMediaButtonInline, SocialCustomStylesInline]
+
+
+class QuestionInline(admin.StackedInline):
+    model = Question
+    extra = 0
+
+
+@register(QuestionsBlock)
+class QuestionsBlockAdmin(BaseBlockAdmin):
+    inlines = [QuestionInline, QuestionsCustomStylesInline]
 
 
 """

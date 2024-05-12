@@ -1,7 +1,8 @@
+from ckeditor.fields import RichTextField
 from colorfield.fields import ColorField
 from django.db import models
 
-from .blocks import FeaturesBlock, Navbar, SocialMediaBlock
+from .blocks import FeaturesBlock, Navbar, QuestionsBlock, SocialMediaBlock
 from .mixins import ButtonMixin, TitleMixin
 
 
@@ -31,3 +32,13 @@ class SocialMediaButton(models.Model):
     class Meta:
         verbose_name = "Социальная сеть"
         verbose_name_plural = "Социальные сети"
+
+
+class Question(TitleMixin):
+    text = RichTextField(verbose_name="текст вопроса", max_length=1500)
+
+    block = models.ForeignKey(QuestionsBlock, on_delete=models.CASCADE, related_name="questions")
+
+    class Meta:
+        verbose_name = "Вопрос"
+        verbose_name_plural = "Вопросы"

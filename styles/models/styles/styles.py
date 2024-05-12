@@ -6,7 +6,9 @@ from blocks.models.blocks import (
     Cover,
     FeaturesBlock,
     Navbar,
+    QuestionsBlock,
     RegisterBlock,
+    SocialMediaBlock,
 )
 from styles.models.mixins.text_mixins import ExplanationTextStylesMixin
 
@@ -59,3 +61,11 @@ class RegisterCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
     block = models.OneToOneField(RegisterBlock, on_delete=models.SET_NULL, null=True)
 
     button_color = ColorField(verbose_name="цвет кнопки", null=True, blank=True)
+
+
+class SocialCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
+    block = models.OneToOneField(SocialMediaBlock, on_delete=models.SET_NULL, null=True)
+
+
+class QuestionsCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
+    block = models.OneToOneField(QuestionsBlock, on_delete=models.SET_NULL, null=True)

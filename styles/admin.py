@@ -9,7 +9,9 @@ from .models.styles.styles import (
     FeaturesCustomStyles,
     GlobalStyles,
     NavbarCustomStyles,
+    QuestionsCustomStyles,
     RegisterCustomStyles,
+    SocialCustomStyles,
 )
 from .models.texts.font import Font
 from .models.texts.texts import ExplanationText, HeaderText, MainText, SubheaderText
@@ -38,6 +40,14 @@ class FeaturesCustomStylesInline(StyleInline):
 
 class RegisterCustomStylesInline(StyleInline):
     model = RegisterCustomStyles
+
+
+class SocialCustomStylesInline(StyleInline):
+    model = SocialCustomStyles
+
+
+class QuestionsCustomStylesInline(StyleInline):
+    model = QuestionsCustomStyles
 
 
 class ColorStylesInline(StyleInline):
