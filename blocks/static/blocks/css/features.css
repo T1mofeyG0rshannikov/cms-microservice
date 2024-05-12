@@ -72,7 +72,6 @@ button{
 
 .features .inner{
     text-align: center;
-    width: calc(100% - 180px);
 }
 
 @media screen and (max-width: 760px) {
