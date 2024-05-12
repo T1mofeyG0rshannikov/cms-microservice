@@ -83,6 +83,8 @@ class CustomStylesSerializer(serializers.Serializer):
 
     border_radius = serializers.CharField(required=False)
 
+    button_color = serializers.CharField(required=False)
+
     def get_columns(self, obj):
         try:
             return " ".join(["1fr" for i in range(obj.columns)])

@@ -8,6 +8,7 @@ from styles.admin import (
     CoverCustomStylesInline,
     FeaturesCustomStylesInline,
     NavbarCustomStylesInline,
+    RegisterCustomStylesInline,
 )
 
 from .models.blocks import ContentBlock, Cover, FeaturesBlock, Navbar, RegisterBlock
@@ -58,7 +59,7 @@ class FeaturesBlockAdmin(BaseBlockAdmin):
 
 @register(RegisterBlock)
 class RegisterBlockAdmin(BaseBlockAdmin):
-    pass
+    inlines = [RegisterCustomStylesInline]
 
 
 """

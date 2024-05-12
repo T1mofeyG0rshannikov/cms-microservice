@@ -57,3 +57,5 @@ class FeaturesCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
 
 class RegisterCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
     block = models.OneToOneField(RegisterBlock, on_delete=models.SET_NULL, null=True)
+
+    button_color = ColorField(verbose_name="цвет кнопки", null=True, blank=True)
