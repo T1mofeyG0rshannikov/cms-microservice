@@ -1,9 +1,9 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from blocks.template_exist import is_template_exists
+from blocks.validators import validate_html_filename
 from utils.errors import Errors
-
-from ..validators import validate_html_filename
 
 
 class Page(models.Model):
@@ -54,9 +54,7 @@ class Block(models.Model):
 
 class Template(models.Model):
     name = models.CharField(verbose_name="Название шаблона", max_length=50)
-    file = models.CharField(
-        verbose_name="Название файла (например base.html)", validators=[validate_html_filename], max_length=50
-    )
+    file = models.CharField(verbose_name="Название файла (например base.html)", max_length=50)
 
     class Meta:
         verbose_name = "Html шаблон"
@@ -69,6 +67,8 @@ class Template(models.Model):
         super().clean()
         if not validate_html_filename(self.file):
             raise ValidationError({"file": Errors.incorrect_file_name.value})
+        if not is_template_exists("blocks/" + self.file):
+            raise ValidationError({"file": Errors.template_doesnt_exist.value})
 
 
 class BaseBlock(models.Model):

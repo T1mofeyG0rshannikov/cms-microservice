@@ -3,7 +3,7 @@
         <div class="right-text">
             <h1 class="title">{{ block.title }}</h1>
 
-            <a style="line-height: 140%">{{ block.body|safe }}</a>
+            <a style="line-height: 140%">{{ block.text|safe }}</a>
             <button onclick="smoothScroll('{{block.button_ref}}')"><a>{{ block.button_text }}</a></button>
         </div>
 

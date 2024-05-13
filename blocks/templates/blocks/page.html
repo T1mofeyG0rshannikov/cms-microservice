@@ -24,7 +24,7 @@
 </head>
 <body>
     {% for block in page.blocks %}
-        {% with template_name=block.content.template.file%}
+        {% with template_name=block.content.template.file %}
             {% template_exists template_name as exist %}
                 {% if exist %}
                     {% with forloop.counter as id %}
@@ -52,7 +52,7 @@
                                         color: {{styles.subheader_color}};
                                     }
 
-                                    #block{{id}} span{
+                                    #block{{id}} span, #block{{id}} span p{
                                         font-size: {{styles.explanation_text_size}};
                                         font-weight: {{styles.explanation_text_thickness}};
                                         color: {{styles.explanation_text_color}};
@@ -75,7 +75,7 @@
                                             font-weight: {{styles.main_text_thickness_mobile}};
                                         }
 
-                                        #block{{id}} span{
+                                        #block{{id}} span, #block{{id}} span p{
                                             font-size: {{styles.explanation_text_size_mobile}};
                                             font-weight: {{styles.explanation_text_thickness_mobile}};
                                         }

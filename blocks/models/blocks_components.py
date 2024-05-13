@@ -11,7 +11,7 @@ class NavMenuItem(ButtonMixin):
 
 
 class Feature(TitleMixin):
-    icon = models.ImageField(verbose_name="Иконка", upload_to="features")
+    icon = models.ImageField(verbose_name="Иконка", upload_to="images/features")
     description = models.TextField(verbose_name="Пояснение")
     block = models.ForeignKey(
         FeaturesBlock, verbose_name="Блок", on_delete=models.SET_NULL, null=True, related_name="features"
@@ -19,6 +19,15 @@ class Feature(TitleMixin):
 
     def __str__(self):
         return self.description
+
+    def save(self, *args, **kwargs):
+        try:
+            this = Feature.objects.get(id=self.id)
+            if this.icon != self.icon:
+                this.icon.delete()
+        except:
+            pass
+        super().save(*args, **kwargs)
 
 
 class SocialMediaButton(models.Model):

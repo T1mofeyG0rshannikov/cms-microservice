@@ -2,13 +2,12 @@ from ckeditor.fields import RichTextField
 from django.db import models
 
 from .common import BaseBlock
-from .mixins import ButtonMixin, TitleMixin
+from .mixins import ButtonMixin, MainTextMixin, TitleMixin
 
 
-class ContentBlock(BaseBlock, ButtonMixin, TitleMixin):
-    body = RichTextField(verbose_name="Основной текст", max_length=1000)
-    image1 = models.ImageField(verbose_name="Первое изображение", upload_to="images/", null=True, blank=True)
-    image2 = models.ImageField(verbose_name="Второе изображение", upload_to="images/", null=True, blank=True)
+class ContentBlock(BaseBlock, ButtonMixin, TitleMixin, MainTextMixin):
+    image1 = models.ImageField(verbose_name="Первое изображение", upload_to="images/content/", null=True, blank=True)
+    image2 = models.ImageField(verbose_name="Второе изображение", upload_to="images/content/", null=True, blank=True)
 
     class Meta:
         verbose_name = "Контентный блок"
@@ -26,8 +25,7 @@ class Navbar(BaseBlock):
         verbose_name_plural = "навбар`ы"
 
 
-class Cover(BaseBlock, ButtonMixin, TitleMixin):
-    text = RichTextField(verbose_name="Основной текст", max_length=500)
+class Cover(BaseBlock, ButtonMixin, TitleMixin, MainTextMixin):
     image_desctop = models.ImageField(verbose_name="Картинка(десктоп)", upload_to="images/covers/")
     image_mobile = models.ImageField(verbose_name="Картинка(смартфон)", upload_to="images/covers/")
     second_button_text = models.CharField(verbose_name="Текст второй кнопки", max_length=20)

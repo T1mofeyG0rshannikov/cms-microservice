@@ -4,7 +4,7 @@ from styles.models.styles.styles import GlobalStyles
 
 
 class BaseStyles(models.Model):
-    global_styles = models.ForeignKey(GlobalStyles, on_delete=models.SET_NULL, null=True)
+    global_styles = models.OneToOneField(GlobalStyles, on_delete=models.SET_NULL, null=True)
 
     class Meta:
         abstract = True

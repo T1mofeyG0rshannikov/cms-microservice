@@ -6,14 +6,10 @@ from .models import Icon, Logo, SiteSettings
 
 class LogoInline(admin.StackedInline):
     model = Logo
-    max_num = 1
-    extra = 0
 
 
 class IconInline(admin.StackedInline):
     model = Icon
-    max_num = 1
-    extra = 0
 
 
 @register(SiteSettings)

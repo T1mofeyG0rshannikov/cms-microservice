@@ -1,10 +1,8 @@
-from .models import SiteSettings
-from .serializers import SettingsSerializer
+from settings.models import SiteSettings
+from settings.serializers import SettingsSerializer
 
 
-def get_settings():
-    settings = SiteSettings.objects.first()
+def get_settings() -> dict:
+    settings = SiteSettings.objects.prefetch_related("icon").prefetch_related("logo").first()
 
-    settings = SettingsSerializer(settings).data
-
-    return settings
+    return SettingsSerializer(settings).data

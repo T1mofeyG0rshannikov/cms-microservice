@@ -26,6 +26,30 @@ from .models.blocks_components import Feature, NavMenuItem, Question, SocialMedi
 from .models.common import Block, Page, Template
 
 
+class BaseInline(admin.StackedInline):
+    extra = 0
+
+
+class QuestionInline(BaseInline):
+    model = Question
+
+
+class NavMenuItemAdmin(BaseInline):
+    model = NavMenuItem
+
+
+class FeatureInline(BaseInline):
+    model = Feature
+
+
+class SocialMediaButtonInline(BaseInline):
+    model = SocialMediaButton
+
+
+class PageBlockInline(SortableStackedInline, BaseInline):
+    model = Block
+
+
 @register(Template)
 class TemplateAdmin(admin.ModelAdmin):
     list_display = ["name", "file"]
@@ -35,11 +59,6 @@ class BaseBlockAdmin(admin.ModelAdmin):
     change_form_template = "blocks/change_form.html"
     list_display = ["name", "template"]
     exclude = ["block_relation"]
-
-
-class NavMenuItemAdmin(admin.StackedInline):
-    model = NavMenuItem
-    extra = 0
 
 
 @register(Navbar)
@@ -57,11 +76,6 @@ class CoverAdmin(BaseBlockAdmin):
     inlines = [CoverCustomStylesInline]
 
 
-class FeatureInline(admin.StackedInline):
-    model = Feature
-    extra = 0
-
-
 @register(FeaturesBlock)
 class FeaturesBlockAdmin(BaseBlockAdmin):
     inlines = [FeatureInline, FeaturesCustomStylesInline]
@@ -72,19 +86,9 @@ class RegisterBlockAdmin(BaseBlockAdmin):
     inlines = [RegisterCustomStylesInline]
 
 
-class SocialMediaButtonInline(admin.StackedInline):
-    model = SocialMediaButton
-    extra = 0
-
-
 @register(SocialMediaBlock)
 class SocialMediaBlockAdmin(BaseBlockAdmin):
     inlines = [SocialMediaButtonInline, SocialCustomStylesInline]
-
-
-class QuestionInline(admin.StackedInline):
-    model = Question
-    extra = 0
 
 
 @register(QuestionsBlock)
@@ -92,45 +96,14 @@ class QuestionsBlockAdmin(BaseBlockAdmin):
     inlines = [QuestionInline, QuestionsCustomStylesInline]
 
 
-"""
-class FooChangeList(ChangeList):
-    def url_for_result(self, result):
-        pk = getattr(result, self.pk_attname)
-        return "/foos/foo/"
-"""
-"""
-@register(BlockRelationship)
-class BlockRelationAdmin(admin.ModelAdmin):
-    list_display = ["name", "content"]
-
-    def content(self, block):
-        return format_html(f"<a href='admin/styles'>Контент</a>")
-
-    def name(self, block):
-        return str(get_block(block))
-
-    #def get_changelist(self, request, **kwargs):
-    #    return FooChangeList
-
-    # inlines = [NavbarAdminInline]
-"""
-
-
-class PageBlockInline(SortableStackedInline, admin.StackedInline):
-    model = Block
-    extra = 0
-
-
 @register(Page)
 class PageAdmin(SortableAdminBase, admin.ModelAdmin):
-    list_display = ["url", "title", "your_custom_button"]
+    list_display = ["url", "title", "clone_button"]
     change_list_template = "blocks/change_list_page.html"
 
     inlines = [PageBlockInline]
 
-    def your_custom_button(self, obj):
+    def clone_button(self, obj):
         return mark_safe(f'<button class="copy-button" onclick="clonePage({obj.id})">Копировать</button>')
 
-    your_custom_button.allow_tags = True
-
-    your_custom_button.short_description = ""
+    clone_button.short_description = ""

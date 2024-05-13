@@ -1,10 +1,8 @@
 from rest_framework import serializers
 
+from blocks.get_block import get_block
+from blocks.models.common import Page, Template
 from styles.serializers import CustomStylesSerializer
-
-from .get_block import get_block
-from .get_custom_styles import get_custom_styles
-from .models.common import Page, Template
 
 
 class PageSerializer(serializers.ModelSerializer):
@@ -31,7 +29,7 @@ class BlockSerializer(serializers.Serializer):
         return content
 
     def get_styles(self, block):
-        return CustomStylesSerializer(get_custom_styles(self.get_content(block))).data
+        return CustomStylesSerializer(self.get_content(block).styles).data
 
 
 class TemplateSerializer(serializers.ModelSerializer):

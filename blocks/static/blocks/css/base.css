@@ -54,13 +54,14 @@ button a{
     text-decoration: none;
 }
 
-span{
+span, span p{
     color: var(--explanation-text-color);
     font-size: var(--explanation-text-font-size);
     font-weight: var(--explanation-text-font-weight);
     font-family: var(--explanation-text-font-family);
     line-height: 140%;
 }
+
 
 .inner{
     width: calc(100% - 180px);
@@ -90,7 +91,7 @@ span{
         margin: var(--margin-inside-block-mobile) 0px;
     }
 
-    span{
+    span, span p{
         font-size: var(--explanation-text-font-size-mobile);
         font-weight: var(--explanation-text-font-weight-mobile);
     }

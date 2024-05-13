@@ -18,8 +18,7 @@ from .models.texts.texts import ExplanationText, HeaderText, MainText, Subheader
 
 
 class StyleInline(admin.StackedInline):
-    extra = 0
-    max_num = 1
+    pass
 
 
 class NavbarCustomStylesInline(StyleInline):

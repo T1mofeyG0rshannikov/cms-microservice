@@ -19,7 +19,7 @@ class SettingsSerializer(serializers.Serializer):
     icon = serializers.SerializerMethodField()
 
     def get_logo(self, obj):
-        return LogoSerializer(obj.logo.first()).data
+        return LogoSerializer(obj.logo).data
 
     def get_icon(self, obj):
-        return obj.icon.first().image.url
+        return obj.icon.image.url

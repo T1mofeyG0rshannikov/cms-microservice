@@ -2,17 +2,23 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    cursor: pointer;
 }
 
 .questions .title img{
     height: 10px;
-    cursor: pointer;
+}
+
+.question p{
+    margin: 10px 0px;
 }
 
 .questions{
     display: flex;
     justify-content: center;
     width: 100%;
+    padding-top: var(--padding-block-top);
+    padding-bottom: var(--padding-block-bottom);
 }
 
 .questions .inner{

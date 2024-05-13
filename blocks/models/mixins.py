@@ -1,4 +1,12 @@
+from ckeditor.fields import RichTextField
 from django.db import models
+
+
+class MainTextMixin(models.Model):
+    text = RichTextField(verbose_name="Основной текст", max_length=1000)
+
+    class Meta:
+        abstract = True
 
 
 class TitleMixin(models.Model):

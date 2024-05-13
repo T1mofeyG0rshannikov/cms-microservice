@@ -25,20 +25,21 @@ class GlobalStyles(models.Model):
 
 
 class NavbarCustomStyles(BaseCustomStyles):
-    block = models.OneToOneField(Navbar, on_delete=models.SET_NULL, null=True)
+    block = models.OneToOneField(Navbar, on_delete=models.SET_NULL, null=True, related_name="styles")
 
 
 class ContentCustomStyles(BaseCustomStyles):
-    block = models.OneToOneField(ContentBlock, on_delete=models.SET_NULL, null=True)
+    block = models.OneToOneField(ContentBlock, on_delete=models.SET_NULL, null=True, related_name="styles")
     border_radius = models.CharField(verbose_name="Радиус скругления картинки", null=True, blank=True, max_length=50)
 
 
 class CoverCustomStyles(BaseCustomStyles):
-    block = models.OneToOneField(Cover, on_delete=models.SET_NULL, null=True)
+    block = models.OneToOneField(Cover, on_delete=models.SET_NULL, null=True, related_name="styles")
 
 
 class FeaturesCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
-    block = models.OneToOneField(FeaturesBlock, on_delete=models.SET_NULL, null=True)
+    block = models.OneToOneField(FeaturesBlock, on_delete=models.SET_NULL, null=True, related_name="styles")
+
     columns = models.PositiveIntegerField(verbose_name="Количество колонок", default=4)
     icon_color = ColorField(verbose_name="Цвет иконок", default="#689F38")
     icon_background_color = ColorField(verbose_name="Цвет фона иконок", default="#FFFFFF")
@@ -58,14 +59,14 @@ class FeaturesCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
 
 
 class RegisterCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
-    block = models.OneToOneField(RegisterBlock, on_delete=models.SET_NULL, null=True)
+    block = models.OneToOneField(RegisterBlock, on_delete=models.SET_NULL, null=True, related_name="styles")
 
     button_color = ColorField(verbose_name="цвет кнопки", null=True, blank=True)
 
 
 class SocialCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
-    block = models.OneToOneField(SocialMediaBlock, on_delete=models.SET_NULL, null=True)
+    block = models.OneToOneField(SocialMediaBlock, on_delete=models.SET_NULL, null=True, related_name="styles")
 
 
 class QuestionsCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
-    block = models.OneToOneField(QuestionsBlock, on_delete=models.SET_NULL, null=True)
+    block = models.OneToOneField(QuestionsBlock, on_delete=models.SET_NULL, null=True, related_name="styles")

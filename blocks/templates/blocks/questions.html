@@ -5,13 +5,13 @@
         {% for question in block.questions.all %}
             {% with forloop.counter as id %}
             <div class="question">
-                <div class="title">
+                <div class="title" onclick="openQuestion({{id}})">
                     <h3>{{ question.title }}</h3>
 
-                    <img onclick="openQuestion({{id}})" src="{% static "blocks/images/triangle.png" %}"/>
+                    <img src="{% static "blocks/images/triangle.png" %}"/>
                 </div>
 
-                <a style="display: none;">{{ question.text|safe }}</a>
+                <span style="display: none;">{{ question.text|safe }}</span>
             </div>
             {% endwith %}
         {% endfor %}
@@ -19,16 +19,28 @@
         <script>
             function openQuestion(id){
                 const question = document.querySelectorAll(".question")[id - 1];
-                question.querySelector("a").style.display = "block";
+                question.querySelector("span").style.display = "block";
 
-                question.querySelector("img").outerHTML = `<img onclick="closeQuestion(${id})" src="static/blocks/images/triangle-reverse.png"/>`
+                question.querySelector(".title").removeEventListener("click", () => {
+                    openQuestion(id)
+                })
+
+                question.querySelector(".title").addEventListener("click", () => {
+                    closeQuestion(id)
+                })
+                question.querySelector("img").outerHTML = `<img src="static/blocks/images/triangle-reverse.png"/>`
             }
 
             function closeQuestion(id){
                 const question = document.querySelectorAll(".question")[id - 1];
-                question.querySelector("a").style.display = "none";
+                question.querySelector("span").style.display = "none";
 
-                question.querySelector("img").outerHTML = `<img onclick="openQuestion(${id})" src="static/blocks/images/triangle.png"/>`
+                question.querySelector(".title").removeEventListener("click", closeQuestion)
+
+                question.querySelector(".title").addEventListener("click", () => {
+                    openQuestion(id)
+                })
+                question.querySelector("img").outerHTML = `<img src="static/blocks/images/triangle.png"/>`
             }
         </script>
 
