@@ -2,8 +2,14 @@ from ckeditor.fields import RichTextField
 from colorfield.fields import ColorField
 from django.db import models
 
-from .blocks import FeaturesBlock, Navbar, QuestionsBlock, SocialMediaBlock
-from .mixins import ButtonMixin, TitleMixin
+from blocks.models.blocks import (
+    FeaturesBlock,
+    Navbar,
+    QuestionsBlock,
+    SocialMediaBlock,
+    StagesBlock,
+)
+from blocks.models.mixins import ButtonMixin, TitleMixin
 
 
 class NavMenuItem(ButtonMixin):
@@ -51,3 +57,19 @@ class Question(TitleMixin):
     class Meta:
         verbose_name = "Вопрос"
         verbose_name_plural = "Вопросы"
+
+
+class Stage(TitleMixin):
+    text = RichTextField(verbose_name="текст этапа", max_length=1500)
+    period = models.CharField(verbose_name="срок этапа", max_length=200)
+
+    num = models.PositiveIntegerField(verbose_name="порядок")
+
+    block = models.ForeignKey(StagesBlock, on_delete=models.CASCADE, related_name="stages")
+
+    class Meta:
+        verbose_name = "Этап"
+        verbose_name_plural = "Этапы"
+
+    def __str__(self):
+        return self._meta.verbose_name

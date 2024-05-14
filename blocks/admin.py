@@ -3,6 +3,24 @@ from django.contrib import admin
 from django.contrib.admin.decorators import register
 from django.utils.safestring import mark_safe
 
+from blocks.models.blocks import (
+    ContentBlock,
+    Cover,
+    FeaturesBlock,
+    Navbar,
+    QuestionsBlock,
+    RegisterBlock,
+    SocialMediaBlock,
+    StagesBlock,
+)
+from blocks.models.blocks_components import (
+    Feature,
+    NavMenuItem,
+    Question,
+    SocialMediaButton,
+    Stage,
+)
+from blocks.models.common import Block, Page, Template
 from styles.admin import (
     ContentCustomStylesInline,
     CoverCustomStylesInline,
@@ -11,19 +29,8 @@ from styles.admin import (
     QuestionsCustomStylesInline,
     RegisterCustomStylesInline,
     SocialCustomStylesInline,
+    StagesCustomStylesInline,
 )
-
-from .models.blocks import (
-    ContentBlock,
-    Cover,
-    FeaturesBlock,
-    Navbar,
-    QuestionsBlock,
-    RegisterBlock,
-    SocialMediaBlock,
-)
-from .models.blocks_components import Feature, NavMenuItem, Question, SocialMediaButton
-from .models.common import Block, Page, Template
 
 
 class BaseInline(admin.StackedInline):
@@ -44,6 +51,10 @@ class FeatureInline(BaseInline):
 
 class SocialMediaButtonInline(BaseInline):
     model = SocialMediaButton
+
+
+class StageInline(BaseInline):
+    model = Stage
 
 
 class PageBlockInline(SortableStackedInline, BaseInline):
@@ -94,6 +105,11 @@ class SocialMediaBlockAdmin(BaseBlockAdmin):
 @register(QuestionsBlock)
 class QuestionsBlockAdmin(BaseBlockAdmin):
     inlines = [QuestionInline, QuestionsCustomStylesInline]
+
+
+@register(StagesBlock)
+class StagesBlockAdmin(BaseBlockAdmin):
+    inlines = [StageInline, StagesCustomStylesInline]
 
 
 @register(Page)

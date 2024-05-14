@@ -65,3 +65,9 @@ class QuestionsBlock(BaseBlock):
     class Meta:
         verbose_name = "Блок с вопросами"
         verbose_name_plural = "Блоки с вопросами"
+
+
+class StagesBlock(BaseBlock, TitleMixin, MainTextMixin):
+    class Meta:
+        verbose_name = "Блок этапов"
+        verbose_name_plural = "Блоки этапов"

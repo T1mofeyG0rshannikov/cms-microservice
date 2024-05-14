@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.contrib.admin.decorators import register
 
-from .models.colors.colors import ColorStyles
-from .models.other import IconSize, MarginBlock
-from .models.styles.styles import (
+from styles.models.colors.colors import ColorStyles
+from styles.models.other import IconSize, MarginBlock
+from styles.models.styles.styles import (
     ContentCustomStyles,
     CoverCustomStyles,
     FeaturesCustomStyles,
@@ -12,9 +12,15 @@ from .models.styles.styles import (
     QuestionsCustomStyles,
     RegisterCustomStyles,
     SocialCustomStyles,
+    StagesCustomStyles,
 )
-from .models.texts.font import Font
-from .models.texts.texts import ExplanationText, HeaderText, MainText, SubheaderText
+from styles.models.texts.font import Font
+from styles.models.texts.texts import (
+    ExplanationText,
+    HeaderText,
+    MainText,
+    SubheaderText,
+)
 
 
 class StyleInline(admin.StackedInline):
@@ -47,6 +53,10 @@ class SocialCustomStylesInline(StyleInline):
 
 class QuestionsCustomStylesInline(StyleInline):
     model = QuestionsCustomStyles
+
+
+class StagesCustomStylesInline(StyleInline):
+    model = StagesCustomStyles
 
 
 class ColorStylesInline(StyleInline):

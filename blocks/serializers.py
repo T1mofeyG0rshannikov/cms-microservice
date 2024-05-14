@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
 from blocks.get_block import get_block
@@ -29,7 +30,10 @@ class BlockSerializer(serializers.Serializer):
         return content
 
     def get_styles(self, block):
-        return CustomStylesSerializer(self.get_content(block).styles).data
+        try:
+            return CustomStylesSerializer(self.get_content(block).styles).data
+        except ObjectDoesNotExist:
+            return None
 
 
 class TemplateSerializer(serializers.ModelSerializer):

@@ -1,0 +1,48 @@
+<div id="{{ block.ancor }}" class="stages">
+    <div class="inner">
+        <h1>{{block.title}}</h1>
+
+        <a>{{ block.text|safe }}</a>
+
+        <div class="stages-container">
+            {% for stage in block.stages.all %}
+                <div class="stage">
+                    <div class="num">
+                        <div class="num-container">
+                            <a>{{ stage.num }}</a>
+                        </div>
+
+                        <div class="border"></div>
+                    </div>
+
+                    <div>
+                        <h3>{{ stage.title }}</h3>
+
+                        <a>{{ stage.period }}</a>
+
+                        <span>{{ stage.text|safe }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <script>
+            const stages = document.querySelectorAll(".stage");
+            const stage = stages[stages.length - 1];
+
+            stage.querySelector(".border").style.border = "none";
+        </script>
+
+        <style>
+            #block{{id}} .stages{
+                padding-top: {{styles.margin_top}};
+                padding-bottom: {{styles.margin_bottom}};
+                background-color: {{styles.background_color}};
+            }
+
+            @media screen and (max-width: 760px) {
+
+            }
+        </style>
+    </div>
+</div>
