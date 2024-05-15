@@ -5,3 +5,7 @@ class Errors(str, Enum):
     incorrect_file_name = "Неккоректное название файла"
     block_with_name_already_exist = "Уже есть блок, привязанный к этому имени"
     template_doesnt_exist = "Нет такого html файла"
+
+
+class UserErrors(str, Enum):
+    username_alredy_exists = "Пользователь уже существует"

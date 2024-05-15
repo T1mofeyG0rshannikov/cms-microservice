@@ -1,0 +1,107 @@
+{% extends "user/base.html" %}
+{% load static %}
+
+
+{% block content %}
+
+<form action="/user/register" method="post" class="user-form">
+    <img class="logo" src="{{ settings.form_logo.image }}" />
+
+    <h3>Регистрация</h3>
+
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="field" id="{{ field.name }}">
+            {{ field }}
+            {% for error in field.errors %}
+                <div class="error">{{ error }}</div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+    <input type="submit" value="Зарегистрироваться" />
+
+    <label class="agreed-container">Я прочитал(а) и принимаю Пользовательское соглашение и Политику Конфденциальности
+        <input type="checkbox">
+        <span class="checkmark"></span>
+    </label>
+
+    <p class="already-register">Уже зарегистрированы?</p>
+    <a href="/" class="login">Войти в кабинет</a>
+</form>
+
+<style>
+    .logo{
+        width: {{settings.form_logo.width}};
+        height: {{settings.form_logo.height}};
+    }
+</style>
+
+<script>
+    $(function(){
+        $("input[name=phone]").mask("+7 (999) 999-99-99");
+    });
+</script>
+
+<script src="{% static "user/js/email_validator.js" %}"></script>
+<script src="{% static "user/js/username_validator.js" %}"></script>
+
+<script>
+    const emailInput = document.querySelector("#email").querySelector("input");
+
+    emailInput.addEventListener("change", event => {
+        const isValid = validateEmail(event.target.value);
+
+        const emailContainer = document.querySelector("#email");
+        const errorContainer = emailContainer.querySelector(".error");
+
+        if (!isValid){
+            if (errorContainer === null){
+                const errorMessage = document.createElement("div")
+                errorMessage.classList.add("error")
+                errorMessage.innerHTML = "Введите правильный E-mail"
+
+                emailContainer.appendChild(errorMessage);
+            }
+
+            else{
+                errorContainer.innerHTML = "Введите правильный E-mail"
+            }
+        }
+
+        else{
+            errorContainer.innerHTML = "";
+        }
+    })
+</script>
+
+<script>
+    const usernameContainer = document.querySelector("#username");
+    const usernameInput = usernameContainer.querySelector("input");
+
+    usernameInput.addEventListener("change", event => {
+        const isValid = validateUsername(event.target.value);
+        console.log(isValid)
+
+        const errorContainer = usernameContainer.querySelector(".error");
+
+        if (!isValid){
+            if (errorContainer === null){
+                const errorMessage = document.createElement("div")
+                errorMessage.classList.add("error")
+                errorMessage.innerHTML = "Слишком короткое имя"
+
+                usernameContainer.appendChild(errorMessage);
+            }
+
+            else{
+                errorContainer.innerHTML = "Слишком короткое имя"
+            }
+        }
+
+        else{
+            errorContainer.innerHTML = "";
+        }
+    })
+</script>
+
+{% endblock %}

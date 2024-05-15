@@ -10,7 +10,7 @@ class SiteSettings(models.Model):
         return self._meta.verbose_name
 
 
-class Logo(models.Model):
+class BaseLogo(models.Model):
     image = models.ImageField(verbose_name="Изображение", upload_to="images/logo")
     width = models.CharField(verbose_name="Ширина", max_length=20)
     height = models.CharField(verbose_name="Высота", max_length=20)
@@ -18,10 +18,15 @@ class Logo(models.Model):
     width_mobile = models.CharField(verbose_name="Ширина(смартфон)", max_length=20)
     height_mobile = models.CharField(verbose_name="Высота(смартфон)", max_length=20)
 
-    settings = models.OneToOneField(SiteSettings, on_delete=models.CASCADE, related_name="logo")
-
     def __str__(self):
-        return "Логотип"
+        return self._meta.verbose_name
+
+    class Meta:
+        abstract = True
+
+
+class Logo(BaseLogo):
+    settings = models.OneToOneField(SiteSettings, on_delete=models.CASCADE, related_name="logo")
 
     class Meta:
         verbose_name = "Логотип"
@@ -30,6 +35,23 @@ class Logo(models.Model):
     def save(self, *args, **kwargs):
         try:
             this = Logo.objects.get(id=self.id)
+            if this.image != self.image:
+                this.image.delete()
+        except:
+            pass
+        super().save(*args, **kwargs)
+
+
+class FormLogo(BaseLogo):
+    settings = models.OneToOneField(SiteSettings, on_delete=models.CASCADE, related_name="form_logo")
+
+    class Meta:
+        verbose_name = "Логотип для форм"
+        verbose_name_plural = "Логотип для форм"
+
+    def save(self, *args, **kwargs):
+        try:
+            this = FormLogo.objects.get(id=self.id)
             if this.image != self.image:
                 this.image.delete()
         except:

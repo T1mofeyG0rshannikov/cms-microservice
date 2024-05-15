@@ -34,7 +34,8 @@ INSTALLED_APPS = [
     "ckeditor",
     "blocks",
     "styles",
-    "settings"
+    "settings",
+    "user",
 ]
 
 MIDDLEWARE = [

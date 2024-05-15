@@ -1,11 +1,15 @@
 from django.contrib import admin
 from django.contrib.admin.decorators import register
 
-from .models import Icon, Logo, SiteSettings
+from .models import FormLogo, Icon, Logo, SiteSettings
 
 
 class LogoInline(admin.StackedInline):
     model = Logo
+
+
+class FormLogoInline(admin.StackedInline):
+    model = FormLogo
 
 
 class IconInline(admin.StackedInline):
@@ -14,4 +18,4 @@ class IconInline(admin.StackedInline):
 
 @register(SiteSettings)
 class SettingsAdmin(admin.ModelAdmin):
-    inlines = [LogoInline, IconInline]
+    inlines = [LogoInline, FormLogoInline, IconInline]

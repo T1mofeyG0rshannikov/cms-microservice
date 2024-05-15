@@ -3,12 +3,12 @@ from rest_framework import serializers
 from .models import Logo
 
 
-class LogoSerializer(serializers.ModelSerializer):
+class LogoSerializer(serializers.Serializer):
     image = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Logo
-        fields = ("image", "width", "height", "width_mobile", "height_mobile")
+    width = serializers.CharField()
+    width_mobile = serializers.CharField()
+    height_mobile = serializers.CharField()
+    height = serializers.CharField()
 
     def get_image(self, obj):
         return obj.image.url
@@ -16,10 +16,14 @@ class LogoSerializer(serializers.ModelSerializer):
 
 class SettingsSerializer(serializers.Serializer):
     logo = serializers.SerializerMethodField()
+    form_logo = serializers.SerializerMethodField()
     icon = serializers.SerializerMethodField()
 
     def get_logo(self, obj):
         return LogoSerializer(obj.logo).data
+
+    def get_form_logo(self, obj):
+        return LogoSerializer(obj.form_logo).data
 
     def get_icon(self, obj):
         return obj.icon.image.url

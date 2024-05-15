@@ -1,0 +1,139 @@
+:root{
+    --dark-color: rgb(200, 200, 200);
+}
+
+.user-form{
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--dark-color);
+    width: 325px;
+    background: var(--second-background-color);
+    text-align: center;
+    align-items: center;
+}
+
+.user-form input{
+    padding: 10px;
+    border: 1px solid var(--dark-color);
+    margin: 7px 0px;
+    border-radius: 5px;
+    width: calc(100% - 20px);
+}
+
+.user-form input[type=submit]{
+    color: white;
+    border: 1px solid var(--main-color);
+    width: 100%;
+}
+
+.user-form input::-webkit-input-placeholder{
+    color: var(--dark-color);
+    font-family: var(--main-text-font-family);
+    font-size: var(--main-text-font-size);
+    font-weight: var(--main-text-font-weight);
+}
+
+.agreed-container{
+    display: flex;
+}
+
+.agreed-container label{
+    font-size: 13px;
+    text-align: center;
+}
+
+
+.agreed-container {
+    display: block;
+    position: relative;
+    padding-left: 30px;
+    margin-top: 12px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 13px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.agreed-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.user-form .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 18px;
+    width: 18px;
+    background-color: transparent;
+    border-radius: 5px;
+    border: 1px solid var(--dark-color);
+}
+
+.user-form .agreed-container:hover input ~ .checkmark {
+    background-color: rgb(240, 240, 240);
+}
+
+.user-form .agreed-container input:checked ~ .checkmark {
+    background-color: #2196F3;
+}
+
+.user-form .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.user-form .agreed-container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.user-form .agreed-container .checkmark:after {
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.user-form a, .user-form p{
+    margin: 5px 0px;
+}
+
+.user-form p{
+    margin-top: 20px;
+}
+
+.already-register{
+    color: black;
+    font-weight: 700;
+}
+
+.login{
+    font-weight: 700;
+    text-decoration: none;
+    color: rgb(120, 140, 240);
+}
+
+.user-form .field{
+    width: 100%;
+}
+
+.user-form .error{
+    color: rgb(250, 70, 70);
+    text-align: center;
+    font-size: 14px;
+    font-family: var(--main-text-font-family);
+}
