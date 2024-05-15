@@ -1,5 +1,14 @@
-{% extends "user/base.html" %}
+{% extends "common/base.html" %}
 {% load static %}
+
+
+{% block title %}
+    Регистрация
+{% endblock %}
+
+{% block additional_styles %}
+    <link rel="stylesheet" href="{% static 'user/css/main.css' %}">
+{% endblock %}
 
 
 {% block content %}

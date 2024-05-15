@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "styles",
     "settings",
     "user",
+    "common"
 ]
 
 MIDDLEWARE = [

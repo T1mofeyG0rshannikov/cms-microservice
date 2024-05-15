@@ -13,16 +13,14 @@ from blocks.models.blocks import (
 )
 from styles.models.mixins.text_mixins import ExplanationTextStylesMixin
 
-from .base_custom_styles import BaseCustomStyles
+from styles.models.styles.base_custom_styles import BaseCustomStyles
+from common.models import OneInstanceModel
 
 
-class GlobalStyles(models.Model):
+class GlobalStyles(OneInstanceModel):
     class Meta:
         verbose_name = "Глобальные стили"
         verbose_name_plural = "Глобальные стили"
-
-    def __str__(self):
-        return self._meta.verbose_name
 
 
 class NavbarCustomStyles(BaseCustomStyles):

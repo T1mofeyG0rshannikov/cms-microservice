@@ -1,15 +1,13 @@
 from colorfield.fields import ColorField
 from django.db import models
+from common.models import OneInstanceModel
 
 
-class ColorMixin(models.Model):
+class ColorMixin(OneInstanceModel):
     color = ColorField(verbose_name="Цвет", default="#FFFFFF")
 
     class Meta:
         abstract = True
-
-    def __str__(self):
-        return self._meta.verbose_name
 
 
 class ThicknessOfTextMixin(models.Model):
