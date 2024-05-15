@@ -8,3 +8,4 @@ class User(AbstractBaseUser):
 
     email = models.CharField(verbose_name="E-main", max_length=200)
     new_email = models.CharField(verbose_name="новый E-main", max_length=200)
+    email_is_confirmed = models.BooleanField(verbose_name="Почта подтверждена", default=False)

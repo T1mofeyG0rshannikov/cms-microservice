@@ -8,4 +8,6 @@ class Errors(str, Enum):
 
 
 class UserErrors(str, Enum):
-    username_alredy_exists = "Пользователь уже существует"
+    username_with_phone_alredy_exists = "Пользователь с таким телефоном уже существует"
+    username_with_email_alredy_exists = "Пользователь с такой почтой уже существует"
+    incorrect_phone = "Неверный номер телефона"
