@@ -13,7 +13,6 @@
 
 {% block content %}
 
-<!-- <form method="post" class="user-form"> -->
 <form action="/user/register" method="post" class="user-form">
     <img class="logo" src="{{ settings.form_logo.image }}" />
 
@@ -48,8 +47,8 @@
 
 
 <script src="{% static "user/js/register_form.js" %}"></script>
-<script src="{% static "user/js/email_validator.js" %}"></script>
-<script src="{% static "user/js/username_validator.js" %}"></script>
-<script src="{% static "user/js/phone_validator.js" %}"></script>
+<script src="{% static "user/js/validators/email_validator.js" %}"></script>
+<script src="{% static "user/js/validators/username_validator.js" %}"></script>
+<script src="{% static "user/js/validators/phone_validator.js" %}"></script>
 
 {% endblock %}

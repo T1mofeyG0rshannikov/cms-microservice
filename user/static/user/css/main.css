@@ -19,7 +19,7 @@
     border: 1px solid var(--dark-color);
     margin: 7px 0px;
     border-radius: 5px;
-    width: calc(100% - 20px);
+    width: 100%;
 }
 
 .user-form input[type=submit]{
@@ -142,4 +142,8 @@
     text-align: center;
     font-size: 14px;
     font-family: var(--main-text-font-family);
+}
+
+.user-form h3{
+    margin-top: 0px;
 }

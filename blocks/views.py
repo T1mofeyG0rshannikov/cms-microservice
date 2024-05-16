@@ -1,7 +1,6 @@
 import json
 
 from django.http import Http404, HttpResponse, JsonResponse
-from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
@@ -9,20 +8,24 @@ from django.views.generic import View
 from blocks.clone_page import clone_page
 from blocks.models.common import Page, Template
 from blocks.serializers import PageSerializer, TemplateSerializer
-from settings.get_settings import get_settings
+from common.views import BaseTemplateView
 
 
-class ShowPage(View):
-    def get(self, request, page_url):
+class ShowPage(BaseTemplateView):
+    template_name = "blocks/page.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
         try:
-            page = Page.objects.prefetch_related("blocks").get(url=page_url)
+            page = Page.objects.prefetch_related("blocks").get(url=kwargs["page_url"])
             serialized_page = PageSerializer(page).data
 
-            settings = get_settings()
-
-            return render(request, "blocks/page.html", {"page": serialized_page, "settings": settings})
+            context["page"] = serialized_page
         except Page.DoesNotExist:
             raise Http404("Page does not exist")
+
+        return context
 
 
 class ShowTemplates(View):

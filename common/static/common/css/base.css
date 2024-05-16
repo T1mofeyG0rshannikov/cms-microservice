@@ -1,3 +1,8 @@
+:root{
+    --margin-inside-block-desctop: 25px;
+    --margin-inside-block-mobile: 12px;
+}
+
 body{
     margin: 0 auto;
     background-color: var(--background-color);

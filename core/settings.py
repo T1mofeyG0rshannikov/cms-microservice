@@ -17,7 +17,7 @@ SECRET_KEY = str(os.getenv("SECRET_KEY"))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS: list[str] = []
 
 
 # Application definition
@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     "styles",
     "settings",
     "user",
-    "common"
+    "common",
 ]
 
 MIDDLEWARE = [
@@ -124,5 +124,7 @@ STATICFILES_DIR = os.path.join(BASE_DIR, "static")
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "static")
+
+# AUTH_USER_MODEL = "user.User"
 
 # SECURE_CROSS_ORIGIN_OPENER_POLICY=None

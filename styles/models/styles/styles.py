@@ -11,10 +11,9 @@ from blocks.models.blocks import (
     SocialMediaBlock,
     StagesBlock,
 )
-from styles.models.mixins.text_mixins import ExplanationTextStylesMixin
-
-from styles.models.styles.base_custom_styles import BaseCustomStyles
 from common.models import OneInstanceModel
+from styles.models.mixins.text_mixins import ExplanationTextStylesMixin
+from styles.models.styles.base_custom_styles import BaseCustomStyles
 
 
 class GlobalStyles(OneInstanceModel):

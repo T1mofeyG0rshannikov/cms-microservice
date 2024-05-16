@@ -1,31 +1,34 @@
+import json
+
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.core.mail import send_mail
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
-from settings.get_settings import get_settings
-from user.auth.jwt_processor import JwtProcessor
-from user.auth.jwt_settings import get_jwt_settings
+from common.views import BaseTemplateView
+from user.auth.jwt_processor import JwtProcessor, get_jwt_processor
 from user.forms import RegistrationForm
 from user.models import User
 from utils.errors import UserErrors
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class RegisterUser(View):
+class RegisterUser(BaseTemplateView):
+    template_name = "user/register.html"
+
     def __init__(self):
-        jwt_settings = get_jwt_settings()
-        self.jwt_processor = JwtProcessor(jwt_settings)
+        super().__init__()
+        self.jwt_processor = get_jwt_processor()
 
-    def get(self, request):
-        form = RegistrationForm()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = RegistrationForm()
 
-        settings = get_settings()
-
-        return render(request, "user/register.html", {"form": form, "settings": settings})
+        return context
 
     def post(self, request):
         form = RegistrationForm(request.POST)
@@ -58,3 +61,26 @@ class RegisterUser(View):
             return redirect(f"/user/password/{token_to_set_password}")
 
         return render(request, "user/register.html", {"form": form})
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class SetPassword(View):
+    def __init__(self):
+        self.jwt_processor = get_jwt_processor()
+
+    def get(self, request, token):
+        return render(request, "user/set-password.html", {"token": token})
+
+    def post(self, request, token):
+        data = json.loads(request.body)
+
+        payload = self.jwt_processor.validate_token(token)
+
+        if not payload:
+            return JsonResponse({"message": "срок действия токена для ввода пароля истёк"}, status=404)
+
+        password = data.get("password")
+
+        User.objects.filter(id=payload["id"]).update(password=password)
+
+        return HttpResponse(status=200)
