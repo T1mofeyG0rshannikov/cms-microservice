@@ -16,10 +16,18 @@
                     </div>
 
                     <div>
-                        <h3>{{ stage.title }}</h3>
+                        <div class="title">
+                            <div class="num-container">
+                                <a>{{ stage.num }}</a>
+                            </div>
 
-                        <a>{{ stage.period }}</a>
-
+                            <div>
+                                <h3>{{ stage.title }}</h3>
+                                <a>{{ stage.period }}</a>
+                            </div>
+                        </div>
+                        
+                        
                         <span>{{ stage.text|safe }}</span>
                     </div>
                 </div>
