@@ -13,15 +13,10 @@ const emailInput = document.querySelector("#email").querySelector("input");
 const usernameInput = document.querySelector("#username").querySelector("input");
 const phoneInput = $("input[name=phone]");
 
-/*
-console.log(emailInput.value);
-console.log(usernameInput.value);
-console.log(phoneInput.value);
-*/
 
-let validEmail = false;
-let validUsername = false;
-let validPhone = false;
+let validEmail = validateEmail(emailInput.value);
+let validUsername = validateUsername(usernameInput.value);
+let validPhone = validatePhone(phoneInput.value);
 
 
 emailInput.addEventListener("change", event => {

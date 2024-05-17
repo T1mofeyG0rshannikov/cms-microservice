@@ -147,3 +147,15 @@
 .user-form h3{
     margin-top: 0px;
 }
+
+.user-form .bottom-menu{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+
+.user-form .bottom-menu .forget-password{
+    color: rgb(103, 167, 180);
+    font-size: 14px;
+}

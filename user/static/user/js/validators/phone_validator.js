@@ -26,3 +26,13 @@ function onchangePhone(){
         }
     }
 }
+
+function validatePhone(phoneNumber) {
+    let phoneRegex = /^\+7[0-9]{10}$/;
+
+    if (phoneRegex.test(phoneNumber)) {
+        return true;
+    } else {
+        return false;
+    }
+}

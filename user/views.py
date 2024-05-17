@@ -11,9 +11,11 @@ from django.views.generic import View
 
 from common.views import BaseTemplateView
 from user.auth.jwt_processor import JwtProcessor, get_jwt_processor
-from user.forms import RegistrationForm
+from user.forms import LoginForm, RegistrationForm
 from user.models import User
 from utils.errors import UserErrors
+from utils.format_phone import get_raw_phone
+from utils.validators import is_valid_phone
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -22,7 +24,7 @@ class RegisterUser(BaseTemplateView):
 
     def __init__(self):
         super().__init__()
-        self.jwt_processor = get_jwt_processor()
+        self.jwt_processor: JwtProcessor = get_jwt_processor()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -34,6 +36,8 @@ class RegisterUser(BaseTemplateView):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             phone = form.cleaned_data.get("phone")
+            phone = get_raw_phone(phone)
+
             email = form.cleaned_data.get("email")
 
             user_with_phone = User.objects.filter(phone=phone).first()
@@ -84,3 +88,49 @@ class SetPassword(View):
         User.objects.filter(id=payload["id"]).update(password=password)
 
         return HttpResponse(status=200)
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class Login(BaseTemplateView):
+    template_name = "user/login.html"
+
+    def __init__(self):
+        super().__init__()
+        self.jwt_processor: JwtProcessor = get_jwt_processor()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = LoginForm()
+
+        return context
+
+    def post(self, request):
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            phone_or_email = form.cleaned_data.get("phone_or_email")
+            password = form.cleaned_data.get("password")
+
+            if is_valid_phone(phone_or_email):
+                try:
+                    user = User.objects.get(phone=phone_or_email)
+                except User.DoesNotExist:
+                    form.add_error("phone_or_email", UserErrors.user_by_phone_not_found.value)
+                    return render(request, "user/login.html", {"form": form})
+
+            else:
+                try:
+                    user = User.objects.get(email=phone_or_email)
+                except User.DoesNotExist:
+                    form.add_error("phone_or_email", UserErrors.user_by_email_not_found.value)
+                    return render(request, "user/login.html", {"form": form})
+
+            if user.password != password:
+                form.add_error("password", UserErrors.incorrect_password.value)
+                return render(request, "user/login.html", {"form": form})
+
+            access_token = self.jwt_processor.create_access_token(user.username, user.id)
+            print(access_token)
+
+            return render(request, "user/login.html", {"form": form, "acess_token": access_token})
+
+        return render(request, "user/login.html", {"form": form})
