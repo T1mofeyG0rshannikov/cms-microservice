@@ -1,27 +1,9 @@
-function setPassword(token, password){
-    console.log(password)
-    fetch(`/user/password/${token}`, {
-        method: "post",
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: JSON.stringify({
-            password: password
-        })
-    }).then(response => {
-        if (response.status === 200){
-            window.location.replace("/")
-        }
-    })
-}
-
 function validateForm(){
-    const errorContainer = document.querySelector(".error");
+    const errorContainer = document.querySelector("#password").querySelector(".error");
     const button = document.querySelector("input[type=submit]");
 
     const password1 = document.querySelector("input[name=password]").value;
-    const password2 = document.querySelector("input[name=repeat-password]").value;
+    const password2 = document.querySelector("input[name=repeat_password]").value;
 
     if (password1.length < 6){
         errorContainer.innerHTML = "Слишком короткий пароль"
@@ -44,6 +26,6 @@ edited = false;
 const input1 = document.querySelector("input[name=password]")
 input1.addEventListener("change", () => validateForm())
 
-const input2 = document.querySelector("input[name=repeat-password]")
+const input2 = document.querySelector("input[name=repeat_password]")
 input2.addEventListener("change", () => validateForm())
 input2.addEventListener("change", () => edited = true)

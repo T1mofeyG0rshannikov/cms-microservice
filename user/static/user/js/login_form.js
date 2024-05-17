@@ -1,9 +1,6 @@
 function formValid(){
     const loginButton = document.querySelector("input[type=submit]")
 
-    console.log(validPhoneOrEmail);
-    console.log(validPassword);
-
     if (validPhoneOrEmail && validPassword){
         loginButton.disabled = false;
     }

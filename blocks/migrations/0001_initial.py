@@ -2,283 +2,448 @@
 
 import ckeditor.fields
 import colorfield.fields
-from django.db import migrations, models
 import django.db.models.deletion
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='BlockRelationship',
+            name="BlockRelationship",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('block_name', models.CharField(max_length=50, unique=True, verbose_name='Имя компонента')),
-                ('block', models.CharField(max_length=50)),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("block_name", models.CharField(max_length=50, unique=True, verbose_name="Имя компонента")),
+                ("block", models.CharField(max_length=50)),
             ],
             options={
-                'verbose_name': 'Блок',
-                'verbose_name_plural': 'Блоки',
+                "verbose_name": "Блок",
+                "verbose_name_plural": "Блоки",
             },
         ),
         migrations.CreateModel(
-            name='Navbar',
+            name="Navbar",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=50, unique=True, verbose_name='Имя')),
-                ('ancor', models.CharField(blank=True, max_length=50, null=True, verbose_name='Якорь')),
-                ('register_button_text', models.CharField(max_length=50, null=True, verbose_name='Текст кнопки регистрации')),
-                ('register_button_href', models.CharField(max_length=50, null=True, verbose_name='Сслыка кнопки регистрации')),
-                ('login_button_text', models.CharField(max_length=50, null=True, verbose_name='Текст кнопки входа')),
-                ('block_relation', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='blocks.blockrelationship')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("name", models.CharField(max_length=50, unique=True, verbose_name="Имя")),
+                ("ancor", models.CharField(blank=True, max_length=50, null=True, verbose_name="Якорь")),
+                (
+                    "register_button_text",
+                    models.CharField(max_length=50, null=True, verbose_name="Текст кнопки регистрации"),
+                ),
+                (
+                    "register_button_href",
+                    models.CharField(max_length=50, null=True, verbose_name="Сслыка кнопки регистрации"),
+                ),
+                ("login_button_text", models.CharField(max_length=50, null=True, verbose_name="Текст кнопки входа")),
+                (
+                    "block_relation",
+                    models.ForeignKey(
+                        null=True, on_delete=django.db.models.deletion.SET_NULL, to="blocks.blockrelationship"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'навбар',
-                'verbose_name_plural': 'навбар`ы',
+                "verbose_name": "навбар",
+                "verbose_name_plural": "навбар`ы",
             },
         ),
         migrations.CreateModel(
-            name='Page',
+            name="Page",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=50, verbose_name='Заголовок')),
-                ('url', models.CharField(max_length=50)),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("title", models.CharField(max_length=50, verbose_name="Заголовок")),
+                ("url", models.CharField(max_length=50)),
             ],
             options={
-                'verbose_name': 'Страница',
-                'verbose_name_plural': 'Страницы',
-                'ordering': ['url'],
+                "verbose_name": "Страница",
+                "verbose_name_plural": "Страницы",
+                "ordering": ["url"],
             },
         ),
         migrations.CreateModel(
-            name='SocialMediaBlock',
+            name="SocialMediaBlock",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=50, unique=True, verbose_name='Имя')),
-                ('ancor', models.CharField(blank=True, max_length=50, null=True, verbose_name='Якорь')),
-                ('title', models.CharField(blank=True, max_length=100, null=True, verbose_name='Заголовок')),
-                ('text', ckeditor.fields.RichTextField(blank=True, max_length=1000, null=True, verbose_name='Вводный текст')),
-                ('block_relation', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='blocks.blockrelationship')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("name", models.CharField(max_length=50, unique=True, verbose_name="Имя")),
+                ("ancor", models.CharField(blank=True, max_length=50, null=True, verbose_name="Якорь")),
+                ("title", models.CharField(blank=True, max_length=100, null=True, verbose_name="Заголовок")),
+                (
+                    "text",
+                    ckeditor.fields.RichTextField(blank=True, max_length=1000, null=True, verbose_name="Вводный текст"),
+                ),
+                (
+                    "block_relation",
+                    models.ForeignKey(
+                        null=True, on_delete=django.db.models.deletion.SET_NULL, to="blocks.blockrelationship"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Блок подписок на соц сети',
-                'verbose_name_plural': 'Блоки подписок на соц сети',
+                "verbose_name": "Блок подписок на соц сети",
+                "verbose_name_plural": "Блоки подписок на соц сети",
             },
         ),
         migrations.CreateModel(
-            name='Template',
+            name="Template",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=50, verbose_name='Название шаблона')),
-                ('file', models.CharField(max_length=50, verbose_name='Название файла (например base.html)')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("name", models.CharField(max_length=50, verbose_name="Название шаблона")),
+                ("file", models.CharField(max_length=50, verbose_name="Название файла (например base.html)")),
             ],
             options={
-                'verbose_name': 'Html шаблон',
-                'verbose_name_plural': 'Html шаблоны',
+                "verbose_name": "Html шаблон",
+                "verbose_name_plural": "Html шаблоны",
             },
         ),
         migrations.CreateModel(
-            name='StagesBlock',
+            name="StagesBlock",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=50, unique=True, verbose_name='Имя')),
-                ('ancor', models.CharField(blank=True, max_length=50, null=True, verbose_name='Якорь')),
-                ('text', ckeditor.fields.RichTextField(max_length=1000, verbose_name='Основной текст')),
-                ('title', models.CharField(blank=True, max_length=100, null=True, verbose_name='Заголовок')),
-                ('block_relation', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='blocks.blockrelationship')),
-                ('template', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='blocks.template', verbose_name='html шаблон')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("name", models.CharField(max_length=50, unique=True, verbose_name="Имя")),
+                ("ancor", models.CharField(blank=True, max_length=50, null=True, verbose_name="Якорь")),
+                ("text", ckeditor.fields.RichTextField(max_length=1000, verbose_name="Основной текст")),
+                ("title", models.CharField(blank=True, max_length=100, null=True, verbose_name="Заголовок")),
+                (
+                    "block_relation",
+                    models.ForeignKey(
+                        null=True, on_delete=django.db.models.deletion.SET_NULL, to="blocks.blockrelationship"
+                    ),
+                ),
+                (
+                    "template",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="blocks.template", verbose_name="html шаблон"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Блок этапов',
-                'verbose_name_plural': 'Блоки этапов',
+                "verbose_name": "Блок этапов",
+                "verbose_name_plural": "Блоки этапов",
             },
         ),
         migrations.CreateModel(
-            name='Stage',
+            name="Stage",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(blank=True, max_length=100, null=True, verbose_name='Заголовок')),
-                ('text', ckeditor.fields.RichTextField(max_length=1500, verbose_name='текст этапа')),
-                ('period', models.CharField(max_length=200, verbose_name='срок этапа')),
-                ('num', models.PositiveIntegerField(verbose_name='порядок')),
-                ('block', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='stages', to='blocks.stagesblock')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("title", models.CharField(blank=True, max_length=100, null=True, verbose_name="Заголовок")),
+                ("text", ckeditor.fields.RichTextField(max_length=1500, verbose_name="текст этапа")),
+                ("period", models.CharField(max_length=200, verbose_name="срок этапа")),
+                ("num", models.PositiveIntegerField(verbose_name="порядок")),
+                (
+                    "block",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, related_name="stages", to="blocks.stagesblock"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Этап',
-                'verbose_name_plural': 'Этапы',
+                "verbose_name": "Этап",
+                "verbose_name_plural": "Этапы",
             },
         ),
         migrations.CreateModel(
-            name='SocialMediaButton',
+            name="SocialMediaButton",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('icon', models.ImageField(upload_to='images/social', verbose_name='Изображение')),
-                ('background_color', colorfield.fields.ColorField(default='#FFFFFF', image_field=None, max_length=25, samples=None, verbose_name='Цвет фона')),
-                ('ref', models.CharField(max_length=500, verbose_name='Ссылка на соц. сети')),
-                ('text', models.CharField(max_length=100, null=True, verbose_name='Текст')),
-                ('block', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='buttons', to='blocks.socialmediablock')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("icon", models.ImageField(upload_to="images/social", verbose_name="Изображение")),
+                (
+                    "background_color",
+                    colorfield.fields.ColorField(
+                        default="#FFFFFF", image_field=None, max_length=25, samples=None, verbose_name="Цвет фона"
+                    ),
+                ),
+                ("ref", models.CharField(max_length=500, verbose_name="Ссылка на соц. сети")),
+                ("text", models.CharField(max_length=100, null=True, verbose_name="Текст")),
+                (
+                    "block",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="buttons",
+                        to="blocks.socialmediablock",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Социальная сеть',
-                'verbose_name_plural': 'Социальные сети',
-            },
-        ),
-        migrations.AddField(
-            model_name='socialmediablock',
-            name='template',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='blocks.template', verbose_name='html шаблон'),
-        ),
-        migrations.CreateModel(
-            name='RegisterBlock',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=50, unique=True, verbose_name='Имя')),
-                ('ancor', models.CharField(blank=True, max_length=50, null=True, verbose_name='Якорь')),
-                ('title', models.CharField(blank=True, max_length=100, null=True, verbose_name='Заголовок')),
-                ('explanation_text', ckeditor.fields.RichTextField(blank=True, max_length=1000, null=True, verbose_name='текст пояснений')),
-                ('warning_text', models.CharField(max_length=500, verbose_name='текст предупреждения')),
-                ('block_relation', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='blocks.blockrelationship')),
-                ('template', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='blocks.template', verbose_name='html шаблон')),
-            ],
-            options={
-                'verbose_name': 'Блок регистрации',
-                'verbose_name_plural': 'Блоки регистрации',
-            },
-        ),
-        migrations.CreateModel(
-            name='QuestionsBlock',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=50, unique=True, verbose_name='Имя')),
-                ('ancor', models.CharField(blank=True, max_length=50, null=True, verbose_name='Якорь')),
-                ('block_relation', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='blocks.blockrelationship')),
-                ('template', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='blocks.template', verbose_name='html шаблон')),
-            ],
-            options={
-                'verbose_name': 'Блок с вопросами',
-                'verbose_name_plural': 'Блоки с вопросами',
-            },
-        ),
-        migrations.CreateModel(
-            name='Question',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(blank=True, max_length=100, null=True, verbose_name='Заголовок')),
-                ('text', ckeditor.fields.RichTextField(max_length=1500, verbose_name='текст вопроса')),
-                ('block', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='questions', to='blocks.questionsblock')),
-            ],
-            options={
-                'verbose_name': 'Вопрос',
-                'verbose_name_plural': 'Вопросы',
-            },
-        ),
-        migrations.CreateModel(
-            name='NavMenuItem',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('button_text', models.CharField(blank=True, max_length=20, null=True, verbose_name='Текст кнопки')),
-                ('button_ref', models.CharField(blank=True, max_length=20, null=True, verbose_name='Ссылка для кнопки')),
-                ('navbar', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='menu_items', to='blocks.navbar')),
-            ],
-            options={
-                'abstract': False,
+                "verbose_name": "Социальная сеть",
+                "verbose_name_plural": "Социальные сети",
             },
         ),
         migrations.AddField(
-            model_name='navbar',
-            name='template',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='blocks.template', verbose_name='html шаблон'),
+            model_name="socialmediablock",
+            name="template",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="blocks.template", verbose_name="html шаблон"
+            ),
         ),
         migrations.CreateModel(
-            name='FeaturesBlock',
+            name="RegisterBlock",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=50, unique=True, verbose_name='Имя')),
-                ('ancor', models.CharField(blank=True, max_length=50, null=True, verbose_name='Якорь')),
-                ('title', models.CharField(blank=True, max_length=100, null=True, verbose_name='Заголовок')),
-                ('button_text', models.CharField(blank=True, max_length=20, null=True, verbose_name='Текст кнопки')),
-                ('button_ref', models.CharField(blank=True, max_length=20, null=True, verbose_name='Ссылка для кнопки')),
-                ('introductory_text', ckeditor.fields.RichTextField(max_length=300, verbose_name='Вводный текст')),
-                ('block_relation', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='blocks.blockrelationship')),
-                ('template', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='blocks.template', verbose_name='html шаблон')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("name", models.CharField(max_length=50, unique=True, verbose_name="Имя")),
+                ("ancor", models.CharField(blank=True, max_length=50, null=True, verbose_name="Якорь")),
+                ("title", models.CharField(blank=True, max_length=100, null=True, verbose_name="Заголовок")),
+                (
+                    "explanation_text",
+                    ckeditor.fields.RichTextField(
+                        blank=True, max_length=1000, null=True, verbose_name="текст пояснений"
+                    ),
+                ),
+                ("warning_text", models.CharField(max_length=500, verbose_name="текст предупреждения")),
+                (
+                    "block_relation",
+                    models.ForeignKey(
+                        null=True, on_delete=django.db.models.deletion.SET_NULL, to="blocks.blockrelationship"
+                    ),
+                ),
+                (
+                    "template",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="blocks.template", verbose_name="html шаблон"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Блок с фичами',
-                'verbose_name_plural': 'Блоки с фичами',
+                "verbose_name": "Блок регистрации",
+                "verbose_name_plural": "Блоки регистрации",
             },
         ),
         migrations.CreateModel(
-            name='Feature',
+            name="QuestionsBlock",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(blank=True, max_length=100, null=True, verbose_name='Заголовок')),
-                ('icon', models.ImageField(upload_to='images/features', verbose_name='Иконка')),
-                ('description', models.TextField(verbose_name='Пояснение')),
-                ('block', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='features', to='blocks.featuresblock', verbose_name='Блок')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("name", models.CharField(max_length=50, unique=True, verbose_name="Имя")),
+                ("ancor", models.CharField(blank=True, max_length=50, null=True, verbose_name="Якорь")),
+                (
+                    "block_relation",
+                    models.ForeignKey(
+                        null=True, on_delete=django.db.models.deletion.SET_NULL, to="blocks.blockrelationship"
+                    ),
+                ),
+                (
+                    "template",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="blocks.template", verbose_name="html шаблон"
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "verbose_name": "Блок с вопросами",
+                "verbose_name_plural": "Блоки с вопросами",
             },
         ),
         migrations.CreateModel(
-            name='Cover',
+            name="Question",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=50, unique=True, verbose_name='Имя')),
-                ('ancor', models.CharField(blank=True, max_length=50, null=True, verbose_name='Якорь')),
-                ('text', ckeditor.fields.RichTextField(max_length=1000, verbose_name='Основной текст')),
-                ('title', models.CharField(blank=True, max_length=100, null=True, verbose_name='Заголовок')),
-                ('button_text', models.CharField(blank=True, max_length=20, null=True, verbose_name='Текст кнопки')),
-                ('button_ref', models.CharField(blank=True, max_length=20, null=True, verbose_name='Ссылка для кнопки')),
-                ('image_desctop', models.ImageField(upload_to='images/covers/', verbose_name='Картинка(десктоп)')),
-                ('image_mobile', models.ImageField(upload_to='images/covers/', verbose_name='Картинка(смартфон)')),
-                ('second_button_text', models.CharField(max_length=20, verbose_name='Текст второй кнопки')),
-                ('second_button_ref', models.CharField(max_length=20, verbose_name='Ссылка для второй кнопки')),
-                ('block_relation', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='blocks.blockrelationship')),
-                ('template', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='blocks.template', verbose_name='html шаблон')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("title", models.CharField(blank=True, max_length=100, null=True, verbose_name="Заголовок")),
+                ("text", ckeditor.fields.RichTextField(max_length=1500, verbose_name="текст вопроса")),
+                (
+                    "block",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="questions",
+                        to="blocks.questionsblock",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Обложка',
-                'verbose_name_plural': 'Обложки',
+                "verbose_name": "Вопрос",
+                "verbose_name_plural": "Вопросы",
             },
         ),
         migrations.CreateModel(
-            name='ContentBlock',
+            name="NavMenuItem",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=50, unique=True, verbose_name='Имя')),
-                ('ancor', models.CharField(blank=True, max_length=50, null=True, verbose_name='Якорь')),
-                ('text', ckeditor.fields.RichTextField(max_length=1000, verbose_name='Основной текст')),
-                ('title', models.CharField(blank=True, max_length=100, null=True, verbose_name='Заголовок')),
-                ('button_text', models.CharField(blank=True, max_length=20, null=True, verbose_name='Текст кнопки')),
-                ('button_ref', models.CharField(blank=True, max_length=20, null=True, verbose_name='Ссылка для кнопки')),
-                ('image1', models.ImageField(blank=True, null=True, upload_to='images/content/', verbose_name='Первое изображение')),
-                ('image2', models.ImageField(blank=True, null=True, upload_to='images/content/', verbose_name='Второе изображение')),
-                ('block_relation', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='blocks.blockrelationship')),
-                ('template', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='blocks.template', verbose_name='html шаблон')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("button_text", models.CharField(blank=True, max_length=20, null=True, verbose_name="Текст кнопки")),
+                (
+                    "button_ref",
+                    models.CharField(blank=True, max_length=20, null=True, verbose_name="Ссылка для кнопки"),
+                ),
+                (
+                    "navbar",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="menu_items",
+                        to="blocks.navbar",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Контентный блок',
-                'verbose_name_plural': 'Контентные блоки',
+                "abstract": False,
+            },
+        ),
+        migrations.AddField(
+            model_name="navbar",
+            name="template",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="blocks.template", verbose_name="html шаблон"
+            ),
+        ),
+        migrations.CreateModel(
+            name="FeaturesBlock",
+            fields=[
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("name", models.CharField(max_length=50, unique=True, verbose_name="Имя")),
+                ("ancor", models.CharField(blank=True, max_length=50, null=True, verbose_name="Якорь")),
+                ("title", models.CharField(blank=True, max_length=100, null=True, verbose_name="Заголовок")),
+                ("button_text", models.CharField(blank=True, max_length=20, null=True, verbose_name="Текст кнопки")),
+                (
+                    "button_ref",
+                    models.CharField(blank=True, max_length=20, null=True, verbose_name="Ссылка для кнопки"),
+                ),
+                ("introductory_text", ckeditor.fields.RichTextField(max_length=300, verbose_name="Вводный текст")),
+                (
+                    "block_relation",
+                    models.ForeignKey(
+                        null=True, on_delete=django.db.models.deletion.SET_NULL, to="blocks.blockrelationship"
+                    ),
+                ),
+                (
+                    "template",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="blocks.template", verbose_name="html шаблон"
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Блок с фичами",
+                "verbose_name_plural": "Блоки с фичами",
             },
         ),
         migrations.CreateModel(
-            name='Block',
+            name="Feature",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('my_order', models.PositiveIntegerField(default=0)),
-                ('name', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='page_block', to='blocks.blockrelationship', verbose_name='Блок')),
-                ('page', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='blocks', to='blocks.page', verbose_name='Страница')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("title", models.CharField(blank=True, max_length=100, null=True, verbose_name="Заголовок")),
+                ("icon", models.ImageField(upload_to="images/features", verbose_name="Иконка")),
+                ("description", models.TextField(verbose_name="Пояснение")),
+                (
+                    "block",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="features",
+                        to="blocks.featuresblock",
+                        verbose_name="Блок",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Блок',
-                'verbose_name_plural': 'Блоки',
-                'ordering': ['my_order'],
+                "abstract": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="Cover",
+            fields=[
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("name", models.CharField(max_length=50, unique=True, verbose_name="Имя")),
+                ("ancor", models.CharField(blank=True, max_length=50, null=True, verbose_name="Якорь")),
+                ("text", ckeditor.fields.RichTextField(max_length=1000, verbose_name="Основной текст")),
+                ("title", models.CharField(blank=True, max_length=100, null=True, verbose_name="Заголовок")),
+                ("button_text", models.CharField(blank=True, max_length=20, null=True, verbose_name="Текст кнопки")),
+                (
+                    "button_ref",
+                    models.CharField(blank=True, max_length=20, null=True, verbose_name="Ссылка для кнопки"),
+                ),
+                ("image_desctop", models.ImageField(upload_to="images/covers/", verbose_name="Картинка(десктоп)")),
+                ("image_mobile", models.ImageField(upload_to="images/covers/", verbose_name="Картинка(смартфон)")),
+                ("second_button_text", models.CharField(max_length=20, verbose_name="Текст второй кнопки")),
+                ("second_button_ref", models.CharField(max_length=20, verbose_name="Ссылка для второй кнопки")),
+                (
+                    "block_relation",
+                    models.ForeignKey(
+                        null=True, on_delete=django.db.models.deletion.SET_NULL, to="blocks.blockrelationship"
+                    ),
+                ),
+                (
+                    "template",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="blocks.template", verbose_name="html шаблон"
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Обложка",
+                "verbose_name_plural": "Обложки",
+            },
+        ),
+        migrations.CreateModel(
+            name="ContentBlock",
+            fields=[
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("name", models.CharField(max_length=50, unique=True, verbose_name="Имя")),
+                ("ancor", models.CharField(blank=True, max_length=50, null=True, verbose_name="Якорь")),
+                ("text", ckeditor.fields.RichTextField(max_length=1000, verbose_name="Основной текст")),
+                ("title", models.CharField(blank=True, max_length=100, null=True, verbose_name="Заголовок")),
+                ("button_text", models.CharField(blank=True, max_length=20, null=True, verbose_name="Текст кнопки")),
+                (
+                    "button_ref",
+                    models.CharField(blank=True, max_length=20, null=True, verbose_name="Ссылка для кнопки"),
+                ),
+                (
+                    "image1",
+                    models.ImageField(
+                        blank=True, null=True, upload_to="images/content/", verbose_name="Первое изображение"
+                    ),
+                ),
+                (
+                    "image2",
+                    models.ImageField(
+                        blank=True, null=True, upload_to="images/content/", verbose_name="Второе изображение"
+                    ),
+                ),
+                (
+                    "block_relation",
+                    models.ForeignKey(
+                        null=True, on_delete=django.db.models.deletion.SET_NULL, to="blocks.blockrelationship"
+                    ),
+                ),
+                (
+                    "template",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="blocks.template", verbose_name="html шаблон"
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Контентный блок",
+                "verbose_name_plural": "Контентные блоки",
+            },
+        ),
+        migrations.CreateModel(
+            name="Block",
+            fields=[
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("my_order", models.PositiveIntegerField(default=0)),
+                (
+                    "name",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="page_block",
+                        to="blocks.blockrelationship",
+                        verbose_name="Блок",
+                    ),
+                ),
+                (
+                    "page",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="blocks",
+                        to="blocks.page",
+                        verbose_name="Страница",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Блок",
+                "verbose_name_plural": "Блоки",
+                "ordering": ["my_order"],
             },
         ),
     ]

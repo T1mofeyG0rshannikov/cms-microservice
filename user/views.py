@@ -11,9 +11,10 @@ from django.views.generic import View
 
 from common.views import BaseTemplateView
 from user.auth.jwt_processor import JwtProcessor, get_jwt_processor
-from user.forms import LoginForm, RegistrationForm
+from user.forms import LoginForm, RegistrationForm, SetPasswordForm
 from user.models import User
-from utils.errors import UserErrors
+from user.serializers import UserSerializer
+from utils.errors import Errors, UserErrors
 from utils.format_phone import get_raw_phone
 from utils.validators import is_valid_phone
 
@@ -36,8 +37,6 @@ class RegisterUser(BaseTemplateView):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             phone = form.cleaned_data.get("phone")
-            phone = get_raw_phone(phone)
-
             email = form.cleaned_data.get("email")
 
             user_with_phone = User.objects.filter(phone=phone).first()
@@ -73,21 +72,29 @@ class SetPassword(View):
         self.jwt_processor = get_jwt_processor()
 
     def get(self, request, token):
-        return render(request, "user/set-password.html", {"token": token})
+        form = SetPasswordForm()
+        return render(request, "user/set-password.html", {"form": form, "token": token})
 
     def post(self, request, token):
-        data = json.loads(request.body)
+        form = SetPasswordForm(request.POST)
+        if form.is_valid():
+            payload = self.jwt_processor.validate_token(token)
+            print(payload)
 
-        payload = self.jwt_processor.validate_token(token)
+            if not payload:
+                return JsonResponse({"message": Errors.expired_set_password_token.value}, status=404)
 
-        if not payload:
-            return JsonResponse({"message": "срок действия токена для ввода пароля истёк"}, status=404)
+            password = form.cleaned_data.get("password")
 
-        password = data.get("password")
+            User.objects.filter(id=payload["id"]).update(password=password)
 
-        User.objects.filter(id=payload["id"]).update(password=password)
+            user = User.objects.get(id=payload["id"])
 
-        return HttpResponse(status=200)
+            access_token = self.jwt_processor.create_access_token(user.username, user.id)
+
+            return render(request, "user/set-password.html", {"access_token": access_token})
+
+        return render(request, "user/set-password.html", {"form": form, "token": token})
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -129,8 +136,28 @@ class Login(BaseTemplateView):
                 return render(request, "user/login.html", {"form": form})
 
             access_token = self.jwt_processor.create_access_token(user.username, user.id)
-            print(access_token)
 
-            return render(request, "user/login.html", {"form": form, "acess_token": access_token})
+            return render(request, "user/login.html", {"acess_token": access_token})
 
         return render(request, "user/login.html", {"form": form})
+
+
+class Profile(BaseTemplateView):
+    template_name = "user/profile.html"
+
+
+class GetUserInfo(View):
+    def __init__(self):
+        self.jwt_processor: JwtProcessor = get_jwt_processor()
+
+    def get(self, request):
+        token = request.headers.get("Authorization")
+        payload = self.jwt_processor.validate_token(token)
+
+        user = None
+
+        if payload:
+            user = User.objects.get(id=payload["id"])
+            user = UserSerializer(user).data
+
+        return JsonResponse(user)

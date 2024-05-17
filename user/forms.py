@@ -2,6 +2,7 @@ from django import forms
 from django.core import validators
 
 from utils.errors import UserErrors
+from utils.format_phone import get_raw_phone
 from utils.validators import is_valid_phone
 
 
@@ -12,6 +13,7 @@ class RegistrationForm(forms.Form):
 
     def clean_phone(self):
         phone = self.cleaned_data["phone"]
+        phone = get_raw_phone(phone)
 
         if not is_valid_phone(phone):
             self.add_error("phone", UserErrors.incorrect_phone.value)
@@ -33,3 +35,10 @@ class LoginForm(forms.Form):
             self.add_error("phone_or_email", UserErrors.incorrect_login.value)
 
         return phone_or_email
+
+
+class SetPasswordForm(forms.Form):
+    password = forms.CharField(max_length=100, widget=forms.PasswordInput(attrs={"placeholder": "Пароль"}))
+    repeat_password = forms.CharField(
+        max_length=100, widget=forms.PasswordInput(attrs={"placeholder": "Повтор пароля"})
+    )

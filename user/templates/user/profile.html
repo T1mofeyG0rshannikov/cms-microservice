@@ -1,0 +1,35 @@
+{% extends "user/base-profile.html" %}
+{% load static %}
+
+
+{% block profile-content %}
+
+<main>
+    <div class="user-info">
+        <p>username</p>
+        <a id="username"></a>
+        <p>email</p>
+        <p>phone</p>
+    </div>
+</main>
+
+<script src="{% static "user/js/token.js" %}"></script>
+
+
+<script>
+    const token = getToken();
+
+    fetch("/user/get-user-info", {
+        method: "get",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': `${token}`
+        }
+    }).then(response => response.json()).
+    then(user => {
+        document.querySelector("#username").innerHTML = user.username
+    })
+</script>
+
+{% endblock %}
