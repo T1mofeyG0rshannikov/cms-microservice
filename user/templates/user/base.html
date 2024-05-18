@@ -1,0 +1,22 @@
+{% extends "common/base.html" %}
+{% load static %}
+
+{% block additional_styles %}
+    <link rel="stylesheet" href="{% static 'user/css/main.css' %}">
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static "user/js/validators/password_validator.js" %}"></script>
+<script src="{% static "user/js/validators/email_validator.js" %}"></script>
+<script src="{% static "user/js/validators/username_validator.js" %}"></script>
+<script src="{% static "user/js/validators/phone_validator.js" %}"></script>
+<script src="{% static "user/js/login_form.js" %}"></script>
+<script src="{% static "user/js/token.js" %}"></script>
+<script>
+    const token = "{{acess_token}}";
+    if (token !== ""){
+        setToken(token);
+        window.location.replace("/user/profile")
+    }
+</script>
+{% endblock %}

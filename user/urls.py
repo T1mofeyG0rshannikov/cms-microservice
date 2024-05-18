@@ -1,6 +1,13 @@
 from django.urls import path
 
-from user.views import GetUserInfo, Login, Profile, RegisterUser, SetPassword
+from user.views.views import (
+    ConfirmEmail,
+    GetUserInfo,
+    Login,
+    Profile,
+    RegisterUser,
+    SetPassword,
+)
 
 urlpatterns = [
     path("register", RegisterUser.as_view()),
@@ -8,4 +15,5 @@ urlpatterns = [
     path("login", Login.as_view()),
     path("profile", Profile.as_view()),
     path("get-user-info", GetUserInfo.as_view()),
+    path("confirm-email/<str:token>", ConfirmEmail.as_view()),
 ]

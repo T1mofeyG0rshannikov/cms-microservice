@@ -125,6 +125,21 @@ STATICFILES_DIR = os.path.join(BASE_DIR, "static")
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "static")
 
+HOST = "http://127.0.0.1:8000"
 # AUTH_USER_MODEL = "user.User"
 
 # SECURE_CROSS_ORIGIN_OPENER_POLICY=None
+
+# email settings
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = "sodastockonlinestore@gmail.com"
+EMAIL_HOST_PASSWORD = str(os.getenv("EMAIL_HOST_PASSWORD"))
+
+SERVER_EMAIL = EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587

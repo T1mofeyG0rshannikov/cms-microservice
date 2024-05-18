@@ -24,8 +24,10 @@ function validateForm(){
 edited = false;
 
 const input1 = document.querySelector("input[name=password]")
-input1.addEventListener("change", () => validateForm())
+input1.addEventListener("change", validateForm)
 
 const input2 = document.querySelector("input[name=repeat_password]")
-input2.addEventListener("change", () => validateForm())
-input2.addEventListener("change", () => edited = true)
+input2.addEventListener("change", () => {
+    validateForm();
+    edited = true;
+})

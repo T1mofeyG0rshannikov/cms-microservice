@@ -1,31 +1,24 @@
-import json
-
-from django.conf import settings
-from django.contrib.auth import authenticate, login, logout
-from django.core.mail import send_mail
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import View
 
 from common.views import BaseTemplateView
-from user.auth.jwt_processor import JwtProcessor, get_jwt_processor
+from user.email_service.email_service import get_email_service
 from user.forms import LoginForm, RegistrationForm, SetPasswordForm
-from user.models import User
 from user.serializers import UserSerializer
+from user.views.base_user_view import BaseUserView
 from utils.errors import Errors, UserErrors
-from utils.format_phone import get_raw_phone
 from utils.validators import is_valid_phone
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class RegisterUser(BaseTemplateView):
+class RegisterUser(BaseUserView):
     template_name = "user/register.html"
 
     def __init__(self):
         super().__init__()
-        self.jwt_processor: JwtProcessor = get_jwt_processor()
+        self.email_service = get_email_service()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -39,25 +32,21 @@ class RegisterUser(BaseTemplateView):
             phone = form.cleaned_data.get("phone")
             email = form.cleaned_data.get("email")
 
-            user_with_phone = User.objects.filter(phone=phone).first()
-            user_with_email = User.objects.filter(email=email).filter(email_is_confirmed=True).first()
+            user_with_phone = self.user_manager.get_user_by_phone(phone)
+            user_with_email = self.user_manager.get_user_by_email(email)
 
-            if user_with_email is not None:
+            if user_with_email is not None and user_with_email.email_is_confirmed:
                 form.add_error("email", UserErrors.username_with_email_alredy_exists.value)
 
                 return render(request, "user/register.html", {"form": form})
 
-            if user_with_phone is not None:
-                if user_with_phone.email_is_confirmed:
-                    form.add_error("phone", UserErrors.username_with_phone_alredy_exists)
+            elif user_with_phone is not None:
+                form.add_error("phone", UserErrors.username_with_phone_alredy_exists.value)
 
-                    return render(request, "user/register.html", {"form": form})
+                return render(request, "user/register.html", {"form": form})
 
-            user = User.objects.create(
-                username=form.cleaned_data.get("username"),
-                email=form.cleaned_data.get("email"),
-                phone=form.cleaned_data.get("phone"),
-            )
+            user = self.user_manager.create_user(form.cleaned_data)
+            self.email_service.send_main_to_confirm_email(user)
 
             token_to_set_password = self.jwt_processor.create_set_password_token(user.id)
 
@@ -67,10 +56,7 @@ class RegisterUser(BaseTemplateView):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class SetPassword(View):
-    def __init__(self):
-        self.jwt_processor = get_jwt_processor()
-
+class SetPassword(BaseUserView):
     def get(self, request, token):
         form = SetPasswordForm()
         return render(request, "user/set-password.html", {"form": form, "token": token})
@@ -79,16 +65,15 @@ class SetPassword(View):
         form = SetPasswordForm(request.POST)
         if form.is_valid():
             payload = self.jwt_processor.validate_token(token)
-            print(payload)
 
             if not payload:
                 return JsonResponse({"message": Errors.expired_set_password_token.value}, status=404)
 
             password = form.cleaned_data.get("password")
 
-            User.objects.filter(id=payload["id"]).update(password=password)
-
-            user = User.objects.get(id=payload["id"])
+            user = self.user_manager.get_user_by_id(payload["id"])
+            user.set_password(password)
+            user.save()
 
             access_token = self.jwt_processor.create_access_token(user.username, user.id)
 
@@ -98,12 +83,8 @@ class SetPassword(View):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class Login(BaseTemplateView):
+class Login(BaseUserView):
     template_name = "user/login.html"
-
-    def __init__(self):
-        super().__init__()
-        self.jwt_processor: JwtProcessor = get_jwt_processor()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -118,20 +99,19 @@ class Login(BaseTemplateView):
             password = form.cleaned_data.get("password")
 
             if is_valid_phone(phone_or_email):
-                try:
-                    user = User.objects.get(phone=phone_or_email)
-                except User.DoesNotExist:
+                user = self.user_manager.get_user_by_phone(phone_or_email)
+                if user is None:
                     form.add_error("phone_or_email", UserErrors.user_by_phone_not_found.value)
+
                     return render(request, "user/login.html", {"form": form})
 
             else:
-                try:
-                    user = User.objects.get(email=phone_or_email)
-                except User.DoesNotExist:
+                user = self.user_manager.get_user_by_email(phone_or_email)
+                if user is None:
                     form.add_error("phone_or_email", UserErrors.user_by_email_not_found.value)
                     return render(request, "user/login.html", {"form": form})
 
-            if user.password != password:
+            if not user.verify_password(password):
                 form.add_error("password", UserErrors.incorrect_password.value)
                 return render(request, "user/login.html", {"form": form})
 
@@ -146,10 +126,7 @@ class Profile(BaseTemplateView):
     template_name = "user/profile.html"
 
 
-class GetUserInfo(View):
-    def __init__(self):
-        self.jwt_processor: JwtProcessor = get_jwt_processor()
-
+class GetUserInfo(BaseUserView):
     def get(self, request):
         token = request.headers.get("Authorization")
         payload = self.jwt_processor.validate_token(token)
@@ -157,7 +134,24 @@ class GetUserInfo(View):
         user = None
 
         if payload:
-            user = User.objects.get(id=payload["id"])
+            user = self.user_manager.get_user_by_id(payload["id"])
             user = UserSerializer(user).data
 
         return JsonResponse(user)
+
+
+class ConfirmEmail(BaseUserView):
+    def get(self, request, token):
+        payload = self.jwt_processor.validate_token(token)
+
+        if not payload:
+            return render(
+                request,
+                "user/confirm_email.html",
+                {"message", "Ссылка больше неактивна :/ \n попробуйте получить письмо ещё раз"},
+            )
+
+        user = self.user_manager.get_user_by_id(payload["user_id"])
+        user.confirm_email()
+
+        return render(request, "user/confirm_email.html", {"message": "Почта подтверждена!"})
