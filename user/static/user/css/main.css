@@ -17,7 +17,6 @@
 .user-form input{
     padding: 10px;
     border: 1px solid var(--dark-color);
-    margin: 7px 0px;
     border-radius: 5px;
     width: 100%;
 }
@@ -34,11 +33,31 @@
     cursor: not-allowed;
 }
 
+.user-form .field{
+    margin: 7px 0px;
+    position: relative;
+}
+
+.user-form input:-webkit-autofill,
+.user-form input:-webkit-autofill:hover,
+.user-form input:-webkit-autofill:focus,
+.user-form input:-webkit-autofill:active{
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+}
+
 .user-form input::-webkit-input-placeholder{
     color: var(--dark-color);
     font-family: var(--main-text-font-family);
     font-size: var(--main-text-font-size);
     font-weight: var(--main-text-font-weight);
+}
+
+.user-form .field .eye{
+    height: 20px;
+    position: absolute;
+    top: 10px;
+    right: 7px;
+    cursor: pointer;
 }
 
 .agreed-container{
@@ -158,4 +177,28 @@
 .user-form .bottom-menu .forget-password{
     color: rgb(103, 167, 180);
     font-size: 14px;
+}
+
+.user-form input[type=password]:focus {
+    background-image:none!important;
+}
+.user-form input[type=password]::before {
+    content: ""!important;
+    background-image:none!important;
+}
+
+.user-form input[type=password]::after {
+    content: ""!important;
+    background-image:none!important;
+}
+
+.user-form input[type=password]::-ms-reveal,
+.user-form input[type=password]::-ms-clear
+{
+    display: none;
+}
+
+.user-form input[type=password]{
+    background-image: url("")!important;
+    background: url("")!important;
 }

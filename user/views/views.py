@@ -1,5 +1,7 @@
+import json
+
 from django.http import JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
@@ -27,7 +29,7 @@ class RegisterUser(BaseUserView):
         return context
 
     def post(self, request):
-        form = RegistrationForm(request.POST)
+        form = RegistrationForm(json.loads(request.body))
         if form.is_valid():
             phone = form.cleaned_data.get("phone")
             email = form.cleaned_data.get("email")
@@ -38,21 +40,21 @@ class RegisterUser(BaseUserView):
             if user_with_email is not None and user_with_email.email_is_confirmed:
                 form.add_error("email", UserErrors.username_with_email_alredy_exists.value)
 
-                return render(request, "user/register.html", {"form": form})
+                return JsonResponse({"errors": form.errors}, status=400)
 
             elif user_with_phone is not None:
                 form.add_error("phone", UserErrors.username_with_phone_alredy_exists.value)
 
-                return render(request, "user/register.html", {"form": form})
+                return JsonResponse({"errors": form.errors}, status=400)
 
             user = self.user_manager.create_user(form.cleaned_data)
             self.email_service.send_main_to_confirm_email(user)
 
             token_to_set_password = self.jwt_processor.create_set_password_token(user.id)
 
-            return redirect(f"/user/password/{token_to_set_password}")
+            return JsonResponse({"token_to_set_password": token_to_set_password})
 
-        return render(request, "user/register.html", {"form": form})
+        return JsonResponse({"errors": form.errors}, status=400)
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -93,7 +95,7 @@ class Login(BaseUserView):
         return context
 
     def post(self, request):
-        form = LoginForm(request.POST)
+        form = LoginForm(json.loads(request.body))
         if form.is_valid():
             phone_or_email = form.cleaned_data.get("phone_or_email")
             password = form.cleaned_data.get("password")
@@ -103,23 +105,25 @@ class Login(BaseUserView):
                 if user is None:
                     form.add_error("phone_or_email", UserErrors.user_by_phone_not_found.value)
 
-                    return render(request, "user/login.html", {"form": form})
+                    return JsonResponse({"errors": form.errors}, status=400)
 
             else:
                 user = self.user_manager.get_user_by_email(phone_or_email)
                 if user is None:
                     form.add_error("phone_or_email", UserErrors.user_by_email_not_found.value)
-                    return render(request, "user/login.html", {"form": form})
+
+                    return JsonResponse({"errors": form.errors}, status=400)
 
             if not user.verify_password(password):
                 form.add_error("password", UserErrors.incorrect_password.value)
-                return render(request, "user/login.html", {"form": form})
+
+                return JsonResponse({"errors": form.errors}, status=400)
 
             access_token = self.jwt_processor.create_access_token(user.username, user.id)
 
-            return render(request, "user/login.html", {"acess_token": access_token})
+            return JsonResponse({"acess_token": access_token})
 
-        return render(request, "user/login.html", {"form": form})
+        return JsonResponse({"errors": form.errors}, status=400)
 
 
 class Profile(BaseTemplateView):
@@ -130,7 +134,7 @@ class GetUserInfo(BaseUserView):
     def get(self, request):
         token = request.headers.get("Authorization")
         payload = self.jwt_processor.validate_token(token)
-
+        print(payload)
         user = None
 
         if payload:

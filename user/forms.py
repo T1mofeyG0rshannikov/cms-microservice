@@ -23,7 +23,9 @@ class RegistrationForm(forms.Form):
 
 class LoginForm(forms.Form):
     phone_or_email = forms.CharField(max_length=100, widget=forms.TextInput(attrs={"placeholder": "Email или телефон"}))
-    password = forms.CharField(max_length=18, widget=forms.PasswordInput(attrs={"placeholder": "Пароль"}))
+    password = forms.CharField(
+        max_length=18, widget=forms.PasswordInput(attrs={"placeholder": "Пароль", "autocomplete": "off"})
+    )
 
     def clean_phone_or_email(self):
         phone_or_email = self.cleaned_data["phone_or_email"]

@@ -1,4 +1,4 @@
-{% extends "common/base.html" %}
+{% extends "user/base.html" %}
 {% load static %}
 
 
@@ -13,7 +13,7 @@
 
 {% block content %}
 
-<form action="/user/register" method="post" class="user-form">
+<form onsubmit="getForm(event)" method="post" class="user-form">
     <img class="logo" src="{{ settings.form_logo.image }}" />
 
     <h3>Регистрация</h3>
@@ -44,11 +44,49 @@
         height: {{settings.form_logo.height}};
     }
 </style>
+{% endblock %}
 
-
-<script src="{% static "user/js/validators/email_validator.js" %}"></script>
-<script src="{% static "user/js/validators/username_validator.js" %}"></script>
-<script src="{% static "user/js/validators/phone_validator.js" %}"></script>
+{% block additional_scripts %}
 <script src="{% static "user/js/register_form.js" %}"></script>
 
+<script>
+    function getForm(event){
+        event.preventDefault();
+        const form = document.querySelector(".user-form")
+        const data = new FormData(form);
+
+        fetch("/user/register", {
+            method: "post",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: JSON.stringify({
+                "csrfmiddlewaretoken": data.get("csrfmiddlewaretoken"),
+                "phone": data.get("phone"),
+                "email": data.get("email"),
+                "username": data.get("username")
+            })
+        }).then(response => {
+            if (response.status === 200){
+                response.json().then((response) => {
+                    const token_to_set_password = response.token_to_set_password;
+                    console.log(token_to_set_password);
+                    window.location.replace(`/user/password/${token_to_set_password}`)
+                })
+            }
+            return response.json();
+        }).then(response => {
+            const errors = response.errors;
+            setError("username", "")
+            setError("email", "")
+            setError("phone", "")
+            console.log(errors);
+            for (let field of Object.keys(errors)) {
+                console.log(field, errors[field]);
+                setError(field, errors[field][0]);
+            }
+        })
+    }
+</script>
 {% endblock %}
