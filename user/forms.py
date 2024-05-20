@@ -44,3 +44,7 @@ class SetPasswordForm(forms.Form):
     repeat_password = forms.CharField(
         max_length=100, widget=forms.PasswordInput(attrs={"placeholder": "Повтор пароля"})
     )
+
+
+class ResetPasswordForm(forms.Form):
+    email = forms.EmailField(max_length=200, widget=forms.TextInput(attrs={"placeholder": "Email"}))

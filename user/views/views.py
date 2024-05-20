@@ -7,10 +7,11 @@ from django.views.decorators.csrf import csrf_exempt
 
 from common.views import BaseTemplateView
 from user.email_service.email_service import get_email_service
-from user.forms import LoginForm, RegistrationForm, SetPasswordForm
+from user.forms import LoginForm, RegistrationForm, ResetPasswordForm, SetPasswordForm
 from user.serializers import UserSerializer
 from user.views.base_user_view import BaseUserView
 from utils.errors import Errors, UserErrors
+from utils.success_messages import Messages
 from utils.validators import is_valid_phone
 
 
@@ -20,7 +21,7 @@ class RegisterUser(BaseUserView):
 
     def __init__(self):
         super().__init__()
-        self.email_service = get_email_service()
+        self.email_service = get_email_service(self.jwt_processor)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -134,7 +135,6 @@ class GetUserInfo(BaseUserView):
     def get(self, request):
         token = request.headers.get("Authorization")
         payload = self.jwt_processor.validate_token(token)
-        print(payload)
         user = None
 
         if payload:
@@ -159,3 +159,34 @@ class ConfirmEmail(BaseUserView):
         user.confirm_email()
 
         return render(request, "user/confirm_email.html", {"message": "Почта подтверждена!"})
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class SendMailToResetPassword(BaseUserView):
+    template_name = "user/reset-password.html"
+
+    def __init__(self):
+        super().__init__()
+        self.email_service = get_email_service(self.jwt_processor)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = ResetPasswordForm()
+
+        return context
+
+    def post(self, request):
+        form = ResetPasswordForm(json.loads(request.body))
+        if form.is_valid():
+            email = form.cleaned_data.get("email")
+
+            user = self.user_manager.get_user_by_email(email)
+            if user is None:
+                form.add_error("email", UserErrors.user_by_email_not_found.value)
+                return JsonResponse({"errors": form.errors})
+
+            self.email_service.send_mail_to_reset_password(user)
+
+            return JsonResponse({"message": Messages.sent_message_to_reset_password.value})
+
+        return JsonResponse({"errors": form.errors}, status=400)

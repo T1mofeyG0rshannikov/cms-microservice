@@ -177,6 +177,7 @@
 .user-form .bottom-menu .forget-password{
     color: rgb(103, 167, 180);
     font-size: 14px;
+    text-decoration: none;
 }
 
 .user-form input[type=password]:focus {

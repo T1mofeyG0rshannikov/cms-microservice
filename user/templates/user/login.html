@@ -36,7 +36,7 @@
             <span class="checkmark"></span>
         </label>
 
-        <a class="forget-password">Забыли пароль?</a>
+        <a href="/user/reset-password" class="forget-password">Забыли пароль?</a>
     </div>
 
     <p class="already-register">Ещё не зарегистрированы?</p>
@@ -53,6 +53,12 @@
 
 
 {% block additional_scripts %}
+<script>
+    function sendMainToResetPassword(){
+        fetch("/user/mail-to-reset-password/${user}", )
+    }
+</script>
+
 <script>
     function getForm(event){
         event.preventDefault();
