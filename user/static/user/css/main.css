@@ -53,10 +53,9 @@
 }
 
 .user-form .field .eye{
-    height: 20px;
     position: absolute;
-    top: 10px;
     right: 7px;
+    width: 40px;
     cursor: pointer;
 }
 
@@ -202,4 +201,9 @@
 .user-form input[type=password]{
     background-image: url("")!important;
     background: url("")!important;
+}
+
+.user-form .field-container{
+    display: flex;
+    align-items: center;
 }

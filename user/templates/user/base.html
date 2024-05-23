@@ -6,12 +6,12 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static "user/js/set_error.js" %}"></script>
 <script src="{% static "user/js/validators/password_validator.js" %}"></script>
+<script src="{% static "user/js/password_field.js" %}"></script>
+<script src="{% static "user/js/set_error.js" %}"></script>
 <script src="{% static "user/js/validators/email_validator.js" %}"></script>
 <script src="{% static "user/js/validators/username_validator.js" %}"></script>
 <script src="{% static "user/js/validators/phone_validator.js" %}"></script>
-<script src="{% static "user/js/login_form.js" %}"></script>
 <script src="{% static "user/js/token.js" %}"></script>
 <script>
     const token = "{{acess_token}}";

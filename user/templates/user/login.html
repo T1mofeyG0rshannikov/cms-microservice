@@ -17,15 +17,17 @@
     {% csrf_token %}
     {% for field in form %}
         <div class="field" id="{{ field.name }}">
-            {{ field }}
+            <div class="field-container">
+                {{ field }}
 
-            <!--{% if field.field.widget.input_type == "password" %}
-                <img class="eye" src="{% static "user/images/eye.png" %}"/>
-            {% endif %} -->
+                {% if field.name == "password" %}
+                    <img class="eye" src="{% static 'user/images/eye-cross.png' %}" />
+                {% endif %}
 
-            {% for error in field.errors %}
-                <div class="error">{{ error }}</div>
-            {% endfor %}
+                {% for error in field.errors %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
         </div>
     {% endfor %}
     <input type="submit" disabled value="Войти в кабинет" />
@@ -53,11 +55,7 @@
 
 
 {% block additional_scripts %}
-<script>
-    function sendMainToResetPassword(){
-        fetch("/user/mail-to-reset-password/${user}", )
-    }
-</script>
+<script src="{% static "user/js/login_form.js" %}"></script>
 
 <script>
     function getForm(event){

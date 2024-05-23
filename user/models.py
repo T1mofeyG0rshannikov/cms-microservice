@@ -7,7 +7,7 @@ class User(AbstractBaseUser):
     username = models.CharField(verbose_name="Имя пользователя", max_length=100)
     phone = models.CharField(verbose_name="Номер телефона", max_length=12)
 
-    email = models.CharField(verbose_name="E-main", max_length=200, null=True)
+    email = models.CharField(verbose_name="E-mail", max_length=200, null=True)
     new_email = models.CharField(verbose_name="новый E-main", max_length=200, null=True, blank=True)
     email_is_confirmed = models.BooleanField(verbose_name="Почта подтверждена", default=False)
     created_at = models.DateTimeField(verbose_name="пользователь создан", auto_now_add=True, null=True)

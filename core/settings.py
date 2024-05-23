@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-
+from typing import List
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -17,7 +17,7 @@ SECRET_KEY = str(os.getenv("SECRET_KEY"))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS: list[str] = []
+ALLOWED_HOSTS: List[str] = ["*"]
 
 
 # Application definition

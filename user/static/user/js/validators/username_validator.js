@@ -1,5 +1,5 @@
 const validateUsername = (username) => {
-    return username.length > 4;
+    return username.length > 0;
 };
 
 

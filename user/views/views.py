@@ -49,7 +49,7 @@ class RegisterUser(BaseUserView):
                 return JsonResponse({"errors": form.errors}, status=400)
 
             user = self.user_manager.create_user(form.cleaned_data)
-            self.email_service.send_main_to_confirm_email(user)
+            self.email_service.send_mail_to_confirm_email(user)
 
             token_to_set_password = self.jwt_processor.create_set_password_token(user.id)
 

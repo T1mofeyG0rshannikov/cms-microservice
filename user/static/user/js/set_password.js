@@ -6,15 +6,21 @@ function validateForm(){
     const password2 = document.querySelector("input[name=repeat_password]").value;
 
     if (password1.length < 6){
-        errorContainer.innerHTML = "Слишком короткий пароль"
+        setError("password", "Длина пароля не менее 6 символов")
         button.disabled = true;
-        return
+        return;
     }
 
-    if (password1 !== password2 && edited){
-        errorContainer.innerHTML = "Пароли не совпадают"
+    if (containsCyrillic(password1)){
+        setError("password", "Только латинские буквы, цифры и символы")
         button.disabled = true;
-        return
+        return;
+    }
+
+    if (password1 !== password2){
+        setError("password", "Пароли не совпадают")
+        button.disabled = true;
+        return;
     }
 
     errorContainer.innerHTML = "";
