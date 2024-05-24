@@ -1,4 +1,4 @@
-version: "3.9"
+version: "3.3"
 
 services:
   db:
@@ -7,6 +7,10 @@ services:
       - ./data/db:/root/db
     environment:
       - SQLITE3_DB=db.sqlite3
+      - SECRET_KEY=${SECRET_KEY}
+      - ALGORITHM=${ALGORITHM}
+      - EXPIRES_IN=${EXPIRES_IN}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
     ports:
       - '9000:9000'
   web:
@@ -14,20 +18,19 @@ services:
     command: sh -c "gunicorn --bind 0.0.0.0:8000 core.wsgi:application"
     volumes:
       - .:/code
-    ports:
-      - "8000:8000"
+      - static:/var/www/html/cms/static
+    expose:
+      - 8000
     depends_on:
       - db
-
   nginx:
     build: ./nginx
-    volumes:
-      - static_volume:/home/app/web/staticfiles
     ports:
-      - 1337:80
+      - 80:80
     depends_on:
       - web
+    volumes:
+      - static:/var/www/html/cms/static
 
 volumes:
-  postgres_data:
-  static_volume:
+  static:
