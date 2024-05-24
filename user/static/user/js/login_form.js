@@ -1,58 +1,65 @@
-function formValid(){
-    const loginButton = document.querySelector("input[type=submit]")
+function initLoginForm(element){
+    const phoneOrEmailContainer = element.querySelector("#phone_or_email");
+    const passwordContainer = element.querySelector("#password");
 
-    if (validPhoneOrEmail && validPassword){
-        loginButton.disabled = false;
+    const phoneOrEmailInput = phoneOrEmailContainer.querySelector("input")
+    const passwordInput = passwordContainer.querySelector("input")
+
+    function formValid(){
+        const loginButton = document.querySelector("input[type=submit]")
+
+        if (validPhoneOrEmail && validPassword){
+            loginButton.disabled = false;
+        }
+        else{
+            loginButton.disabled = true;
+        }
     }
-    else{
-        loginButton.disabled = true;
+
+
+    function validatePhoneOrEmail(value){
+        if (!validateEmail(value) && !validatePhone(value)){
+            return false;
+        }
+
+        return true;
     }
-}
 
 
-function validatePhoneOrEmail(value){
-    if (!validateEmail(value) && !validatePhone(value)){
-        return false;
+    function onchangePhoneOrEmail(element){
+        const isValid = validatePhoneOrEmail(phoneOrEmailInput.value);
+
+        const errorMessage = isValid ? "" : "Введите правильный логин"
+        setError(phoneOrEmailContainer, errorMessage);
+        return isValid;
     }
 
-    return true;
+
+    function onchangePassword(element){
+        const isValid = validatePassword(passwordInput.value);
+
+        const errorMessage = isValid ? "" : "слишком короткий пароль"
+        setError(passwordContainer, errorMessage);
+        return isValid;
+    }
+
+    let validPhoneOrEmail = validatePhoneOrEmail(phoneOrEmailInput.value);
+    let validPassword = validatePassword(passwordInput.value);
+
+
+    phoneOrEmailInput.addEventListener("change", (event) => {
+        validPhoneOrEmail = onchangePhoneOrEmail(event);
+        formValid();
+    });
+
+    passwordInput.addEventListener("change", (event) => {
+        validPassword =onchangePassword(event);
+        formValid();
+    })
 }
 
-
-function onchangePhoneOrEmail(event){
-    const isValid = validatePhoneOrEmail(event.target.value);
-    validPhoneOrEmail = isValid;
-
-    const errorMessage = isValid ? "" : "Введите правильный логин"
-    setError("phone_or_email", errorMessage)
-}
-
-
-function onchangePassword(event){
-    const isValid = validatePassword(event.target.value);
-    validPassword = isValid;
-
-    const errorMessage = isValid ? "" : "Введите правильный пароль"
-    setError("password", errorMessage)
-}
-
-
-const phoneOrEmailInput = document.querySelector("#phone_or_email").querySelector("input")
-const passwordInput = document.querySelector("#password").querySelector("input")
-
-let validPhoneOrEmail = validatePhoneOrEmail(phoneOrEmailInput.value);
-let validPassword = validatePassword(passwordInput.value);
-
-
-phoneOrEmailInput.addEventListener("change", (event) => {
-    onchangePhoneOrEmail(event);
-    formValid();
-});
-
-passwordInput.addEventListener("change", (event) => {
-    onchangePassword(event);
-    formValid();
-})
+const loginForm = document.querySelector(".user-form")
+initLoginForm(loginForm);
 
 function sendMainToResetPassword(){
     fetch("/user/mail-to-reset-password/${user}", )

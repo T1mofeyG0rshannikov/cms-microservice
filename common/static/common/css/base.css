@@ -65,6 +65,18 @@ form input[type=submit]{
     font-weight: var(--main-text-font-weight);
 }
 
+input[type=submit]:disabled, button:disabled{
+    opacity: .7;
+    cursor: not-allowed;
+}
+
+form .error{
+    color: rgb(250, 70, 70);
+    text-align: center;
+    font-size: 14px;
+    font-family: var(--main-text-font-family);
+}
+
 @media screen and (max-width: 760px) {
     a, p{
         font-size: var(--main-text-font-size-mobile);

@@ -28,11 +28,6 @@
     cursor: pointer;
 }
 
-.user-form input[type=submit]:disabled{
-    opacity: .7;
-    cursor: not-allowed;
-}
-
 .user-form .field{
     margin: 7px 0px;
     position: relative;
@@ -55,7 +50,7 @@
 .user-form .field .eye{
     position: absolute;
     right: 7px;
-    width: 40px;
+    width: 45px;
     cursor: pointer;
 }
 
@@ -153,13 +148,6 @@
 
 .user-form .field{
     width: 100%;
-}
-
-.user-form .error{
-    color: rgb(250, 70, 70);
-    text-align: center;
-    font-size: 14px;
-    font-family: var(--main-text-font-family);
 }
 
 .user-form h3{

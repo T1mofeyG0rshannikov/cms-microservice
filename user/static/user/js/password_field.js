@@ -3,11 +3,8 @@ const passwordContainer = document.querySelector("#password")
 const eye = passwordContainer.querySelector(".eye");
 const passwordInput = passwordContainer.querySelector("input");
 
-console.log(eye)
-console.log(passwordInput)
 
-eye.addEventListener("click", (event) => {
-    console.log(passwordInput.type)
+eye.addEventListener("click", () => {
     if (passwordInput.type == "password"){
         passwordInput.type = "text";
         eye.src = "/static/user/images/eye.png";

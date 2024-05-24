@@ -21,6 +21,7 @@
     border-radius: 7px;
     margin: 0px 6px;
     width: 235px;
+    height: 50px;
     font-family: var(--main-text-font-family);
     font-size: var(--main-text-font-size);
     font-weight: var(--main-text-font-weight);

@@ -1,13 +1,11 @@
-function onchangePhone(){
-    const phoneContainer = document.querySelector("#phone");
-
+function onchangePhone(element){
+    const phoneContainer = element.querySelector("#phone");
+    //const isValid = validatePhone(phoneContainer.querySelector("input").value);
     const isValid = phoneContainer.querySelector("input").value.length > 0;
 
-    validPhone = isValid;
-
-    const errorMessage = isValid ? "" : "Введите телефон"
-
-    setError("phone", errorMessage)
+    const errorMessage = isValid ? "" : "Введите правильный телефон"
+    setError(phoneContainer, errorMessage);
+    return isValid;
 }
 
 function validatePhone(phoneNumber) {

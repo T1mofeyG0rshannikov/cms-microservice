@@ -3,14 +3,17 @@ const validateEmail = (email) => {
         .toLowerCase()
         .match(
         /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-        );
+    ) !== null;
 };
 
 
-function onchangeEmail(event){
-    const isValid = validateEmail(event.target.value);
-    validEmail = isValid;
+function onchangeEmail(element){
+    const emailContainer = element.querySelector("#email");
+
+    const isValid = validateEmail(emailContainer.querySelector("input").value);
 
     const errorMessage = isValid ? "" : "Введите правильный E-mail"
-    setError("email", errorMessage)
+    setError(emailContainer, errorMessage);
+
+    return isValid;
 }

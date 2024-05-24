@@ -1,13 +1,14 @@
-const validateUsername = (username) => {
+function validateUsername(username){
     return username.length > 0;
 };
 
 
-function onchangeUsername(event){
-    const isValid = validateUsername(event.target.value);
-    validUsername = isValid;
+function onchangeUsername(element){
+    const usernameContainer = element.querySelector("#username");
 
+    const isValid = validateUsername(usernameContainer.querySelector("input").value);
     const errorMessage = isValid ? "" : "Слишком короткое имя"
+    setError(usernameContainer, errorMessage);
 
-    setError("username", errorMessage)
+    return isValid;
 }

@@ -16,6 +16,11 @@
     <link rel="icon" href="{{settings.icon}}">
     <script src="{% static 'styles/js/load-styles.js'%}"></script>
     <script src="{% static 'styles/js/import-fonts.js'%}"></script>
+    <script src="{% static "user/js/set_error.js" %}"></script>
+    <script src="{% static "user/js/validators/email_validator.js" %}"></script>
+    <script src="{% static "user/js/validators/username_validator.js" %}"></script>
+    <script src="{% static "user/js/validators/phone_validator.js" %}"></script>
+    <script src="{% static "user/js/token.js" %}"></script>
 </head>
 <body>
     {% block content %}

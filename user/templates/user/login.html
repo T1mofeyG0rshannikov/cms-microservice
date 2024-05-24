@@ -9,7 +9,7 @@
 
 {% block content %}
 
-<form onsubmit="getForm(event)" method="post" class="user-form">
+<form onsubmit="getForm(this, event)" method="post" class="user-form">
     <img class="logo" src="{{ settings.form_logo.image }}" />
 
     <h3>Вход в кабинет</h3>
@@ -58,7 +58,7 @@
 <script src="{% static "user/js/login_form.js" %}"></script>
 
 <script>
-    function getForm(event){
+    function getForm(element, event){
         event.preventDefault();
         const form = document.querySelector(".user-form")
         const data = new FormData(form);
@@ -87,11 +87,11 @@
         }).then(response => {
             const errors = response.errors;
             console.log(errors);
-            setError("password", "")
-            setError("phone_or_email", "")
+            setError(element.querySelector(`#password`), "")
+            setError(element.querySelector(`#phone_or_email`), "")
             for (let field of Object.keys(errors)) {
                 console.log(field, errors[field]);
-                setError(field, errors[field][0]);
+                setError(element.querySelector(`#${field}`), errors[field][0]);
             }
         })
     }

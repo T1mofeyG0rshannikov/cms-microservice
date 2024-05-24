@@ -1,3 +1,5 @@
+{% load static %}
+
 <div id="{{ block.ancor }}" class="register">
     <div class="inner">
         <div class="text">
@@ -6,18 +8,24 @@
             <a>{{ block.explanation_text|safe }}</a>
         </div>
 
-        <form>
-            <input placeholder="Ваше имя" />
-            <input id="phone" name="phone" placeholder="+7 (495) 888-00-00" />
-            <input placeholder="E-mail" />
+        <form style="display: flex;" onclick="initForm(this)" onsubmit="submitRegisterForm(this, event)">
+            <div class="field" id="username">
+                <input name="username" placeholder="Ваше имя" />
+                <div class="error">{{ error }}</div>
+            </div>
+
+            <div class="field" id="phone">
+                <input name="phone" placeholder="+7 (495) 888-00-00" />
+                <div class="error">{{ error }}</div>
+            </div>
+
+            <div class="field" id="email">
+                <input name="email" placeholder="E-mail" />
+                <div class="error">{{ error }}</div>
+            </div>
+
             <input type="submit" value="Регистрация" />
         </form>
-
-        <script>
-            $(function(){
-                $("#phone").mask("+7 (999) 999-99-99");
-            });
-        </script>
 
         <span>{{ block.warning_text }}</span>
 
@@ -54,4 +62,7 @@
             }
         </style>
     </div>
+
+    <script src="{% static 'blocks/js/register.js' %}"></script>
+    <script src="{% static 'user/js/submit_register_form.js' %}"></script>
 </div>

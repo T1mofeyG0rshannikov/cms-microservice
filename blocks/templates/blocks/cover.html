@@ -11,7 +11,6 @@
             <button onclick="smoothScroll('{{block.second_button_ref}}')" id="white-button"><a>{{ block.second_button_text }}</a></button>
         </div>
     </div>
-    <script src="{% static 'blocks/js/cover.js' %}"></script>
     <script>
         document.addEventListener("DOMContentLoaded", async function() {
             setCoverDarkness("{{block.ancor}}", "{{styles.photo_darkness}}")
