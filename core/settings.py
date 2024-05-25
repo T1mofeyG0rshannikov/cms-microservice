@@ -143,3 +143,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
+
+# celery
+
+CELERY_BROKER_URL = str(os.getenv("CELERY_BROKER_URL"))

@@ -1,13 +1,16 @@
 from django.conf import settings
-from django.core.mail import send_mail
 
 from user.auth.jwt_processor_interface import JwtProcessorInterface
 from user.email_service.email_service_interface import EmailServiceInterface
+from user.email_service.tasks import (
+    send_mail_to_confirm_email,
+    send_mail_to_reset_password,
+)
 from user.models import User
 
 
 class EmailService(EmailServiceInterface):
-    def __init__(self, jwt_processor: JwtProcessorInterface):
+    def __init__(self, jwt_processor: JwtProcessorInterface) -> None:
         self.jwt_processor = jwt_processor
 
     def get_url_to_confirm_email(self, user_id: int) -> str:
@@ -20,15 +23,11 @@ class EmailService(EmailServiceInterface):
 
     def send_mail_to_confirm_email(self, user: User) -> None:
         url = self.get_url_to_confirm_email(user.id)
-
-        send_mail("Подтвердите почту", url, settings.EMAIL_HOST_USER, [user.email], fail_silently=False)
+        send_mail_to_confirm_email.delay(url, user.email)
 
     def send_mail_to_reset_password(self, user: User) -> None:
         url = self.get_url_to_reset_password(user.id)
-
-        send_mail(
-            "Перейдите по ссылке для сброса пароля", url, settings.EMAIL_HOST_USER, [user.email], fail_silently=False
-        )
+        send_mail_to_reset_password.delay(url, user.email)
 
 
 def get_email_service(jwt_processor: JwtProcessorInterface) -> EmailService:
