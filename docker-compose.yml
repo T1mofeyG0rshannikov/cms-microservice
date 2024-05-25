@@ -11,6 +11,7 @@ services:
       - ALGORITHM=${ALGORITHM}
       - EXPIRES_IN=${EXPIRES_IN}
       - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
     ports:
       - '9000:9000'
   web:
@@ -23,6 +24,7 @@ services:
       - 8000
     depends_on:
       - db
+      - redis
   nginx:
     build: ./nginx
     ports:
@@ -32,20 +34,26 @@ services:
     volumes:
       - static:/var/www/html/cms/static
   redis:
-    restart: unless-stopped
     image: redis:7.0.5-alpine
-    expose:
-        - 6379
+    ports:
+      - '6379:6379'
+
   worker:
-    restart: unless-stopped
     build: .
-    command: sh -c "celery -A user.email_service.tasks worker -l INFO --pool=solo"
+    command: celery -A user.email_service.tasks worker -l INFO --pool=solo
     volumes:
       - .:/code
       - static:/var/www/html/cms/static
     depends_on:
-        - web
-        - redis
+      - redis
+      - web
+    environment:
+      - SQLITE3_DB=db.sqlite3
+      - SECRET_KEY=${SECRET_KEY}
+      - ALGORITHM=${ALGORITHM}
+      - EXPIRES_IN=${EXPIRES_IN}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
 
 volumes:
   static:
