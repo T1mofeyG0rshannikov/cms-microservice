@@ -12,6 +12,11 @@
     background: var(--second-background-color);
     text-align: center;
     align-items: center;
+    position: fixed;
+    z-index: 2;
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow: 0px 0px 0px 100vw rgba(0, 0, 0, .3);
 }
 
 .user-form input{
@@ -132,18 +137,19 @@
 }
 
 .user-form p{
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .already-register{
     color: black;
-    font-weight: 700;
+    font-size: 13px;
 }
 
 .login{
     font-weight: 700;
     text-decoration: none;
-    color: rgb(120, 140, 240);
+    font-size: 13px;
+    color: var(--ref-color);
 }
 
 .user-form .field{
@@ -151,7 +157,7 @@
 }
 
 .user-form h3{
-    margin-top: 0px;
+    margin-top: 12px;
 }
 
 .user-form .bottom-menu{
@@ -162,8 +168,8 @@
 }
 
 .user-form .bottom-menu .forget-password{
-    color: rgb(103, 167, 180);
-    font-size: 14px;
+    color: var(--ref-color);
+    font-size: 13px;
     text-decoration: none;
 }
 

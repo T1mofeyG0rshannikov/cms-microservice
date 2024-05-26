@@ -1,7 +1,5 @@
 function openAsideMenu(){
     const menu = document.getElementById("aside-menu");
-    //menu.style.width = "300px";
-    //menu.style.right = "0px";
     menu.style.display = "flex";
     document.body.style.overflow = "hidden";
 
@@ -13,8 +11,6 @@ function openAsideMenu(){
 
 function closeAsideMenu(){
     const menu = document.getElementById("aside-menu");
-   // menu.style.width = "0px";
-    //menu.style.right = "-300px";
     menu.style.display = "none";
     document.body.style.overflow = "auto";
 
@@ -26,4 +22,31 @@ function closeAsideMenu(){
 
 
 const burger = document.querySelector(".burger")
-burger.addEventListener("click", openAsideMenu)
+burger.addEventListener("click", openAsideMenu);
+
+const loginForm = document.getElementById("login-form");
+const loginFormContainer = document.querySelector(".login-form-container")
+
+function openLoginForm(){
+    loginFormContainer.style.display = "flex";
+}
+
+function closeLoginForm(){
+    loginFormContainer.style.display = "none";
+}
+
+loginFormContainer.addEventListener("mousedown", event => {
+    if (!loginForm.contains(event.target)){
+        closeLoginForm();
+    }
+})
+
+const loginButtons = document.querySelectorAll("#login-button")
+console.log(loginButtons);
+
+for (let loginButton of loginButtons){
+    loginButton.addEventListener("click", () => {
+        console.log("open");
+        openLoginForm()
+    });
+}

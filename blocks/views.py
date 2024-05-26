@@ -9,6 +9,7 @@ from blocks.clone_page import clone_page
 from blocks.models.common import Page, Template
 from blocks.serializers import PageSerializer, TemplateSerializer
 from common.views import BaseTemplateView
+from user.forms import LoginForm
 
 
 class ShowPage(BaseTemplateView):
@@ -24,6 +25,8 @@ class ShowPage(BaseTemplateView):
             context["page"] = serialized_page
         except Page.DoesNotExist:
             raise Http404("Page does not exist")
+
+        context["form"] = LoginForm()
 
         return context
 

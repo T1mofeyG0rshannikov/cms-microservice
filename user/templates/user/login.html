@@ -1,15 +1,9 @@
 {% extends "user/base.html" %}
 {% load static %}
 
-
-{% block title %}
-    Войти в аккаунт
-{% endblock %}
-
-
 {% block content %}
 
-<form onsubmit="getForm(this, event)" method="post" class="user-form">
+<form onsubmit="getForm(this, event)" method="post" class="user-form" id="login-form">
     <img class="logo" src="{{ settings.form_logo.image }}" />
 
     <h3>Вход в кабинет</h3>
@@ -30,7 +24,7 @@
             </div>
         </div>
     {% endfor %}
-    <input type="submit" disabled value="Войти в кабинет" />
+    <input type="submit" value="Войти в кабинет" />
 
     <div class="bottom-menu">
         <label class="agreed-container">Запомнить меня

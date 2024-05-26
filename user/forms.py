@@ -1,9 +1,8 @@
 from django import forms
-from django.core import validators
 
 from utils.errors import UserErrors
 from utils.format_phone import get_raw_phone
-from utils.validators import is_valid_phone
+from utils.validators import is_valid_email, is_valid_phone
 
 
 class RegistrationForm(forms.Form):
@@ -30,13 +29,16 @@ class LoginForm(forms.Form):
     def clean_phone_or_email(self):
         phone_or_email = self.cleaned_data["phone_or_email"]
 
-        valid_as_email = validators.EmailValidator(phone_or_email)
-        valid_as_phone = is_valid_phone(phone_or_email)
+        valid_as_email = is_valid_email(phone_or_email)
+        valid_as_phone = is_valid_phone(get_raw_phone(phone_or_email))
 
         if not valid_as_email and not valid_as_phone:
             self.add_error("phone_or_email", UserErrors.incorrect_login.value)
 
-        return phone_or_email
+        if valid_as_email:
+            return phone_or_email
+        else:
+            return get_raw_phone(phone_or_email)
 
 
 class SetPasswordForm(forms.Form):

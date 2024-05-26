@@ -12,7 +12,7 @@ from user.serializers import UserSerializer
 from user.views.base_user_view import BaseUserView
 from utils.errors import Errors, UserErrors
 from utils.success_messages import Messages
-from utils.validators import is_valid_phone
+from utils.validators import is_valid_email, is_valid_phone
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -108,12 +108,17 @@ class Login(BaseUserView):
 
                     return JsonResponse({"errors": form.errors}, status=400)
 
-            else:
+            elif is_valid_email(phone_or_email):
                 user = self.user_manager.get_user_by_email(phone_or_email)
                 if user is None:
                     form.add_error("phone_or_email", UserErrors.user_by_email_not_found.value)
 
                     return JsonResponse({"errors": form.errors}, status=400)
+
+            else:
+                form.add_error("phone_or_email", UserErrors.incorrect_login.value)
+
+                return JsonResponse({"errors": form.errors}, status=400)
 
             if not user.verify_password(password):
                 form.add_error("password", UserErrors.incorrect_password.value)

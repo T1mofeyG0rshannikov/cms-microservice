@@ -1,6 +1,7 @@
 :root{
     --margin-inside-block-desctop: 25px;
     --margin-inside-block-mobile: 12px;
+    --ref-color: #5f6d87;
 }
 
 body{
@@ -30,9 +31,9 @@ h1{
 h3{
     font-size: var(--subheader-font-size);
     font-weight: var(--subheader-font-weight);
-    color: var(--subheader-сolor);
     font-family: var(--subheader-font-family);
     margin: var(--margin-inside-block-desctop) 0px;
+    color: var(--subheader-color);
 }
 
 button{
@@ -73,7 +74,7 @@ input[type=submit]:disabled, button:disabled{
 form .error{
     color: rgb(250, 70, 70);
     text-align: center;
-    font-size: 14px;
+    font-size: 13px;
     font-family: var(--main-text-font-family);
 }
 

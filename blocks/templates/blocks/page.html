@@ -20,6 +20,9 @@
 {% endblock %}
 
 {% block content %}
+    <div class="login-form-container" style="display: none">
+        {% include "user/login.html" %}
+    </div>
 
     {% for block in page.blocks %}
         {% with template_name=block.content.template.file %}
