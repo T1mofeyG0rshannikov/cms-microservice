@@ -28,8 +28,29 @@ const loginForm = document.getElementById("login-form");
 const loginFormContainer = document.querySelector(".login-form-container")
 
 function openLoginForm(){
-    loginFormContainer.style.display = "flex";
+    const token = getToken();
+
+    fetch("/user/get-user-info", {
+        method: "get",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': `${token}`
+        }
+    }).then(response => {
+        if (response.status === 200){
+            response.json().then(() => {
+                window.location.replace("/user/profile")
+            })
+        }
+        return response.status;
+    }).then(status => {
+        if (status === 401){
+            loginFormContainer.style.display = "flex";
+        }
+    })
 }
+
 
 function closeLoginForm(){
     loginFormContainer.style.display = "none";
@@ -42,11 +63,7 @@ loginFormContainer.addEventListener("mousedown", event => {
 })
 
 const loginButtons = document.querySelectorAll("#login-button")
-console.log(loginButtons);
 
 for (let loginButton of loginButtons){
-    loginButton.addEventListener("click", () => {
-        console.log("open");
-        openLoginForm()
-    });
+    loginButton.addEventListener("click", openLoginForm);
 }

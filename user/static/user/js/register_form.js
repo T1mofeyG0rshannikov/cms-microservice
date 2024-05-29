@@ -1,11 +1,6 @@
 function formValid(){
     const registerButton = document.querySelector("input[type=submit]")
     const agreed = checkbox.checked;
-    /*console.log(validUsername)
-    console.log(validPhone)
-    console.log(validEmail)
-    console.log(agreed)
-    console.log("-----")*/
 
     if (validEmail && validPhone && validUsername && agreed){
         registerButton.disabled = false;

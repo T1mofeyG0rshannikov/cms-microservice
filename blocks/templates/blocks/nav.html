@@ -7,12 +7,10 @@
             <a onclick="smoothScroll('{{ item.button_ref }}')">{{ item.button_text }}</a>
         {% endfor %}
 
-        <!-- <button onclick="smoothScroll('{{ block.register_button_href }}')"> -->
-        <button onclick="location.href='user/register'">
+        <button onclick="smoothScroll('{{ block.register_button_href }}'')">
             <a>{{ block.register_button_text }}</a>
         </button>
 
-        <!-- <button id="login-button" onclick="smoothScroll('{{ block.login_button_href }}')"> -->
         <button id="login-button" onclick="openLoginForm()">
             <a>{{ block.login_button_text }}</a>
         </button>
@@ -28,12 +26,10 @@
                 {% endfor %}
             </nav>
 
-            <!-- <button onclick="smoothScroll('{{ block.register_button_href }}')"> -->
-            <button onclick="location.href='user/register'">
+            <button onclick="smoothScroll('{{ block.register_button_href }}')">
                 <a>{{ block.register_button_text }}</a>
             </button>
 
-            <!-- <button id="login-button" onclick="smoothScroll('{{ block.login_button_href }}')"> -->
             <button id="login-button" onclick="openLoginForm()">
                 <a>{{ block.login_button_text }}</a>
             </button>

@@ -1,6 +1,6 @@
 import json
 
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -140,13 +140,15 @@ class GetUserInfo(BaseUserView):
     def get(self, request):
         token = request.headers.get("Authorization")
         payload = self.jwt_processor.validate_token(token)
-        user = None
 
         if payload:
             user = self.user_manager.get_user_by_id(payload["id"])
             user = UserSerializer(user).data
 
-        return JsonResponse(user)
+            return JsonResponse(user)
+
+        else:
+            return HttpResponse(status=401)
 
 
 class ConfirmEmail(BaseUserView):

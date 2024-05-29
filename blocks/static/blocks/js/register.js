@@ -1,10 +1,6 @@
 function initForm(element){
     function formValid(){
         const registerButton = element.querySelector("input[type=submit]")
-        /*console.log(validUsername)
-        console.log(validPhone)
-        console.log(validEmail)
-        console.log("-----")*/
 
         if (validEmail && validPhone && validUsername){
             registerButton.disabled = false;
@@ -36,7 +32,6 @@ function initForm(element){
     $("input[name=phone]").mask("+7 (999) 999-99-99")
     $("input[name=phone]").on("change", () => {
         validPhone = onchangePhone(element);
-        console.log(validPhone)
         formValid()
     })
 }

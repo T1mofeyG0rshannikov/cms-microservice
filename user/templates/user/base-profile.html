@@ -9,7 +9,11 @@
 {% block content %}
 
 <header>
-    <img class="logo"/>
+    <div class="inner">
+        <img onclick="location.href='/partners'" class="logo"/>
+
+        <a class="logout" >Выйти из аккаунта</a>
+    </div>
 </header>
 
 <div class="profile-content">
@@ -37,4 +41,16 @@
     }
 </style>
 
+{% endblock %}
+
+{% block additional_scripts %}
+<script>
+    function logout(){
+        deleteToken();
+        window.location.replace("/partners");
+    }
+
+    const logoutElem = document.querySelector("header .inner .logout");
+    logoutElem.addEventListener("click", logout)
+</script>
 {% endblock %}

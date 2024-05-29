@@ -72,7 +72,6 @@
             if (response.status === 200){
                 response.json().then((response) => {
                     const token = response.acess_token;
-                    console.log(token);
                     setToken(token);
                     window.location.replace("/user/profile")
                 })
@@ -80,11 +79,9 @@
             return response.json();
         }).then(response => {
             const errors = response.errors;
-            console.log(errors);
             setError(element.querySelector(`#password`), "")
             setError(element.querySelector(`#phone_or_email`), "")
             for (let field of Object.keys(errors)) {
-                console.log(field, errors[field]);
                 setError(element.querySelector(`#${field}`), errors[field][0]);
             }
         })
