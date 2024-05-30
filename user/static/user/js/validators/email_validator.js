@@ -12,7 +12,7 @@ function onchangeEmail(element){
 
     const isValid = validateEmail(emailContainer.querySelector("input").value);
 
-    const errorMessage = isValid ? "" : "Введите правильный E-mail"
+    const errorMessage = isValid ? "" : "Введите корректный email"
     setError(emailContainer, errorMessage);
 
     return isValid;

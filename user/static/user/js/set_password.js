@@ -6,9 +6,20 @@ function initSetPasswordForm(){
     input1.addEventListener("change", validateForm)
 
     const input2 = repeatPasswordContainer.querySelector("input")
-    input2.addEventListener("change", () => {
+    input2.addEventListener("input", () => {
         validateForm();
         edited = true;
+    })
+
+    input2.addEventListener("change", () => {
+        const password1 = input1.value;
+        const password2 = input2.value;
+
+        if (password1 !== password2){
+            setError(repeatPasswordContainer, "Пароли не совпадают")
+            button.disabled = true;
+            return;
+        }
     })
 
     function validateForm(){
@@ -30,12 +41,12 @@ function initSetPasswordForm(){
         }
 
         if (password1 !== password2){
-            setError(passwordContainer, "Пароли не совпадают")
             button.disabled = true;
             return;
         }
 
         setError(passwordContainer, "")
+        setError(repeatPasswordContainer, "")
         button.disabled = false;
     }
 

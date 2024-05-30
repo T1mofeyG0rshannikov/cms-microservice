@@ -18,20 +18,25 @@ function initForm(element){
     let validUsername = validateUsername(usernameInput.value);
     let validPhone = validatePhone(phoneInput.value);
 
-
     emailInput.addEventListener("change", () => {
         validEmail = onchangeEmail(element);
+        validPhone = onchangePhone(element);
+        validUsername = onchangeUsername(element);
         formValid()
     });
 
     usernameInput.addEventListener("change", () => {
+        validEmail = onchangeEmail(element);
+        validPhone = onchangePhone(element);
         validUsername = onchangeUsername(element);
         formValid()
     })
 
     $("input[name=phone]").mask("+7 (999) 999-99-99")
     $("input[name=phone]").on("change", () => {
+        validEmail = onchangeEmail(element);
         validPhone = onchangePhone(element);
-        formValid()
+        validUsername = onchangeUsername(element);
+        formValid();
     })
 }

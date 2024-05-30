@@ -46,6 +46,7 @@ function openLoginForm(){
         return response.status;
     }).then(status => {
         if (status === 401){
+            compliteLoginForm();
             loginFormContainer.style.display = "flex";
         }
     })

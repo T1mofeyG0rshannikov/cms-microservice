@@ -3,7 +3,7 @@ function onchangePhone(element){
     //const isValid = validatePhone(phoneContainer.querySelector("input").value);
     const isValid = phoneContainer.querySelector("input").value.length > 0;
 
-    const errorMessage = isValid ? "" : "Введите правильный телефон"
+    const errorMessage = isValid ? "" : "Введите корректный телефон"
     setError(phoneContainer, errorMessage);
     return isValid;
 }
