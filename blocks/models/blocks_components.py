@@ -3,6 +3,7 @@ from colorfield.fields import ColorField
 from django.db import models
 
 from blocks.models.blocks import (
+    CatalogBlock,
     FeaturesBlock,
     Navbar,
     QuestionsBlock,
@@ -10,6 +11,8 @@ from blocks.models.blocks import (
     StagesBlock,
 )
 from blocks.models.mixins import ButtonMixin, TitleMixin
+from catalog.models import Product
+from common.models import Sortable
 
 
 class NavMenuItem(ButtonMixin):
@@ -73,3 +76,11 @@ class Stage(TitleMixin):
 
     def __str__(self):
         return self._meta.verbose_name
+
+
+class CatalogProduct(Sortable):
+    block = models.ForeignKey(CatalogBlock, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Продукт")
+
+    def __str__(self):
+        return str(self.product)

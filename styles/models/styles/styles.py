@@ -2,6 +2,7 @@ from colorfield.fields import ColorField
 from django.db import models
 
 from blocks.models.blocks import (
+    CatalogBlock,
     ContentBlock,
     Cover,
     FeaturesBlock,
@@ -72,3 +73,7 @@ class QuestionsCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
 
 class StagesCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
     block = models.OneToOneField(StagesBlock, on_delete=models.CASCADE, related_name="styles")
+
+
+class CatalogCustomStyles(BaseCustomStyles):
+    block = models.OneToOneField(CatalogBlock, on_delete=models.CASCADE, related_name="styles")

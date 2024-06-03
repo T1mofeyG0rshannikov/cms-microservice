@@ -4,6 +4,7 @@ from django.contrib.admin.decorators import register
 from django.utils.safestring import mark_safe
 
 from blocks.models.blocks import (
+    CatalogBlock,
     ContentBlock,
     Cover,
     FeaturesBlock,
@@ -14,6 +15,7 @@ from blocks.models.blocks import (
     StagesBlock,
 )
 from blocks.models.blocks_components import (
+    CatalogProduct,
     Feature,
     NavMenuItem,
     Question,
@@ -21,7 +23,9 @@ from blocks.models.blocks_components import (
     Stage,
 )
 from blocks.models.common import Block, Page, Template
+from common.admin import BaseInline
 from styles.admin import (
+    CatalogCustomStylesInline,
     ContentCustomStylesInline,
     CoverCustomStylesInline,
     FeaturesCustomStylesInline,
@@ -31,10 +35,6 @@ from styles.admin import (
     SocialCustomStylesInline,
     StagesCustomStylesInline,
 )
-
-
-class BaseInline(admin.StackedInline):
-    extra = 0
 
 
 class QuestionInline(BaseInline):
@@ -59,6 +59,10 @@ class StageInline(BaseInline):
 
 class PageBlockInline(SortableStackedInline, BaseInline):
     model = Block
+
+
+class CatalogProductInline(SortableStackedInline, BaseInline):
+    model = CatalogProduct
 
 
 @register(Template)
@@ -110,6 +114,11 @@ class QuestionsBlockAdmin(BaseBlockAdmin):
 @register(StagesBlock)
 class StagesBlockAdmin(BaseBlockAdmin):
     inlines = [StageInline, StagesCustomStylesInline]
+
+
+@register(CatalogBlock)
+class CatalogBlogAdmin(SortableAdminBase, BaseBlockAdmin):
+    inlines = [CatalogProductInline, CatalogCustomStylesInline]
 
 
 @register(Page)

@@ -1,3 +1,5 @@
 from django.contrib import admin
 
-# Register your models here.
+
+class BaseInline(admin.StackedInline):
+    extra = 0

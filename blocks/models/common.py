@@ -3,6 +3,7 @@ from django.db import models
 
 from blocks.template_exist import is_template_exists
 from blocks.validators import validate_html_filename
+from common.models import BasePageBlock, BlockRelationship
 from utils.errors import Errors
 
 
@@ -19,37 +20,11 @@ class Page(models.Model):
         return self.title
 
 
-class BlockRelationship(models.Model):
-    block_name = models.CharField(verbose_name="Имя компонента", max_length=50, unique=True)
-    block = models.CharField(max_length=50)
-
-    class Meta:
-        verbose_name = "Блок"
-        verbose_name_plural = "Блоки"
-
-    def __str__(self):
-        return self.block_name
-
-
-class Block(models.Model):
+class Block(BasePageBlock):
     name = models.ForeignKey(
         BlockRelationship, verbose_name="Блок", on_delete=models.CASCADE, related_name="page_block"
     )
     page = models.ForeignKey(Page, related_name="blocks", verbose_name="Страница", on_delete=models.CASCADE)
-
-    my_order = models.PositiveIntegerField(
-        default=0,
-        blank=False,
-        null=False,
-    )
-
-    class Meta:
-        verbose_name = "Блок"
-        verbose_name_plural = "Блоки"
-        ordering = ["my_order"]
-
-    def __str__(self):
-        return str(self.name)
 
 
 class Template(models.Model):
