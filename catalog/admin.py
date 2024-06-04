@@ -2,9 +2,8 @@ from adminsortable2.admin import SortableAdminBase, SortableStackedInline
 from django.contrib import admin
 from django.contrib.admin.decorators import register
 
-from catalog.models import (
-    Block,
-    CatalogPageTemplate,
+from catalog.models.blocks import Block, CatalogPageTemplate
+from catalog.models.products import (
     Link,
     Organization,
     OrganizationType,

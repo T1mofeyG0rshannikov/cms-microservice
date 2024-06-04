@@ -3,15 +3,15 @@ from colorfield.fields import ColorField
 from django.db import models
 
 from blocks.models.blocks import (
-    CatalogBlock,
     FeaturesBlock,
     Navbar,
     QuestionsBlock,
     SocialMediaBlock,
     StagesBlock,
 )
+from blocks.models.catalog_block import CatalogBlock
 from blocks.models.mixins import ButtonMixin, TitleMixin
-from catalog.models import Product
+from catalog.models.products import Product
 from common.models import Sortable
 
 
@@ -34,7 +34,7 @@ class Feature(TitleMixin):
             this = Feature.objects.get(id=self.id)
             if this.icon != self.icon:
                 this.icon.delete()
-        except:
+        except Exception:
             pass
         super().save(*args, **kwargs)
 
@@ -79,8 +79,8 @@ class Stage(TitleMixin):
 
 
 class CatalogProduct(Sortable):
-    block = models.ForeignKey(CatalogBlock, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Продукт")
+    block = models.ForeignKey(CatalogBlock, on_delete=models.CASCADE, related_name="products")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Продукт", null=True)
 
     def __str__(self):
         return str(self.product)

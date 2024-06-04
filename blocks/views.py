@@ -1,15 +1,17 @@
 import json
 
-from django.http import Http404, HttpResponse, HttpResponseNotFound, JsonResponse
+from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
-from blocks.clone_page import clone_page
-from blocks.models.blocks import CatalogBlock
+from blocks.models.catalog_block import CatalogBlock
 from blocks.models.common import Page, Template
+from blocks.pages_service.page_service_interface import PageServiceInterface
+from blocks.pages_service.pages_service import get_page_service
 from blocks.serializers import PageSerializer, TemplateSerializer
-from catalog.models import CatalogPageTemplate
+from catalog.catalog_service.catalog_service import get_catalog_service
+from catalog.catalog_service.catalog_service_interface import CatalogServiceInterface
 from common.views import BaseTemplateView
 from user.forms import LoginForm
 
@@ -32,17 +34,16 @@ class ShowPage(BaseTemplateView):
 class ShowCatalogPage(BaseTemplateView):
     template_name = "blocks/page.html"
 
+    def __init__(self):
+        super().__init__()
+        self.catalog_service: CatalogServiceInterface = get_catalog_service()
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        page = CatalogPageTemplate.objects.prefetch_related("blocks").first()
-        serialized_page = PageSerializer(page).data
+        page = self.catalog_service.get_page(kwargs["products_slug"])
 
-        catalog = CatalogBlock.objects.get(product_type__slug=kwargs["products_slug"])
-
-        context["page"] = serialized_page
-        context["catalog"] = catalog
-
+        context["page"] = page
         context["form"] = LoginForm()
 
         return context
@@ -65,10 +66,13 @@ def slug_router(request, slug):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class ClonePage(View):
+    def __init__(self):
+        self.page_service: PageServiceInterface = get_page_service()
+
     def post(self, request):
         data = json.loads(request.body)
         page_id = data.get("page_id")
 
-        clone_page(page_id)
+        self.page_service.clone_page(page_id)
 
         return HttpResponse(status=201)

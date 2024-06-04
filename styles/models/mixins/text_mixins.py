@@ -63,3 +63,18 @@ class ExplanationTextStylesMixin(models.Model):
 
     class Meta:
         abstract = True
+
+
+class SubheaderStylesMixin(models.Model):
+    subheader_size = models.CharField(verbose_name="размер подзаголовка", max_length=50, null=True, blank=True)
+    subheader_size_mobile = models.CharField(
+        verbose_name="размер подзаголовка (смартфон)", max_length=50, null=True, blank=True
+    )
+    subheader_thickness = models.CharField(verbose_name="толщина подзаголовка", max_length=50, null=True, blank=True)
+    subheader_thickness_mobile = models.CharField(
+        verbose_name="толщина подзаголовка (смартфон)", max_length=50, null=True, blank=True
+    )
+    subheader_color = ColorField(verbose_name="Цвет подзаголовка", null=True, blank=True)
+
+    class Meta:
+        abstract = True

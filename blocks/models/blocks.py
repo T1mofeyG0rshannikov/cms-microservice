@@ -1,8 +1,6 @@
 from ckeditor.fields import RichTextField
 from django.db import models
 
-from catalog.models import ProductType
-
 from .common import BaseBlock
 from .mixins import ButtonMixin, MainTextMixin, TitleMixin
 
@@ -73,16 +71,3 @@ class StagesBlock(BaseBlock, TitleMixin, MainTextMixin):
     class Meta:
         verbose_name = "Блок этапов"
         verbose_name_plural = "Блоки этапов"
-
-
-class CatalogBlock(BaseBlock, TitleMixin, ButtonMixin):
-    product_type = models.ForeignKey(ProductType, on_delete=models.CASCADE)
-    introductory_text = RichTextField(verbose_name="Введение", max_length=300)
-    add_exclusive = models.BooleanField(
-        verbose_name="Эксклюзив", help_text="нужно ли добавлять карточку приватного продукта"
-    )
-
-    # Продукты (управляемый список продуктов)
-    class Meta:
-        verbose_name = "Блок каталога"
-        verbose_name_plural = "Блоки каталога"

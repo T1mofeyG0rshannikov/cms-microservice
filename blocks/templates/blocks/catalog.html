@@ -1,0 +1,23 @@
+<div id="{{ block.ancor }}" class="catalog">
+    <h1>{{ block.title }}</h1>
+    <a>{{ block.introductory_text|safe }}</a>
+
+    <div class="products">
+        {% for product in block.products %}
+            <div class="product">
+                <img src="{{ product.cover }}" />
+                <h3 style="margin-bottom: 3px;">{{ product.name }}</h3>
+                <h3 style="margin-bottom: 3px; margin-top: 0px; font-size: 16px;">{{ product.type }}</h3>
+
+                <a style="margin-top: 3px;">Акция до {{ product.end_promotion }}</a>
+
+                <a style="margin-bottom: 0px;">{{ product.annotation }}</a>
+                <a style="margin-top: 3px;" class='how'>как получить деньги</a>
+
+                <a class="bonus">Бонус {{ product.profit }}</a>
+
+                <button><a href="{{ product.link }}">Заказать</a></button>
+            </div>
+        {% endfor %}
+    </div>
+</div>

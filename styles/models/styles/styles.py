@@ -2,7 +2,6 @@ from colorfield.fields import ColorField
 from django.db import models
 
 from blocks.models.blocks import (
-    CatalogBlock,
     ContentBlock,
     Cover,
     FeaturesBlock,
@@ -12,8 +11,12 @@ from blocks.models.blocks import (
     SocialMediaBlock,
     StagesBlock,
 )
+from blocks.models.catalog_block import CatalogBlock
 from common.models import OneInstanceModel
-from styles.models.mixins.text_mixins import ExplanationTextStylesMixin
+from styles.models.mixins.text_mixins import (
+    ExplanationTextStylesMixin,
+    SubheaderStylesMixin,
+)
 from styles.models.styles.base_custom_styles import BaseCustomStyles
 
 
@@ -36,7 +39,7 @@ class CoverCustomStyles(BaseCustomStyles):
     block = models.OneToOneField(Cover, on_delete=models.CASCADE, related_name="styles")
 
 
-class FeaturesCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
+class FeaturesCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin, SubheaderStylesMixin):
     block = models.OneToOneField(FeaturesBlock, on_delete=models.CASCADE, related_name="styles")
 
     columns = models.PositiveIntegerField(verbose_name="Количество колонок", default=4)
@@ -45,16 +48,6 @@ class FeaturesCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
 
     icon_width = models.CharField(verbose_name="Ширина иконок", max_length=20, null=True, blank=True)
     icon_height = models.CharField(verbose_name="Высота иконок", max_length=20, null=True, blank=True)
-
-    subheader_size = models.CharField(verbose_name="размер подзаголовка", max_length=50, null=True, blank=True)
-    subheader_size_mobile = models.CharField(
-        verbose_name="размер подзаголовка (смартфон)", max_length=50, null=True, blank=True
-    )
-    subheader_thickness = models.CharField(verbose_name="толщина подзаголовка", max_length=50, null=True, blank=True)
-    subheader_thickness_mobile = models.CharField(
-        verbose_name="толщина подзаголовка (смартфон)", max_length=50, null=True, blank=True
-    )
-    subheader_color = ColorField(verbose_name="Цвет подзаголовка", null=True, blank=True)
 
 
 class RegisterCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
@@ -75,5 +68,5 @@ class StagesCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
     block = models.OneToOneField(StagesBlock, on_delete=models.CASCADE, related_name="styles")
 
 
-class CatalogCustomStyles(BaseCustomStyles):
+class CatalogCustomStyles(BaseCustomStyles, SubheaderStylesMixin):
     block = models.OneToOneField(CatalogBlock, on_delete=models.CASCADE, related_name="styles")

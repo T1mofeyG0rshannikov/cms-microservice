@@ -1,4 +1,4 @@
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
 
 from blocks.template_exist import is_template_exists
@@ -57,6 +57,12 @@ class BaseBlock(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_styles(self):
+        try:
+            return self.styles
+        except ObjectDoesNotExist:
+            return None
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

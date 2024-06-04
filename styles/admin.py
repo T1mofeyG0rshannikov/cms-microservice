@@ -3,8 +3,7 @@ from django.contrib.admin.decorators import register
 
 from styles.models.colors.colors import ColorStyles
 from styles.models.other import IconSize, MarginBlock
-from styles.models.styles.styles import (
-    CatalogCustomStyles,
+from styles.models.styles.styles import (  # CatalogCustomStyles,
     ContentCustomStyles,
     CoverCustomStyles,
     FeaturesCustomStyles,
@@ -60,8 +59,8 @@ class StagesCustomStylesInline(StyleInline):
     model = StagesCustomStyles
 
 
-class CatalogCustomStylesInline(StyleInline):
-    model = CatalogCustomStyles
+# class CatalogCustomStylesInline(StyleInline):
+#   model = CatalogCustomStyles
 
 
 class ColorStylesInline(StyleInline):

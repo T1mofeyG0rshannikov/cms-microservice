@@ -1,8 +1,7 @@
 from ckeditor.fields import RichTextField
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-
-from common.models import BasePageBlock, BlockRelationship
+from blocks.models.blocks import Cover
 
 
 class OrganizationType(models.Model):
@@ -38,7 +37,9 @@ class ProductType(models.Model):
     slug = models.SlugField(max_length=200, unique=True, blank=True, null=True, verbose_name="URL")
 
     title = models.CharField(max_length=100, verbose_name="Заголовок")
-    cover = models.ImageField(upload_to="organizations/covers", verbose_name="Обложка")
+    image = models.ImageField(upload_to="organizations/covers", verbose_name="Картинка блока типа продукта", null=True)
+
+    cover = models.ForeignKey(Cover, on_delete=models.SET_NULL, null=True, verbose_name="блок обложки")
     description = models.CharField(max_length=500, verbose_name="Описание")
 
     profit = models.CharField(max_length=500, verbose_name="Выгода")
@@ -92,23 +93,3 @@ class Link(models.Model):
 
     def __str__(self):
         return self.text
-
-
-class CatalogPageTemplate(models.Model):
-    title = models.CharField(verbose_name="Заголовок", max_length=50)
-
-    class Meta:
-        verbose_name = "Шаблон страницы каталога"
-        verbose_name_plural = "Шаблон страницы каталога"
-
-    def __str__(self):
-        return self.title
-
-
-class Block(BasePageBlock):
-    name = models.ForeignKey(
-        BlockRelationship, verbose_name="Блок", on_delete=models.CASCADE, related_name="catalog_block"
-    )
-    page = models.ForeignKey(
-        CatalogPageTemplate, related_name="blocks", verbose_name="Страница", on_delete=models.CASCADE
-    )

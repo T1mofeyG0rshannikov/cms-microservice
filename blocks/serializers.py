@@ -1,8 +1,7 @@
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
-from blocks.get_block import get_block
 from blocks.models.common import Page, Template
+from blocks.pages_service.pages_service import PageService
 from styles.serializers import CustomStylesSerializer
 
 
@@ -21,8 +20,10 @@ class BlockSerializer(serializers.Serializer):
     content = serializers.SerializerMethodField()
     styles = serializers.SerializerMethodField()
 
+    page_service = PageService()
+
     def get_content(self, block):
-        content = get_block(block.name)
+        content = self.page_service.get_page_block(block.name)
 
         if content is not None:
             content.template.file = "blocks/" + content.template.file
@@ -30,10 +31,11 @@ class BlockSerializer(serializers.Serializer):
         return content
 
     def get_styles(self, block):
-        try:
-            return CustomStylesSerializer(self.get_content(block).styles).data
-        except ObjectDoesNotExist:
-            return None
+        styles = self.get_content(block).get_styles()
+        if styles is not None:
+            return CustomStylesSerializer(styles).data
+
+        return None
 
 
 class TemplateSerializer(serializers.ModelSerializer):
