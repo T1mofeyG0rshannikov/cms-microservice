@@ -13,16 +13,19 @@ from blocks.models.blocks import (
     SocialMediaBlock,
     StagesBlock,
 )
-from blocks.models.blocks_components import (  # CatalogProduct,
+from blocks.models.blocks_components import (
+    CatalogProduct,
     Feature,
     NavMenuItem,
     Question,
     SocialMediaButton,
     Stage,
 )
+from blocks.models.catalog_block import CatalogBlock
 from blocks.models.common import Block, Page, Template
 from common.admin import BaseInline
-from styles.admin import (  # CatalogCustomStylesInline,
+from styles.admin import (
+    CatalogCustomStylesInline,
     ContentCustomStylesInline,
     CoverCustomStylesInline,
     FeaturesCustomStylesInline,
@@ -32,8 +35,6 @@ from styles.admin import (  # CatalogCustomStylesInline,
     SocialCustomStylesInline,
     StagesCustomStylesInline,
 )
-
-# from blocks.models.catalog_block import CatalogBlock
 
 
 class QuestionInline(BaseInline):
@@ -60,20 +61,17 @@ class PageBlockInline(SortableStackedInline, BaseInline):
     model = Block
 
 
-"""
 class CatalogProductInline(SortableStackedInline, BaseInline):
     model = CatalogProduct
 
     def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
+        field = super().formfield_for_foreignkey(db_field, request, **kwargs)
 
-        field = super(CatalogProductInline, self).formfield_for_foreignkey(db_field, request, **kwargs)
-
-        if db_field.name == 'product':
+        if db_field.name == "product":
             if request._obj_ is not None:
-                field.queryset = field.queryset.filter(type = request._obj_.product_type)
+                field.queryset = field.queryset.filter(type=request._obj_.product_type)
 
         return field
-"""
 
 
 @register(Template)
@@ -127,14 +125,14 @@ class StagesBlockAdmin(BaseBlockAdmin):
     inlines = [StageInline, StagesCustomStylesInline]
 
 
-"""@register(CatalogBlock)
+@register(CatalogBlock)
 class CatalogBlogAdmin(SortableAdminBase, BaseBlockAdmin):
-   # inlines = [CatalogCustomStylesInline]#[CatalogProductInline, CatalogCustomStylesInline]
+    inlines = [CatalogProductInline, CatalogCustomStylesInline]
     exclude = BaseBlockAdmin.exclude + ["product_type"]
 
     def get_form(self, request, obj=None, **kwargs):
         request._obj_ = obj
-        return super(CatalogBlogAdmin, self).get_form(request, obj, **kwargs)"""
+        return super().get_form(request, obj, **kwargs)
 
 
 @register(Page)
