@@ -49,12 +49,15 @@ class CustomAdminFileWidget(AdminFileWidget):
 
 @register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ["image_tag", "name", "organization", "created_at_tag", "end_promotion_tag"]  # , "status"]
+    list_display = ["image_tag", "name_tag", "organization", "created_at_tag", "end_promotion_tag"]  # , "status"]
     inlines = [LinkInline]
     formfield_overrides = {models.ImageField: {"widget": CustomAdminFileWidget}}
 
+    def name_tag(self, obj):
+        return mark_safe(f'<a href="/admin/catalog/product/{obj.pk}/change/" >{obj.name}</a>')
+        
     def image_tag(self, obj):
-        return mark_safe('<img src="%s" height="75" />' % (obj.cover.url))
+        return mark_safe('<img src="%s" height="35" />' % (obj.cover.url))
 
     def created_at_tag(self, obj):
         return obj.created_at.strftime("%Y-%m-%d")
@@ -73,6 +76,9 @@ class ProductAdmin(admin.ModelAdmin):
 
     end_promotion_tag.short_description = "дата окончания акции"
     end_promotion_tag.allow_tags = True
+    
+    name_tag.short_description = "имя"
+    name_tag.allow_tags = True
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
