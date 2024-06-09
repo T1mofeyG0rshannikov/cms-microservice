@@ -64,14 +64,16 @@ class PageBlockInline(SortableStackedInline, BaseInline):
 class CatalogProductInline(SortableStackedInline, BaseInline):
     model = CatalogProduct
 
-    def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
-        field = super().formfield_for_foreignkey(db_field, request, **kwargs)
+    # def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
+    #    field = super().formfield_for_foreignkey(db_field, request, **kwargs)
+    #
+    #    if db_field.name == "product":
+    #        if request._obj_ is not None:
+    #            field.queryset = field.queryset.filter(type=request._obj_.product_type)
 
-        if db_field.name == "product":
-            if request._obj_ is not None:
-                field.queryset = field.queryset.filter(type=request._obj_.product_type)
 
-        return field
+#
+#    return field
 
 
 @register(Template)
@@ -128,7 +130,7 @@ class StagesBlockAdmin(BaseBlockAdmin):
 @register(CatalogBlock)
 class CatalogBlogAdmin(SortableAdminBase, BaseBlockAdmin):
     inlines = [CatalogProductInline, CatalogCustomStylesInline]
-    exclude = BaseBlockAdmin.exclude + ["product_type"]
+    exclude = BaseBlockAdmin.exclude  # + ["product_type"]
 
     def get_form(self, request, obj=None, **kwargs):
         request._obj_ = obj

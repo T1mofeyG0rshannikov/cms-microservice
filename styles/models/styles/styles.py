@@ -70,3 +70,5 @@ class StagesCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
 
 class CatalogCustomStyles(BaseCustomStyles, SubheaderStylesMixin):
     block = models.OneToOneField(CatalogBlock, on_delete=models.CASCADE, related_name="styles")
+
+    columns = models.PositiveIntegerField(verbose_name="Количество колонок", default=4)

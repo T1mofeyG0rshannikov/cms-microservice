@@ -72,3 +72,5 @@ class BaseBlock(models.Model):
         )
 
         self.block_relation = block_relation
+
+        super().save(*args, **kwargs)

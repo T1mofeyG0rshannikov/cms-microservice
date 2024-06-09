@@ -1,23 +1,65 @@
+{% load static %}
+
 <div id="{{ block.ancor }}" class="catalog">
-    <h1>{{ block.title }}</h1>
-    <a>{{ block.introductory_text|safe }}</a>
+    <div class="inner">
+        <h1>{{ block.title }}</h1>
+        <a style="margin-top: 0px;">{{ block.introductory_text|safe }}</a>
 
-    <div class="products">
-        {% for product in block.products %}
-            <div class="product">
-                <img src="{{ product.cover }}" />
-                <h3 style="margin-bottom: 3px;">{{ product.name }}</h3>
-                <h3 style="margin-bottom: 3px; margin-top: 0px; font-size: 16px;">{{ product.type }}</h3>
+        <div class="products">
+            {% for product in block.products %}
+                {% with forloop.counter as product_id %}
+                    <div class="product">
+                        <img src="{{ product.cover }}" />
+                        <h3 style="margin-bottom: 3px;">{{ product.name }}</h3>
+                        <h3 style="margin-bottom: 3px; margin-top: 0px; font-weight: 600;"><span>{{ product.organization }}</span></h3>
 
-                <a style="margin-top: 3px;">Акция до {{ product.end_promotion }}</a>
+                        <span style="margin-top: 3px;">Акция до {{ product.end_promotion }}</span>
 
-                <a style="margin-bottom: 0px;">{{ product.annotation }}</a>
-                <a style="margin-top: 3px;" class='how'>как получить деньги</a>
+                        <span style="margin-bottom: 0px;">{{ product.annotation }}</span>
+                        <span onclick="openPopup({{ product_id }})" style="margin-top: 3px;" class='how'>Как получить деньги</span>
 
-                <a class="bonus">Бонус {{ product.profit }}</a>
+                        <a class="bonus">Выгода: {{ product.profit }}</a>
 
-                <button><a href="{{ product.link }}">Заказать</a></button>
-            </div>
-        {% endfor %}
+                        <button><a target="_blank" href="{{ product.link }}">{{ block.button_text }}</a></button>
+
+                        <div class="popup-background">
+                            <div class="description-popup">
+                                <div class="title">
+                                    <img onclick="closePopup({{ product_id }})" class="cross" src="{% static 'blocks/images/cross-gray.png' %}" />
+                                </div>
+                                <div class="text">
+                                    <a>{{ product.description|safe }}</a>
+                                </div>
+
+                                <button><a>{{ block.button_text }}</a></button>
+                            </div>
+                        </div>
+                    </div>
+                {% endwith %}
+            {% endfor %}
+        </div>
     </div>
+
+    <script src="{% static "blocks/js/catalog.js" %}"></script>
+
+    <style>
+        #block{{id}} .catalog{
+            padding-top: {{styles.margin_top}};
+            padding-bottom: {{styles.margin_bottom}};
+            background-color: {{styles.background_color}};
+        }
+
+        #block{{id}} .products{
+            display: grid;
+            grid-column-gap: 25px;
+            grid-row-gap: 10px;
+            grid-template-columns: {{styles.columns}};
+        }
+
+        @media screen and (max-width: 760px) {
+            #block{{id}} .products{
+                grid-template-columns: repeat(1, 1fr);
+            }
+        }
+    </style>
 </div>

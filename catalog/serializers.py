@@ -1,5 +1,7 @@
+import datetime
 import random
 
+from dateutil.relativedelta import relativedelta
 from rest_framework import serializers
 
 from blocks.models.catalog_block import CatalogBlock
@@ -39,6 +41,7 @@ class CatalogProductSerializer(serializers.ModelSerializer):
     link = serializers.SerializerMethodField()
     cover = serializers.SerializerMethodField()
     end_promotion = serializers.SerializerMethodField()
+    organization = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -58,8 +61,14 @@ class CatalogProductSerializer(serializers.ModelSerializer):
             "end_promotion",
         )
 
+    def get_organization(self, product):
+        return product.organization
+
     def get_end_promotion(self, product):
         date = product.end_promotion
+        if date is None:
+            date = datetime.date.today() + relativedelta(years=+1)
+
         month = date.month
         day = date.day
         year = date.year

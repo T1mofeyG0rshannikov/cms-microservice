@@ -23,7 +23,7 @@ class Organization(models.Model):
     logo = models.ImageField(upload_to="organizations/logos/", verbose_name="Лого")
     site = models.URLField(verbose_name="сайт", max_length=500)
 
-    admin_hint = models.CharField(max_length=100, verbose_name="пояснение для админа")
+    admin_hint = RichTextField(max_length=1500, verbose_name="пояснение для админа")
 
     class Meta:
         verbose_name = "Организация"
@@ -31,6 +31,9 @@ class Organization(models.Model):
 
     def __str__(self):
         return self.name
+
+
+PRODUCT_STATUS = (("Новое", "Новое"), ("Опубликовано", "Опубликовано"))
 
 
 class Product(models.Model):
@@ -48,10 +51,14 @@ class Product(models.Model):
     private = models.BooleanField(verbose_name="Приватный(виден только зарегистрированным пользователям)")
     promotion = models.BooleanField(verbose_name="Акция")
 
-    profit = models.CharField(max_length=500, verbose_name="Выгода")
+    profit = models.CharField(max_length=500, verbose_name="Выгода", help_text="₽")
 
     start_promotion = models.DateField(verbose_name="Начало акции", null=True, blank=True)
     end_promotion = models.DateField(verbose_name="Окончание акции", null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+
+    status = models.CharField(verbose_name="статус", choices=PRODUCT_STATUS, max_length=50, default="Новое")
 
     class Meta:
         verbose_name = "продукт/акция"
@@ -66,6 +73,8 @@ class Link(models.Model):
     percent = models.PositiveIntegerField(
         verbose_name="процент", validators=[MinValueValidator(0), MaxValueValidator(100)]
     )
+    info = models.CharField(verbose_name="Инфо", max_length=300, null=True, blank=True)
+
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="links")
 
     class Meta:

@@ -8,6 +8,7 @@ from catalog.models.blocks import CatalogPageTemplate
 from catalog.models.products import ProductType
 from catalog.serializers import CatalogBlockSerializer
 from common.models import BlockRelationship
+from styles.models.styles.styles import CatalogCustomStyles
 from styles.serializers import CustomStylesSerializer
 
 
@@ -31,12 +32,16 @@ class CatalogService(CatalogServiceInterface):
         return page
 
     def get_catalog_block(self, slug: str):
-        catalog = CatalogBlock.objects.get(product_type__slug=slug)
+        catalog = CatalogBlock.objects.prefetch_related("styles").get(product_type__slug=slug)
         catalog_relation = BlockRelationship.objects.get(block_name=catalog.name)
-
         catalog = self.page_service.get_page_block(catalog_relation)
 
-        catalog_styles = CustomStylesSerializer(catalog.get_styles()).data
+        styles = catalog.get_styles()
+        # catalog.styles
+        if styles is None:
+            styles = CatalogCustomStyles.objects.create(block=catalog)
+
+        catalog_styles = CustomStylesSerializer(styles).data
 
         catalog = CatalogBlockSerializer(catalog).data
 

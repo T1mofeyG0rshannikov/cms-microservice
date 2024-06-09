@@ -84,3 +84,14 @@ class CatalogProduct(Sortable):
 
     def __str__(self):
         return str(self.product)
+
+    def save(self, *args, **kwargs):
+        self.product.status = "Опубликовано"
+        self.product.save()
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        self.product.status = "Новое"
+        self.product.save()
+
+        super().delete(*args, **kwargs)
