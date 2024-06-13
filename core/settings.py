@@ -17,6 +17,7 @@ SECRET_KEY = str(os.getenv("SECRET_KEY"))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# ALLOWED_HOSTS = ['api.localhost', 'localhost', 'api.mysite', 'mysite']
 ALLOWED_HOSTS: list[str] = ["*"]
 
 
@@ -38,6 +39,8 @@ INSTALLED_APPS = [
     "user",
     "common",
     "catalog",
+    "django_hosts",
+    "domens",
 ]
 
 MIDDLEWARE = [
@@ -48,6 +51,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_hosts.middleware.HostsRequestMiddleware",
+    "django_hosts.middleware.HostsResponseMiddleware",
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -148,3 +153,9 @@ EMAIL_PORT = 587
 # celery
 
 CELERY_BROKER_URL = str(os.getenv("CELERY_BROKER_URL"))
+
+
+# domens
+
+ROOT_HOSTCONF = "core.hosts"
+DEFAULT_HOST = "www"
