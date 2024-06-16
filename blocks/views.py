@@ -16,6 +16,28 @@ from common.views import BaseTemplateView
 from user.forms import LoginForm
 
 
+class IndexPage(BaseTemplateView):
+    template_name = "blocks/page.html"
+
+    def get(self, *args, **kwargs):
+        if not Page.objects.filter(url=None).exists():
+            return HttpResponseNotFound()
+
+        return super().get(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        page = Page.objects.prefetch_related("blocks").get(url=None)
+
+        serialized_page = PageSerializer(page).data
+
+        context["page"] = serialized_page
+        context["form"] = LoginForm()
+
+        return context
+
+
 class ShowPage(BaseTemplateView):
     template_name = "blocks/page.html"
 

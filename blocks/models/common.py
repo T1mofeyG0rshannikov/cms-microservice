@@ -9,7 +9,7 @@ from utils.errors import Errors
 
 class Page(models.Model):
     title = models.CharField(verbose_name="Заголовок", max_length=50)
-    url = models.CharField(max_length=50)
+    url = models.CharField(max_length=50, null=True, blank=True)
 
     class Meta:
         verbose_name = "Страница"

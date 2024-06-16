@@ -3,9 +3,14 @@ from settings.models import SiteSettings
 from settings.serializers import SettingsSerializer
 
 
-def get_settings(subdomen: str) -> dict:
-    if Site.objects.filter(domen=subdomen).exists():
-        site = Site.objects.get(domen=subdomen)
+def get_settings(domain: str, subdomain: str) -> dict:
+    if domain == "localhost":
+        sites = Site.objects.all()
+    else:
+        sites = Site.objects.filter(domain__domain=domain)
+
+    if sites.filter(subdomain=subdomain).exists():
+        site = sites.get(subdomain=subdomain)
         settings = SiteSettings.objects.prefetch_related("icon").prefetch_related("logo").first()
         settings = SettingsSerializer(settings).data
 

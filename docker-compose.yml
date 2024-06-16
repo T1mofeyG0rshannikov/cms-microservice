@@ -2,18 +2,16 @@ version: "3.3"
 
 services:
   db:
-    image: nouchka/sqlite3:latest
-    volumes:
-      - ./data/db:/root/db
+    image: postgres
+    container_name: db
     environment:
-      - SQLITE3_DB=db.sqlite3
-      - SECRET_KEY=${SECRET_KEY}
-      - ALGORITHM=${ALGORITHM}
-      - EXPIRES_IN=${EXPIRES_IN}
-      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
-      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - db:/var/lib/postgresql/data/
     ports:
-      - '9000:9000'
+      - '5432:5432'
   web:
     build: .
     command: sh -c "gunicorn --bind 0.0.0.0:8000 core.wsgi:application"
