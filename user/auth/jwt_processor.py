@@ -23,6 +23,9 @@ class JwtProcessor(JwtProcessorInterface):
         return jwt.encode(encode, self.jwt_settings.secret_key, algorithm=self.jwt_settings.algorithm)
 
     def validate_token(self, token: str) -> dict | bool:
+        if token is None:
+            return False
+
         try:
             payload = jwt.decode(token, self.jwt_settings.secret_key, algorithms=[self.jwt_settings.algorithm])
             return payload

@@ -16,3 +16,5 @@ class UserErrors(str, Enum):
     incorrect_password = "Неверный пароль"
     user_by_phone_not_found = "Нет пользователя с таким телефоном"
     user_by_email_not_found = "Нет пользователя с таким E-mail'ом"
+    login_first = "Сначала войдите в аккаунт"
+    you_already_have_your_own_website = "вы уже имеете свой сайт"

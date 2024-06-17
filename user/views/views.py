@@ -6,6 +6,8 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
 from common.views import BaseTemplateView
+from domens.forms import CreateSiteForm
+from domens.models import Domain, Site
 from user.email_service.email_service import get_email_service
 from user.forms import LoginForm, RegistrationForm, ResetPasswordForm, SetPasswordForm
 from user.serializers import UserSerializer
@@ -49,7 +51,7 @@ class RegisterUser(BaseUserView):
                 return JsonResponse({"errors": form.errors}, status=400)
 
             user = self.user_manager.create_user(form.cleaned_data)
-            self.email_service.send_mail_to_confirm_email(user)
+            # self.email_service.send_mail_to_confirm_email(user)
 
             token_to_set_password = self.jwt_processor.create_set_password_token(user.id)
 
@@ -197,3 +199,51 @@ class SendMailToResetPassword(BaseUserView):
             return JsonResponse({"message": Messages.sent_message_to_reset_password.value})
 
         return JsonResponse({"errors": form.errors}, status=400)
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class CreateSite(BaseUserView):
+    template_name = "user/create_site.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["form"] = CreateSiteForm()
+
+        return context
+
+    def post(self, request):
+        form = CreateSiteForm(request.POST, request.FILES)
+
+        token = request.headers.get("Authorization")
+        payload = self.jwt_processor.validate_token(token)
+
+        if payload:
+            user = self.user_manager.get_user_by_id(payload["id"])
+
+            if user.site is not None:
+                form.add_error("subdomain", UserErrors.you_already_have_your_own_website.value)
+                return JsonResponse({"errors": form.errors}, status=400)
+
+            if form.is_valid():
+                domain = Domain.objects.get(domain="idri.ru")
+                print("valid")
+                data = form.cleaned_data
+                data["user"] = user
+                data["is_active"] = True
+                data["domain"] = domain
+
+                print(data)
+
+                Site.objects.create(**data)
+
+                return HttpResponse(status=200)
+
+            else:
+                print("invalid")
+                print(form.errors)
+                return JsonResponse({"errors": form.errors}, status=400)
+        else:
+            print("unlogin")
+            form.add_error("subdomain", UserErrors.login_first.value)
+            return JsonResponse({"errors": form.errors}, status=400)

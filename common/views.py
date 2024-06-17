@@ -8,10 +8,6 @@ from settings.get_settings import get_settings
 
 
 class BaseTemplateView(TemplateView):
-    def __init__(self):
-        super().__init__()
-        # self.settings = get_settings(self.get_subdomen())
-
     def get_domain(self):
         host = self.request.get_host()
         host = host.replace("127.0.0.1", "localhost")
