@@ -1,9 +1,5 @@
-import json
-
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
 
 from common.views import BaseTemplateView
 from domens.forms import CreateSiteForm
@@ -17,7 +13,6 @@ from utils.success_messages import Messages
 from utils.validators import is_valid_email, is_valid_phone
 
 
-@method_decorator(csrf_exempt, name="dispatch")
 class RegisterUser(BaseUserView):
     template_name = "user/register.html"
 
@@ -32,7 +27,7 @@ class RegisterUser(BaseUserView):
         return context
 
     def post(self, request):
-        form = RegistrationForm(json.loads(request.body))
+        form = RegistrationForm(request.POST)
         if form.is_valid():
             phone = form.cleaned_data.get("phone")
             email = form.cleaned_data.get("email")
@@ -51,7 +46,7 @@ class RegisterUser(BaseUserView):
                 return JsonResponse({"errors": form.errors}, status=400)
 
             user = self.user_manager.create_user(form.cleaned_data)
-            # self.email_service.send_mail_to_confirm_email(user)
+            self.email_service.send_mail_to_confirm_email(user)
 
             token_to_set_password = self.jwt_processor.create_set_password_token(user.id)
 
@@ -60,7 +55,6 @@ class RegisterUser(BaseUserView):
         return JsonResponse({"errors": form.errors}, status=400)
 
 
-@method_decorator(csrf_exempt, name="dispatch")
 class SetPassword(BaseUserView):
     def get(self, request, token):
         form = SetPasswordForm()
@@ -87,7 +81,6 @@ class SetPassword(BaseUserView):
         return render(request, "user/set-password.html", {"form": form, "token": token})
 
 
-@method_decorator(csrf_exempt, name="dispatch")
 class Login(BaseUserView):
     template_name = "user/login.html"
 
@@ -98,7 +91,7 @@ class Login(BaseUserView):
         return context
 
     def post(self, request):
-        form = LoginForm(json.loads(request.body))
+        form = LoginForm(request.POST)
         if form.is_valid():
             phone_or_email = form.cleaned_data.get("phone_or_email")
             password = form.cleaned_data.get("password")
@@ -170,7 +163,6 @@ class ConfirmEmail(BaseUserView):
         return render(request, "user/confirm_email.html", {"message": "Почта подтверждена!"})
 
 
-@method_decorator(csrf_exempt, name="dispatch")
 class SendMailToResetPassword(BaseUserView):
     template_name = "user/reset-password.html"
 
@@ -185,7 +177,7 @@ class SendMailToResetPassword(BaseUserView):
         return context
 
     def post(self, request):
-        form = ResetPasswordForm(json.loads(request.body))
+        form = ResetPasswordForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data.get("email")
 
@@ -201,7 +193,6 @@ class SendMailToResetPassword(BaseUserView):
         return JsonResponse({"errors": form.errors}, status=400)
 
 
-@method_decorator(csrf_exempt, name="dispatch")
 class CreateSite(BaseUserView):
     template_name = "user/create_site.html"
 
@@ -227,23 +218,17 @@ class CreateSite(BaseUserView):
 
             if form.is_valid():
                 domain = Domain.objects.get(domain="idri.ru")
-                print("valid")
                 data = form.cleaned_data
                 data["user"] = user
                 data["is_active"] = True
                 data["domain"] = domain
-
-                print(data)
 
                 Site.objects.create(**data)
 
                 return HttpResponse(status=200)
 
             else:
-                print("invalid")
-                print(form.errors)
                 return JsonResponse({"errors": form.errors}, status=400)
         else:
-            print("unlogin")
             form.add_error("subdomain", UserErrors.login_first.value)
             return JsonResponse({"errors": form.errors}, status=400)

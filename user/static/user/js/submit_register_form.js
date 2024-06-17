@@ -1,21 +1,17 @@
 function submitRegisterForm(element, event){
     event.preventDefault();
 
-   /* const form = document.querySelector(".user-form")*/
     const data = new FormData(element);
 
     fetch("/user/register", {
         method: "post",
+        mode: 'same-origin',
         headers: {
             'Accept': 'application/json',
-            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': data.get("csrfmiddlewaretoken"),
         },
-        body: JSON.stringify({
-            "csrfmiddlewaretoken": data.get("csrfmiddlewaretoken"),
-            "phone": data.get("phone"),
-            "email": data.get("email"),
-            "username": data.get("username")
-        })
+        body: data
     }).then(response => {
         if (response.status === 200){
             response.json().then((response) => {
@@ -26,9 +22,12 @@ function submitRegisterForm(element, event){
         return response.json();
     }).then(response => {
         const errors = response.errors;
-        setError(element.querySelector(`#username`), "")
-        setError(element.querySelector(`#phone`), "")
-        setError(element.querySelector(`#email`), "")
+
+        const fields = element.querySelectorAll(".field");
+
+        for (let field of fields){
+            setError(field, "")
+        }
 
         for (let field of Object.keys(errors)) {
             setError(element.querySelector(`#${field}`), errors[field][0]);

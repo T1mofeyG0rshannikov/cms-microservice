@@ -33,6 +33,38 @@ function compliteLoginForm(){
 }
 
 function isAgreeToRememberMe(){
-    console.log(document.querySelector(".agreed-container input").checked);
     return document.querySelector(".agreed-container input").checked;
+}
+
+function submitLoginForm(element, event){
+    event.preventDefault();
+    const data = new FormData(element);
+
+    fetch("/user/login", {
+        method: "POST",
+        mode: 'same-origin',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': data.get("csrfmiddlewaretoken"),
+        },
+        body: data
+    }).then(response => {
+        if (response.status === 200){
+            response.json().then((response) => {
+                const token = response.acess_token;
+                setToken(token);
+
+                if (isAgreeToRememberMe()){
+                    rememberMe();
+                    rememberUserInfo(data.get("phone_or_email"), data.get("password"));
+                }
+
+                window.location.replace("/user/profile");
+            })
+        }
+        return response.json();
+    }).then(response => {
+        setErrors(response.errors, element)
+    })
 }

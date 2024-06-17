@@ -35,47 +35,8 @@
     }
 </style>
 
-<script>
-    function getForm(element, event){
-        event.preventDefault();
-        const form = document.querySelector(".create-form");
+{% endblock %}
 
-        const data = new FormData(form);
-        data.append('logo', document.getElementById("id_logo").files[0])
-        data.append('logo2', document.getElementById("id_logo2").files[0])
-
-        const token = getToken();
-
-        fetch("/user/create-site", {
-            method: "POST",
-            mode: 'same-origin',
-            headers: {
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                'Authorization': `${token}`
-            },
-            body: data
-        }).then(response => {
-            if (response.status === 200){
-                console.log("success");
-            }
-            return response.json();
-        }).then(response => {
-            const errors = response.errors;
-            console.log(errors);
-
-            setError(element.querySelector(`#subdomain`), "")
-            setError(element.querySelector(`#logo`), "")
-            setError(element.querySelector(`#logo_width`), "")
-            setError(element.querySelector(`#logo_width_mobile`), "")
-            setError(element.querySelector(`#logo2`), "")
-            setError(element.querySelector(`#use_default_settings`), "")
-            setError(element.querySelector(`#advertising_channel`), "")
-            for (let field of Object.keys(errors)) {
-                setError(element.querySelector(`#${field}`), errors[field][0]);
-            }
-        })
-    }
-</script>
-
+{% block additional_scripts %}
+<script src="{% static "user/js/create_site.js" %}"></script>
 {% endblock %}

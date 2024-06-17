@@ -12,3 +12,16 @@ function setError(element, message){
         errorContainer.innerHTML = message
     }
 }
+
+
+function setErrors(errors, element){
+    const fields = element.querySelectorAll(".field")
+
+    for (let field of fields){
+        setError(field, "")
+    }
+
+    for (let field of Object.keys(errors)) {
+        setError(element.querySelector(`#${field}`), errors[field][0]);
+    }
+}

@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<form onsubmit="getForm(this, event)" method="post" class="user-form" id="login-form">
+<form onsubmit="submitLoginForm(this, event)" class="user-form" id="login-form">
     <img class="logo" src="{{ settings.form_logo.image }}" />
 
     <h3>Вход в кабинет</h3>
@@ -47,50 +47,6 @@
 </style>
 {% endblock %}
 
-
 {% block additional_scripts %}
 <script src="{% static "user/js/login_form.js" %}"></script>
-
-<script>
-    function getForm(element, event){
-        event.preventDefault();
-        const form = document.querySelector(".user-form")
-        const data = new FormData(form);
-
-        fetch("/user/login", {
-            method: "post",
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: JSON.stringify({
-                "csrfmiddlewaretoken": data.get("csrfmiddlewaretoken"),
-                "phone_or_email": data.get("phone_or_email"),
-                "password": data.get("password")
-            })
-        }).then(response => {
-            if (response.status === 200){
-                response.json().then((response) => {
-                    const token = response.acess_token;
-                    setToken(token);
-
-                    if (isAgreeToRememberMe()){
-                        rememberMe();
-                        rememberUserInfo(data.get("phone_or_email"), data.get("password"));
-                    }
-
-                    window.location.replace("/user/profile");
-                })
-            }
-            return response.json();
-        }).then(response => {
-            const errors = response.errors;
-            setError(element.querySelector(`#password`), "")
-            setError(element.querySelector(`#phone_or_email`), "")
-            for (let field of Object.keys(errors)) {
-                setError(element.querySelector(`#${field}`), errors[field][0]);
-            }
-        })
-    }
-</script>
 {% endblock %}
