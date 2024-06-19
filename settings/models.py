@@ -4,6 +4,8 @@ from common.models import OneInstanceModel
 
 
 class SiteSettings(OneInstanceModel):
+    disable_partners_sites = models.BooleanField(default=False, verbose_name="Отключить партнёрский домен")
+    
     class Meta:
         verbose_name = "Настройки сайта"
         verbose_name_plural = "Настройки сайта"

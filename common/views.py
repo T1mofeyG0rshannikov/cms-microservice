@@ -6,6 +6,7 @@ from django.views.generic import TemplateView
 
 from domens.models import Domain, Site
 from settings.get_settings import get_settings
+from settings.models import SiteSettings
 
 
 class BaseTemplateView(TemplateView):
@@ -74,6 +75,9 @@ class BaseTemplateView(TemplateView):
 
         partner_domain = Domain.objects.filter(is_partners=True).first()
         if domain == partner_domain.domain and not subdomain and self.request.path != "":
+            return HttpResponseNotFound("404 Page not found")
+        
+        if domain == partner_domain.domain and SiteSettings.objects.first().disable_partners_sites:
             return HttpResponseNotFound("404 Page not found")
 
         return super().get(*args, **kwargs)
