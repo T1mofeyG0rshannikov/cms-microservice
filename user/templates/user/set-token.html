@@ -1,0 +1,10 @@
+{% extends "user/base.html" %}
+
+{% block content %}
+
+<script>
+    setToken('{{ token }}');
+    window.location.replace(`/user/profile`)
+</script>
+
+{% endblock %}

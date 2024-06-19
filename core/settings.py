@@ -53,7 +53,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_hosts.middleware.HostsRequestMiddleware",
     "django_hosts.middleware.HostsResponseMiddleware",
-    "domens.middleware.BlockAdminPanelMiddleware"
+    "domens.middleware.BlockAdminPanelMiddleware",
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -162,3 +162,6 @@ DEFAULT_HOST = "www"
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 20_971_520
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
+
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
+SESSION_COOKIE_SECURE = False

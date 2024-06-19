@@ -1,12 +1,11 @@
 import re
 
+from django.db.models import Q
 from django.http import HttpResponseNotFound
 from django.views.generic import TemplateView
 
-from domens.models import Site
+from domens.models import Domain, Site
 from settings.get_settings import get_settings
-from django.db.models import Q
-from domens.models import Domain
 
 
 class BaseTemplateView(TemplateView):
@@ -66,18 +65,25 @@ class BaseTemplateView(TemplateView):
         if not self.valid_subdomen(subdomain):
             return HttpResponseNotFound("404 Subdomen not found")
 
-        if domain != "localhost" and not Site.objects.filter(Q(domain__domain=domain) & Q(subdomain=subdomain)).exists():
+        if (
+            domain != "localhost"
+            and subdomain
+            and not Site.objects.filter(Q(domain__domain=domain) & Q(subdomain=subdomain)).exists()
+        ):
             return HttpResponseNotFound("404 Subdomen not found")
-        
+
         partner_domain = Domain.objects.filter(is_partners=True).first()
         if domain == partner_domain.domain and not subdomain and self.request.path != "":
             return HttpResponseNotFound("404 Page not found")
-        
+
         return super().get(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["settings"] = self.settings
-        context["domain"] = Domain.objects.filter(is_partners=False).domain
+        if self.get_domain() == "localhost":
+            context["domain"] = "localhost:8000"
+        else:
+            context["domain"] = Domain.objects.filter(is_partners=False).first().domain
 
         return context

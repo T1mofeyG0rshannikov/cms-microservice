@@ -1,4 +1,5 @@
 from django.http import HttpResponseNotFound
+
 from domens.admin import Domain
 
 
@@ -7,9 +8,9 @@ class BlockAdminPanelMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        partner_domain = Domain.objects.filter(is_partners=True).domain
-        
-        if request.path.startswith('/admin/') and partner_domain in request.get_host():
+        partner_domain = Domain.objects.filter(is_partners=True).first().domain
+
+        if request.path.startswith("/admin/") and partner_domain in request.get_host():
             return HttpResponseNotFound("404 Page not found")
 
         return self.get_response(request)

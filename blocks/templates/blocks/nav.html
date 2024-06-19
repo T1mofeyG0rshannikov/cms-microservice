@@ -11,7 +11,7 @@
             <a>{{ block.register_button_text }}</a>
         </button>
 
-        <button id="login-button" onclick="openLoginForm()">
+        <button id="login-button" onclick="openLoginForm('{{ domain }}')">
             <a>{{ block.login_button_text }}</a>
         </button>
     </aside>
@@ -30,7 +30,7 @@
                 <a>{{ block.register_button_text }}</a>
             </button>
 
-            <button id="login-button" onclick="openLoginForm()">
+            <button id="login-button" onclick="openLoginForm('{{ domain }}')">
                 <a>{{ block.login_button_text }}</a>
             </button>
         </div>

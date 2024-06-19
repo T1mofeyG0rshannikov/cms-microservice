@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<form onsubmit="submitLoginForm(this, event)" class="user-form" id="login-form">
+<form onsubmit="submitLoginForm(this, event, '{{domain}}')" class="user-form" id="login-form">
     <img class="logo" src="{{ settings.form_logo.image }}" />
 
     <h3>Вход в кабинет</h3>

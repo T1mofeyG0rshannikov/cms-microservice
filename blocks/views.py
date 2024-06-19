@@ -1,6 +1,7 @@
 import json
 
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
+from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
@@ -13,10 +14,8 @@ from blocks.serializers import PageSerializer, TemplateSerializer
 from catalog.catalog_service.catalog_service import get_catalog_service
 from catalog.catalog_service.catalog_service_interface import CatalogServiceInterface
 from common.views import BaseTemplateView
-from user.forms import LoginForm
-from django.shortcuts import render
-from user.forms import LoginForm
 from domens.models import Domain
+from user.forms import LoginForm
 
 
 class IndexPage(BaseTemplateView):
@@ -24,10 +23,19 @@ class IndexPage(BaseTemplateView):
 
     def get(self, *args, **kwargs):
         partner_domain = Domain.objects.filter(is_partners=True).first()
-        
-        if (self.get_domain() == partner_domain.domain or "localhost") and self.get_subdomain() == "":
+
+        print(self.get_domain(), partner_domain.domain, self.get_subdomain())
+        if (
+            self.get_domain() == partner_domain.domain or self.get_domain() == "localhost"
+        ) and self.get_subdomain() == "":
             form = LoginForm()
-            return render(self.request, "blocks/login.html", {"form": form})
+
+            if self.get_domain() == "localhost":
+                domain = "localhost:8000"
+            else:
+                domain = Domain.objects.filter(is_partners=False).first().domain
+
+            return render(self.request, "blocks/login.html", {"form": form, "domain": domain})
 
         if not Page.objects.filter(url=None).exists():
             return HttpResponseNotFound()

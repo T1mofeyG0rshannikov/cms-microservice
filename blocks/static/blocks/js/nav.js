@@ -40,7 +40,7 @@ function openLoginForm(domain){
     }).then(response => {
         if (response.status === 200){
             response.json().then(() => {
-                window.location.replace(`http://${domain}/user/profile`)
+                window.location.replace(`http://${domain}/user/set-token/${token}`)
             })
         }
         return response.status;

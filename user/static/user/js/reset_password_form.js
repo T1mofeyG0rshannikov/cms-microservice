@@ -36,7 +36,7 @@ function submitResetPasswordFormForm(element, event){
         headers: {
             'Accept': 'application/json',
             'X-Requested-With': 'XMLHttpRequest',
-            'X-CSRFToken': data.get("csrfmiddlewaretoken"),
+            //'X-CSRFToken': data.get("csrfmiddlewaretoken"),
         },
         body: data
     }).then(response => {

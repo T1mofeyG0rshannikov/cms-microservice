@@ -1,19 +1,22 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 from common.views import BaseTemplateView
 from domens.forms import CreateSiteForm
 from domens.models import Domain, Site
 from user.email_service.email_service import get_email_service
 from user.forms import LoginForm, RegistrationForm, ResetPasswordForm, SetPasswordForm
+from user.models import User
 from user.serializers import UserSerializer
 from user.views.base_user_view import BaseUserView
 from utils.errors import Errors, UserErrors
 from utils.success_messages import Messages
 from utils.validators import is_valid_email, is_valid_phone
-from user.models import User
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class RegisterUser(BaseUserView):
     template_name = "user/register.html"
 
@@ -47,7 +50,7 @@ class RegisterUser(BaseUserView):
                 return JsonResponse({"errors": form.errors}, status=400)
 
             user = self.user_manager.create_user(form.cleaned_data)
-            self.email_service.send_mail_to_confirm_email(user)
+            # self.email_service.send_mail_to_confirm_email(user)
 
             token_to_set_password = self.jwt_processor.create_set_password_token(user.id)
 
@@ -56,13 +59,26 @@ class RegisterUser(BaseUserView):
         return JsonResponse({"errors": form.errors}, status=400)
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class SetPassword(BaseUserView):
     def get(self, request, token):
         form = SetPasswordForm()
-        return render(request, "user/set-password.html", {"form": form, "token": token})
+
+        if self.get_domain() == "localhost":
+            domain = "localhost:8000"
+        else:
+            domain = Domain.objects.filter(is_partners=False).first().domain
+
+        return render(request, "user/set-password.html", {"form": form, "token": token, "domain": domain})
 
     def post(self, request, token):
         form = SetPasswordForm(request.POST)
+
+        if self.get_domain() == "localhost":
+            domain = "localhost:8000"
+        else:
+            domain = Domain.objects.filter(is_partners=False).first().domain
+
         if form.is_valid():
             payload = self.jwt_processor.validate_token(token)
 
@@ -77,11 +93,12 @@ class SetPassword(BaseUserView):
 
             access_token = self.jwt_processor.create_access_token(user.username, user.id)
 
-            return render(request, "user/set-password.html", {"access_token": access_token})
+            return render(request, "user/set-password.html", {"access_token": access_token, "domain": domain})
 
-        return render(request, "user/set-password.html", {"form": form, "token": token})
+        return render(request, "user/set-password.html", {"form": form, "token": token, "domain": domain})
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class Login(BaseUserView):
     template_name = "user/login.html"
 
@@ -128,10 +145,12 @@ class Login(BaseUserView):
         return JsonResponse({"errors": form.errors}, status=400)
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class Profile(BaseTemplateView):
     template_name = "user/profile.html"
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class GetUserInfo(BaseUserView):
     def get(self, request):
         token = request.headers.get("Authorization")
@@ -164,6 +183,7 @@ class ConfirmEmail(BaseUserView):
         return render(request, "user/confirm_email.html", {"message": "Почта подтверждена!"})
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class SendMailToResetPassword(BaseUserView):
     template_name = "user/reset-password.html"
 
@@ -194,10 +214,6 @@ class SendMailToResetPassword(BaseUserView):
         return JsonResponse({"errors": form.errors}, status=400)
 
 
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
-
-
 @method_decorator(csrf_exempt, name="dispatch")
 class CreateSite(BaseUserView):
     template_name = "user/create_site.html"
@@ -224,7 +240,7 @@ class CreateSite(BaseUserView):
                     return JsonResponse({"errors": form.errors}, status=400)
             except User.site.RelatedObjectDoesNotExist:
                 pass
-                
+
             if form.is_valid():
                 domain = Domain.objects.filter(is_partners=True).first()
                 data = form.cleaned_data
@@ -241,3 +257,13 @@ class CreateSite(BaseUserView):
         else:
             form.add_error("subdomain", UserErrors.login_first.value)
             return JsonResponse({"errors": form.errors}, status=400)
+
+
+class SetToken(BaseUserView):
+    template_name = "user/set-token.html"
+
+    def get_context_data(self, token, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["token"] = token
+
+        return context
