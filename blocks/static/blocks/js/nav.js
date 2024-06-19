@@ -27,7 +27,7 @@ burger.addEventListener("click", openAsideMenu);
 const loginForm = document.getElementById("login-form");
 const loginFormContainer = document.querySelector(".login-form-container")
 
-function openLoginForm(){
+function openLoginForm(domain){
     const token = getToken();
 
     fetch("/user/get-user-info", {
@@ -40,7 +40,7 @@ function openLoginForm(){
     }).then(response => {
         if (response.status === 200){
             response.json().then(() => {
-                window.location.replace("/user/profile")
+                window.location.replace(`http://${domain}/user/profile`)
             })
         }
         return response.status;

@@ -9,12 +9,12 @@ function submitCreateSiteForm(element, event){
 
     fetch("/user/create-site", {
         method: "POST",
-        mode: 'same-origin',
+      
         headers: {
             'Accept': 'application/json',
             'X-Requested-With': 'XMLHttpRequest',
             'Authorization': `${token}`,
-            'X-CSRFToken': data.get("csrfmiddlewaretoken"),
+           
         },
         body: data
     }).then(response => {

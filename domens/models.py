@@ -5,7 +5,8 @@ from user.models import User
 
 class Domain(models.Model):
     domain = models.CharField(max_length=50, verbose_name="домен")
-
+    is_partners = models.BooleanField(default=True, verbose_name="партнёрский сайт")
+    
     def __str__(self):
         return self.domain
 

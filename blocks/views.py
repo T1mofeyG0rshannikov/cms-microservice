@@ -14,12 +14,21 @@ from catalog.catalog_service.catalog_service import get_catalog_service
 from catalog.catalog_service.catalog_service_interface import CatalogServiceInterface
 from common.views import BaseTemplateView
 from user.forms import LoginForm
+from django.shortcuts import render
+from user.forms import LoginForm
+from domens.models import Domain
 
 
 class IndexPage(BaseTemplateView):
     template_name = "blocks/page.html"
 
     def get(self, *args, **kwargs):
+        partner_domain = Domain.objects.filter(is_partners=True).first()
+        
+        if (self.get_domain() == partner_domain.domain or "localhost") and self.get_subdomain() == "":
+            form = LoginForm()
+            return render(self.request, "blocks/login.html", {"form": form})
+
         if not Page.objects.filter(url=None).exists():
             return HttpResponseNotFound()
 

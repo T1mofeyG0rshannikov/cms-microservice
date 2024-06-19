@@ -36,7 +36,7 @@ function isAgreeToRememberMe(){
     return document.querySelector(".agreed-container input").checked;
 }
 
-function submitLoginForm(element, event){
+function submitLoginForm(element, event, domain){
     event.preventDefault();
     const data = new FormData(element);
 
@@ -60,7 +60,7 @@ function submitLoginForm(element, event){
                     rememberUserInfo(data.get("phone_or_email"), data.get("password"));
                 }
 
-                window.location.replace("/user/profile");
+                window.location.replace(`http://${domain}/user/profile`);
             })
         }
         return response.json();

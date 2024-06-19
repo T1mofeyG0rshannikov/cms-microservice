@@ -53,6 +53,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_hosts.middleware.HostsRequestMiddleware",
     "django_hosts.middleware.HostsResponseMiddleware",
+    "domens.middleware.BlockAdminPanelMiddleware"
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -131,7 +132,6 @@ STATICFILES_DIR = os.path.join(BASE_DIR, "static")
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "static")
 
-HOST = "http://idri.ru"
 # AUTH_USER_MODEL = "user.User"
 
 # SECURE_CROSS_ORIGIN_OPENER_POLICY=None

@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<form onsubmit="getForm(this, event)" class="create-form" enctype='multipart/form-data'>
+<form onsubmit="submitCreateSiteForm(this, event)" class="create-form" enctype='multipart/form-data'>
     <h3>Создать партнёрский сайт</h3>
 
     {% csrf_token %}

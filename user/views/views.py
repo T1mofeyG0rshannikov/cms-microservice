@@ -11,6 +11,7 @@ from user.views.base_user_view import BaseUserView
 from utils.errors import Errors, UserErrors
 from utils.success_messages import Messages
 from utils.validators import is_valid_email, is_valid_phone
+from user.models import User
 
 
 class RegisterUser(BaseUserView):
@@ -193,6 +194,11 @@ class SendMailToResetPassword(BaseUserView):
         return JsonResponse({"errors": form.errors}, status=400)
 
 
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+
+
+@method_decorator(csrf_exempt, name="dispatch")
 class CreateSite(BaseUserView):
     template_name = "user/create_site.html"
 
@@ -212,12 +218,15 @@ class CreateSite(BaseUserView):
         if payload:
             user = self.user_manager.get_user_by_id(payload["id"])
 
-            if user.site is not None:
-                form.add_error("subdomain", UserErrors.you_already_have_your_own_website.value)
-                return JsonResponse({"errors": form.errors}, status=400)
-
+            try:
+                if user.site is not None:
+                    form.add_error("subdomain", UserErrors.you_already_have_your_own_website.value)
+                    return JsonResponse({"errors": form.errors}, status=400)
+            except User.site.RelatedObjectDoesNotExist:
+                pass
+                
             if form.is_valid():
-                domain = Domain.objects.get(domain="idri.ru")
+                domain = Domain.objects.filter(is_partners=True).first()
                 data = form.cleaned_data
                 data["user"] = user
                 data["is_active"] = True
