@@ -8,6 +8,7 @@ urlpatterns = [
     path("styles/", include("styles.urls")),
     path("user/", include("user.urls")),
     path("admin/", admin.site.urls),
+    path("domain/", include("domens.urls")),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -2,8 +2,8 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import TemplateView, View
 
-from common.views import BaseTemplateView
 from domens.forms import CreateSiteForm
 from domens.models import Domain, Site
 from user.email_service.email_service import get_email_service
@@ -64,20 +64,10 @@ class SetPassword(BaseUserView):
     def get(self, request, token):
         form = SetPasswordForm()
 
-        if self.get_domain() == "localhost":
-            domain = "localhost:8000"
-        else:
-            domain = Domain.objects.filter(is_partners=False).first().domain
-
-        return render(request, "user/set-password.html", {"form": form, "token": token, "domain": domain})
+        return render(request, "user/set-password.html", {"form": form, "token": token})
 
     def post(self, request, token):
         form = SetPasswordForm(request.POST)
-
-        if self.get_domain() == "localhost":
-            domain = "localhost:8000"
-        else:
-            domain = Domain.objects.filter(is_partners=False).first().domain
 
         if form.is_valid():
             payload = self.jwt_processor.validate_token(token)
@@ -93,9 +83,9 @@ class SetPassword(BaseUserView):
 
             access_token = self.jwt_processor.create_access_token(user.username, user.id)
 
-            return render(request, "user/set-password.html", {"access_token": access_token, "domain": domain})
+            return render(request, "user/set-password.html", {"access_token": access_token})
 
-        return render(request, "user/set-password.html", {"form": form, "token": token, "domain": domain})
+        return render(request, "user/set-password.html", {"form": form, "token": token})
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -146,22 +136,15 @@ class Login(BaseUserView):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class Profile(BaseTemplateView):
+class Profile(TemplateView):
     template_name = "user/profile.html"
 
 
-@method_decorator(csrf_exempt, name="dispatch")
-class GetUserInfo(BaseUserView):
+class GetUserInfo(View):
     def get(self, request):
-        token = request.headers.get("Authorization")
-        payload = self.jwt_processor.validate_token(token)
-
-        if payload:
-            user = self.user_manager.get_user_by_id(payload["id"])
-            user = UserSerializer(user).data
-
+        if request.user:
+            user = UserSerializer(request.user).data
             return JsonResponse(user)
-
         else:
             return HttpResponse(status=401)
 
@@ -214,52 +197,7 @@ class SendMailToResetPassword(BaseUserView):
         return JsonResponse({"errors": form.errors}, status=400)
 
 
-@method_decorator(csrf_exempt, name="dispatch")
-class CreateSite(BaseUserView):
-    template_name = "user/create_site.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        context["form"] = CreateSiteForm()
-
-        return context
-
-    def post(self, request):
-        form = CreateSiteForm(request.POST, request.FILES)
-
-        token = request.headers.get("Authorization")
-        payload = self.jwt_processor.validate_token(token)
-
-        if payload:
-            user = self.user_manager.get_user_by_id(payload["id"])
-
-            try:
-                if user.site is not None:
-                    form.add_error("subdomain", UserErrors.you_already_have_your_own_website.value)
-                    return JsonResponse({"errors": form.errors}, status=400)
-            except User.site.RelatedObjectDoesNotExist:
-                pass
-
-            if form.is_valid():
-                domain = Domain.objects.filter(is_partners=True).first()
-                data = form.cleaned_data
-                data["user"] = user
-                data["is_active"] = True
-                data["domain"] = domain
-
-                Site.objects.create(**data)
-
-                return HttpResponse(status=200)
-
-            else:
-                return JsonResponse({"errors": form.errors}, status=400)
-        else:
-            form.add_error("subdomain", UserErrors.login_first.value)
-            return JsonResponse({"errors": form.errors}, status=400)
-
-
-class SetToken(BaseUserView):
+class SetToken(View):
     template_name = "user/set-token.html"
 
     def get_context_data(self, token, **kwargs):

@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import View
+from django.views.generic import TemplateView, View
 
 from blocks.models.catalog_block import CatalogBlock
 from blocks.models.common import Page, Template
@@ -13,29 +13,26 @@ from blocks.pages_service.pages_service import get_page_service
 from blocks.serializers import PageSerializer, TemplateSerializer
 from catalog.catalog_service.catalog_service import get_catalog_service
 from catalog.catalog_service.catalog_service_interface import CatalogServiceInterface
-from common.views import BaseTemplateView
 from domens.models import Domain
+from settings.models import SiteSettings
 from user.forms import LoginForm
 
 
-class IndexPage(BaseTemplateView):
+class IndexPage(TemplateView):
     template_name = "blocks/page.html"
 
     def get(self, *args, **kwargs):
         partner_domain = Domain.objects.filter(is_partners=True).first()
 
-        print(self.get_domain(), partner_domain.domain, self.get_subdomain())
+        if self.request.domain == partner_domain.domain and SiteSettings.objects.first().disable_partners_sites:
+            return HttpResponse("<h1>Привет :)</h1>")
+
         if (
-            self.get_domain() == partner_domain.domain or self.get_domain() == "localhost"
-        ) and self.get_subdomain() == "":
+            self.request.domain == partner_domain.domain or self.request.domain == "localhost"
+        ) and self.request.subdomain == "":
             form = LoginForm()
 
-            if self.get_domain() == "localhost":
-                domain = "localhost:8000"
-            else:
-                domain = Domain.objects.filter(is_partners=False).first().domain
-
-            return render(self.request, "blocks/login.html", {"form": form, "domain": domain})
+            return render(self.request, "blocks/login.html", {"form": form})
 
         if not Page.objects.filter(url=None).exists():
             return HttpResponseNotFound()
@@ -55,7 +52,7 @@ class IndexPage(BaseTemplateView):
         return context
 
 
-class ShowPage(BaseTemplateView):
+class ShowPage(TemplateView):
     template_name = "blocks/page.html"
 
     def get_context_data(self, **kwargs):
@@ -70,7 +67,7 @@ class ShowPage(BaseTemplateView):
         return context
 
 
-class ShowCatalogPage(BaseTemplateView):
+class ShowCatalogPage(TemplateView):
     template_name = "blocks/page.html"
 
     def __init__(self):

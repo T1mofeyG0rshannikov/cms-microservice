@@ -53,7 +53,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_hosts.middleware.HostsRequestMiddleware",
     "django_hosts.middleware.HostsResponseMiddleware",
-    "domens.middleware.BlockAdminPanelMiddleware",
+    "domens.middleware.DomainMiddleware",
+    "user.middleware.JwtAuthMiddleware",
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -69,6 +70,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "common.context_processor.get_site_data",
             ],
         },
     },
