@@ -19,7 +19,7 @@ class DomainMiddleware:
 
         subdomain = self.get_subdomain(request)
         first_domain = host.split(".")[-1]
-        print(first_domain)
+        #print(first_domain)
 
         domain = re.findall(f"{subdomain}.*?{first_domain}", host)[0]
         domain = re.sub(subdomain, "", domain)
@@ -61,8 +61,8 @@ class DomainMiddleware:
         subdomain = self.get_subdomain(request)
         domain = self.get_domain(request)
 
-        print(domain, "domain")
-        print(subdomain, "subdomain")
+        #print(domain, "domain")
+        #print(subdomain, "subdomain")
 
         if not self.valid_subdomain(subdomain):
             return HttpResponseNotFound("404 Subdomen not found")
@@ -74,11 +74,11 @@ class DomainMiddleware:
         ):
             return HttpResponseNotFound("404 Subdomen not found")
 
-        partner_domain = Domain.objects.filter(is_partners=True).first()
-        if domain == partner_domain.domain and not subdomain and self.request.path != "":
+        partner_domain = Domain.objects.filter(is_partners=True).first().domain
+        if domain == partner_domain and not subdomain and self.request.path != "":
             return HttpResponseNotFound("404 Page not found")
 
-        if domain == partner_domain.domain and SiteSettings.objects.first().disable_partners_sites:
+        if domain == partner_domain and SiteSettings.objects.first().disable_partners_sites:
             return HttpResponseRedirect("/")
 
         if request.path.startswith("/admin/") and partner_domain in request.get_host():

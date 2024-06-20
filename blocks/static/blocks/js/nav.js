@@ -29,8 +29,10 @@ const loginFormContainer = document.querySelector(".login-form-container")
 
 function openLoginForm(domain){
     const token = getToken();
+    console.log(domain, "domain")
+    console.log(`http://${domain}/user/get-user-info`, "path")
 
-    fetch("/user/get-user-info", {
+    fetch(`http://${domain}/user/get-user-info`, {
         method: "get",
         headers: {
             'Accept': 'application/json',
@@ -40,7 +42,7 @@ function openLoginForm(domain){
     }).then(response => {
         if (response.status === 200){
             response.json().then(() => {
-                window.location.replace(`http://${domain}/user/set-token/${token}`)
+                window.location.replace(`http://${domain}/user/profile`)
             })
         }
         return response.status;
@@ -62,9 +64,3 @@ loginFormContainer.addEventListener("mousedown", event => {
         closeLoginForm();
     }
 })
-
-const loginButtons = document.querySelectorAll("#login-button")
-
-for (let loginButton of loginButtons){
-    loginButton.addEventListener("click", openLoginForm);
-}

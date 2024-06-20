@@ -37,7 +37,6 @@ function isAgreeToRememberMe(){
 }
 
 function submitLoginForm(element, event, domain){
-    console.log(domain)
     event.preventDefault();
     const data = new FormData(element);
 

@@ -9,6 +9,7 @@ from user.views.views import (
     SendMailToResetPassword,
     SetPassword,
     SetToken,
+    Logout
 )
 
 urlpatterns = [
@@ -20,4 +21,5 @@ urlpatterns = [
     path("confirm-email/<str:token>", ConfirmEmail.as_view()),
     path("reset-password", SendMailToResetPassword.as_view()),
     path("set-token/<str:token>", SetToken.as_view()),
+    path("logout", Logout.as_view())
 ]

@@ -1,19 +1,17 @@
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, View
 
-from domens.forms import CreateSiteForm
-from domens.models import Domain, Site
 from user.email_service.email_service import get_email_service
 from user.forms import LoginForm, RegistrationForm, ResetPasswordForm, SetPasswordForm
-from user.models import User
 from user.serializers import UserSerializer
 from user.views.base_user_view import BaseUserView
 from utils.errors import Errors, UserErrors
 from utils.success_messages import Messages
 from utils.validators import is_valid_email, is_valid_phone
+from django.contrib.auth import authenticate, login
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -49,7 +47,11 @@ class RegisterUser(BaseUserView):
 
                 return JsonResponse({"errors": form.errors}, status=400)
 
-            user = self.user_manager.create_user(form.cleaned_data)
+            user = self.user_manager.create_user(**form.cleaned_data)
+            print(user)
+            request.user = user
+            user = authenticate(request)
+            login(request, user)
             # self.email_service.send_mail_to_confirm_email(user)
 
             token_to_set_password = self.jwt_processor.create_set_password_token(user.id)
@@ -78,8 +80,14 @@ class SetPassword(BaseUserView):
             password = form.cleaned_data.get("password")
 
             user = self.user_manager.get_user_by_id(payload["id"])
+            print(user, "10")
             user.set_password(password)
             user.save()
+            
+            print(user, "11")
+            request.user = user
+            user = authenticate(request)
+            login(request, user)
 
             access_token = self.jwt_processor.create_access_token(user.username, user.id)
 
@@ -129,6 +137,9 @@ class Login(BaseUserView):
                 return JsonResponse({"errors": form.errors}, status=400)
 
             access_token = self.jwt_processor.create_access_token(user.username, user.id)
+            request.user = user
+            user = authenticate(request)
+            login(request, user)
 
             return JsonResponse({"acess_token": access_token})
 
@@ -142,7 +153,8 @@ class Profile(TemplateView):
 
 class GetUserInfo(View):
     def get(self, request):
-        if request.user:
+        print(request.user)
+        if request.user.is_authenticated:
             user = UserSerializer(request.user).data
             return JsonResponse(user)
         else:
@@ -196,8 +208,8 @@ class SendMailToResetPassword(BaseUserView):
 
         return JsonResponse({"errors": form.errors}, status=400)
 
-
-class SetToken(View):
+@method_decorator(csrf_exempt, name="dispatch")
+class SetToken(TemplateView):
     template_name = "user/set-token.html"
 
     def get_context_data(self, token, **kwargs):
@@ -205,3 +217,11 @@ class SetToken(View):
         context["token"] = token
 
         return context
+
+from django.contrib.auth import logout
+
+class Logout(View):
+    def get(self, request):
+        logout(request)
+        return redirect("/")
+    

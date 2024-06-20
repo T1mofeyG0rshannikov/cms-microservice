@@ -47,7 +47,8 @@
 <script>
     function logout(){
         deleteToken();
-        window.location.replace("/partners");
+        window.location.replace("/user/logout");
+        fetch("/user/logout")
     }
 
     const logoutElem = document.querySelector("header .inner .logout");

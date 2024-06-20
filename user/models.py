@@ -1,9 +1,10 @@
 from django.contrib.auth.hashers import check_password
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
+from user.user_manager.user_manager import UserManager
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(verbose_name="Имя пользователя", max_length=100)
     phone = models.CharField(verbose_name="Номер телефона", max_length=12)
 
@@ -13,6 +14,14 @@ class User(AbstractBaseUser):
     created_at = models.DateTimeField(verbose_name="пользователь создан", auto_now_add=True, null=True)
 
     USERNAME_FIELD = "id"
+    
+    staff = models.BooleanField(default=False)
+    
+    objects = UserManager()
+
+    @property
+    def is_staff(self):
+        return self.staff
 
     def __str__(self) -> str:
         return self.username
