@@ -2,7 +2,7 @@
 
 <div id="{{ block.ancor }}" class="register">
     <div class="inner">
-        <form style="display: flex;" onclick="initForm(this)" onsubmit="submitRegisterForm(this, event)">
+        <form style="display: flex;" onclick="initForm(this)" onsubmit="submitRegisterForm(this, event, '{{ domain }}')">
             <div class="field" id="username">
                 <input name="username" placeholder="Ваше имя" />
                 <div class="error">{{ error }}</div>

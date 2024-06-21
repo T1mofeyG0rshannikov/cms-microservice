@@ -1,24 +1,22 @@
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import TemplateView, View
+from django.views.generic import TemplateView
 
 from domens.forms import CreateSiteForm
 from domens.models import Domain, Site
-from user.email_service.email_service import get_email_service
-from user.forms import LoginForm, RegistrationForm, ResetPasswordForm, SetPasswordForm
+from user.auth.jwt_processor import get_jwt_processor
 from user.models import User
-from user.serializers import UserSerializer
-from user.views.base_user_view import BaseUserView
-from utils.errors import Errors, UserErrors
-from utils.success_messages import Messages
-from utils.validators import is_valid_email, is_valid_phone
+from utils.errors import UserErrors
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class CreateSite(View):
-    template_name = "user/create_site.html"
+class CreateSite(TemplateView):
+    template_name = "domens/create_site.html"
+
+    def __init__(self):
+        super().__init__()
+        self.jwt_processor = get_jwt_processor()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -29,8 +27,19 @@ class CreateSite(View):
     def post(self, request):
         form = CreateSiteForm(request.POST, request.FILES)
 
-        if request.user:
-            user = request.user
+        token = request.headers.get("Authorization")
+        payload = self.jwt_processor.validate_token(token)
+        print(token, payload)
+        if payload:
+            user = User.objects.get_user_by_id(id=payload["id"])
+        else:
+            user = None
+
+        print(user)
+        print(request.user)
+        print(request.user.is_authenticated)
+        if user:
+            # user = request.user
 
             try:
                 if user.site is not None:

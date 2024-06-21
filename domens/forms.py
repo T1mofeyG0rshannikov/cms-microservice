@@ -6,4 +6,4 @@ from domens.models import Site
 class CreateSiteForm(forms.ModelForm):
     class Meta:
         model = Site
-        exclude = ["domain", "is_active"]
+        exclude = ["domain", "is_active", "user"]

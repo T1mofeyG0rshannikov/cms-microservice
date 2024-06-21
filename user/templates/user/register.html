@@ -13,7 +13,7 @@
 
 {% block content %}
 
-<form onsubmit="submitRegisterForm(this, event)" method="post" class="user-form">
+<form onsubmit="submitRegisterForm(this, event, '{{ domain }}')" method="post" class="user-form">
     <img class="logo" src="{{ settings.form_logo.image }}" />
 
     <h3>Регистрация</h3>

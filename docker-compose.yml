@@ -41,16 +41,10 @@ services:
     command: celery -A user.email_service.tasks worker -l INFO --pool=solo
     volumes:
       - .:/code
-      - static:/var/www/html/cms/static
     depends_on:
       - redis
       - web
     environment:
-      - SQLITE3_DB=db.sqlite3
-      - SECRET_KEY=${SECRET_KEY}
-      - ALGORITHM=${ALGORITHM}
-      - EXPIRES_IN=${EXPIRES_IN}
-      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
       - CELERY_BROKER_URL=${CELERY_BROKER_URL}
 
 volumes:

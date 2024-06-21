@@ -1,4 +1,4 @@
-function submitCreateSiteForm(element, event){
+function submitCreateSiteForm(element, event, domain){
     event.preventDefault();
 
     const data = new FormData(element);
@@ -7,22 +7,21 @@ function submitCreateSiteForm(element, event){
 
     const token = getToken();
 
-    fetch("/user/create-site", {
+    fetch(`http://${domain}/domain/create-site`, {
         method: "POST",
-      
         headers: {
             'Accept': 'application/json',
             'X-Requested-With': 'XMLHttpRequest',
             'Authorization': `${token}`,
-           
         },
         body: data
     }).then(response => {
         if (response.status === 200){
+            setErrors({}, element)
             console.log("success");
         }
         return response.json();
     }).then(response => {
-        setErros(response.errors, element)
+        setErrors(response.errors, element)
     })
 }

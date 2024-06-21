@@ -6,7 +6,7 @@ from user.models import User
 class Domain(models.Model):
     domain = models.CharField(max_length=50, verbose_name="домен")
     is_partners = models.BooleanField(default=True, verbose_name="партнёрский сайт")
-    
+
     def __str__(self):
         return self.domain
 
@@ -26,7 +26,7 @@ class Site(models.Model):
     use_default_settings = models.BooleanField(verbose_name="Использовать общие настройки сайта", default=False)
     advertising_channel = models.CharField(verbose_name="Рекламный канал", null=True, max_length=100)
     user = models.OneToOneField(
-        User, on_delete=models.SET_NULL, verbose_name="пользователь", null=True, blank=True, related_name="site"
+        User, on_delete=models.CASCADE, verbose_name="пользователь", null=True, blank=True, related_name="site"
     )
 
     class Meta:

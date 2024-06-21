@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<form onsubmit="submitCreateSiteForm(this, event)" class="create-form" enctype='multipart/form-data'>
+<form onsubmit="submitCreateSiteForm(this, event, '{{ domain }}')" class="create-form" enctype='multipart/form-data'>
     <h3>Создать партнёрский сайт</h3>
 
     {% csrf_token %}
@@ -38,5 +38,5 @@
 {% endblock %}
 
 {% block additional_scripts %}
-<script src="{% static "user/js/create_site.js" %}"></script>
+<script src="{% static "domens/js/create_site.js" %}"></script>
 {% endblock %}

@@ -11,3 +11,4 @@ gunicorn==22.0.0
 celery[redis]==5.3.6
 redis
 django-hosts==6.0
+django-cors-headers

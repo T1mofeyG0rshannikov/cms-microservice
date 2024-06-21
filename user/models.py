@@ -1,7 +1,9 @@
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
+
 from user.user_manager.user_manager import UserManager
+from user.user_manager.user_manager_interface import UserManagerInterface
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -13,11 +15,28 @@ class User(AbstractBaseUser, PermissionsMixin):
     email_is_confirmed = models.BooleanField(verbose_name="Почта подтверждена", default=False)
     created_at = models.DateTimeField(verbose_name="пользователь создан", auto_now_add=True, null=True)
 
+    register_on_site = models.ForeignKey(
+        "domens.Site",
+        verbose_name="зарегистрирован на сайте",
+        related_name="register_on_site",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    register_on_domain = models.ForeignKey(
+        "domens.Domain",
+        verbose_name="зарегистрирован на домене",
+        related_name="register_on_domain",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+
     USERNAME_FIELD = "id"
-    
+
     staff = models.BooleanField(default=False)
-    
-    objects = UserManager()
+
+    objects: UserManagerInterface = UserManager()
 
     @property
     def is_staff(self):
