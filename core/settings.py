@@ -55,7 +55,7 @@ MIDDLEWARE = [
     "django_hosts.middleware.HostsRequestMiddleware",
     "django_hosts.middleware.HostsResponseMiddleware",
     "domens.middleware.DomainMiddleware",
-    # "user.middleware.JwtAuthMiddleware",
+    "user.middleware.JwtAuthMiddleware",
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -135,7 +135,6 @@ STATICFILES_DIR = os.path.join(BASE_DIR, "static")
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "static")
 
-# SECURE_CROSS_ORIGIN_OPENER_POLICY=None
 
 # email settings
 
@@ -165,8 +164,8 @@ DEFAULT_HOST = "www"
 DATA_UPLOAD_MAX_MEMORY_SIZE = 20_971_520
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
 
-# SECURE_CROSS_ORIGIN_OPENER_POLICY = None
-# SESSION_COOKIE_SECURE = False
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
+SESSION_COOKIE_SECURE = False
 
 CORS_ORIGIN_ALLOW_ALL = True
 

@@ -1,10 +1,19 @@
 from django.contrib.auth.models import BaseUserManager
 from django.core.exceptions import MultipleObjectsReturned
 
+from user.user_manager.user_manager_interface import UserManagerInterface
 
-class UserManager(BaseUserManager):
+
+class UserManager(BaseUserManager, UserManagerInterface):
     def get_by_natural_key(self, username):
-        return self.get(**{"email": username})
+        user_by_email = self.get_user_by_email(username)
+        user_by_phone = self.get_user_by_phone(username)
+
+        if user_by_email:
+            return user_by_email
+
+        if user_by_phone:
+            return user_by_phone
 
     def get_user_by_id(self, id: int):
         try:

@@ -1,23 +1,11 @@
 from django import forms
+from django.contrib.admin.forms import AuthenticationForm
+from django.core.exceptions import ValidationError
 
 from utils.errors import UserErrors
 from utils.format_phone import get_raw_phone
 from utils.validators import is_valid_email, is_valid_phone
-import unicodedata
 
-from django import forms
-from django.contrib.auth import authenticate, get_user_model, password_validation
-from django.contrib.auth.hashers import UNUSABLE_PASSWORD_PREFIX, identify_hasher
-from django.contrib.auth.tokens import default_token_generator
-from django.contrib.sites.shortcuts import get_current_site
-from django.core.exceptions import ValidationError
-from django.core.mail import EmailMultiAlternatives
-from django.template import loader
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
-from django.utils.text import capfirst
-from django.utils.translation import gettext
-from django.utils.translation import gettext_lazy as _
 
 class RegistrationForm(forms.Form):
     username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={"placeholder": "Ваше имя"}))
@@ -65,31 +53,17 @@ class SetPasswordForm(forms.Form):
 class ResetPasswordForm(forms.Form):
     email = forms.EmailField(max_length=200, widget=forms.TextInput(attrs={"placeholder": "Email"}))
 
-from django.contrib.admin.forms import AdminAuthenticationForm
-from django.contrib.admin.forms import AuthenticationForm
 
 class CustomAuthenticationAdminForm(AuthenticationForm):
     def __init__(self, request=None, *args, **kwargs):
-        """
-        The 'request' parameter is set for custom auth use by subclasses.
-        The form data comes in via the standard 'data' kwarg.
-        """
         self.request = request
         self.user_cache = None
         super(forms.Form, self).__init__(*args, **kwargs)
 
+        self.fields["username"].label = "Email или телефон"
+        self.fields["password"].label = "Пароль"
 
     def confirm_login_allowed(self, user):
-        """
-        Controls whether the given User may log in. This is a policy setting,
-        independent of end-user authentication. This default behavior is to
-        allow login by active users, and reject login by inactive users.
-
-        If the given user cannot log in, this method should raise a
-        ``ValidationError``.
-
-        If the given user may log in, this method should return None.
-        """
         if not user.is_active:
             raise ValidationError(
                 self.error_messages["inactive"],
@@ -105,7 +79,7 @@ class CustomAuthenticationAdminForm(AuthenticationForm):
             code="invalid_login",
             params={"username": self.username_field.verbose_name},
         )
-        
+
     username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={"placeholder": "Email или телефон"}))
     password = forms.CharField(
         max_length=18, widget=forms.PasswordInput(attrs={"placeholder": "Пароль", "autocomplete": "off"})

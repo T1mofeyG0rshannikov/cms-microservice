@@ -19,7 +19,6 @@ class DomainMiddleware:
 
         subdomain = self.get_subdomain(request)
         first_domain = host.split(".")[-1]
-        # print(first_domain)
 
         domain = re.findall(f"{subdomain}.*?{first_domain}", host)[0]
         domain = re.sub(subdomain, "", domain)
@@ -58,9 +57,6 @@ class DomainMiddleware:
     def __call__(self, request):
         subdomain = self.get_subdomain(request)
         domain = self.get_domain(request)
-
-        # print(domain, "domain")
-        # print(subdomain, "subdomain")
 
         if not self.valid_subdomain(subdomain):
             return HttpResponseNotFound("404 Subdomen not found")

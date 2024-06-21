@@ -171,8 +171,10 @@ class Profile(TemplateView):
 
 class GetUserInfo(View):
     def get(self, request):
-        if request.user:
-            user = UserSerializer(request.user).data
+        user = request.user_from_header
+
+        if user:
+            user = UserSerializer(user).data
             return JsonResponse(user)
         else:
             return HttpResponse(status=401)

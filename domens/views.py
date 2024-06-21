@@ -5,7 +5,6 @@ from django.views.generic import TemplateView
 
 from domens.forms import CreateSiteForm
 from domens.models import Domain, Site
-from user.auth.jwt_processor import get_jwt_processor
 from user.models import User
 from utils.errors import UserErrors
 
@@ -13,10 +12,6 @@ from utils.errors import UserErrors
 @method_decorator(csrf_exempt, name="dispatch")
 class CreateSite(TemplateView):
     template_name = "domens/create_site.html"
-
-    def __init__(self):
-        super().__init__()
-        self.jwt_processor = get_jwt_processor()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -27,20 +22,8 @@ class CreateSite(TemplateView):
     def post(self, request):
         form = CreateSiteForm(request.POST, request.FILES)
 
-        token = request.headers.get("Authorization")
-        payload = self.jwt_processor.validate_token(token)
-        print(token, payload)
-        if payload:
-            user = User.objects.get_user_by_id(id=payload["id"])
-        else:
-            user = None
-
-        print(user)
-        print(request.user)
-        print(request.user.is_authenticated)
+        user = request.user_from_header
         if user:
-            # user = request.user
-
             try:
                 if user.site is not None:
                     form.add_error("subdomain", UserErrors.you_already_have_your_own_website.value)
