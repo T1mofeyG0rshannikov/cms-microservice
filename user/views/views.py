@@ -163,7 +163,7 @@ class Profile(TemplateView):
     template_name = "user/profile.html"
 
     def get(self, request, *args, **kwargs):
-        if not request.user:
+        if not request.user.is_authenticated:
             return HttpResponseRedirect("/user/login")
 
         return super().get(args, kwargs)
@@ -173,9 +173,6 @@ class GetUserInfo(View):
     def get(self, request):
         user_from_request = request.user
         user_from_header = request.user_from_header
-
-        print(user_from_request)
-        print(user_from_header)
 
         user = None
         if user_from_header:
