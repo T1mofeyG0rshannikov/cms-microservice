@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from blocks.models.blocks_components import CatalogProductType
+from blocks.models.catalog_block import MainPageCatalogBlock
 from blocks.models.common import Page, Template
 from blocks.pages_service.pages_service import PageService
 from styles.serializers import CustomStylesSerializer
@@ -24,6 +26,9 @@ class BlockSerializer(serializers.Serializer):
 
     def get_content(self, block):
         content = self.page_service.get_page_block(block.name)
+
+        if isinstance(content, MainPageCatalogBlock):
+            content.products = [product.product for product in CatalogProductType.objects.filter(block=content)]
 
         if content is not None:
             content.template.file = "blocks/" + content.template.file

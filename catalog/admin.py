@@ -7,6 +7,7 @@ from django.utils.html import format_html, mark_safe
 
 from catalog.models.blocks import Block, CatalogPageTemplate
 from catalog.models.products import (
+    ExclusiveCard,
     Link,
     Organization,
     OrganizationType,
@@ -55,7 +56,7 @@ class ProductAdmin(admin.ModelAdmin):
 
     def name_tag(self, obj):
         return mark_safe(f'<a href="/admin/catalog/product/{obj.pk}/change/" >{obj.name}</a>')
-        
+
     def image_tag(self, obj):
         return mark_safe('<img src="%s" height="35" />' % (obj.cover.url))
 
@@ -76,7 +77,7 @@ class ProductAdmin(admin.ModelAdmin):
 
     end_promotion_tag.short_description = "дата окончания акции"
     end_promotion_tag.allow_tags = True
-    
+
     name_tag.short_description = "имя"
     name_tag.allow_tags = True
 
@@ -105,7 +106,7 @@ class ProductAdmin(admin.ModelAdmin):
                         "promote",
                         "private",
                     ),
-                    "description": obj.status,
+                    "description": obj.status if obj else None,
                 },
             ),
         )
@@ -120,10 +121,23 @@ class OrganizationTypeAdmin(admin.ModelAdmin):
 @register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
     def get_fieldsets(self, request, obj):
-        fieldsets = ((None, {"fields": ("name", "type", "logo", "site", "admin_hint"), "description": obj.admin_hint}),)
+        fieldsets = (
+            (
+                None,
+                {
+                    "fields": ("name", "type", "logo", "site", "admin_hint"),
+                    "description": obj.admin_hint if obj else None,
+                },
+            ),
+        )
         return fieldsets
 
 
 @register(ProductType)
 class ProductTypeAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
+
+
+@register(ExclusiveCard)
+class ExclusiveCardAdmin(admin.ModelAdmin):
+    pass

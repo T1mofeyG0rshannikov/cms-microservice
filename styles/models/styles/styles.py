@@ -1,4 +1,5 @@
 from colorfield.fields import ColorField
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from blocks.models.blocks import (
@@ -11,7 +12,7 @@ from blocks.models.blocks import (
     SocialMediaBlock,
     StagesBlock,
 )
-from blocks.models.catalog_block import CatalogBlock
+from blocks.models.catalog_block import CatalogBlock, MainPageCatalogBlock
 from common.models import OneInstanceModel
 from styles.models.mixins.text_mixins import (
     ExplanationTextStylesMixin,
@@ -72,3 +73,17 @@ class CatalogCustomStyles(BaseCustomStyles, SubheaderStylesMixin):
     block = models.OneToOneField(CatalogBlock, on_delete=models.CASCADE, related_name="styles")
 
     columns = models.PositiveIntegerField(verbose_name="Количество колонок", default=4)
+
+
+class MainPageCatalogCustomStyles(BaseCustomStyles, SubheaderStylesMixin):
+    block = models.OneToOneField(MainPageCatalogBlock, on_delete=models.CASCADE, related_name="styles")
+
+    columns = models.PositiveIntegerField(verbose_name="Количество колонок", default=4)
+    darkness_bottom = models.PositiveIntegerField(
+        verbose_name="процент затемнения карточки снизу",
+        validators=[MinValueValidator(0), MaxValueValidator(100)],
+        null=True,
+        blank=True,
+    )
+    add_annotation = models.BooleanField(verbose_name="добавлять аннотацию к карточке", default=True)
+    add_button = models.BooleanField(verbose_name="добавлять кнопку к карточке", default=True)

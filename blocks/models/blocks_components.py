@@ -9,9 +9,12 @@ from blocks.models.blocks import (
     SocialMediaBlock,
     StagesBlock,
 )
-from blocks.models.catalog_block import CatalogBlock
+
+# from blocks.models.catalog_block import #CatalogBlock#, MainPageCatalogBlock
 from blocks.models.mixins import ButtonMixin, TitleMixin
 from catalog.models.products import Product
+
+# from catalog.models.product_type import ProductType
 from common.models import Sortable
 
 
@@ -79,7 +82,7 @@ class Stage(TitleMixin):
 
 
 class CatalogProduct(Sortable):
-    block = models.ForeignKey(CatalogBlock, on_delete=models.CASCADE, related_name="products")
+    block = models.ForeignKey("blocks.CatalogBlock", on_delete=models.CASCADE, related_name="products")
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Продукт", null=True)
 
     def __str__(self):
@@ -95,3 +98,22 @@ class CatalogProduct(Sortable):
         self.product.save()
 
         super().delete(*args, **kwargs)
+
+
+class CatalogProductType(Sortable):
+    block = models.ForeignKey("blocks.MainPageCatalogBlock", on_delete=models.CASCADE)
+    product = models.ForeignKey("catalog.ProductType", on_delete=models.CASCADE, verbose_name="Продукт", null=True)
+
+    def __str__(self):
+        return str(self.product)
+
+    """def save(self, *args, **kwargs):
+        self.product.status = "Опубликовано"
+        self.product.save()
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        self.product.status = "Новое"
+        self.product.save()
+
+        super().delete(*args, **kwargs)"""

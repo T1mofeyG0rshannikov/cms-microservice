@@ -22,16 +22,16 @@ class CatalogService(CatalogServiceInterface):
 
         return serialized_page
 
-    def get_page(self, slug: str):
+    def get_page(self, user, slug: str):
         page = CatalogPageTemplate.objects.prefetch_related("blocks").first()
 
-        page = self.set_catalog_block(page, slug)
+        page = self.set_catalog_block(page, user, slug)
         page = self.set_catalog_cover(page, slug)
         page = self.set_page_title(page, slug)
 
         return page
 
-    def get_catalog_block(self, slug: str):
+    def get_catalog_block(self, user, slug: str):
         catalog = CatalogBlock.objects.prefetch_related("styles").get(product_type__slug=slug)
         catalog_relation = BlockRelationship.objects.get(block_name=catalog.name)
         catalog = self.page_service.get_page_block(catalog_relation)
@@ -43,7 +43,7 @@ class CatalogService(CatalogServiceInterface):
 
         catalog_styles = CustomStylesSerializer(styles).data
 
-        catalog = CatalogBlockSerializer(catalog).data
+        catalog = CatalogBlockSerializer(catalog, context={"user": user}).data
 
         return {"content": catalog, "styles": catalog_styles}
 
@@ -60,9 +60,9 @@ class CatalogService(CatalogServiceInterface):
 
         return {"content": cover, "styles": cover_styles}
 
-    def set_catalog_block(self, page, slug: str):
+    def set_catalog_block(self, page, user, slug: str):
         page = PageSerializer(page).data
-        catalog = self.get_catalog_block(slug)
+        catalog = self.get_catalog_block(user, slug)
 
         for block in page["blocks"]:
             if isinstance(block["content"], CatalogBlock):

@@ -9,6 +9,7 @@ from styles.models.styles.styles import (
     CoverCustomStyles,
     FeaturesCustomStyles,
     GlobalStyles,
+    MainPageCatalogCustomStyles,
     NavbarCustomStyles,
     QuestionsCustomStyles,
     RegisterCustomStyles,
@@ -62,6 +63,10 @@ class StagesCustomStylesInline(StyleInline):
 
 class CatalogCustomStylesInline(StyleInline):
     model = CatalogCustomStyles
+
+
+class MainPageCatalogCustomStylesInline(StyleInline):
+    model = MainPageCatalogCustomStyles
 
 
 class ColorStylesInline(StyleInline):

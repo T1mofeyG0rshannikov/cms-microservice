@@ -12,7 +12,9 @@ class ProductType(models.Model):
     slug = models.SlugField(max_length=200, unique=True, blank=True, null=True, verbose_name="URL")
 
     title = models.CharField(max_length=100, verbose_name="Заголовок")
-    image = models.ImageField(upload_to="organizations/covers", verbose_name="Картинка блока типа продукта", null=True)
+    image = models.ImageField(
+        upload_to="organizations/covers", verbose_name="Картинка блока типа продукта(этикетка)", null=True
+    )
 
     cover = models.ForeignKey(Cover, on_delete=models.SET_NULL, null=True, verbose_name="блок обложки")
     description = RichTextField(max_length=1000, verbose_name="Описание")

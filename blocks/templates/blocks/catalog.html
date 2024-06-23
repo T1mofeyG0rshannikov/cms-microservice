@@ -37,6 +37,22 @@
                     </div>
                 {% endwith %}
             {% endfor %}
+
+            {% if block.add_exclusive %}
+                <div class="product exclusive">
+                    <div>
+                        <img src="{{ block.exclusive_card.image.url }}" />
+                        <h3 style="margin-bottom: 3px; color: rgb(250, 50, 50);">Наш эксклюзив</h3>
+                    </div>
+
+                    <span style="margin: 15px 0px;">Только для зарегистрированных пользователей сайта</span>
+
+                    <div>
+                        <a class="bonus" style="margin-top: 5px;">Бонус: {{ block.exclusive_card.bonus }}</a>
+                        <button><a href="/user/register">Регистрация</a></button>
+                    </div>
+                </div>
+            {% endif %}
         </div>
     </div>
 

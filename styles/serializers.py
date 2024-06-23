@@ -84,6 +84,15 @@ class CustomStylesSerializer(serializers.Serializer):
     border_radius = serializers.CharField(required=False)
 
     button_color = serializers.CharField(required=False)
+    darkness_bottom = serializers.SerializerMethodField(required=False)
+    add_annotation = serializers.BooleanField(required=False)
+    add_button = serializers.BooleanField(required=False)
+
+    def get_darkness_bottom(self, obj):
+        try:
+            return 100 - obj.darkness_bottom
+        except AttributeError:
+            pass
 
     def get_columns(self, obj):
         try:

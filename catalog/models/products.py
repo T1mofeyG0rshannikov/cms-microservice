@@ -3,6 +3,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from catalog.models.product_type import ProductType
+from common.models import OneInstanceModel
 
 
 class OrganizationType(models.Model):
@@ -63,6 +64,7 @@ class Product(models.Model):
     class Meta:
         verbose_name = "продукт/акция"
         verbose_name_plural = "продукты/акции"
+        ordering = ["end_promotion"]
 
     def __str__(self):
         return self.name
@@ -83,3 +85,12 @@ class Link(models.Model):
 
     def __str__(self):
         return self.text
+
+
+class ExclusiveCard(OneInstanceModel):
+    image = models.ImageField(verbose_name="картинка", upload_to="images/exclusive")
+    bonus = models.CharField(verbose_name="бонус", max_length=50)
+
+    class Meta:
+        verbose_name = "Карточка Эксклюзив"
+        verbose_name_plural = "Карточка Эксклюзив"

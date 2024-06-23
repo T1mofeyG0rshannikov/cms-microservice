@@ -92,11 +92,11 @@ class SetPassword(BaseUserView):
             password = form.cleaned_data.get("password")
 
             user = User.objects.get_user_by_id(payload["id"])
-            print(user, "10")
+            # print(user, "10")
             user.set_password(password)
             user.save()
 
-            print(user, "11")
+            # print(user, "11")
             request.user = user
             user = authenticate(request)
             login(request, user)
@@ -171,7 +171,17 @@ class Profile(TemplateView):
 
 class GetUserInfo(View):
     def get(self, request):
-        user = request.user_from_header
+        user_from_request = request.user
+        user_from_header = request.user_from_header
+
+        print(user_from_request)
+        print(user_from_header)
+
+        user = None
+        if user_from_header:
+            user = user_from_header
+        if user_from_request.is_authenticated:
+            user = user_from_request
 
         if user:
             user = UserSerializer(user).data

@@ -2,7 +2,7 @@ from typing import Protocol
 
 
 class CatalogServiceInterface(Protocol):
-    def get_page(self, slug: str):
+    def get_page(self, user, slug: str):
         raise NotImplementedError()
 
     def get_catalog_block(self, slug: str):

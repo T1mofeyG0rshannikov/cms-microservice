@@ -15,13 +15,14 @@ from blocks.models.blocks import (
 )
 from blocks.models.blocks_components import (
     CatalogProduct,
+    CatalogProductType,
     Feature,
     NavMenuItem,
     Question,
     SocialMediaButton,
     Stage,
 )
-from blocks.models.catalog_block import CatalogBlock
+from blocks.models.catalog_block import CatalogBlock, MainPageCatalogBlock
 from blocks.models.common import Block, Page, Template
 from common.admin import BaseInline
 from styles.admin import (
@@ -29,6 +30,7 @@ from styles.admin import (
     ContentCustomStylesInline,
     CoverCustomStylesInline,
     FeaturesCustomStylesInline,
+    MainPageCatalogCustomStylesInline,
     NavbarCustomStylesInline,
     QuestionsCustomStylesInline,
     RegisterCustomStylesInline,
@@ -64,16 +66,9 @@ class PageBlockInline(SortableStackedInline, BaseInline):
 class CatalogProductInline(SortableStackedInline, BaseInline):
     model = CatalogProduct
 
-    # def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
-    #    field = super().formfield_for_foreignkey(db_field, request, **kwargs)
-    #
-    #    if db_field.name == "product":
-    #        if request._obj_ is not None:
-    #            field.queryset = field.queryset.filter(type=request._obj_.product_type)
 
-
-#
-#    return field
+class MainPageCatalogProductInline(SortableStackedInline, BaseInline):
+    model = CatalogProductType
 
 
 @register(Template)
@@ -131,6 +126,16 @@ class StagesBlockAdmin(BaseBlockAdmin):
 class CatalogBlogAdmin(SortableAdminBase, BaseBlockAdmin):
     inlines = [CatalogProductInline, CatalogCustomStylesInline]
     exclude = BaseBlockAdmin.exclude  # + ["product_type"]
+
+    def get_form(self, request, obj=None, **kwargs):
+        request._obj_ = obj
+        return super().get_form(request, obj, **kwargs)
+
+
+@register(MainPageCatalogBlock)
+class MainPageCatalogBlogAdmin(SortableAdminBase, BaseBlockAdmin):
+    inlines = [MainPageCatalogProductInline, MainPageCatalogCustomStylesInline]
+    exclude = BaseBlockAdmin.exclude
 
     def get_form(self, request, obj=None, **kwargs):
         request._obj_ = obj

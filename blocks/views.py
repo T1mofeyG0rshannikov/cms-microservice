@@ -77,7 +77,7 @@ class ShowCatalogPage(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        page = self.catalog_service.get_page(kwargs["products_slug"])
+        page = self.catalog_service.get_page(user=self.request.user, slug=kwargs["products_slug"])
 
         context["page"] = page
         context["form"] = LoginForm()

@@ -1,0 +1,46 @@
+{% load static %}
+
+<div id="{{ block.ancor }}" class="catalog">
+    <div class="inner">
+        <h1>{{ block.title }}</h1>
+        <a style="margin-top: 0px;">{{ block.introductory_text|safe }}</a>
+
+        <div class="products">
+            {% for product in block.products %}
+                {% with forloop.counter as product_id %}
+                    <div class="product" style="text-align: center;">
+                        <img src="{{ product.image.url }}" />
+                        <h3 style="margin-bottom: 3px;">{{ product.name }}</h3>
+
+                        <span style="margin-bottom: 0px;">{{ product.description|safe }}</span>
+
+                        <button><a href="{{ request.scheme }}://{{ request.META.HTTP_HOST }}/{{ product.slug }}">{{ block.button_text }}</a></button>
+                    </div>
+                {% endwith %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <script src="{% static "blocks/js/catalog.js" %}"></script>
+
+    <style>
+        #block{{id}} .catalog{
+            padding-top: {{styles.margin_top}};
+            padding-bottom: {{styles.margin_bottom}};
+            background-color: {{styles.background_color}};
+        }
+
+        #block{{id}} .products{
+            display: grid;
+            grid-column-gap: 25px;
+            grid-row-gap: 10px;
+            grid-template-columns: {{styles.columns}};
+        }
+
+        @media screen and (max-width: 760px) {
+            #block{{id}} .products{
+                grid-template-columns: repeat(1, 1fr);
+            }
+        }
+    </style>
+</div>
