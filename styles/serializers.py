@@ -87,6 +87,7 @@ class CustomStylesSerializer(serializers.Serializer):
     darkness_bottom = serializers.SerializerMethodField(required=False)
     add_annotation = serializers.BooleanField(required=False)
     add_button = serializers.BooleanField(required=False)
+    swiper_columns = serializers.CharField(required=False)
 
     def get_darkness_bottom(self, obj):
         try:

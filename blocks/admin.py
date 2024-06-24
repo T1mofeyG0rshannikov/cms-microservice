@@ -22,7 +22,7 @@ from blocks.models.blocks_components import (
     SocialMediaButton,
     Stage,
 )
-from blocks.models.catalog_block import CatalogBlock, MainPageCatalogBlock
+from blocks.models.catalog_block import CatalogBlock, MainPageCatalogBlock, PromoCatalog
 from blocks.models.common import Block, Page, Template
 from common.admin import BaseInline
 from styles.admin import (
@@ -32,6 +32,7 @@ from styles.admin import (
     FeaturesCustomStylesInline,
     MainPageCatalogCustomStylesInline,
     NavbarCustomStylesInline,
+    PromoCatalogCustomStylesInline,
     QuestionsCustomStylesInline,
     RegisterCustomStylesInline,
     SocialCustomStylesInline,
@@ -140,6 +141,11 @@ class MainPageCatalogBlogAdmin(SortableAdminBase, BaseBlockAdmin):
     def get_form(self, request, obj=None, **kwargs):
         request._obj_ = obj
         return super().get_form(request, obj, **kwargs)
+
+
+@register(PromoCatalog)
+class PromoCatalogAdmin(BaseBlockAdmin):
+    inlines = [PromoCatalogCustomStylesInline]
 
 
 @register(Page)

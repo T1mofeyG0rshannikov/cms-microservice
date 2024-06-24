@@ -9,10 +9,12 @@
             {% for product in block.products %}
                 {% with forloop.counter as product_id %}
                     <div class="product-main-page">
-                        <img src="{{ product.image.url }}" />
-                        <h1>{{ product.name }}</h1>
+                        <div class="product-content">
+                            <img src="{{ product.image.url }}" />
+                            <h1>{{ product.name }}</h1>
 
-                        <span style="margin-bottom: 0px;">{{ product.description|safe }}</span>
+                            <span style="margin-bottom: 0px;">{{ product.description|safe }}</span>
+                        </div>
 
                         <button onclick="location.href='{{ request.scheme }}://{{ request.META.HTTP_HOST }}/{{ product.slug }}'" ><a>{{ block.button_text }}</a></button>
                     </div>

@@ -1,0 +1,34 @@
+{% load static %}
+
+<div id="{{ block.ancor }}" class="catalog">
+    <div class="inner" style="position: relative;">
+        <h1>{{ block.title }}</h1>
+        <div class="swiper mySwiper" style="margin-top: 20px;">
+            <div class="swiper-wrapper">
+                {% for product in block.products %}
+                    {% with forloop.counter as product_id %}
+                        <div class="swiper-slide">
+                            <div class="promo-product" id="product{{product_id}}">
+                            </div>
+
+                            <style>
+                                #block{{id}} #product{{product_id}}{
+                                    background: url("{{product.banner.url}}") no-repeat 50% 50%/cover;
+                                }
+                            </style>
+                        </div>
+                    {% endwith %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+    </div>
+
+    <script src="{% static 'blocks/js/promo.js' %}"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => initSwiper({{ styles.swiper_columns }}))
+    </script>
+</div>

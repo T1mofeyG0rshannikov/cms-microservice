@@ -16,19 +16,4 @@
 <script src="{% static "user/js/token.js" %}"></script>
 
 
-<script>
-    fetch("/user/get-user-info", {
-        method: "get",
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': `${getToken()}`
-        }
-    }).then(response => response.json()).
-    then(user => {
-        console.log(user);
-        document.querySelector("#username").innerHTML = user.username
-    })
-</script>
-
 {% endblock %}

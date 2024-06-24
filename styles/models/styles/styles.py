@@ -12,7 +12,7 @@ from blocks.models.blocks import (
     SocialMediaBlock,
     StagesBlock,
 )
-from blocks.models.catalog_block import CatalogBlock, MainPageCatalogBlock
+from blocks.models.catalog_block import CatalogBlock, MainPageCatalogBlock, PromoCatalog
 from common.models import OneInstanceModel
 from styles.models.mixins.text_mixins import (
     ExplanationTextStylesMixin,
@@ -27,21 +27,25 @@ class GlobalStyles(OneInstanceModel):
         verbose_name_plural = "Глобальные стили"
 
 
+def related_block(block_class):
+    return models.OneToOneField(block_class, on_delete=models.CASCADE, related_name="styles")
+
+
 class NavbarCustomStyles(BaseCustomStyles):
-    block = models.OneToOneField(Navbar, on_delete=models.CASCADE, related_name="styles")
+    block = related_block(Navbar)
 
 
 class ContentCustomStyles(BaseCustomStyles):
-    block = models.OneToOneField(ContentBlock, on_delete=models.CASCADE, related_name="styles")
+    block = related_block(ContentBlock)
     border_radius = models.CharField(verbose_name="Радиус скругления картинки", null=True, blank=True, max_length=50)
 
 
 class CoverCustomStyles(BaseCustomStyles):
-    block = models.OneToOneField(Cover, on_delete=models.CASCADE, related_name="styles")
+    block = related_block(Cover)
 
 
 class FeaturesCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin, SubheaderStylesMixin):
-    block = models.OneToOneField(FeaturesBlock, on_delete=models.CASCADE, related_name="styles")
+    block = related_block(FeaturesBlock)
 
     columns = models.PositiveIntegerField(verbose_name="Количество колонок", default=4)
     icon_color = ColorField(verbose_name="Цвет иконок", default="#689F38")
@@ -52,31 +56,31 @@ class FeaturesCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin, Subhead
 
 
 class RegisterCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
-    block = models.OneToOneField(RegisterBlock, on_delete=models.CASCADE, related_name="styles")
+    block = related_block(RegisterBlock)
 
     button_color = ColorField(verbose_name="цвет кнопки", null=True, blank=True)
 
 
 class SocialCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
-    block = models.OneToOneField(SocialMediaBlock, on_delete=models.CASCADE, related_name="styles")
+    block = related_block(SocialMediaBlock)
 
 
 class QuestionsCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
-    block = models.OneToOneField(QuestionsBlock, on_delete=models.CASCADE, related_name="styles")
+    block = related_block(QuestionsBlock)
 
 
 class StagesCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
-    block = models.OneToOneField(StagesBlock, on_delete=models.CASCADE, related_name="styles")
+    block = related_block(StagesBlock)
 
 
 class CatalogCustomStyles(BaseCustomStyles, SubheaderStylesMixin):
-    block = models.OneToOneField(CatalogBlock, on_delete=models.CASCADE, related_name="styles")
+    block = related_block(CatalogBlock)
 
     columns = models.PositiveIntegerField(verbose_name="Количество колонок", default=4)
 
 
 class MainPageCatalogCustomStyles(BaseCustomStyles, SubheaderStylesMixin):
-    block = models.OneToOneField(MainPageCatalogBlock, on_delete=models.CASCADE, related_name="styles")
+    block = related_block(MainPageCatalogBlock)
 
     columns = models.PositiveIntegerField(verbose_name="Количество колонок", default=4)
     darkness_bottom = models.PositiveIntegerField(
@@ -87,3 +91,9 @@ class MainPageCatalogCustomStyles(BaseCustomStyles, SubheaderStylesMixin):
     )
     add_annotation = models.BooleanField(verbose_name="добавлять аннотацию к карточке", default=True)
     add_button = models.BooleanField(verbose_name="добавлять кнопку к карточке", default=True)
+
+
+class PromoCatalogCustomStyles(BaseCustomStyles):
+    block = related_block(PromoCatalog)
+
+    swiper_columns = models.PositiveIntegerField(verbose_name="Количество колонок в слайдере", default=3)

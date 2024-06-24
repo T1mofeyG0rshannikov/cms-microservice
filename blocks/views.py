@@ -34,6 +34,10 @@ class IndexPage(TemplateView):
 
             return render(self.request, "blocks/login.html", {"form": form})
 
+        tracker = self.request.GET.get("product")
+        if tracker:
+            pass
+
         if not Page.objects.filter(url=None).exists():
             return HttpResponseNotFound()
 

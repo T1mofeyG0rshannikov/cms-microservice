@@ -63,9 +63,14 @@
         align-items: center;
     }
 
-    .register form input{
+    .register form .field{
         width: 100%;
         margin-bottom: var(--margin-inside-block-mobile);
+    }
+
+    .register form input{
+        width: 100%;
+        margin: 0;
     }
 
     .register form input[type=submit]{

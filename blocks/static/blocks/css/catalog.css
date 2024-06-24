@@ -28,7 +28,7 @@
     font-weight: 700;
 }
 
-.catalog .products .product button, .catalog .products .product-main-page button{
+.catalog .product button, .catalog .product-main-page button{
     background-color: var(--main-color);
     border: none;
     margin: 0px;
@@ -36,15 +36,15 @@
     width: 100%;
 }
 
-.catalog .products .product a, .catalog .products .product span{
+.catalog .product a, .catalog .product span{
     display: block;
 }
 
-.catalog .products .product button a{
+.catalog .product button a{
     color: var(--main-text-inverted-color);
 }
 
-.catalog .products .product img{
+.catalog .product img{
     width: 100%;
 }
 
@@ -153,7 +153,21 @@
 
 .catalog .inner{
     max-width: 1200px;
+    overflow-wrap: break-word
 }
+
+.swiper-button-next:after, .swiper-button-prev:after{
+    font-size: 25px!important;
+}
+
+.swiper-button-next {
+    right: -15px!important;
+}
+
+.swiper-button-prev {
+    left: -15px!important;
+}
+
 
 @media screen and (max-width: 760px) {
     .catalog{
@@ -167,6 +181,19 @@
 
     .product, .additional-product{
         margin: 10px 0px;
+    }
+
+    .mySwiper{
+        width: 80%;
+        padding: 0px 50px !important;
+    }
+
+    .swiper-button-next {
+        right: 10px!important;
+    }
+
+    .swiper-button-prev {
+        left: 10px!important;
     }
 }
 
@@ -198,7 +225,7 @@
     margin: 10px 0px;
 }
 
-.catalog .products .additional-product button{
+.catalog .additional-product button{
     background-color: var(--main-color);
     border: none;
     margin: 0px;
@@ -218,12 +245,19 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    justify-content: space-between;
     text-align: center;
+}
+
+.catalog .product-main-page .product-content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .catalog .product-main-page img{
     width: calc(100% + 40px);
+    aspect-ratio: 3/2;
 }
 
 .catalog .product-main-page h1{
@@ -233,4 +267,20 @@
 
 .catalog .product-main-page span p{
     margin-top: 10px;
+}
+
+.promo-product{
+    min-height: 300px;
+    aspect-ratio: 4/7;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    background-color: rgb(150, 150, 150);
+    width: 40px!important;
+    height: 40px!important;
+    color: white !important;
+    fill: white !important;
+    stroke: white !important;
+    border-radius: 50%;
 }

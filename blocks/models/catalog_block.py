@@ -1,9 +1,7 @@
 from ckeditor.fields import RichTextField
 from django.db import models
 
-# from catalog.models.products import Product
-# from catalog.serializers import CatalogProductSerializer
-from blocks.models.blocks_components import CatalogProductType
+from catalog.models.products import Product
 
 from .common import BaseBlock
 from .mixins import ButtonMixin, TitleMixin
@@ -14,7 +12,6 @@ class BaseCatalogBlock(BaseBlock, TitleMixin, ButtonMixin):
     add_exclusive = models.BooleanField(
         verbose_name="Эксклюзив", help_text="нужно ли добавлять карточку приватного продукта", null=True
     )
-    # page_title = models.CharField(verbose_name="Заголовок страницы", max_length=100, null=True)
 
     class Meta:
         abstract = True
@@ -36,10 +33,12 @@ class MainPageCatalogBlock(BaseCatalogBlock):
         verbose_name = "Блок каталога на главной"
         verbose_name_plural = "Блоки каталога на главной"
 
-    # @property
-    # def products(self):
-    #    return [product.product for product in CatalogProductType.objects.filter(block=self)]
 
-    # @products.setter
-    # def products(self, serialized_products):
-    #    self._products = serialized_products
+class PromoCatalog(BaseBlock, TitleMixin):
+    class Meta:
+        verbose_name = "Промо акции"
+        verbose_name_plural = "Промо акциий"
+
+    @property
+    def products(self):
+        return Product.objects.all()

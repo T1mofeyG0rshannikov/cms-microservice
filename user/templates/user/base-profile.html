@@ -44,14 +44,5 @@
 {% endblock %}
 
 {% block additional_scripts %}
-<script>
-    function logout(){
-        deleteToken();
-        window.location.replace("/user/logout");
-        fetch("/user/logout")
-    }
-
-    const logoutElem = document.querySelector("header .inner .logout");
-    logoutElem.addEventListener("click", logout)
-</script>
+<script src="{% static 'user/js/profile.js' %}"></script>
 {% endblock %}
