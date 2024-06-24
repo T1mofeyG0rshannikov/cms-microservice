@@ -17,3 +17,7 @@ popupBackgrounds.forEach((popup, index) => {
         }
     })
 })
+
+function openProductLink(url){
+    window.open(url)
+}

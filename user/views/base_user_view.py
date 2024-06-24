@@ -5,6 +5,4 @@ from user.auth.jwt_processor_interface import JwtProcessorInterface
 
 
 class BaseUserView(TemplateView):
-    def __init__(self) -> None:
-        super().__init__()
-        self.jwt_processor: JwtProcessorInterface = get_jwt_processor()
+    jwt_processor: JwtProcessorInterface = get_jwt_processor()

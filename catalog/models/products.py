@@ -1,9 +1,12 @@
+import random
+
 from ckeditor.fields import RichTextField
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from catalog.models.product_type import ProductType
 from common.models import OneInstanceModel
+from common.security import LinkEncryptor
 
 
 class OrganizationType(models.Model):
@@ -60,6 +63,23 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True)
 
     status = models.CharField(verbose_name="статус", choices=PRODUCT_STATUS, max_length=50, default="Новое")
+
+    link_encryptor = LinkEncryptor()
+
+    @property
+    def link(self):
+        links = self.links.all()
+
+        link_change = []
+
+        for i in range(len(links)):
+            for j in range(links[i].percent):
+                link_change.append(i)
+
+        link = links[random.choice(link_change)].text
+        link = self.link_encryptor.encrypt(link)
+
+        return link
 
     class Meta:
         verbose_name = "продукт/акция"

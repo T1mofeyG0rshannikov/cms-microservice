@@ -8,7 +8,7 @@
                 {% for product in block.products %}
                     {% with forloop.counter as product_id %}
                         <div class="swiper-slide">
-                            <div class="promo-product" id="product{{product_id}}">
+                            <div onclick="openProductLink('{{ request.scheme }}://{{ request.META.HTTP_HOST }}/product?product={{ product.link }}')" class="promo-product" id="product{{product_id}}">
                             </div>
 
                             <style>
@@ -25,8 +25,6 @@
         <div class="swiper-button-next"></div>
         <div class="swiper-button-prev"></div>
     </div>
-
-    <script src="{% static 'blocks/js/promo.js' %}"></script>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => initSwiper({{ styles.swiper_columns }}))

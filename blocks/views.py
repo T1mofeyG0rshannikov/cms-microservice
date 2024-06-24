@@ -1,6 +1,11 @@
 import json
 
-from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
+from django.http import (
+    HttpResponse,
+    HttpResponseNotFound,
+    HttpResponseRedirect,
+    JsonResponse,
+)
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -33,10 +38,6 @@ class IndexPage(TemplateView):
             form = LoginForm()
 
             return render(self.request, "blocks/login.html", {"form": form})
-
-        tracker = self.request.GET.get("product")
-        if tracker:
-            pass
 
         if not Page.objects.filter(url=None).exists():
             return HttpResponseNotFound()

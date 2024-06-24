@@ -14,7 +14,7 @@ function initMobileSwiper(){
 
 function initDesctopSwiper(columns){
     const swiper = new Swiper(".mySwiper", {
-        spaceBetween: 20,
+        spaceBetween: 40,
         slidesPerView: columns,
         navigation: {
         nextEl: ".swiper-button-next",

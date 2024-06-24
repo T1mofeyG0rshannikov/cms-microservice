@@ -184,7 +184,7 @@
     }
 
     .mySwiper{
-        width: 80%;
+        width: calc(90% - 100px);
         padding: 0px 50px !important;
     }
 
@@ -271,7 +271,8 @@
 
 .promo-product{
     min-height: 300px;
-    aspect-ratio: 4/7;
+    aspect-ratio: 4/5;
+    border: 1px solid var(--dark-color);
 }
 
 .swiper-button-next,

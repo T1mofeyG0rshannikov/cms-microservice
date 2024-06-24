@@ -1,5 +1,4 @@
 import datetime
-import random
 
 from dateutil.relativedelta import relativedelta
 from rest_framework import serializers
@@ -7,6 +6,7 @@ from rest_framework import serializers
 from blocks.models.catalog_block import CatalogBlock
 from catalog.models.product_type import ProductType
 from catalog.models.products import ExclusiveCard, Product
+from common.security import LinkEncryptor
 
 
 class CatalogBlockSerializer(serializers.ModelSerializer):
@@ -29,11 +29,8 @@ class CatalogBlockSerializer(serializers.ModelSerializer):
         )
 
     def get_exclusive_card(self, catalog):
-        print(catalog.add_exclusive)
         if catalog.add_exclusive:
-            card = ExclusiveCard.objects.all().first()
-            print(card)
-            return card
+            return ExclusiveCard.objects.all().first()
 
     def get_template(self, catalog):
         template = catalog.template
@@ -56,7 +53,6 @@ class CatalogBlockSerializer(serializers.ModelSerializer):
 
 
 class CatalogProductSerializer(serializers.ModelSerializer):
-    link = serializers.SerializerMethodField()
     cover = serializers.SerializerMethodField()
     end_promotion = serializers.SerializerMethodField()
     organization = serializers.SerializerMethodField()
@@ -110,17 +106,6 @@ class CatalogProductSerializer(serializers.ModelSerializer):
 
     def get_cover(self, product):
         return product.cover.url
-
-    def get_link(self, product):
-        links = product.links.all()
-
-        link_change = []
-
-        for i in range(len(links)):
-            for j in range(links[i].percent):
-                link_change.append(i)
-
-        return links[random.choice(link_change)].text
 
 
 class MainPageCatalogProductSerializer(serializers.ModelSerializer):
