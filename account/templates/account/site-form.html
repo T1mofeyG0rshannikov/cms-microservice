@@ -83,7 +83,9 @@
         <div class="field">
             <p>Соцсеть</p>
             <select name="" id="">
-
+                {% for social in socials %}
+                    <option value="{{ social.id }}">{{ social.name }}</option>
+                {% endfor %}
             </select>
         </div>
 

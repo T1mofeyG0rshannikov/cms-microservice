@@ -7,11 +7,9 @@
 
         <div class="button-container">
             {% for social in block.buttons.all %}
-                <a style="background-color: {{ social.background_color }};" class="social-button" target="_blank" href='{{social.ref}}'>
-
-                    <img src="{{social.icon.url}}" />
-                    {{ social.text }}
-
+                <a style="background-color: {{ social.social_network.button_color }};" class="social-button" target="_blank" href='{{social.ref}}'>
+                    <img src="{{social.social_network.icon.url}}" />
+                    {{ social.social_network.name }}
                 </a>
             {% endfor %}
         </div>

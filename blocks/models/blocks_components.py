@@ -1,5 +1,4 @@
 from ckeditor.fields import RichTextField
-from colorfield.fields import ColorField
 from django.db import models
 
 from blocks.models.blocks import (
@@ -9,13 +8,9 @@ from blocks.models.blocks import (
     SocialMediaBlock,
     StagesBlock,
 )
-
-# from blocks.models.catalog_block import #CatalogBlock#, MainPageCatalogBlock
 from blocks.models.mixins import ButtonMixin, TitleMixin
 from catalog.models.products import Product
-
-# from catalog.models.product_type import ProductType
-from common.models import Sortable
+from common.models import SocialNetwork, Sortable
 
 
 class NavMenuItem(ButtonMixin):
@@ -43,10 +38,9 @@ class Feature(TitleMixin):
 
 
 class SocialMediaButton(models.Model):
-    icon = models.ImageField(verbose_name="Изображение", upload_to="images/social")
-    background_color = ColorField(verbose_name="Цвет фона")
     ref = models.CharField(verbose_name="Ссылка на соц. сети", max_length=500)
-    text = models.CharField(verbose_name="Текст", max_length=100, null=True)
+
+    social_network = models.ForeignKey(SocialNetwork, on_delete=models.SET_NULL, null=True, verbose_name="Соц. сеть")
 
     block = models.ForeignKey(SocialMediaBlock, on_delete=models.CASCADE, related_name="buttons")
 
