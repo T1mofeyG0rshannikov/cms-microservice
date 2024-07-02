@@ -1,0 +1,22 @@
+<header>
+    <div class="inner">
+        <img onclick="location.href='/partners'" class="logo"/>
+
+        <a class="logout" >Выйти из аккаунта</a>
+    </div>
+</header>
+
+<style>
+    header .logo{
+        content: url("{{settings.logo.image}}");
+        height: {{settings.logo.height}};
+        width: {{settings.logo.width}};
+    }
+
+    @media (pointer:none), (pointer:coarse) {
+        header .logo{
+            height: {{settings.logo.height_mobile}};
+            width: {{settings.logo.width_mobile}};
+        }
+    }
+</style>

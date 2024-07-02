@@ -1,7 +1,3 @@
-:root{
-    --dark-color: rgb(200, 200, 200);
-}
-
 .user-form{
     display: flex;
     flex-direction: column;

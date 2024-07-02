@@ -1,7 +1,7 @@
 from django.http import HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, View
 
 from domens.forms import CreateSiteForm
 from domens.models import Domain, Site
@@ -47,3 +47,23 @@ class CreateSite(TemplateView):
         else:
             form.add_error("subdomain", UserErrors.login_first.value)
             return JsonResponse({"errors": form.errors}, status=400)
+
+
+class StopSite(View):
+    def get(self, request):
+        if self.request.user_from_header:
+            self.request.user_from_header.site.deactivate()
+
+            return HttpResponse(status=200)
+
+        return HttpResponse(status=401)
+
+
+class ActivateSite(View):
+    def get(self, request):
+        if self.request.user_from_header:
+            self.request.user_from_header.site.activate()
+
+            return HttpResponse(status=200)
+
+        return HttpResponse(status=401)

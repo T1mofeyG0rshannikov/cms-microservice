@@ -33,7 +33,7 @@ class IndexPage(TemplateView):
             return HttpResponse("<h1>Привет :)</h1>")
 
         if (
-            self.request.domain == partner_domain.domain or self.request.domain == "localhost"
+            self.request.domain == partner_domain.domain  # or self.request.domain == "localhost"
         ) and self.request.subdomain == "":
             form = LoginForm()
 

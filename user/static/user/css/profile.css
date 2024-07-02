@@ -28,7 +28,7 @@ header .inner{
     height: 100%;
 }
 
-main{
+.profile-main{
     display: flex;
     justify-content: center;
     width: 100%;

@@ -1,0 +1,50 @@
+.site{
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    align-items: center;
+}
+
+.site .link{
+    width: 25px;
+    height: 25px;
+    position: relative;
+    z-index: -1;
+}
+
+.site p{
+    margin: 0px;
+}
+
+.container{
+    display: flex;
+    gap: 80px;
+}
+
+.qrcode{
+    width: 250px;
+    height: 250px;
+    margin-bottom: 15px;
+}
+
+.qrcode svg{
+    width: 100%;
+    height: 100%;
+}
+
+.site-container, .logo-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.container-child{
+    max-width: 50%;
+    min-width: 45%;
+}
+
+.account-main button{
+    background-color: var(--main-color);
+    border: none;
+    width: 200px;
+}

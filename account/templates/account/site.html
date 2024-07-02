@@ -1,0 +1,111 @@
+{% extends "account/base.html" %}
+{% load static %}
+{% load qr_code %}
+
+{% block additional_styles %}
+    <link rel="stylesheet" href="{% static 'account/css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'account/css/site.css' %}">
+    <link rel="stylesheet" href="{% static 'user/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'user/css/profile.css' %}">
+{% endblock %}
+
+{% block account_content %}
+
+{% include "account/site-form.html" %}
+<h1 style="margin-bottom: 0px;">Мой сайт</h1>
+<hr />
+
+<div class="container">
+    <div class="container-child">
+        <div class="site-container">
+            <div>
+                <p>Адрес сайта</p>
+
+                <div class="site">
+                    <p>{{ request.user.full_site_name }}</p>
+
+                    <a style="cursor: pointer; margin: 0px;" onclick="openLink('http://{{ request.user.full_site_name }}')">
+                        <object class="link" data="/static/account/images/external-link.svg"></object>
+                    </a>
+                </div>
+
+                <p style="color: rgb(250, 50, 50);" onclick="stopSite(this)">Остановить</p>
+            </div>
+
+            <p style="margin: 0px; color: rgb(40, 200, 40);">Онлайн с {{ user.site.online_from|date:"d.m.Y" }}</p>
+        </div>
+
+        <hr />
+
+        <div>
+            <p>Логотип:</p>
+
+            <div class="site-container">
+                <img class="site-logo" style="width: {{ user.site.logo_width }}" src="{{ user.site.logo.url }}" />
+
+                <p>{{ user.site.logo_size }}</p>
+            </div>
+        </div>
+
+        <hr />
+
+        <div>
+            <p>Название:</p>
+
+            <div class="site-container">
+                {% if user.site.name %}
+                    <p style="margin-top: 0px;">{{ user.site.name }}</p>
+                {% else %}
+                    <p style="margin-top: 0px;">Задайте название сайта</p>
+                {% endif %}
+
+                <p>{{ user.site.font }} {{ user.site.font_size }}</p>
+            </div>
+
+            <p>Владелец:</p>
+            {% if user.full_name %}
+                <p>{{ user.full_name }}</p>
+            {% else %}
+                <p>Нет информации о владельце</p>
+            {% endif %}
+        </div>
+
+        <hr />
+
+        <div>
+            <p>Контактная информация</p>
+            {% if user.contact_info %}
+                <p>{{ user.contact_info }}</p>
+            {% else %}
+                <p>нет контактной информации</p>
+            {% endif %}
+        </div>
+
+        <button id="open-site-form"><a>Настроить</a></button>
+
+    </div>
+
+    <div class="container-child">
+        <p>QR код сайта:</p>
+        <div class="qrcode">
+            {% qr_from_text request.user.full_site_name size="T" %}
+        </div>
+
+        <a href="/">Рекламные материалы</a>
+
+        <hr />
+
+        <p>Каналы</p>
+        {% if user.channels %}
+            <p>{{ channel.name }}</p>
+        {% else %}
+            <p>у вас пока нет своих каналов</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block additional_scripts %}
+<script src="{% static 'account/js/site.js' %}"></script>
+{% endblock %}

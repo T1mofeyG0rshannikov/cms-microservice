@@ -10,4 +10,6 @@ def get_site_data(request):
     else:
         domain = Domain.objects.filter(is_partners=False).first().domain
 
-    return {"settings": settings, "domain": domain}
+    partner_domain = Domain.objects.filter(is_partners=True).first().domain
+
+    return {"settings": settings, "domain": domain, "partner_domain": partner_domain}

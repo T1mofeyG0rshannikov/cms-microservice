@@ -1,0 +1,107 @@
+{% extends "common/base.html" %}
+{% load static %}
+
+
+{% block additional_styles%}
+<link rel="stylesheet" href="{% static 'account/css/base.css' %}">
+<link rel="stylesheet" href="{% static 'account/css/site-form.css' %}">
+<link rel="stylesheet" href="{% static 'user/css/main.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<form class="site-form" action="">
+    <div class="title">
+        <h3>Настройки сайта</h3>
+        <div onclick="closeSiteForm()" class="cross">
+            <img src="{% static 'blocks/images/cross.png' %}"/>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="field-container">
+        <div class="field">
+            <p>Адрес сайта</p>
+            <input placeholder="придумайте адрес" /><a>{{ partner_domain }}</a>
+        </div>
+    </div>
+
+    <div class="field-container">
+        <div class="field">
+            <p>Название сайта</p>
+            <input />
+        </div>
+
+        <div class="field">
+            <p>Шрифт</p>
+            <select name="" id="">
+
+            </select>
+        </div>
+
+        <div class="field">
+            <p>Размер</p>
+            <select name="" id="">
+
+            </select>
+        </div>
+    </div>
+
+    <div class="field-container">
+        <div class="field">
+            <p>Логотип</p>
+            <img class="logo" src="{% static 'account/images/baselogo.png' %}" />
+            <a href="/">Как сделать логотип</a>
+        </div>
+
+        <div class="field">
+            <p>Размер</p>
+            <input min="0" max="100" type="range" />
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="field-container">
+        <div class="field" style="width: 100%">
+            <p>Владелец</p>
+            <input style="width: 100%"/>
+        </div>
+    </div>
+
+    <div class="field-container">
+        <div class="field" style="width: 100%">
+            <p>Контактная информация</p>
+            <input style="width: 100%" placeholder="Контактные данные на сайт" />
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="field-container">
+        <div class="field">
+            <p>Соцсеть</p>
+            <select name="" id="">
+
+            </select>
+        </div>
+
+        <div class="field">
+            <p>Адрес</p>
+            <input />
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="field-container">
+        <button><a>Сохранить</a></button>
+    </div>
+</form>
+
+{% endblock %}
+
+{% block additional_scripts %}
+    <script src="{% static 'account/js/site-form.js' %}"></script>
+{% endblock %}

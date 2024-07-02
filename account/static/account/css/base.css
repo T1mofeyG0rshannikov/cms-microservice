@@ -1,0 +1,49 @@
+.menu li{
+    margin: 5px 0px;
+    font-weight: 400;
+    padding: 10px;
+}
+
+.menu li a{
+    display: flex;
+    align-items: center;
+    margin: 0px;
+    gap: 10px;
+}
+
+.menu li::marker{
+    display: none;
+    content: '';
+}
+
+.menu li img{
+    height: 25px;
+}
+
+.menu{
+    height: 100%;
+}
+
+.active{
+    border-radius: 15px 0px 0px 15px;
+    background: white;
+}
+
+.menu li a{
+    font-weight: 400;
+    text-decoration: none;
+}
+
+hr{
+    border: 1px solid var(--dark-color);
+}
+
+.account-main{
+    padding-left: 50px;
+    padding-right: 50px;
+    min-width: calc(100% - 300px);
+}
+
+body{
+    overflow-x: hidden;
+}

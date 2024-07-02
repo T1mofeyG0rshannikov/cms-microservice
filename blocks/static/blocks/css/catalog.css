@@ -184,8 +184,8 @@
     }
 
     .mySwiper{
-        width: calc(90% - 100px);
-        padding: 0px 50px !important;
+        width: calc(78%);
+        padding: 0px 11% !important;
     }
 
     .swiper-button-next {
@@ -273,6 +273,7 @@
     min-height: 300px;
     aspect-ratio: 4/5;
     border: 1px solid var(--dark-color);
+    cursor: pointer;
 }
 
 .swiper-button-next,

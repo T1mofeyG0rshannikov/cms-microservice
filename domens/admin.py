@@ -6,7 +6,7 @@ from domens.models import Domain, Site
 
 @register(Site)
 class SiteAdmin(admin.ModelAdmin):
-    pass
+    exclude = ["online_from"]
 
 
 @register(Domain)

@@ -2,6 +2,7 @@ from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 
+from domens.models import Domain
 from user.user_manager.user_manager import UserManager
 from user.user_manager.user_manager_interface import UserManagerInterface
 
@@ -41,6 +42,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def is_staff(self):
         return self.staff
+
+    @property
+    def full_site_name(self):
+        return f"{self.site}.{Domain.objects.filter(is_partners=True).first().domain}"
 
     def __str__(self) -> str:
         return self.username

@@ -20,7 +20,7 @@
 
                         <a class="bonus" style="margin-top: 5px;">Выгода: {{ product.profit }}</a>
 
-                        <button onclick="openProductLink('{{ request.scheme }}://{{ request.META.HTTP_HOST }}/product?product={{ product.link }}')"><a>{{ block.button_text }}</a></button>
+                        <button onclick="openLink('{{ request.scheme }}://{{ request.META.HTTP_HOST }}/product?product={{ product.link }}')"><a>{{ block.button_text }}</a></button>
 
                         <div class="popup-background">
                             <div class="description-popup">
@@ -31,7 +31,7 @@
                                     <a>{{ product.description|safe }}</a>
                                 </div>
 
-                                <button onclick="openProductLink('{{ request.scheme }}://{{ request.META.HTTP_HOST }}/product?product={{ product.link }}')" style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);"><a onclick="closePopup({{ product_id }})">{{ block.button_text }}</a></button>
+                                <button onclick="openLink('{{ request.scheme }}://{{ request.META.HTTP_HOST }}/product?product={{ product.link }}')" style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);"><a onclick="closePopup({{ product_id }})">{{ block.button_text }}</a></button>
                             </div>
                         </div>
                     </div>

@@ -2,6 +2,7 @@
     --margin-inside-block-desctop: 25px;
     --margin-inside-block-mobile: 12px;
     --ref-color: #5f6d87;
+    --dark-color: rgb(200, 200, 200);
 }
 
 body{
@@ -12,7 +13,7 @@ body{
     flex-direction: column;
 }
 
-a, p{
+a, p, li{
     color: var(--main-text-color);
     font-size: var(--main-text-font-size);
     font-weight: var(--main-text-font-weight);

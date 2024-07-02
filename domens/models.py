@@ -1,6 +1,5 @@
 from django.db import models
-
-from user.models import User
+from django.utils import timezone
 
 
 class Domain(models.Model):
@@ -26,8 +25,10 @@ class Site(models.Model):
     use_default_settings = models.BooleanField(verbose_name="Использовать общие настройки сайта", default=False)
     advertising_channel = models.CharField(verbose_name="Рекламный канал", null=True, max_length=100)
     user = models.OneToOneField(
-        User, on_delete=models.CASCADE, verbose_name="пользователь", null=True, blank=True, related_name="site"
+        "user.User", on_delete=models.CASCADE, verbose_name="пользователь", null=True, blank=True, related_name="site"
     )
+
+    online_from = models.DateField(verbose_name="онлайн с", default=timezone.now())
 
     class Meta:
         verbose_name = "сайт"
@@ -35,3 +36,21 @@ class Site(models.Model):
 
     def __str__(self):
         return self.subdomain
+
+    def activate(self):
+        self.is_active = True
+        self.online_from = timezone.now()
+        self.save()
+
+    def deactivate(self):
+        self.is_active = False
+        self.save()
+
+    @property
+    def logo_size(self):
+        coeff = self.logo.height / self.logo.width
+
+        width = int(self.logo_width)
+        height = int(width * coeff)
+
+        return f"{width}x{height}px"

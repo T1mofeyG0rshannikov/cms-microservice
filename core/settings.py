@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     "catalog",
     "django_hosts",
     "domens",
+    "account",
+    "qr_code",
 ]
 
 MIDDLEWARE = [
