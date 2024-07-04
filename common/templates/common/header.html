@@ -1,8 +1,13 @@
+{% load static %}
+
 <header>
     <div class="inner">
         <img onclick="location.href='/partners'" class="logo"/>
 
-        <a class="logout" >Выйти из аккаунта</a>
+        <div class="icons">
+            <img src="{% static 'common/images/menu_alert.png' %}"/>
+            <img src="{% static 'common/images/menu_user.png' %}"/>
+        </div>
     </div>
 </header>
 

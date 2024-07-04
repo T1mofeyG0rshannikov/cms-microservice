@@ -10,7 +10,7 @@
 
 {% block content %}
 
-<form class="site-form" action="">
+<form onsubmit="onSubmitSiteForm(this, event)" class="site-form">
     <div class="title">
         <h3>Настройки сайта</h3>
         <div onclick="closeSiteForm()" class="cross">
@@ -21,77 +21,130 @@
     <hr />
 
     <div class="field-container">
-        <div class="field">
+        <div class="field" id="site">
             <p>Адрес сайта</p>
-            <input placeholder="придумайте адрес" /><a>{{ partner_domain }}</a>
+            <div style="display: flex; align-items: center;">
+                <div>
+                    <input name="site" value="{% if user.site.subdomain %}{{ user.site.subdomain }}{% endif %}" placeholder="придумайте адрес" />
+                </div>
+                <a style="margin: 0px;">{{ partner_domain }}</a>
+            </div>
         </div>
     </div>
 
     <div class="field-container">
-        <div class="field">
+        <div class="field" id="name">
             <p>Название сайта</p>
-            <input />
+            <input name="name" value="{% if user.site.name %}{{ user.site.name }}{% endif %}" />
         </div>
 
-        <div class="field">
+        <div class="field" id="font">
             <p>Шрифт</p>
-            <select name="" id="">
-
-            </select>
-        </div>
-
-        <div class="field">
-            <p>Размер</p>
-            <select name="" id="">
-
-            </select>
-        </div>
-    </div>
-
-    <div class="field-container">
-        <div class="field">
-            <p>Логотип</p>
-            <img class="logo" src="{% static 'account/images/baselogo.png' %}" />
-            <a href="/">Как сделать логотип</a>
-        </div>
-
-        <div class="field">
-            <p>Размер</p>
-            <input min="0" max="100" type="range" />
-        </div>
-    </div>
-
-    <hr />
-
-    <div class="field-container">
-        <div class="field" style="width: 100%">
-            <p>Владелец</p>
-            <input style="width: 100%"/>
-        </div>
-    </div>
-
-    <div class="field-container">
-        <div class="field" style="width: 100%">
-            <p>Контактная информация</p>
-            <input style="width: 100%" placeholder="Контактные данные на сайт" />
-        </div>
-    </div>
-
-    <hr />
-
-    <div class="field-container">
-        <div class="field">
-            <p>Соцсеть</p>
-            <select name="" id="">
-                {% for social in socials %}
-                    <option value="{{ social.id }}">{{ social.name }}</option>
+            <select name="font" id="font">
+                {% for font in fonts %}
+                    <option value="{{ font.id }}" {% if user.site.font.id == font.id %}selected{% endif %}>{{ font.name }}</option>
                 {% endfor %}
             </select>
         </div>
 
-        <div class="field">
-            <p>Адрес</p>
-            <input />
+        <div class="field" id="font_size">
+            <p>Размер</p>
+            <select name="font_size" id="font_size">
+                <option {% if user.site.font_size == 6 %}selected{% endif %} value="6">6</option>
+                <option {% if user.site.font_size == 8 %}selected{% endif %} value="8">8</option>
+                <option {% if user.site.font_size == 9 %}selected{% endif %} value="9">9</option>
+                <option {% if user.site.font_size == 10 %}selected{% endif %} value="10">10</option>
+                <option {% if user.site.font_size == 12 %}selected{% endif %} value="12">12</option>
+                <option {% if user.site.font_size == 14 %}selected{% endif %} value="14">14</option>
+                <option {% if user.site.font_size == 18 %}selected{% endif %} value="18">18</option>
+                <option {% if user.site.font_size == 24 %}selected{% endif %} value="24">24</option>
+                <option {% if user.site.font_size == 30 %}selected{% endif %} value="30">30</option>
+                <option {% if user.site.font_size == 36 %}selected{% endif %} value="36">36</option>
+                <option {% if user.site.font_size == 48 %}selected{% endif %} value="48">48</option>
+                <option {% if user.site.font_size == 60 %}selected{% endif %} value="60">60</option>
+                <option {% if user.site.font_size == 72 %}selected{% endif %} value="72">72</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="field-container">
+        <div class="field" id="logo" style="margin-right: 10px;">
+            <p>Логотип</p>
+            <div id="logo" class="logo">
+                <img src="{% if user.site.logo %}{{ user.site.logo.url }}{% else %}{% static 'account/images/baselogo.png' %}{% endif %}" />
+                <input name="file" type="file" accept="image/*" id="file" />
+            </div>
+
+            <a href="/">Как сделать логотип</a>
+        </div>
+
+        <div class="field" id="logo_size">
+            <p>Размер</p>
+            <input name="logo_size" min="0" max="100" value="100" type="range" />
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="field-container">
+        <div class="field" style="width: 100%" id="owner">
+            <p>Владелец</p>
+            <input name="owner" value="{% if user.site.owner %}{{ user.site.owner }}{% endif %}" style="width: 100%"/>
+        </div>
+    </div>
+
+    <div class="field-container">
+        <div class="field" style="width: 100%" id="contact_info">
+            <p>Контактная информация</p>
+            <input name="contact_info" style="width: 100%" value="{% if user.site.contact_info %}{{ user.site.contact_info }}{% endif %}" placeholder="Контактные данные на сайт" />
+        </div>
+    </div>
+
+    <hr />
+
+    <div id="socials">
+        {% for user_social in user.site.socials.all %}
+            <div class="field-container">
+                <div class="field social" style="width: 150; margin-right: 10px;">
+                    <p>Соцсеть</p>
+                    <select style="width: 100%;" name="" id="">
+                        {% for social in socials %}
+                            <option value="{{ social.id }}" {% if user_social.social_network.id == social.id %}selected{% endif %}>{{ social.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="field" style="width: 230;">
+                    <p>Адрес</p>
+                    <input style="width: 100%;" name="adress" value="{{ user_social.adress }}" />
+                </div>
+
+                <div class="trash-container">
+                    <img class="trash" onclick="deleteSocial(this)" src="{% static 'account/images/trash.png' %}"/>
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="field-container">
+            <div class="field social" style="width: 150; margin-right: 10px;">
+                <p>Соцсеть</p>
+                <select style="width: 100%;" name="" id="">
+                    <option value="">Выбрать</option>
+                    {% for social in socials %}
+                        <option value="{{ social.id }}">{{ social.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="field adress" style="width: 230;">
+                <p>Адрес</p>
+                <input style="width: 100%;" name="adress" />
+            </div>
+
+            <div class="trash-container">
+                <img class="trash" onclick="deleteSocial(this)" src="{% static 'account/images/trash.png' %}"/>
+            </div>
+
         </div>
     </div>
 

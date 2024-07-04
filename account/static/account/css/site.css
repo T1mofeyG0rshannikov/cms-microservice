@@ -48,3 +48,40 @@
     border: none;
     width: 200px;
 }
+
+.stop-site{
+    color: rgb(250, 50, 50);
+    cursor: pointer;
+}
+
+.user-social .icon-wrapper{
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+}
+
+.user-social .icon-wrapper img{
+    width: 60%;
+}
+
+.user-social{
+    display: flex;
+    align-items: center;
+    margin: 15px 0px;
+}
+
+.user-social a{
+    font-weight: 600;
+    margin: 0px 10px;
+}
+
+.user-social .link{
+    width: 20px;
+    height: 20px;
+    margin-left: 15px;
+    position: relative;
+    z-index: -1;
+}

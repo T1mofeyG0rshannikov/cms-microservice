@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils import timezone
 
+from account.models import UserFont
+
 
 class Domain(models.Model):
     domain = models.CharField(max_length=50, verbose_name="домен")
@@ -29,6 +31,13 @@ class Site(models.Model):
     )
 
     online_from = models.DateField(verbose_name="онлайн с", default=timezone.now())
+
+    name = models.CharField(verbose_name="Название сайта", max_length=50, null=True)
+    font = models.ForeignKey(UserFont, on_delete=models.SET_NULL, null=True, verbose_name="шрифт")
+    font_size = models.PositiveIntegerField(verbose_name="размер шрифта", null=True)
+
+    owner = models.CharField(max_length=150, verbose_name="Владелец", null=True)
+    contact_info = models.CharField(max_length=200, verbose_name="Контактная информация", null=True)
 
     class Meta:
         verbose_name = "сайт"

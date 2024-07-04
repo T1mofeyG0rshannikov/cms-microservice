@@ -57,3 +57,14 @@ class SocialNetwork(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class BaseFont(models.Model):
+    name = models.CharField(verbose_name="Имя шрифта", max_length=50)
+    link = models.CharField(verbose_name="Ссылка для подключения", max_length=250, null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return self.name

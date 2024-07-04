@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{% static 'account/css/site.css' %}">
     <link rel="stylesheet" href="{% static 'user/css/main.css' %}">
     <link rel="stylesheet" href="{% static 'user/css/profile.css' %}">
+    <link rel="stylesheet" href="{% static 'common/css/nav.css' %}">
 {% endblock %}
 
 {% block account_content %}
@@ -29,7 +30,7 @@
                     </a>
                 </div>
 
-                <p style="color: rgb(250, 50, 50);" onclick="stopSite(this)">Остановить</p>
+                <p class="stop-site" onclick="stopSite(this)">Остановить</p>
             </div>
 
             <p style="margin: 0px; color: rgb(40, 200, 40);">Онлайн с {{ user.site.online_from|date:"d.m.Y" }}</p>
@@ -54,17 +55,17 @@
 
             <div class="site-container">
                 {% if user.site.name %}
-                    <p style="margin-top: 0px;">{{ user.site.name }}</p>
+                    <p style="margin: 0px;">{{ user.site.name }}</p>
                 {% else %}
-                    <p style="margin-top: 0px;">Задайте название сайта</p>
+                    <p style="margin: 0px;">Задайте название сайта</p>
                 {% endif %}
 
-                <p>{{ user.site.font }} {{ user.site.font_size }}</p>
+                <p>{% if user.site.font %}{{ user.site.font }}{% endif %}, {% if user.site.font_size %}{{ user.site.font_size }}pt{% endif %}</p>
             </div>
 
             <p>Владелец:</p>
-            {% if user.full_name %}
-                <p>{{ user.full_name }}</p>
+            {% if user.site.owner %}
+                <p>{{ user.site.owner }}</p>
             {% else %}
                 <p>Нет информации о владельце</p>
             {% endif %}
@@ -74,8 +75,8 @@
 
         <div>
             <p>Контактная информация</p>
-            {% if user.contact_info %}
-                <p>{{ user.contact_info }}</p>
+            {% if user.site.contact_info %}
+                <p>{{ user.site.contact_info }}</p>
             {% else %}
                 <p>нет контактной информации</p>
             {% endif %}
@@ -96,8 +97,20 @@
         <hr />
 
         <p>Каналы</p>
-        {% if user.channels %}
-            <p>{{ channel.name }}</p>
+        {% if user.site.socials %}
+            {% for user_social_network in user.site.socials.all %}
+                <div class="user-social">
+                    <div class="icon-wrapper" style="background-color: {{ user_social_network.social_network.button_color }}">
+                        <img src="{{ user_social_network.social_network.icon.url }}" />
+                    </div>
+
+                    <a>{{ user_social_network.adress }}</a>
+
+                    <a style="cursor: pointer; margin: 0px;" onclick="openLink('{{ user_social_network.social_network.domain }}{{ user_social_network.adress }}')">
+                        <object class="link" data="/static/account/images/external-link.svg"></object>
+                    </a>
+                </div>
+            {% endfor %}
         {% else %}
             <p>у вас пока нет своих каналов</p>
         {% endif %}

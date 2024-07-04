@@ -43,7 +43,7 @@ function openSiteForm(){
 }
 
 function closeSiteForm(){
-    siteForm.style.right = "-430px";
+    siteForm.style.right = "-480px";
 }
 
 const openSiteFormButton = document.querySelector("#open-site-form");

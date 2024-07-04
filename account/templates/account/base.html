@@ -1,12 +1,6 @@
 {% extends "common/base.html" %}
 {% load static %}
 
-{% block additional_styles %}
-    <link rel="stylesheet" href="{% static 'account/css/base.css' %}">
-    <link rel="stylesheet" href="{% static 'user/css/main.css' %}">
-    <link rel="stylesheet" href="{% static 'user/css/profile.css' %}">
-{% endblock %}
-
 {% block content %}
 {% include "common/header.html" %}
 
@@ -18,8 +12,4 @@
         {% endblock %}
     </main>
 </div>
-{% endblock %}
-
-{% block additional_scripts %}
-<script src="{% static 'user/js/profile.js' %}"></script>
 {% endblock %}
