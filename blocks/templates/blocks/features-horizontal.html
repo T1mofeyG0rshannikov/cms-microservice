@@ -8,7 +8,7 @@
 
         <div class="features-container">
             {% for feature in block.features.all %}
-                <div class="feature">
+                <div class="feature" {% if feature.ref %}onclick="location.href='{{ feature.ref }}'" style="cursor: pointer;"{% endif %}>
                     <div class="icon-wrapper">
                         <img class="icon" src="{{feature.icon.url}}" />
                     </div>

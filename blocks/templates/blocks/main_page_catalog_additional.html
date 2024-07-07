@@ -2,21 +2,18 @@
 
 <div id="{{ block.ancor }}" class="catalog">
     <div class="inner">
-        <h1>{{ block.title }}</h1>
-        <a style="margin-top: 0px;">{{ block.introductory_text|safe }}</a>
-
         <div class="products">
             {% for product in block.products %}
                 {% with forloop.counter as product_id %}
-                    <div id="product{{product_id}}" class="additional-product" style="text-align: center;">
-                        <h3 style="margin-bottom: 3px;">{{ product.name }}</h3>
+                    <div onclick="openLink('{{ request.scheme }}://{{ request.META.HTTP_HOST }}/{{ product.slug }}')" id="product{{product_id}}" class="additional-product" style="text-align: center;">
+                        <h1 style="margin-bottom: 3px;">{{ product.title }}</h1>
 
-                        {% if styles.add_annotation %}
+                        {% if block.add_annotation %}
                             <span style="margin-bottom: 0px;">{{ product.description|safe }}</span>
                         {% endif %}
 
-                        {% if styles.add_button %}
-                            <button><a href="{{ request.scheme }}://{{ request.META.HTTP_HOST }}/{{ product.slug }}">{{ block.button_text }}</a></button>
+                        {% if block.add_button %}
+                            <button onclick="openLink('{{ request.scheme }}://{{ request.META.HTTP_HOST }}/{{ product.slug }}')" ><a>{{ block.button_text }}</a></button>
                         {% endif %}
                     </div>
                     <style>
@@ -39,15 +36,19 @@
         }
 
         #block{{id}} .products{
-            display: grid;
+            display: flex;
+            flex-wrap: wrap;
             grid-column-gap: 25px;
             grid-row-gap: 10px;
-            grid-template-columns: {{styles.columns}};
+        }
+
+        #block{{id}} .additional-product{
+            flex-basis: calc({{styles.column_width}}% - 65px);
         }
 
         @media screen and (max-width: 760px) {
-            #block{{id}} .products{
-                grid-template-columns: repeat(1, 1fr);
+            #block{{id}} .additional-product{
+                flex-basis: 100%;
             }
         }
     </style>

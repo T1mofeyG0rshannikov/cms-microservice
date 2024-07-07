@@ -88,6 +88,13 @@ class CustomStylesSerializer(serializers.Serializer):
     add_annotation = serializers.BooleanField(required=False)
     add_button = serializers.BooleanField(required=False)
     swiper_columns = serializers.CharField(required=False)
+    column_width = serializers.SerializerMethodField(required=False)
+
+    def get_column_width(self, obj):
+        try:
+            return 100 // obj.columns
+        except AttributeError:
+            pass
 
     def get_darkness_bottom(self, obj):
         try:

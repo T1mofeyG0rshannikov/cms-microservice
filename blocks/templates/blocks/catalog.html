@@ -5,7 +5,7 @@
         <h1>{{ block.title }}</h1>
         <a style="margin-top: 0px;">{{ block.introductory_text|safe }}</a>
 
-        <div class="products">
+        <div class="products" style="margin-top: 55px;">
             {% for product in block.products %}
                 {% with forloop.counter as product_id %}
                     <div class="product">
@@ -45,11 +45,11 @@
                         <h3 style="margin-bottom: 3px; color: rgb(250, 50, 50);">Наш эксклюзив</h3>
                     </div>
 
-                    <span style="margin: 15px 0px;">Только для зарегистрированных пользователей сайта</span>
+                    <span style="margin: 15px 0px;">{{ block.exclusive_card.annotation }}</span>
 
                     <div>
                         <a class="bonus" style="margin-top: 5px;">Бонус: {{ block.exclusive_card.bonus }}</a>
-                        <button><a href="/user/register">Регистрация</a></button>
+                        <button><a href="{{ block.exclusive_card.button_ref }}">{{ block.exclusive_card.button_text }}</a></button>
                     </div>
                 </div>
             {% endif %}
@@ -66,15 +66,19 @@
         }
 
         #block{{id}} .products{
-            display: grid;
+            display: flex;
+            flex-wrap: wrap;
             grid-column-gap: 25px;
-            grid-row-gap: 10px;
-            grid-template-columns: {{styles.columns}};
+            grid-row-gap: 35px;
+        }
+
+        #block{{id}} .product{
+            flex-basis: calc({{styles.column_width}}% - 65px);
         }
 
         @media screen and (max-width: 760px) {
-            #block{{id}} .products{
-                grid-template-columns: repeat(1, 1fr);
+            #block{{id}} .product{
+                flex-basis: 100%;
             }
         }
     </style>

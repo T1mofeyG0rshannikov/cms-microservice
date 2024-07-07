@@ -14,6 +14,7 @@ from blocks.models.blocks import (
     StagesBlock,
 )
 from blocks.models.blocks_components import (
+    AdditionalCatalogProductType,
     CatalogProduct,
     CatalogProductType,
     Feature,
@@ -22,10 +23,16 @@ from blocks.models.blocks_components import (
     SocialMediaButton,
     Stage,
 )
-from blocks.models.catalog_block import CatalogBlock, MainPageCatalogBlock, PromoCatalog
+from blocks.models.catalog_block import (
+    AdditionalCatalogBlock,
+    CatalogBlock,
+    MainPageCatalogBlock,
+    PromoCatalog,
+)
 from blocks.models.common import Block, Page, Template
 from common.admin import BaseInline
 from styles.admin import (
+    AdditionalCatalogCustomStylesInline,
     CatalogCustomStylesInline,
     ContentCustomStylesInline,
     CoverCustomStylesInline,
@@ -70,6 +77,10 @@ class CatalogProductInline(SortableStackedInline, BaseInline):
 
 class MainPageCatalogProductInline(SortableStackedInline, BaseInline):
     model = CatalogProductType
+
+
+class AdditionalCatalogProductInline(SortableStackedInline, BaseInline):
+    model = AdditionalCatalogProductType
 
 
 @register(Template)
@@ -128,19 +139,17 @@ class CatalogBlogAdmin(SortableAdminBase, BaseBlockAdmin):
     inlines = [CatalogProductInline, CatalogCustomStylesInline]
     exclude = BaseBlockAdmin.exclude  # + ["product_type"]
 
-    def get_form(self, request, obj=None, **kwargs):
-        request._obj_ = obj
-        return super().get_form(request, obj, **kwargs)
-
 
 @register(MainPageCatalogBlock)
 class MainPageCatalogBlogAdmin(SortableAdminBase, BaseBlockAdmin):
     inlines = [MainPageCatalogProductInline, MainPageCatalogCustomStylesInline]
     exclude = BaseBlockAdmin.exclude
 
-    def get_form(self, request, obj=None, **kwargs):
-        request._obj_ = obj
-        return super().get_form(request, obj, **kwargs)
+
+@register(AdditionalCatalogBlock)
+class AdditionalCatalogBlogAdmin(SortableAdminBase, BaseBlockAdmin):
+    inlines = [AdditionalCatalogProductInline, AdditionalCatalogCustomStylesInline]
+    exclude = BaseBlockAdmin.exclude
 
 
 @register(PromoCatalog)

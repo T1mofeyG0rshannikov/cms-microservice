@@ -4,6 +4,7 @@ from django.contrib.admin.decorators import register
 from styles.models.colors.colors import ColorStyles
 from styles.models.other import IconSize, MarginBlock
 from styles.models.styles.styles import (
+    AdditionalCatalogCustomStyles,
     CatalogCustomStyles,
     ContentCustomStyles,
     CoverCustomStyles,
@@ -72,6 +73,10 @@ class MainPageCatalogCustomStylesInline(StyleInline):
 
 class PromoCatalogCustomStylesInline(StyleInline):
     model = PromoCatalogCustomStyles
+
+
+class AdditionalCatalogCustomStylesInline(StyleInline):
+    model = AdditionalCatalogCustomStyles
 
 
 class ColorStylesInline(StyleInline):

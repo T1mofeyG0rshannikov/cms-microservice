@@ -214,11 +214,11 @@
 
 .additional-product h1{
     margin-top: 50px;
-    color: var(--subheader-inverted-color);
+    color: white;
 }
 
 .additional-product span, .additional-product span p{
-    color: var(--explanation-text-inverted-color);
+    color: white;
 }
 
 .additional-product span p{
@@ -270,10 +270,12 @@
 }
 
 .promo-product{
-    min-height: 300px;
-    aspect-ratio: 4/5;
     border: 1px solid var(--dark-color);
     cursor: pointer;
+}
+
+.promo-product img{
+    width: 100%;
 }
 
 .swiper-button-next,

@@ -18,25 +18,43 @@ function initForm(element){
     let validUsername = validateUsername(usernameInput.value);
     let validPhone = validatePhone(phoneInput.value);
 
+    emailInput.addEventListener("input", () => {
+        validEmail = validateEmail(element.querySelector("#email input").value);
+        console.log(validEmail, "email");
+        formValid();
+    });
+
     emailInput.addEventListener("change", () => {
-        validEmail = onchangeEmail(element);
-        validPhone = onchangePhone(element);
-        validUsername = onchangeUsername(element);
-        formValid()
+        const emailContainer = element.querySelector("#email");
+
+        const errorMessage = validEmail ? "" : "Введите корректный email"
+        setError(emailContainer, errorMessage);
+    })
+
+    usernameInput.addEventListener("input", () => {
+        validUsername = validateUsername(element.querySelector("#username input").value);
+        formValid();
     });
 
     usernameInput.addEventListener("change", () => {
-        validEmail = onchangeEmail(element);
-        validPhone = onchangePhone(element);
-        validUsername = onchangeUsername(element);
-        formValid()
+        const usernameContainer = element.querySelector("#username");
+
+        const errorMessage = validUsername ? "" : "Укажите имя"
+        setError(usernameContainer, errorMessage);
     })
 
     $("input[name=phone]").mask("+7 (999) 999-99-99")
+    $("input[name=phone]").on("keyup", () => {
+        validPhone = validatePhone(element.querySelector("#phone input").value);
+        formValid();
+    })
+
     $("input[name=phone]").on("change", () => {
-        validEmail = onchangeEmail(element);
-        validPhone = onchangePhone(element);
-        validUsername = onchangeUsername(element);
+        validPhone = validatePhone(element.querySelector("#phone input").value);
+        const phoneContainer = element.querySelector("#phone");
+
+        const errorMessage = validPhone ? "" : "Введите корректный телефон"
+        setError(phoneContainer, errorMessage);
         formValid();
     })
 }

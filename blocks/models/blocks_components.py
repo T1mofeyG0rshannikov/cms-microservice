@@ -20,6 +20,9 @@ class NavMenuItem(ButtonMixin):
 class Feature(TitleMixin):
     icon = models.ImageField(verbose_name="Иконка", upload_to="images/features")
     description = models.TextField(verbose_name="Пояснение")
+
+    ref = models.CharField(verbose_name="ссылка", max_length=500, null=True, blank=True)
+
     block = models.ForeignKey(
         FeaturesBlock, verbose_name="Блок", on_delete=models.SET_NULL, null=True, related_name="features"
     )
@@ -111,3 +114,11 @@ class CatalogProductType(Sortable):
         self.product.save()
 
         super().delete(*args, **kwargs)"""
+
+
+class AdditionalCatalogProductType(Sortable):
+    block = models.ForeignKey("blocks.AdditionalCatalogBlock", on_delete=models.CASCADE)
+    product = models.ForeignKey("catalog.ProductType", on_delete=models.CASCADE, verbose_name="Продукт", null=True)
+
+    def __str__(self):
+        return str(self.product)

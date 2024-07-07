@@ -3,19 +3,14 @@
 <div id="{{ block.ancor }}" class="catalog">
     <div class="inner" style="position: relative;">
         <h1>{{ block.title }}</h1>
-        <div class="swiper mySwiper" style="margin-top: 20px;">
+        <div class="swiper mySwiper" style="margin-top: 30px;">
             <div class="swiper-wrapper">
                 {% for product in block.products %}
                     {% with forloop.counter as product_id %}
                         <div class="swiper-slide">
                             <div onclick="openLink('{{ request.scheme }}://{{ request.META.HTTP_HOST }}/product?product={{ product.link }}')" class="promo-product" id="product{{product_id}}">
+                                <img src="{{product.banner.url}}" />
                             </div>
-
-                            <style>
-                                #block{{id}} #product{{product_id}}{
-                                    background: url("{{product.banner.url}}") no-repeat 50% 50%/cover;
-                                }
-                            </style>
                         </div>
                     {% endwith %}
                 {% endfor %}
@@ -29,4 +24,12 @@
     <script>
         document.addEventListener("DOMContentLoaded", () => initSwiper({{ styles.swiper_columns }}))
     </script>
+
+    <style>
+        #block{{id}} .catalog{
+            padding-top: {{styles.margin_top}};
+            padding-bottom: {{styles.margin_bottom}};
+            background-color: {{styles.background_color}};
+        }
+    </style>
 </div>

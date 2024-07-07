@@ -4,6 +4,7 @@ from ckeditor.fields import RichTextField
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
+from blocks.models.mixins import ButtonMixin
 from catalog.models.product_type import ProductType
 from common.models import OneInstanceModel
 from common.security import LinkEncryptor
@@ -107,9 +108,11 @@ class Link(models.Model):
         return self.text
 
 
-class ExclusiveCard(OneInstanceModel):
+class ExclusiveCard(OneInstanceModel, ButtonMixin):
     image = models.ImageField(verbose_name="картинка", upload_to="images/exclusive")
     bonus = models.CharField(verbose_name="бонус", max_length=50)
+
+    annotation = models.TextField(verbose_name="аннотация", max_length=700, null=True)
 
     class Meta:
         verbose_name = "Карточка Эксклюзив"

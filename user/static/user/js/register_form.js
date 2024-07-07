@@ -21,9 +21,7 @@ let validUsername = validateUsername(usernameInput.value);
 let validPhone = validatePhone(phoneInput.value);
 
 
-checkbox.addEventListener("change", event => {
-    formValid()
-})
+checkbox.addEventListener("change", formValid)
 
 emailInput.addEventListener("change", () => {
     validEmail = onchangeEmail(document);

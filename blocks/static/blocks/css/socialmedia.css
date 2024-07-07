@@ -4,6 +4,8 @@
     align-items: center;
     padding: 7px 12px;
     margin: 0px 7px;
+    width: 120px;
+    justify-content: center;
 }
 
 .subscribes .social-button a{

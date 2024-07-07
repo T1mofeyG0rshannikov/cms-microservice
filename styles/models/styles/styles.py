@@ -12,7 +12,12 @@ from blocks.models.blocks import (
     SocialMediaBlock,
     StagesBlock,
 )
-from blocks.models.catalog_block import CatalogBlock, MainPageCatalogBlock, PromoCatalog
+from blocks.models.catalog_block import (
+    AdditionalCatalogBlock,
+    CatalogBlock,
+    MainPageCatalogBlock,
+    PromoCatalog,
+)
 from common.models import OneInstanceModel
 from styles.models.mixins.text_mixins import (
     ExplanationTextStylesMixin,
@@ -83,17 +88,22 @@ class MainPageCatalogCustomStyles(BaseCustomStyles, SubheaderStylesMixin):
     block = related_block(MainPageCatalogBlock)
 
     columns = models.PositiveIntegerField(verbose_name="Количество колонок", default=4)
-    darkness_bottom = models.PositiveIntegerField(
-        verbose_name="процент затемнения карточки снизу",
-        validators=[MinValueValidator(0), MaxValueValidator(100)],
-        null=True,
-        blank=True,
-    )
-    add_annotation = models.BooleanField(verbose_name="добавлять аннотацию к карточке", default=True)
-    add_button = models.BooleanField(verbose_name="добавлять кнопку к карточке", default=True)
 
 
 class PromoCatalogCustomStyles(BaseCustomStyles):
     block = related_block(PromoCatalog)
 
     swiper_columns = models.PositiveIntegerField(verbose_name="Количество колонок в слайдере", default=3)
+
+
+class AdditionalCatalogCustomStyles(BaseCustomStyles):
+    block = related_block(AdditionalCatalogBlock)
+
+    columns = models.PositiveIntegerField(verbose_name="Количество колонок", default=4)
+
+    darkness_bottom = models.PositiveIntegerField(
+        verbose_name="процент затемнения карточки снизу",
+        validators=[MinValueValidator(0), MaxValueValidator(100)],
+        null=True,
+        blank=True,
+    )

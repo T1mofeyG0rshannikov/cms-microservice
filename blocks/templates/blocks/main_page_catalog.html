@@ -5,13 +5,13 @@
         <h1>{{ block.title }}</h1>
         <a style="margin-top: 0px;">{{ block.introductory_text|safe }}</a>
 
-        <div class="products">
+        <div class="products" style="margin-top: 30px;">
             {% for product in block.products %}
                 {% with forloop.counter as product_id %}
                     <div class="product-main-page">
                         <div class="product-content">
                             <img src="{{ product.image.url }}" />
-                            <h1>{{ product.name }}</h1>
+                            <h1>{{ product.title }}</h1>
 
                             <span style="margin-bottom: 0px;">{{ product.description|safe }}</span>
                         </div>
@@ -33,15 +33,19 @@
         }
 
         #block{{id}} .products{
-            display: grid;
+            display: flex;
+            flex-wrap: wrap;
             grid-column-gap: 25px;
-            grid-row-gap: 10px;
-            grid-template-columns: {{styles.columns}};
+            grid-row-gap: 35px;
+        }
+
+        #block{{id}} .product-main-page{
+            flex-basis: calc({{styles.column_width}}% - 65px);
         }
 
         @media screen and (max-width: 760px) {
-            #block{{id}} .products{
-                grid-template-columns: repeat(1, 1fr);
+            #block{{id}} .product-main-page{
+                flex-basis: 100%;
             }
         }
     </style>

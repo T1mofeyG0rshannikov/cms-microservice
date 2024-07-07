@@ -34,16 +34,20 @@ class CatalogPageTemplateAdmin(SortableAdminBase, admin.ModelAdmin):
 class CustomAdminFileWidget(AdminFileWidget):
     def render(self, name, value, attrs=None, renderer=None):
         result = []
-        if hasattr(value, "url"):
-            result.append(
-                f"""<a href="{value.url}" target="_blank">
-                      <img
-                        src="{value.url}" alt="{value}"
-                        height="100"
-                        style="object-fit: cover; margin-right: 30px;"
-                      />
-                    </a>"""
-            )
+        try:
+            if hasattr(value, "url"):
+                result.append(
+                    f"""<a href="{value.url}" target="_blank">
+                        <img
+                            src="{value.url}" alt="{value}"
+                            height="100"
+                            style="object-fit: cover; margin-right: 30px;"
+                        />
+                        </a>"""
+                )
+        except ValueError:
+            pass
+
         result.append(super().render(name, value, attrs, renderer))
         return format_html("".join(result))
 
