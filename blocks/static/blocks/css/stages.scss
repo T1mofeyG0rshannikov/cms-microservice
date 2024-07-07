@@ -1,0 +1,121 @@
+.stages{
+    background-color: var(--main-color);
+    width: 100%;
+    padding-top: var(--padding-block-top);
+    padding-bottom: var(--padding-block-bottom);
+    display: flex;
+    justify-content: center;
+
+    h1{
+        color: var(--header-inverted-color);
+        text-align: center;
+        margin-top: 0px;
+    }
+
+    span, span p{
+        color: var(--explanation-text-inverted-color);
+        line-height: 140%;
+    }
+
+    h3{
+        color: var(--subheader-inverted-color);
+    }
+
+    a, a p{
+        color: var(--main-text-inverted-color);
+        text-align: center;
+        line-height: 140%;
+    }
+
+    .stage{
+        display: flex;
+        gap: 30px;
+
+        span p{
+            margin-top: 10px;
+        }
+
+        .num-container{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            background-color: var(--second-background-color);
+
+            a{
+                color: var(--main-color);
+                font-size: 22px;
+            }
+        }
+
+        h3{
+            margin-top: 0px;
+            margin-bottom: 10px;
+        }
+
+        .num{
+            min-height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+
+            .border{
+                min-height: calc(100% - 60px);
+                width: 0px;
+                border: 1px dashed white;
+            }
+        }
+    }
+
+    .inner{
+        max-width: 700px;
+    }
+
+    .stages-container{
+        margin-top: 40px;
+    }
+
+    .title{
+        position: relative;
+
+        .num-container{
+            display: none;
+            position: absolute;
+        }
+    }
+}
+
+
+@media screen and (max-width: 760px) {
+    .stages{
+        .num-container{
+            width: 50px;
+            height: 50px;
+            display: flex;
+
+            a{
+                color: var(--main-color);
+                font-size: 18px;
+            }
+        }
+
+        .num{
+            display: none;
+
+            .border{
+                min-height: calc(100% - 50px);
+            }
+        }
+
+        .stages .stage{
+            text-align: center;
+
+            span p{
+                margin-bottom: 25px;
+            }
+        }
+    }
+}

@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "domens",
     "account",
     "qr_code",
+    "sass_processor",
 ]
 
 MIDDLEWARE = [

@@ -3,9 +3,9 @@
 
 
 {% block additional_styles%}
-<link rel="stylesheet" href="{% static 'account/css/base.css' %}">
-<link rel="stylesheet" href="{% static 'account/css/site-form.css' %}">
-<link rel="stylesheet" href="{% static 'user/css/main.css' %}">
+<link rel="stylesheet" href="{% static 'account/css/base.scss' %}">
+<link rel="stylesheet" href="{% static 'account/css/site-form.scss' %}">
+<link rel="stylesheet" href="{% static 'user/css/main.scss' %}">
 {% endblock %}
 
 {% block content %}
@@ -68,7 +68,7 @@
     </div>
 
     <div class="field-container">
-        <div class="field" id="logo" style="margin-right: 10px;">
+        <div class="field" id="logo">
             <p>Логотип</p>
             <div id="logo" class="logo">
                 <img src="{% if user.site.logo %}{{ user.site.logo.url }}{% else %}{% static 'account/images/baselogo.png' %}{% endif %}" />
@@ -105,9 +105,9 @@
     <div id="socials">
         {% for user_social in user.site.socials.all %}
             <div class="field-container">
-                <div class="field social" style="width: 150; margin-right: 10px;">
+                <div class="field social">
                     <p>Соцсеть</p>
-                    <select style="width: 100%;" name="" id="">
+                    <select name="" id="">
                         {% for social in socials %}
                             <option value="{{ social.id }}" {% if user_social.social_network.id == social.id %}selected{% endif %}>{{ social.name }}</option>
                         {% endfor %}
@@ -126,9 +126,9 @@
         {% endfor %}
 
         <div class="field-container">
-            <div class="field social" style="width: 150; margin-right: 10px;">
+            <div class="field social">
                 <p>Соцсеть</p>
-                <select style="width: 100%;" name="" id="">
+                <select name="" id="">
                     <option value="">Выбрать</option>
                     {% for social in socials %}
                         <option value="{{ social.id }}">{{ social.name }}</option>
@@ -136,9 +136,9 @@
                 </select>
             </div>
 
-            <div class="field adress" style="width: 230;">
+            <div class="field adress">
                 <p>Адрес</p>
-                <input style="width: 100%;" name="adress" />
+                <input name="adress" />
             </div>
 
             <div class="trash-container">

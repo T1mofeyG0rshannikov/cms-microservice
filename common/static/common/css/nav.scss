@@ -1,0 +1,14 @@
+header{
+    padding: 15px 0px;
+
+    .icons{
+        display: flex;
+        align-items: center;
+        width: 150px;
+        justify-content: space-between;
+
+        img{
+            height: 25px;
+        }
+    }
+}

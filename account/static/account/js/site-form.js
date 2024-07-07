@@ -111,16 +111,16 @@ function createNewSocial(){
     const newSocial = document.createElement("div")
     newSocial.classList.add("field-container");
     newSocial.innerHTML = `
-    <div class="field social" style="width: 150; margin-right: 10px;">
+    <div class="field social">
         <p>Соцсеть</p>
-        <select style="width: 100%;" name="" id="">
+        <select name="" id="">
             ${options}
         </select>
     </div>
 
-    <div class="field adress" style="width: 230;">
+    <div class="field adress">
         <p>Адрес</p>
-        <input style="width: 100%;" name="adress" />
+        <input name="adress" />
     </div>
 
     <div class="trash-container">

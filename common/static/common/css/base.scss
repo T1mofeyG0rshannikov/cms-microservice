@@ -42,12 +42,12 @@ button{
     margin: var(--margin-inside-block-desctop) 0px;
     cursor: pointer;
     border-radius: 5px;
-}
 
-button a{
-    margin: 0px;
-    color: var(--main-text-inverted-color)!important;
-    text-decoration: none;
+    a{
+        margin: 0px;
+        color: var(--main-text-inverted-color)!important;
+        text-decoration: none;
+    }
 }
 
 span, span p, label{
@@ -58,25 +58,27 @@ span, span p, label{
     line-height: 140%;
 }
 
-form input[type=submit]{
-    background-color: var(--main-color);
-    border: 2px solid var(--main-color);
-    color: var(--main-text-inverted-color);
-    font-family: var(--main-text-font-family);
-    font-size: var(--main-text-font-size);
-    font-weight: var(--main-text-font-weight);
+form{
+    input[type=submit]{
+        background-color: var(--main-color);
+        border: 2px solid var(--main-color);
+        color: var(--main-text-inverted-color);
+        font-family: var(--main-text-font-family);
+        font-size: var(--main-text-font-size);
+        font-weight: var(--main-text-font-weight);
+    }
+
+    .error{
+        color: rgb(250, 70, 70);
+        text-align: center;
+        font-size: 13px;
+        font-family: var(--main-text-font-family);
+    }
 }
 
 input[type=submit]:disabled, button:disabled{
     opacity: .7;
     cursor: not-allowed;
-}
-
-form .error{
-    color: rgb(250, 70, 70);
-    text-align: center;
-    font-size: 13px;
-    font-family: var(--main-text-font-family);
 }
 
 @media screen and (max-width: 760px) {
@@ -107,5 +109,4 @@ form .error{
         font-size: var(--explanation-text-font-size-mobile);
         font-weight: var(--explanation-text-font-weight-mobile);
     }
-
 }

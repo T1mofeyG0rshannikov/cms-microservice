@@ -12,14 +12,19 @@ header{
     color: var(--header-inverted-color);
     width: 100%;
     position: relative;
-}
 
-header .inner{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    width: calc(100% - 80px);
+    .inner{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        width: calc(100% - 80px);
+
+        .logout{
+            color: white;
+            cursor: pointer;
+        }
+    }
 }
 
 .profile-content{
@@ -32,9 +37,4 @@ header .inner{
     display: flex;
     justify-content: center;
     width: 100%;
-}
-
-header .inner .logout{
-    color: white;
-    cursor: pointer;
 }

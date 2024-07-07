@@ -5,20 +5,20 @@
         <h1>{{ block.title }}</h1>
         <a style="margin-top: 0px;">{{ block.introductory_text|safe }}</a>
 
-        <div class="products" style="margin-top: 55px;">
+        <div class="products">
             {% for product in block.products %}
                 {% with forloop.counter as product_id %}
                     <div class="product">
                         <img src="{{ product.cover }}" />
-                        <h3 style="margin-bottom: 3px;">{{ product.name }}</h3>
-                        <h3 style="margin-bottom: 3px; margin-top: 0px;"><span style="font-weight: 700;">{{ product.organization }}</span></h3>
+                        <h3>{{ product.name }}</h3>
+                        <h3 style="margin-top: 0px;"><span style="font-weight: 700;">{{ product.organization }}</span></h3>
 
                         <span style="margin-top: 3px; margin-bottom: 15px;">Акция до {{ product.end_promotion }}</span>
 
                         <span style="margin-bottom: 0px;">{{ product.annotation }}</span>
                         <span onclick="openPopup({{ product_id }})" style="margin-top: 3px;" class='how'>Как воспользоваться</span>
 
-                        <a class="bonus" style="margin-top: 5px;">Выгода: {{ product.profit }}</a>
+                        <a class="bonus">Выгода: {{ product.profit }}</a>
 
                         <button onclick="openLink('{{ request.scheme }}://{{ request.META.HTTP_HOST }}/product?product={{ product.link }}')"><a>{{ block.button_text }}</a></button>
 
@@ -42,13 +42,13 @@
                 <div class="product exclusive">
                     <div>
                         <img src="{{ block.exclusive_card.image.url }}" />
-                        <h3 style="margin-bottom: 3px; color: rgb(250, 50, 50);">Наш эксклюзив</h3>
+                        <h3 style="color: rgb(250, 50, 50);">Наш эксклюзив</h3>
                     </div>
 
                     <span style="margin: 15px 0px;">{{ block.exclusive_card.annotation }}</span>
 
                     <div>
-                        <a class="bonus" style="margin-top: 5px;">Бонус: {{ block.exclusive_card.bonus }}</a>
+                        <a class="bonus">Бонус: {{ block.exclusive_card.bonus }}</a>
                         <button><a href="{{ block.exclusive_card.button_ref }}">{{ block.exclusive_card.button_text }}</a></button>
                     </div>
                 </div>
