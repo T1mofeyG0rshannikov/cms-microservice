@@ -10,8 +10,8 @@ class ContentBlock(BaseBlock, ButtonMixin, TitleMixin, MainTextMixin):
     image2 = models.ImageField(verbose_name="Второе изображение", upload_to="images/content/", null=True, blank=True)
 
     class Meta:
-        verbose_name = "Контентный блок"
-        verbose_name_plural = "Контентные блоки"
+        verbose_name = "Контент"
+        verbose_name_plural = "Контент"
 
 
 class Navbar(BaseBlock):
@@ -22,7 +22,7 @@ class Navbar(BaseBlock):
 
     class Meta:
         verbose_name = "навбар"
-        verbose_name_plural = "навбар`ы"
+        verbose_name_plural = "навбары"
 
 
 class Cover(BaseBlock, ButtonMixin, TitleMixin, MainTextMixin):
@@ -40,8 +40,8 @@ class FeaturesBlock(BaseBlock, ButtonMixin, TitleMixin):
     introductory_text = RichTextField(verbose_name="Вводный текст", max_length=300)
 
     class Meta:
-        verbose_name = "Блок с фичами"
-        verbose_name_plural = "Блоки с фичами"
+        verbose_name = "Особенности"
+        verbose_name_plural = "Особенности"
 
 
 class RegisterBlock(BaseBlock, TitleMixin):
@@ -49,25 +49,25 @@ class RegisterBlock(BaseBlock, TitleMixin):
     warning_text = models.CharField(verbose_name="текст предупреждения", max_length=500)
 
     class Meta:
-        verbose_name = "Блок регистрации"
-        verbose_name_plural = "Блоки регистрации"
+        verbose_name = "Регистрации"
+        verbose_name_plural = "Регистрация"
 
 
 class SocialMediaBlock(BaseBlock, TitleMixin):
     text = RichTextField(verbose_name="Вводный текст", max_length=1000, null=True, blank=True)
 
     class Meta:
-        verbose_name = "Блок подписок на соц сети"
-        verbose_name_plural = "Блоки подписок на соц сети"
+        verbose_name = "Соцсети"
+        verbose_name_plural = "Соцсети"
 
 
 class QuestionsBlock(BaseBlock):
     class Meta:
-        verbose_name = "Блок с вопросами"
-        verbose_name_plural = "Блоки с вопросами"
+        verbose_name = "Вопросы"
+        verbose_name_plural = "Вопросы"
 
 
 class StagesBlock(BaseBlock, TitleMixin, MainTextMixin):
     class Meta:
-        verbose_name = "Блок этапов"
-        verbose_name_plural = "Блоки этапов"
+        verbose_name = "Этапы"
+        verbose_name_plural = "Этапы"

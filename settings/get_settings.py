@@ -17,13 +17,26 @@ def get_settings(domain: str, subdomain: str) -> dict:
         if site.use_default_settings:
             return settings
 
-        settings["logo"] = {"image": site.logo.url, "width": site.logo_width, "width_mobile": site.logo_width_mobile}
+        settings.pop("logo")
+        settings.pop("form_logo")
 
-        settings["form_logo"] = {
-            "image": site.logo2.url,
-            "width": site.logo_width,
-            "width_mobile": site.logo_width_mobile,
-        }
+        settings["site_name"] = site.name
+        settings["site_font"] = site.font
+        settings["site_font_size"] = site.font_size
+
+        if site.logo:
+            settings["logo"] = {
+                "image": site.logo.url,
+                "width": site.logo_width,
+                "width_mobile": site.logo_width_mobile,
+            }
+
+        if site.logo2:
+            settings["form_logo"] = {
+                "image": site.logo2.url,
+                "width": site.logo_width,
+                "width_mobile": site.logo_width_mobile,
+            }
 
         return settings
 

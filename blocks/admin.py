@@ -1,6 +1,6 @@
 from adminsortable2.admin import SortableAdminBase, SortableStackedInline
 from django.contrib import admin
-from django.contrib.admin.decorators import register
+from django.contrib.admin import AdminSite
 from django.utils.safestring import mark_safe
 
 from blocks.models.blocks import (
@@ -29,7 +29,7 @@ from blocks.models.catalog_block import (
     MainPageCatalogBlock,
     PromoCatalog,
 )
-from blocks.models.common import Block, Page, Template
+from blocks.models.common import Block, BlockRelationship, Page, Template
 from common.admin import BaseInline
 from styles.admin import (
     AdditionalCatalogCustomStylesInline,
@@ -45,6 +45,9 @@ from styles.admin import (
     SocialCustomStylesInline,
     StagesCustomStylesInline,
 )
+from user.admin import UserAdmin
+from user.forms import CustomAuthenticationAdminForm
+from user.models import User
 
 
 class QuestionInline(BaseInline):
@@ -83,81 +86,95 @@ class AdditionalCatalogProductInline(SortableStackedInline, BaseInline):
     model = AdditionalCatalogProductType
 
 
-@register(Template)
 class TemplateAdmin(admin.ModelAdmin):
     list_display = ["name", "file"]
 
 
 class BaseBlockAdmin(admin.ModelAdmin):
     change_form_template = "blocks/change_form.html"
-    list_display = ["name", "template"]
+    list_display = ["name", "template", "clone_button"]
     exclude = ["block_relation"]
 
+    change_list_template = "blocks/change_list_page.html"
 
-@register(Navbar)
+    def clone_button(self, obj):
+        return mark_safe(
+            f"""<button class="copy-button" onclick="cloneBlock({obj.id}, '{obj.__class__.__name__}')">Копировать</button>"""
+        )
+
+    clone_button.short_description = ""
+
+    def delete_queryset(self, request, queryset):
+        print("==========================delete_queryset==========================")
+        print(queryset)
+
+        """
+        you can do anything here BEFORE deleting the object(s)
+        """
+        for block in queryset:
+            relation_id = block.block_relation.id
+            print(relation_id, "relation_id")
+            BlockRelationship.objects.filter(id=relation_id).delete()
+        queryset.delete()
+
+        """
+        you can do anything here AFTER deleting the object(s)
+        """
+
+        print("==========================delete_queryset==========================")
+
+
 class NavbarAdmin(BaseBlockAdmin):
     inlines = [NavMenuItemAdmin, NavbarCustomStylesInline]
 
 
-@register(ContentBlock)
-class ContentComponenAdmin(BaseBlockAdmin):
+class ContentAdmin(BaseBlockAdmin):
     inlines = [ContentCustomStylesInline]
 
 
-@register(Cover)
 class CoverAdmin(BaseBlockAdmin):
     inlines = [CoverCustomStylesInline]
 
 
-@register(FeaturesBlock)
 class FeaturesBlockAdmin(BaseBlockAdmin):
     inlines = [FeatureInline, FeaturesCustomStylesInline]
 
 
-@register(RegisterBlock)
 class RegisterBlockAdmin(BaseBlockAdmin):
     inlines = [RegisterCustomStylesInline]
 
 
-@register(SocialMediaBlock)
 class SocialMediaBlockAdmin(BaseBlockAdmin):
     inlines = [SocialMediaButtonInline, SocialCustomStylesInline]
 
 
-@register(QuestionsBlock)
 class QuestionsBlockAdmin(BaseBlockAdmin):
     inlines = [QuestionInline, QuestionsCustomStylesInline]
 
 
-@register(StagesBlock)
 class StagesBlockAdmin(BaseBlockAdmin):
     inlines = [StageInline, StagesCustomStylesInline]
 
 
-@register(CatalogBlock)
-class CatalogBlogAdmin(SortableAdminBase, BaseBlockAdmin):
+class CatalogAdmin(SortableAdminBase, BaseBlockAdmin):
     inlines = [CatalogProductInline, CatalogCustomStylesInline]
-    exclude = BaseBlockAdmin.exclude  # + ["product_type"]
+    exclude = BaseBlockAdmin.exclude
 
 
-@register(MainPageCatalogBlock)
 class MainPageCatalogBlogAdmin(SortableAdminBase, BaseBlockAdmin):
     inlines = [MainPageCatalogProductInline, MainPageCatalogCustomStylesInline]
     exclude = BaseBlockAdmin.exclude
 
 
-@register(AdditionalCatalogBlock)
 class AdditionalCatalogBlogAdmin(SortableAdminBase, BaseBlockAdmin):
     inlines = [AdditionalCatalogProductInline, AdditionalCatalogCustomStylesInline]
     exclude = BaseBlockAdmin.exclude
 
 
-@register(PromoCatalog)
 class PromoCatalogAdmin(BaseBlockAdmin):
     inlines = [PromoCatalogCustomStylesInline]
 
 
-@register(Page)
 class PageAdmin(SortableAdminBase, admin.ModelAdmin):
     list_display = ["url", "title", "clone_button"]
     change_list_template = "blocks/change_list_page.html"
@@ -168,3 +185,35 @@ class PageAdmin(SortableAdminBase, admin.ModelAdmin):
         return mark_safe(f'<button class="copy-button" onclick="clonePage({obj.id})">Копировать</button>')
 
     clone_button.short_description = ""
+
+
+class MyAdminSite(AdminSite):
+    site_header = "Bankomag"
+    index_title = "bankomag"
+
+    def get_app_list(self, request):
+        app_order = ["user", "catalog", "blocks", "account", "domens"]
+        app_order_dict = dict(zip(app_order, range(len(app_order))))
+        app_list = list(self._build_app_dict(request).values())
+        app_list.sort(key=lambda x: app_order_dict.get(x["app_label"], 0))
+
+        return app_list
+
+
+admin.site = MyAdminSite()
+admin.site.login_form = CustomAuthenticationAdminForm
+admin.site.register(User, UserAdmin)
+admin.site.register(Page, PageAdmin)
+admin.site.register(Navbar, NavbarAdmin)
+admin.site.register(Cover, CoverAdmin)
+admin.site.register(RegisterBlock, RegisterBlockAdmin)
+admin.site.register(PromoCatalog, PromoCatalogAdmin)
+admin.site.register(MainPageCatalogBlock, MainPageCatalogBlogAdmin)
+admin.site.register(AdditionalCatalogBlock, AdditionalCatalogBlogAdmin)
+admin.site.register(CatalogBlock, CatalogAdmin)
+admin.site.register(ContentBlock, ContentAdmin)
+admin.site.register(FeaturesBlock, FeaturesBlockAdmin)
+admin.site.register(StagesBlock, StagesBlockAdmin)
+admin.site.register(SocialMediaBlock, SocialMediaBlockAdmin)
+admin.site.register(QuestionsBlock, QuestionsBlockAdmin)
+admin.site.register(Template, TemplateAdmin)

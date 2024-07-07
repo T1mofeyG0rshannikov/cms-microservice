@@ -4,7 +4,13 @@
 {% block content %}
 
 <form onsubmit="submitLoginForm(this, event, '{{domain}}')" class="user-form" id="login-form">
-    <img class="logo" src="{{ settings.form_logo.image }}" />
+    {% if settings.form_logo %}
+        <img class="logo" src="{{ settings.form_logo.image }}" />
+    {% else %}
+        <div class="logo">
+            <a style="font-family: {{settings.site_font}}; color: var(--main-color); font-size: {{settings.site_font_size}};">{{ settings.site_name }}</a>
+        </div>
+    {% endif %}
 
     <h3>Вход в кабинет</h3>
 

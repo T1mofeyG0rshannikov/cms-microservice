@@ -88,16 +88,30 @@
   </div>
   <script>
     function clonePage(page_id){
-        fetch("/page/clone", {
-            method: "post",
-            body: JSON.stringify({
-                page_id: page_id
-            }),
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/x-www-form-urlencoded',
-            }
-        })
+      fetch("/page/clone", {
+          method: "post",
+          body: JSON.stringify({
+              page_id: page_id
+          }),
+          headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/x-www-form-urlencoded',
+          }
+      })
+    }
+
+    function cloneBlock(block_id, block_class){
+      fetch("/block/clone", {
+          method: "post",
+          body: JSON.stringify({
+              block_id: block_id,
+              block_class: block_class
+          }),
+          headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/x-www-form-urlencoded',
+          }
+      })
     }
   </script>
   <style>

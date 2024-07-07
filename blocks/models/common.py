@@ -32,8 +32,8 @@ class Template(models.Model):
     file = models.CharField(verbose_name="Название файла (например base.html)", max_length=50)
 
     class Meta:
-        verbose_name = "Html шаблон"
-        verbose_name_plural = "Html шаблоны"
+        verbose_name = "шаблон"
+        verbose_name_plural = "шаблоны"
 
     def __str__(self):
         return self.name

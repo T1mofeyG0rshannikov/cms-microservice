@@ -22,9 +22,8 @@ class CatalogBlock(BaseCatalogBlock, ButtonMixin, TitleMixin):
     )
 
     class Meta:
-        db_table = "blocks_catalogblock"
-        verbose_name = "Блок каталога"
-        verbose_name_plural = "Блоки каталога"
+        verbose_name = "каталог"
+        verbose_name_plural = "каталог"
 
 
 class MainPageCatalogBlock(BaseCatalogBlock, TitleMixin):
@@ -33,8 +32,8 @@ class MainPageCatalogBlock(BaseCatalogBlock, TitleMixin):
     button_text = models.CharField(verbose_name="Текст кнопки", max_length=20, null=True, blank=True)
 
     class Meta:
-        verbose_name = "Блок каталога на главной"
-        verbose_name_plural = "Блоки каталога на главной"
+        verbose_name = "Витрина"
+        verbose_name_plural = "Витрина"
 
 
 class AdditionalCatalogBlock(BaseCatalogBlock):
@@ -50,8 +49,8 @@ class AdditionalCatalogBlock(BaseCatalogBlock):
 
 class PromoCatalog(BaseBlock, TitleMixin):
     class Meta:
-        verbose_name = "Промо акции"
-        verbose_name_plural = "Промо акциий"
+        verbose_name = "Промо"
+        verbose_name_plural = "Промо"
 
     @property
     def products(self):

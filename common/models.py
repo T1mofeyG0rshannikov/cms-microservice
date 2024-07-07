@@ -17,6 +17,7 @@ class BlockRelationship(models.Model):
     class Meta:
         verbose_name = "Блок"
         verbose_name_plural = "Блоки"
+        ordering = ["block_name"]
 
     def __str__(self):
         return self.block_name

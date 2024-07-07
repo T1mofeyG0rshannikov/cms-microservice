@@ -7,8 +7,8 @@ class CatalogPageTemplate(models.Model):
     title = models.CharField(verbose_name="Заголовок", max_length=50)
 
     class Meta:
-        verbose_name = "Шаблон страницы каталога"
-        verbose_name_plural = "Шаблон страницы каталога"
+        verbose_name = "каталог"
+        verbose_name_plural = "каталог"
 
     def __str__(self):
         return self.title

@@ -42,9 +42,13 @@
             <p>Логотип:</p>
 
             <div class="site-container">
-                <img class="site-logo" style="width: {{ user.site.logo_width }}" src="{{ user.site.logo.url }}" />
+                {% if user.site.logo %}
+                    <img class="site-logo" style="width: {{ user.site.logo_width }}" src="{{ user.site.logo.url }}" />
 
-                <p>{{ user.site.logo_size }}</p>
+                    <p>{{ user.site.logo_size }}</p>
+                {% else %}
+                    <img style="width: 70%;" class="site-logo" src="{% static 'account/images/baselogo.png' %}" />
+                {% endif %}
             </div>
         </div>
 

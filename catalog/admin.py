@@ -1,6 +1,5 @@
 from adminsortable2.admin import SortableAdminBase, SortableStackedInline
 from django.contrib import admin
-from django.contrib.admin.decorators import register
 from django.contrib.admin.widgets import AdminFileWidget
 from django.db import models
 from django.utils.html import format_html, mark_safe
@@ -26,7 +25,6 @@ class BlockInline(SortableStackedInline, BaseInline):
     model = Block
 
 
-@register(CatalogPageTemplate)
 class CatalogPageTemplateAdmin(SortableAdminBase, admin.ModelAdmin):
     inlines = [BlockInline]
 
@@ -52,7 +50,6 @@ class CustomAdminFileWidget(AdminFileWidget):
         return format_html("".join(result))
 
 
-@register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ["image_tag", "name_tag", "organization", "created_at_tag", "end_promotion_tag"]  # , "status"]
     inlines = [LinkInline]
@@ -117,12 +114,10 @@ class ProductAdmin(admin.ModelAdmin):
         return fieldsets
 
 
-@register(OrganizationType)
 class OrganizationTypeAdmin(admin.ModelAdmin):
     pass
 
 
-@register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
     def get_fieldsets(self, request, obj):
         fieldsets = (
@@ -137,11 +132,17 @@ class OrganizationAdmin(admin.ModelAdmin):
         return fieldsets
 
 
-@register(ProductType)
 class ProductTypeAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
 
 
-@register(ExclusiveCard)
 class ExclusiveCardAdmin(admin.ModelAdmin):
     pass
+
+
+admin.site.register(Product, ProductAdmin)
+admin.site.register(Organization, OrganizationAdmin)
+admin.site.register(ProductType, ProductTypeAdmin)
+admin.site.register(OrganizationType, OrganizationTypeAdmin)
+admin.site.register(CatalogPageTemplate, CatalogPageTemplateAdmin)
+admin.site.register(ExclusiveCard, ExclusiveCardAdmin)
