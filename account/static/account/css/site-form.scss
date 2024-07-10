@@ -1,96 +1,16 @@
 .site-form{
-    background-color: white;
-    border-radius: 15px;
-    padding: 15px 0px;
-    border: 1px solid var(--dark-color);
     width: 450px;
-    position: absolute;
-    transition: .4s;
-    right: -480px;
     top: 75px;
-
-    .title{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0px 15px;
-
-        .cross{
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            background-color: var(--dark-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-
-            img{
-                width: 60%;
-                height: 60%;
-            }
-
-        }
-
-        h3{
-            margin: 0;
-        }
-    }
-
-    input, select{
-        padding: 8px;
-        border-radius: 4px;
-        border: 1px solid var(--dark-color);
-        margin-right: 10px;
-    }
-
-    .field-container{
-        display: flex;
-        padding: 0px 15px;
-
-        .field p{
-            margin-bottom: 5px;
-            margin-top: 10px;
-        }
-    }
 
     .logo{
         width: 260px;
         height: 55px;
         margin: 10px 0px;
         position: relative;
-
-        input[type=file]{
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            position: absolute;
-            left: 0;
-            top: 0;
-        }
     }
 
     img{
         width: 100%;
-    }
-
-    button{
-        background-color: var(--main-color);
-        border: none;
-        margin: 0px;
-        margin-top: 5px;
-        padding: 9px 17px;
-    }
-
-    input{
-        height: 35px;
-
-        &::-webkit-input-placeholder{
-            color: rgb(200, 200, 200);
-            font-family: var(--main-text-font-family);
-            font-size: var(--main-text-font-size);
-            font-weight: var(--main-text-font-weight);
-        }
     }
 
     input[type=range]{
@@ -132,12 +52,6 @@
         }
     }
 
-    .trash{
-        height: 25px;
-        width: 20px;
-        cursor: pointer;
-    }
-
     #socials .field-container{
         align-items: end;
     }
@@ -147,26 +61,15 @@
         align-items: center;
         height: 35px;
         margin-left: 10px;
+
+        .trash{
+            height: 25px;
+            width: 20px;
+            cursor: pointer;
+        }
     }
 
     #logo{
         margin-right: 10px;
-    }
-
-    .social{
-        width: 150;
-        margin-right: 10px;
-
-        select{
-            width: 100%;
-        }
-    }
-
-    .adress{
-        width: 230;
-
-        input{
-            width: 100%;
-        }
     }
 }

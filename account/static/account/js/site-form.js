@@ -14,19 +14,7 @@ range.addEventListener("input", changeLogoSize)
 const logo = document.querySelector("#logo")
 const logoLoader = logo.querySelector("#file");
 
-function displayLogo() {
-    const file = logoLoader.files[0];
-    const reader  = new FileReader();
-
-    reader.onload = function(e)  {
-        const image = logo.querySelector("img");
-        image.src = e.target.result;
-    }
-
-    reader.readAsDataURL(file);
-}
-
-logoLoader.addEventListener("change", displayLogo)
+logoLoader.addEventListener("change", () => displayPhotoOnload(logo))
 
 function onSubmitSiteForm(element, event){
     event.preventDefault();

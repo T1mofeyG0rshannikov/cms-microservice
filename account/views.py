@@ -1,19 +1,18 @@
 import json
 
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, View
 
-from account.forms import ChangeSiteForm
+from account.forms import ChangePasswordForm, ChangeSiteForm, ChangeUserForm
 from account.models import UserFont, UserSocialNetwork
 from common.models import SocialNetwork
 from domens.models import Site
+from user.views.base_user_view import MyLoginRequiredMixin
 
 
-class SiteView(LoginRequiredMixin, TemplateView):
-    login_url = "/user/login"
+class SiteView(TemplateView, MyLoginRequiredMixin):
     template_name = "account/site.html"
 
     def get_context_data(self, **kwargs):
@@ -79,6 +78,50 @@ class ChangeSiteView(View):
                 site.logo_width = int(260 * (form.cleaned_data["logo_width"] / 100))
 
             site.save()
+
+            return HttpResponse(status=200)
+
+        return JsonResponse({"errors": form.errors}, status=400)
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class ChangeUserView(View):
+    def post(self, request):
+        print(request.POST)
+        print(request.FILES)
+        form = ChangeUserForm(request.POST)
+        if form.is_valid():
+            print(form.cleaned_data["profile_picture"])
+            print("success")
+
+            return HttpResponse(status=200)
+
+        return JsonResponse({"errors": form.errors}, status=400)
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class ChangePasswordView(View):
+    def post(self, request):
+        print(request.POST)
+
+        form = ChangePasswordForm(request.POST)
+        if form.is_valid():
+            user = request.user_from_header
+            print(user)
+
+            if not user.check_password(form.cleaned_data.get("current_password")):
+                form.add_error("current_password", "неверный пароль")
+                return JsonResponse({"errors": form.errors}, status=400)
+
+            password = form.cleaned_data.get("password")
+            repeat_password = form.cleaned_data.get("repeat_password")
+
+            if password != repeat_password:
+                form.add_error("password", "пароли не совпадают")
+                return JsonResponse({"errors": form.errors}, status=400)
+
+            user.set_password(password)
+            user.save()
 
             return HttpResponse(status=200)
 

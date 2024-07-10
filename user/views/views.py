@@ -10,7 +10,7 @@ from user.email_service.email_service import get_email_service
 from user.forms import LoginForm, RegistrationForm, ResetPasswordForm, SetPasswordForm
 from user.models import User
 from user.serializers import UserSerializer
-from user.views.base_user_view import BaseUserView
+from user.views.base_user_view import BaseUserView, MyLoginRequiredMixin
 from utils.errors import Errors, UserErrors
 from utils.success_messages import Messages
 from utils.validators import is_valid_email, is_valid_phone
@@ -29,6 +29,14 @@ class RegisterUser(BaseUserView):
         context["form"] = RegistrationForm()
 
         return context
+
+    def get_subdomain(self):
+        if Site.objects.filter(subdomain=self.request.subdomain).exists():
+            return Site.objects.get(subdomain=self.request.subdomain)
+
+    def get_domain(self):
+        if Domain.objects.filter(domain=self.request.domain).exists():
+            return Domain.objects.get(domain=self.request.domain)
 
     def post(self, request):
         form = RegistrationForm(request.POST)
@@ -49,22 +57,16 @@ class RegisterUser(BaseUserView):
 
                 return JsonResponse({"errors": form.errors}, status=400)
 
-            if Site.objects.filter(subdomain=request.subdomain).exists():
-                site = Site.objects.get(subdomain=request.subdomain)
-            else:
-                site = None
+            user = User.objects.create_user(
+                **form.cleaned_data, register_on_site=self.get_subdomain(), register_on_domain=self.get_domain()
+            )
 
-            if Domain.objects.filter(domain=request.domain).exists():
-                domain = Domain.objects.get(domain=request.domain)
-            else:
-                domain = None
-
-            user = User.objects.create_user(**form.cleaned_data, register_on_site=site, register_on_domain=domain)
             print(user)
             request.user = user
             user = authenticate(request)
             login(request, user)
-            # self.email_service.send_mail_to_confirm_email(user)
+
+            self.email_service.send_mail_to_confirm_email(user)
 
             token_to_set_password = self.jwt_processor.create_set_password_token(user.id)
 
@@ -106,6 +108,19 @@ class SetPassword(BaseUserView):
             return render(request, "user/set-password.html", {"access_token": access_token})
 
         return render(request, "user/set-password.html", {"form": form, "token": token})
+
+
+class SendConfirmEmail(View):
+    def __init__(self):
+        super().__init__()
+        self.email_service = get_email_service(self.jwt_processor)
+
+    def get(self, request):
+        user = request.user_from_header
+        print(user)
+        if user:
+            self.email_service.send_mail_to_confirm_email(user)
+        return HttpResponse(status=200)
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -159,14 +174,8 @@ class Login(BaseUserView):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class Profile(TemplateView):
+class Profile(TemplateView, MyLoginRequiredMixin):
     template_name = "user/profile.html"
-
-    def get(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return HttpResponseRedirect("/user/login")
-
-        return super().get(args, kwargs)
 
 
 class GetUserInfo(View):

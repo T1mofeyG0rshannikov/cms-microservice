@@ -4,7 +4,7 @@ function openAsideMenu(){
     document.body.style.overflow = "hidden";
 
     const burger = document.querySelector(".burger")
-    burger.innerHTML = `<img src="static/blocks/images/cross.png" />`;
+    burger.innerHTML = `<img src="static/common/images/cross.png" />`;
     burger.removeEventListener("click", openAsideMenu)
     burger.addEventListener("click", closeAsideMenu)
 }

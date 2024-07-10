@@ -1,0 +1,81 @@
+{% load static %}
+
+<form class="form change-user-form" onsubmit="onSubmitChangeUserForm(this, event)">
+    <div class="title">
+        <h3>Профиль</h3>
+
+        <div class="cross">
+            <img onclick="closeForm(changeUserForm)" src="{% static 'common/images/cross.png' %}" />
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="main-user-content field-container">
+        <div class="user-logo">
+            <img src="{% static 'common/images/logo.png' %}" />
+            <input name="profile_picture" type="file" accept="image/*" id="file" />
+        </div>
+
+        <div class="fields">
+            <div class="field" id="username">
+                <p style="margin-top: 0px;">Имя</p>
+                <input name="name" value="{% if user.username %}{{ user.username }}{% endif %}" />
+            </div>
+
+            <div class="field" id="second_name">
+                <p>Фамилия</p>
+                <input name="second_name" value="{% if user.second_name %}{{ user.second_name }}{% endif %}" />
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="field-container">
+        <div class="field" style="width: 100%;" id="phone">
+            <p>Телефон</p>
+            <div class="checkmark-container">
+                <input name="phone" value="{% if user.phone %}{{ user.phone }}{% endif %}" />
+
+                {% if user.phone_is_confirmed %}<img src="{% static 'common/images/checkmark.png' %}" />{% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="field-container">
+        <div class="field" style="width: 100%;" id="email">
+            <div class="email-title">
+                <p>Email</p>
+                {% if user.email_is_confirmed %}{% else %}<a style="cursor: pointer;" onclick="sendConfirmEmail()" >Подтвердите email</a>{% endif %}
+            </div>
+            <div class="checkmark-container">
+                <input name="email" value="{% if user.email %}{{ user.email }}{% endif %}" />
+
+                {% if user.email_is_confirmed %}<img src="{% static 'common/images/checkmark.png' %}" />{% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="field-container messager">
+        <div class="field" style="width: 235;">
+            <p>Месенджер</p>
+            <input style="width: 100%;" name="adress" value="{{ user_social.adress }}" />
+        </div>
+
+        <div class="field social">
+            <p class="notifications">Уведомления</p>
+            <select name="social_network" id="">
+                {% for social in socials %}
+                    <option value="{{ social.id }}" {% if user.social.id == social.id %}selected{% endif %}>{{ social.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="field-container">
+        <button><a>Сохранить</a></button>
+    </div>
+</form>

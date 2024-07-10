@@ -12,10 +12,36 @@
 
         <div class="icons">
             <img src="{% static 'common/images/menu_alert.png' %}"/>
-            <img src="{% static 'common/images/menu_user.png' %}"/>
+
+            <div class="user-container">
+                <img class="icon" src="{% static 'common/images/menu_user.png' %}"/>
+
+                <div class="user-nav">
+                    <div class="title">
+                        <a>{{ user.site.owner }}</a>
+                    </div>
+
+                    <hr />
+
+                    <div class="content">
+                        <a onclick="openForm(changeUserForm)" ><img src="{% static 'common/images/profile/menu_profile.png' %}" />Профиль</a>
+                        <a onclick="openForm(changePasswordForm)"><img src="{% static 'common/images/profile/menu_password.png' %}" />Пароль</a>
+                        <a><img src="{% static 'common/images/profile/menu_settings.png' %}" />Настройки</a>
+                    </div>
+
+                    <hr />
+
+                    <div class="bottom">
+                        <a onclick="logout()" ><img src="{% static 'common/images/profile/menu_logout.png' %}" />Выйти</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </header>
+
+{% include "common/change-user-form.html" %}
+{% include "common/change-password-form.html" %}
 
 <style>
     {% if settings.logo %}

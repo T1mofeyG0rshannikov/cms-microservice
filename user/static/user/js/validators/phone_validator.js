@@ -25,8 +25,6 @@ function validatePhone(phoneNumber) {
         }
     }
 
-    console.log(phoneNumber);
-
     let phoneRegex = /^\+7[0-9]{10}$/;
 
     if (phoneRegex.test(phoneNumber)) {

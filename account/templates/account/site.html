@@ -5,9 +5,12 @@
 {% block additional_styles %}
     <link rel="stylesheet" href="{% static 'account/css/base.scss' %}">
     <link rel="stylesheet" href="{% static 'account/css/site.scss' %}">
+    <link rel="stylesheet" href="{% static 'account/css/site-form.scss' %}">
     <link rel="stylesheet" href="{% static 'user/css/main.scss' %}">
     <link rel="stylesheet" href="{% static 'user/css/profile.scss' %}">
     <link rel="stylesheet" href="{% static 'common/css/nav.scss' %}">
+    <link rel="stylesheet" href="{% static 'common/css/change-user-form.scss' %}">
+    <link rel="stylesheet" href="{% static 'common/css/change-password-form.scss' %}">
 {% endblock %}
 
 {% block account_content %}
@@ -124,5 +127,9 @@
 {% endblock %}
 
 {% block additional_scripts %}
+<script src="{% static 'user/js/profile.js' %}"></script>
 <script src="{% static 'account/js/site.js' %}"></script>
+<script src="{% static 'account/js/site-form.js' %}"></script>
+<script src="{% static 'common/js/change-user.js' %}"></script>
+<script src="{% static 'common/js/change-password.js' %}"></script>
 {% endblock %}

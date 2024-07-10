@@ -9,12 +9,18 @@ from user.user_manager.user_manager_interface import UserManagerInterface
 
 class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(verbose_name="Имя пользователя", max_length=100)
+    second_name = models.CharField(verbose_name="Фамлия", max_length=200, null=True, blank=True)
+
     phone = models.CharField(verbose_name="Номер телефона", max_length=12)
+    phone_is_confirmed = models.BooleanField(verbose_name="Телефон подтвержден", default=False)
 
     email = models.CharField(verbose_name="E-mail", max_length=200, null=True)
     new_email = models.CharField(verbose_name="новый E-main", max_length=200, null=True, blank=True)
     email_is_confirmed = models.BooleanField(verbose_name="Почта подтверждена", default=False)
+
     created_at = models.DateTimeField(verbose_name="пользователь создан", auto_now_add=True, null=True)
+
+    profile_picture = models.ImageField(verbose_name="аватарка", null=True, blank=True)
 
     register_on_site = models.ForeignKey(
         "domens.Site",

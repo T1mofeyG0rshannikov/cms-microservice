@@ -20,3 +20,34 @@ class ChangeSiteForm(forms.Form):
         self.fields["font_size"].error_messages = {"required": "Это поле обязательное"}
         self.fields["owner"].error_messages = {"required": "Это поле обязательное"}
         self.fields["contact_info"].error_messages = {"required": "Это поле обязательное"}
+
+
+class ChangeUserForm(forms.Form):
+    username = forms.CharField(max_length=100)
+    second_name = forms.CharField(max_length=200)
+
+    email = forms.CharField(max_length=200)
+    phone = forms.CharField(max_length=12)
+    social_network = forms.CharField(required=False)
+    adress = forms.CharField(required=False)
+
+    profile_picture = forms.ImageField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["username"].error_messages = {"required": "Это поле обязательное"}
+        self.fields["second_name"].error_messages = {"required": "Это поле обязательное"}
+        self.fields["email"].error_messages = {"required": "Это поле обязательное"}
+        self.fields["phone"].error_messages = {"required": "Это поле обязательное"}
+
+
+class ChangePasswordForm(forms.Form):
+    current_password = forms.CharField(max_length=200)
+    password = forms.CharField(max_length=200)
+    repeat_password = forms.CharField(max_length=200)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["current_password"].error_messages = {"required": "Это поле обязательное"}
+        self.fields["password"].error_messages = {"required": "Это поле обязательное"}
+        self.fields["repeat_password"].error_messages = {"required": "Это поле обязательное"}

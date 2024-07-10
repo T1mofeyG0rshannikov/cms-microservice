@@ -38,13 +38,5 @@ function activateSite(element){
 
 const siteForm = document.querySelector(".site-form");
 
-function openSiteForm(){
-    siteForm.style.right = "30px";
-}
-
-function closeSiteForm(){
-    siteForm.style.right = "-480px";
-}
-
 const openSiteFormButton = document.querySelector("#open-site-form");
-openSiteFormButton.addEventListener("click", openSiteForm);
+openSiteFormButton.addEventListener("click", () => openForm(siteForm));
