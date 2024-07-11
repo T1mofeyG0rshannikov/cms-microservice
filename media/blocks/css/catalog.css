@@ -1,0 +1,210 @@
+.catalog {
+  text-align: center;
+  width: 100%;
+  background-color: var(--second-background-color);
+  padding-top: var(--padding-block-top);
+  padding-bottom: var(--padding-block-bottom);
+  display: flex;
+  flex-direction: column;
+  align-items: center; }
+  .catalog .inner {
+    max-width: 1200px;
+    overflow-wrap: break-word; }
+  .catalog .product {
+    padding: 20px;
+    background-color: var(--second-background-color);
+    border-radius: 15px;
+    border: 1.5px solid gainsboro;
+    text-align: left;
+    position: relative; }
+    .catalog .product .how {
+      color: var(--main-color);
+      cursor: pointer; }
+    .catalog .product .bonus {
+      color: #fa3232;
+      font-size: 18px;
+      font-weight: 700;
+      margin-top: 5px; }
+    .catalog .product a, .catalog .product span {
+      display: block; }
+    .catalog .product button a {
+      color: var(--main-text-inverted-color); }
+    .catalog .product img {
+      width: 100%; }
+    .catalog .product h3 {
+      margin-bottom: 3px; }
+  .catalog h1 {
+    margin: 0px; }
+  .catalog .products {
+    display: flex;
+    gap: 25px;
+    justify-content: center;
+    margin-top: 55px; }
+  .catalog .exclusive {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; }
+  .catalog .product-main-page {
+    padding: 20px;
+    overflow: hidden;
+    padding-top: 0px;
+    background-color: var(--second-background-color);
+    border-radius: 15px;
+    border: 1.5px solid gainsboro;
+    text-align: left;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center; }
+    .catalog .product-main-page .product-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center; }
+    .catalog .product-main-page img {
+      width: calc(100% + 40px);
+      aspect-ratio: 3/2; }
+    .catalog .product-main-page h1 {
+      margin: 10px 0px 0px 0px;
+      font-size: 22px; }
+    .catalog .product-main-page span p {
+      margin-top: 10px; }
+  .catalog .additional-product {
+    position: relative;
+    padding: 20px;
+    overflow: hidden;
+    border-radius: 15px;
+    min-height: 130px;
+    display: flex;
+    flex-direction: column;
+    justify-content: end; }
+    .catalog .additional-product img {
+      position: absolute; }
+    .catalog .additional-product h1 {
+      margin-top: 50px;
+      color: white; }
+    .catalog .additional-product span {
+      color: white; }
+      .catalog .additional-product span p {
+        color: white;
+        margin: 10px 0px; }
+    .catalog .additional-product button {
+      background-color: var(--main-color);
+      border: none;
+      margin: 0px;
+      bottom: 20px;
+      margin-top: 20px;
+      width: 100%; }
+
+.catalog .product button, .catalog .product-main-page button {
+  background-color: var(--main-color);
+  border: none;
+  margin: 0px;
+  bottom: 20px;
+  width: 100%; }
+
+.description-popup {
+  position: fixed;
+  width: 500px;
+  height: 500px;
+  animation: showProductPopup 0.3s;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid var(--dark-color);
+  background: var(--second-background-color);
+  text-align: center;
+  align-items: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0px 0px 0px 100vw rgba(0, 0, 0, 0.3); }
+  .description-popup .text {
+    max-height: 400px;
+    overflow-y: scroll;
+    text-align: left;
+    padding-right: 15px;
+    margin-bottom: 20px; }
+    .description-popup .text a {
+      margin-top: -1em; }
+    .description-popup .text::-webkit-scrollbar {
+      width: 12px; }
+    .description-popup .text::-webkit-scrollbar-track {
+      background: var(--second-background-color); }
+    .description-popup .text::-webkit-scrollbar-thumb {
+      background: gainsboro;
+      border-radius: 5px;
+      transition: .2s; }
+      .description-popup .text::-webkit-scrollbar-thumb:hover {
+        background: #aaaaaa; }
+  .description-popup button {
+    max-width: 200px; }
+  .description-popup .title {
+    display: flex;
+    justify-content: end;
+    margin-bottom: 10px; }
+    .description-popup .title .cross {
+      max-height: 20px;
+      min-height: 20px;
+      max-width: 20px;
+      min-width: 20px;
+      cursor: pointer; }
+
+@keyframes showProductPopup {
+  0% {
+    opacity: 0; }
+  100% {
+    opacity: 1; } }
+
+.popup-background {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  position: fixed;
+  z-index: 2; }
+
+.swiper-button-next:after, .swiper-button-prev:after {
+  font-size: 25px !important; }
+
+.swiper-button-next {
+  right: -15px !important; }
+
+.swiper-button-prev {
+  left: -15px !important; }
+
+@media screen and (max-width: 760px) {
+  .catalog {
+    padding-top: var(--padding-block-top);
+    padding-bottom: var(--padding-block-bottom); }
+  .products {
+    padding: 0px 20px;
+    grid-template-columns: repeat(1, 1fr); }
+  .product, .additional-product {
+    margin: 10px 0px; }
+  .mySwiper {
+    width: calc(78%);
+    padding: 0px 11% !important; }
+  .swiper-button-next {
+    right: 10px !important; }
+  .swiper-button-prev {
+    left: 10px !important; } }
+
+.promo-product {
+  border: 1px solid var(--dark-color);
+  cursor: pointer; }
+  .promo-product img {
+    width: 100%; }
+
+.swiper-button-next,
+.swiper-button-prev {
+  background-color: #969696;
+  width: 40px !important;
+  height: 40px !important;
+  color: white !important;
+  fill: white !important;
+  stroke: white !important;
+  border-radius: 50%; }
+
+/*# sourceMappingURL=catalog.css.map */

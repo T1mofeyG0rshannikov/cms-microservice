@@ -1,17 +1,18 @@
 {% extends "account/base.html" %}
 {% load static %}
 {% load qr_code %}
+{% load sass_tags %}
 
 {% block additional_styles %}
-    <link rel="stylesheet" href="{% static 'account/css/base.scss' %}">
-    <link rel="stylesheet" href="{% static 'account/css/site.scss' %}">
-    <link rel="stylesheet" href="{% static 'account/css/site-form.scss' %}">
-    <link rel="stylesheet" href="{% static 'user/css/main.scss' %}">
-    <link rel="stylesheet" href="{% static 'user/css/profile.scss' %}">
-    <link rel="stylesheet" href="{% static 'common/css/nav.scss' %}">
-    <link rel="stylesheet" href="{% static 'common/css/change-user-form.scss' %}">
-    <link rel="stylesheet" href="{% static 'common/css/change-password-form.scss' %}">
-    <link rel="stylesheet" href="{% static 'common/css/alerts.scss' %}">
+    <link type="text/css" rel="stylesheet" href="{% sass_src 'account/css/base.scss' %}">
+    <link type="text/css" rel="stylesheet" href="{% sass_src 'account/css/site.scss' %}">
+    <link type="text/css" rel="stylesheet" href="{% sass_src 'account/css/site-form.scss' %}">
+    <link type="text/css" rel="stylesheet" href="{% sass_src 'user/css/main.scss' %}">
+    <link type="text/css" rel="stylesheet" href="{% sass_src 'user/css/profile.scss' %}">
+    <link type="text/css" rel="stylesheet" href="{% sass_src 'common/css/nav.scss' %}">
+    <link type="text/css" rel="stylesheet" href="{% sass_src 'common/css/change-user-form.scss' %}">
+    <link type="text/css" rel="stylesheet" href="{% sass_src 'common/css/change-password-form.scss' %}">
+    <link type="text/css" rel="stylesheet" href="{% sass_src 'common/css/alerts.scss' %}">
 {% endblock %}
 
 {% block account_content %}

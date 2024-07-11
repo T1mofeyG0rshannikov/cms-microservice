@@ -1,8 +1,9 @@
 {% extends "common/base.html" %}
 {% load static %}
+{% load sass_tags %}
 
 {% block additional_styles %}
-    <link rel="stylesheet" href="{% static 'user/css/main.scss' %}">
+    <link type="text/css" rel="stylesheet" href="{% sass_src 'user/css/main.scss' %}">
 {% endblock %}
 
 {% block scripts %}

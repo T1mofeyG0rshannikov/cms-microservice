@@ -50,14 +50,6 @@ INSTALLED_APPS = [
 
 ASGI_APPLICATION = "core.asgi.application"
 
-"""
-CHANNEL_LAYERS = {
-    'default':{
-        'BACKEND':'channels.layers.InMemoryChannelLayer'
-    }
-}
-"""
-
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
@@ -195,3 +187,27 @@ SESSION_COOKIE_SECURE = False
 CORS_ORIGIN_ALLOW_ALL = True
 
 AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend", "user.backend.CustomAdminAuthentication"]
+
+SASS_ROOT = os.path.join(BASE_DIR, 'static', 'scss')
+SASS_PROCESSOR_ROOT = SASS_ROOT
+
+COMPRESS_PRECOMPILERS = (
+    ('text/x-scss', 'django_libsass.SassCompiler'),
+)
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+
+SASS_PROCESSOR_INCLUDE_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+    SASS_ROOT
+)
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'sass_processor.finders.CssFinder',
+)
+
+SASS_PROCESSOR_ENABLED = True

@@ -1,6 +1,7 @@
 {% extends "common/base.html" %}
 {% load template_exist %}
 {% load static %}
+{% load sass_tags %}
 
 
 {% block title %}
@@ -8,17 +9,17 @@
 {% endblock %}
 
 {% block additional_styles %}
-    <link rel="stylesheet" href="{% static 'blocks/css/text2photos.scss' %}">
-    <link rel="stylesheet" href="{% static 'blocks/css/base.scss' %}">
-    <link rel="stylesheet" href="{% static 'blocks/css/nav.scss' %}">
-    <link rel="stylesheet" href="{% static 'blocks/css/cover.scss' %}">
-    <link rel="stylesheet" href="{% static 'blocks/css/features.scss' %}">
-    <link rel="stylesheet" href="{% static 'blocks/css/register.scss' %}">
-    <link rel="stylesheet" href="{% static 'blocks/css/socialmedia.scss' %}">
-    <link rel="stylesheet" href="{% static 'blocks/css/questions.scss' %}">
-    <link rel="stylesheet" href="{% static 'blocks/css/stages.scss' %}">
-    <link rel="stylesheet" href="{% static 'blocks/css/stages.scss' %}">
-    <link rel="stylesheet" href="{% static 'blocks/css/catalog.scss' %}">
+    <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/text2photos.scss' %}">
+    <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/base.scss' %}">
+    <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/nav.scss' %}">
+    <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/cover.scss' %}">
+    <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/features.scss' %}">
+    <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/register.scss' %}">
+    <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/socialmedia.scss' %}">
+    <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/questions.scss' %}">
+    <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/stages.scss' %}">
+    <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/stages.scss' %}">
+    <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/catalog.scss' %}">
 {% endblock %}
 
 {% block content %}

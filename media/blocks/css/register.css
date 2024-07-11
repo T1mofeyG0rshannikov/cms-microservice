@@ -1,0 +1,60 @@
+.register {
+  background-color: var(--second-background-color);
+  width: 100%;
+  padding-top: var(--padding-block-top);
+  padding-bottom: var(--padding-block-bottom);
+  display: flex;
+  justify-content: center; }
+  .register .inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: calc(100% - 40px);
+    text-align: center; }
+    .register .inner .text {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 800px; }
+      .register .inner .text p {
+        margin: 0px;
+        margin-bottom: 10px; }
+  .register form input[type=submit] {
+    width: 180px;
+    border: 2px solid var(--main-color); }
+  .register form input {
+    padding: 13px 19px;
+    border: 2px solid gainsboro;
+    border-radius: 7px;
+    margin: 0px 6px;
+    width: 235px;
+    height: 50px;
+    font-family: var(--main-text-font-family);
+    font-size: var(--main-text-font-size);
+    font-weight: var(--main-text-font-weight); }
+    .register form input::-webkit-input-placeholder {
+      color: #c8c8c8;
+      font-family: var(--main-text-font-family);
+      font-size: var(--main-text-font-size);
+      font-weight: var(--main-text-font-weight); }
+  .register h1 {
+    margin: 0px; }
+
+@media screen and (max-width: 760px) {
+  .register form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center; }
+    .register form .field {
+      width: 100%;
+      margin-bottom: var(--margin-inside-block-mobile); }
+    .register form input {
+      width: 100%;
+      margin: 0; }
+    .register form input[type=submit] {
+      width: 100%; }
+  .register .inner .text p {
+    margin-bottom: 20px; } }
+
+/*# sourceMappingURL=register.css.map */
