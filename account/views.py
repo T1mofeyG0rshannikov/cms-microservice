@@ -1,5 +1,6 @@
 import json
 
+from django.contrib.auth import authenticate, login
 from django.http import HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -9,7 +10,8 @@ from account.forms import ChangePasswordForm, ChangeSiteForm, ChangeUserForm
 from account.models import UserFont, UserSocialNetwork
 from common.models import SocialNetwork
 from domens.models import Site
-from user.views.base_user_view import MyLoginRequiredMixin
+from notifications.models import UserNotification
+from user.views.base_user_view import BaseUserView, MyLoginRequiredMixin
 
 
 class SiteView(TemplateView, MyLoginRequiredMixin):
@@ -20,6 +22,7 @@ class SiteView(TemplateView, MyLoginRequiredMixin):
 
         context["socials"] = SocialNetwork.objects.all()
         context["fonts"] = UserFont.objects.all()
+        context["notifications"] = UserNotification.objects.all()
 
         return context
 
@@ -100,14 +103,13 @@ class ChangeUserView(View):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class ChangePasswordView(View):
+class ChangePasswordView(BaseUserView):
     def post(self, request):
         print(request.POST)
 
         form = ChangePasswordForm(request.POST)
         if form.is_valid():
             user = request.user_from_header
-            print(user)
 
             if not user.check_password(form.cleaned_data.get("current_password")):
                 form.add_error("current_password", "неверный пароль")
@@ -123,6 +125,12 @@ class ChangePasswordView(View):
             user.set_password(password)
             user.save()
 
-            return HttpResponse(status=200)
+            request.user = user
+            user = authenticate(request)
+            login(request, user)
+
+            access_token = self.jwt_processor.create_access_token(user.username, user.id)
+
+            return JsonResponse({"access_token": access_token}, status=200)
 
         return JsonResponse({"errors": form.errors}, status=400)

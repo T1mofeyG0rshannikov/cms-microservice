@@ -11,3 +11,8 @@ class BaseUserView(TemplateView):
 
 class MyLoginRequiredMixin(LoginRequiredMixin):
     login_url = "/user/login"
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated or request.user_from_header is None:
+            return self.handle_no_permission()
+        return super().dispatch(request, *args, **kwargs)

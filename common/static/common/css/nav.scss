@@ -7,6 +7,21 @@ header{
         width: 150px;
         justify-content: space-between;
 
+        .alert-container{
+            position: relative;
+
+            .indicator{
+                position: absolute;
+                width: 15px;
+                height: 15px;
+                bottom: -4px;
+                right: -4px;
+                border-radius: 50%;
+                background-color: rgb(50, 230, 50);
+                transition: .2s;
+            }
+        }
+
         img{
             height: 25px;
         }

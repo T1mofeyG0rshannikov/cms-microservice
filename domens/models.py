@@ -1,7 +1,9 @@
 from django.db import models
+from django.db.models.signals import post_save
 from django.utils import timezone
 
 from account.models import UserFont
+from notifications.send_message import send_message_to_user
 
 
 class Domain(models.Model):
@@ -63,3 +65,11 @@ class Site(models.Model):
         height = int(width * coeff)
 
         return f"{width}x{height}px"
+
+
+"""
+def site_changed(sender, instance, created, *args, **kwargs):
+    print(instance.user.id)
+    send_message_to_user(instance.user.id, "Ваше сообщение здесь")
+
+post_save.connect(site_changed, sender=Site)"""

@@ -1,8 +1,12 @@
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
+from django.db.models.signals import post_save
 
 from domens.models import Domain
+from notifications.send_message import send_message_to_user
+from user.auth.jwt_processor import get_jwt_processor
+from user.email_service.email_service import get_email_service
 from user.user_manager.user_manager import UserManager
 from user.user_manager.user_manager_interface import UserManagerInterface
 
@@ -67,3 +71,15 @@ class User(AbstractBaseUser, PermissionsMixin):
         ordering = ["-created_at"]
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
+
+
+def user_created_handler(sender, instance, created, *args, **kwargs):
+    if created:
+        jwt_processor = get_jwt_processor()
+        email_service = get_email_service(jwt_processor)
+        email_service.send_mail_to_confirm_email(instance)
+
+    send_message_to_user(instance.id, "kngfd")
+
+
+post_save.connect(user_created_handler, sender=User)

@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -19,10 +19,6 @@ from utils.validators import is_valid_email, is_valid_phone
 @method_decorator(csrf_exempt, name="dispatch")
 class RegisterUser(BaseUserView):
     template_name = "user/register.html"
-
-    def __init__(self):
-        super().__init__()
-        self.email_service = get_email_service(self.jwt_processor)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -66,8 +62,6 @@ class RegisterUser(BaseUserView):
             user = authenticate(request)
             login(request, user)
 
-            self.email_service.send_mail_to_confirm_email(user)
-
             token_to_set_password = self.jwt_processor.create_set_password_token(user.id)
 
             return JsonResponse({"token_to_set_password": token_to_set_password})
@@ -94,11 +88,9 @@ class SetPassword(BaseUserView):
             password = form.cleaned_data.get("password")
 
             user = User.objects.get_user_by_id(payload["id"])
-            # print(user, "10")
             user.set_password(password)
             user.save()
 
-            # print(user, "11")
             request.user = user
             user = authenticate(request)
             login(request, user)
@@ -110,16 +102,17 @@ class SetPassword(BaseUserView):
         return render(request, "user/set-password.html", {"form": form, "token": token})
 
 
-class SendConfirmEmail(View):
+class SendConfirmEmail(BaseUserView):
     def __init__(self):
         super().__init__()
         self.email_service = get_email_service(self.jwt_processor)
 
     def get(self, request):
         user = request.user_from_header
-        print(user)
+
         if user:
             self.email_service.send_mail_to_confirm_email(user)
+
         return HttpResponse(status=200)
 
 

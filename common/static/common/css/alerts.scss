@@ -1,0 +1,31 @@
+.alerts{
+    position: absolute;
+    background: white;
+    border-radius: 5px;
+    right: 0;
+    display: none;
+    width: 400px;
+
+    .title{
+        padding: 10px 20px 0px 20px;
+        justify-content: space-between;
+        display: flex;
+
+        h3{
+            margin: 0;
+        }
+    }
+
+    .alert-elem{
+        display: flex;
+        align-items: start;
+
+        .date{
+            color: rgb(150, 150, 150);
+        }
+    }
+
+    .content{
+        padding: 0px 20px;
+    }
+}

@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{% static 'common/css/nav.scss' %}">
     <link rel="stylesheet" href="{% static 'common/css/change-user-form.scss' %}">
     <link rel="stylesheet" href="{% static 'common/css/change-password-form.scss' %}">
+    <link rel="stylesheet" href="{% static 'common/css/alerts.scss' %}">
 {% endblock %}
 
 {% block account_content %}
@@ -123,13 +124,13 @@
         {% endif %}
     </div>
 </div>
-
 {% endblock %}
 
 {% block additional_scripts %}
-<script src="{% static 'user/js/profile.js' %}"></script>
+<script src="{% static 'user/js/logout.js' %}"></script>
 <script src="{% static 'account/js/site.js' %}"></script>
 <script src="{% static 'account/js/site-form.js' %}"></script>
 <script src="{% static 'common/js/change-user.js' %}"></script>
 <script src="{% static 'common/js/change-password.js' %}"></script>
+<script src="{% static 'common/js/alerts.js' %}"></script>
 {% endblock %}

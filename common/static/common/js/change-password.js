@@ -1,6 +1,6 @@
 const changePasswordForm = document.querySelector(".change-password-form");
 
-function onSubmitChangePasswordForm(element, event){
+function onSubmitChangePasswordForm(domain, element, event){
     event.preventDefault();
 
     const data = new FormData(element);
@@ -20,7 +20,12 @@ function onSubmitChangePasswordForm(element, event){
         if (response.status === 200){
             setErrors({}, element)
             console.log("success");
-            location.reload();
+            const access_token = response.json().access_token;
+            setToken(access_token);
+            closeForm(changePasswordForm);
+
+            window.location.replace(`http://${domain}/user/set-token/${token}`);
+            return;
         }
         return response.json();
     }).then(response => {

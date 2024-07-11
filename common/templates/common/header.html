@@ -11,7 +11,40 @@
         {% endif %}
 
         <div class="icons">
-            <img src="{% static 'common/images/menu_alert.png' %}"/>
+            <div class="alert-container">
+                <img src="{% static 'common/images/menu_alert.png' %}"/>
+
+                <span class="indicator" style="width: 0px; height: 0px;"></span>
+
+                <div class="alerts">
+                    <div class="title">
+                        <h3>Уведомления</h3>
+
+                        <img src="{% static 'common/images/profile/menu_settings.png' %}" />
+                    </div>
+
+                    <hr />
+
+                    <div class="content">
+                        {% for alert in notifications %}
+                            <div class="alert-elem">
+                                <img src="" />
+
+                                <div class="alert-content">
+                                    <a class="date">{{ alert.date_created }}</a>
+                                    <a>{{ alert.notification.message }}</a>
+                                </div>
+
+                                <img src="{% static 'account/images/trash.png' %}" />
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="bottom">
+                        <a>Показать все</a>
+                    </div>
+                </div>
+            </div>
 
             <div class="user-container">
                 <img class="icon" src="{% static 'common/images/menu_user.png' %}"/>

@@ -1,11 +1,10 @@
+from domens.models import Domain
 from user.auth.jwt_processor_interface import JwtProcessorInterface
 from user.email_service.email_service_interface import EmailServiceInterface
 from user.email_service.tasks import (
     send_mail_to_confirm_email,
     send_mail_to_reset_password,
 )
-from user.models import User
-from domens.models import Domain
 
 
 class EmailService(EmailServiceInterface):
@@ -21,11 +20,11 @@ class EmailService(EmailServiceInterface):
         token_to_reset_password = self.jwt_processor.create_set_password_token(user_id)
         return f"{self.host}/user/password/{token_to_reset_password}"
 
-    def send_mail_to_confirm_email(self, user: User) -> None:
+    def send_mail_to_confirm_email(self, user) -> None:
         url = self.get_url_to_confirm_email(user.id)
         send_mail_to_confirm_email.delay(url, user.email)
 
-    def send_mail_to_reset_password(self, user: User) -> None:
+    def send_mail_to_reset_password(self, user) -> None:
         url = self.get_url_to_reset_password(user.id)
         send_mail_to_reset_password.delay(url, user.email)
 
