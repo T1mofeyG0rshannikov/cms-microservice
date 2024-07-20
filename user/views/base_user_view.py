@@ -13,6 +13,10 @@ class MyLoginRequiredMixin(LoginRequiredMixin):
     login_url = "/user/login"
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_authenticated or request.user_from_header is None:
+        if not request.user.is_authenticated:
             return self.handle_no_permission()
+
+        if request.user_from_header and not request.user.is_authenticated:
+            return self.handle_no_permission()
+
         return super().dispatch(request, *args, **kwargs)

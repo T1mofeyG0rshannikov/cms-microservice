@@ -1,7 +1,5 @@
 from django.db import models
 
-from user.models import User
-
 
 class Trigger(models.Model):
     name = models.CharField(verbose_name="триггер", max_length=100)
@@ -37,7 +35,7 @@ class Notification(models.Model):
 
 class UserNotification(models.Model):
     notification = models.ForeignKey(Notification, on_delete=models.CASCADE, verbose_name="уведомление")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="пользователь")
+    user = models.ForeignKey("user.User", on_delete=models.CASCADE, verbose_name="пользователь")
 
     date_created = models.DateTimeField(auto_now_add=True, verbose_name="дата создания", null=True)
 

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "qr_code",
     "sass_processor",
     "channels",
+    "rest_framework",
 ]
 
 ASGI_APPLICATION = "core.asgi.application"
@@ -55,6 +56,7 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
             "hosts": [("127.0.0.1", 6379)],
+            # "hosts": [("localhost", 6379), ("bankomag.ru", 6379), ("idri.ru", 6379)],
         },
     },
 }
@@ -188,26 +190,19 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend", "user.backend.CustomAdminAuthentication"]
 
-SASS_ROOT = os.path.join(BASE_DIR, 'static', 'scss')
+SASS_ROOT = os.path.join(BASE_DIR, "static", "scss")
 SASS_PROCESSOR_ROOT = SASS_ROOT
 
-COMPRESS_PRECOMPILERS = (
-    ('text/x-scss', 'django_libsass.SassCompiler'),
-)
+COMPRESS_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
-SASS_PROCESSOR_INCLUDE_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-    SASS_ROOT
-)
+SASS_PROCESSOR_INCLUDE_DIRS = (os.path.join(BASE_DIR, "static"), SASS_ROOT)
 
 STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'sass_processor.finders.CssFinder',
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "sass_processor.finders.CssFinder",
 )
 
 SASS_PROCESSOR_ENABLED = True

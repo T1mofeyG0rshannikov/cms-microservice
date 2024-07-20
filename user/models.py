@@ -1,9 +1,10 @@
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 
 from domens.models import Domain
+from notifications.create_user_notification import create_user_notification
 from notifications.send_message import send_message_to_user
 from user.auth.jwt_processor import get_jwt_processor
 from user.email_service.email_service import get_email_service
@@ -79,7 +80,20 @@ def user_created_handler(sender, instance, created, *args, **kwargs):
         email_service = get_email_service(jwt_processor)
         email_service.send_mail_to_confirm_email(instance)
 
-    send_message_to_user(instance.id, "kngfd")
+        user_alert = create_user_notification(instance, "SIGNEDUP")
+        send_message_to_user(instance.id, user_alert)
+
+
+def user_verified_email_handler(sender, instance, *args, **kwargs):
+    if instance.id is None:
+        pass
+    else:
+        previous = User.objects.get_user_by_id(id=instance.id)
+        if not previous.email_is_confirmed and instance.email_is_confirmed:
+            user_alert = create_user_notification(instance, "EMAILVERIFIED")
+
+            send_message_to_user(instance.id, user_alert)
 
 
 post_save.connect(user_created_handler, sender=User)
+pre_save.connect(user_verified_email_handler, sender=User)

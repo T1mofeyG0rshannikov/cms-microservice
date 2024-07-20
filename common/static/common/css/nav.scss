@@ -7,8 +7,17 @@ header{
         width: 150px;
         justify-content: space-between;
 
+        .icon{
+            cursor: pointer;
+            padding: 5px;
+        }
+
         .alert-container{
             position: relative;
+
+            &:hover .alerts{
+                display: block;
+            }
 
             .indicator{
                 position: absolute;
@@ -28,11 +37,6 @@ header{
 
         .user-container{
             position: relative;
-
-            .icon{
-                cursor: pointer;
-                padding: 5px;
-            }
 
             &:hover .user-nav{
                 display: block;

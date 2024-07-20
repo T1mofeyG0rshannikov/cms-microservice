@@ -14,7 +14,7 @@ from notifications.models import UserNotification
 from user.views.base_user_view import BaseUserView, MyLoginRequiredMixin
 
 
-class SiteView(TemplateView, MyLoginRequiredMixin):
+class SiteView(MyLoginRequiredMixin, TemplateView):
     template_name = "account/site.html"
 
     def get_context_data(self, **kwargs):

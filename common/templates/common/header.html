@@ -12,7 +12,7 @@
 
         <div class="icons">
             <div class="alert-container">
-                <img src="{% static 'common/images/menu_alert.png' %}"/>
+                <img class="icon" src="{% static 'common/images/menu_alert.png' %}"/>
 
                 <span class="indicator" style="width: 0px; height: 0px;"></span>
 
@@ -28,17 +28,21 @@
                     <div class="content">
                         {% for alert in notifications %}
                             <div class="alert-elem">
-                                <img src="" />
+                                <div class="main">
+                                    <img class="status" src="{% if alert.notification.status == 'info' %}{% static 'common/images/tick.png' %}{% elif alert.notification.status == 'warning' %}{% static 'common/images/i.png' %}{% endif %}" />
 
-                                <div class="alert-content">
-                                    <a class="date">{{ alert.date_created }}</a>
-                                    <a>{{ alert.notification.message }}</a>
+                                    <div class="alert-content">
+                                        <a class="date">{{ alert.date_created|date:"d.m.Y" }}</a>
+                                        <a>{{ alert.notification.message }}</a>
+                                    </div>
                                 </div>
 
-                                <img src="{% static 'account/images/trash.png' %}" />
+                                <img class="trash" onclick="deleteAlert({{ alert.id }})" data-id="{{ alert.id }}" src="{% static 'account/images/trash.png' %}" />
                             </div>
                         {% endfor %}
                     </div>
+
+                    <hr />
 
                     <div class="bottom">
                         <a>Показать все</a>

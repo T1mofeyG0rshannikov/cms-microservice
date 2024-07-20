@@ -3,6 +3,7 @@ from django.db.models.signals import post_save
 from django.utils import timezone
 
 from account.models import UserFont
+from notifications.create_user_notification import create_user_notification
 from notifications.send_message import send_message_to_user
 
 
@@ -67,9 +68,11 @@ class Site(models.Model):
         return f"{width}x{height}px"
 
 
-"""
-def site_changed(sender, instance, created, *args, **kwargs):
-    print(instance.user.id)
-    send_message_to_user(instance.user.id, "Ваше сообщение здесь")
+def site_created_handler(sender, instance, created, *args, **kwargs):
+    if created:
+        user_alert = create_user_notification(instance.user, "SITECREATED")
 
-post_save.connect(site_changed, sender=Site)"""
+        send_message_to_user(instance.user.id, user_alert)
+
+
+post_save.connect(site_created_handler, sender=Site)

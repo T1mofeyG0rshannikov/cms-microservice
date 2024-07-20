@@ -11,6 +11,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("domain/", include("domens.urls")),
     path("my/", include("account.urls")),
+    path("notifications/", include("notifications.urls")),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

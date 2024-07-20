@@ -16,7 +16,7 @@ const logoLoader = logo.querySelector("#file");
 
 logoLoader.addEventListener("change", () => displayPhotoOnload(logo))
 
-function onSubmitSiteForm(element, event){
+function onSubmitSiteForm(domain, element, event){
     event.preventDefault();
 
     const data = new FormData(element);
@@ -44,7 +44,7 @@ function onSubmitSiteForm(element, event){
     data.append("socials", JSON.stringify(socials));
     console.log(data);
 
-    fetch(`http://localhost:8000/my/change-site`, {
+    fetch(`http://${domain}/my/change-site`, {
         method: "POST",
         headers: {
             'Accept': 'application/json',
