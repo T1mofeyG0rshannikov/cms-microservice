@@ -38,3 +38,4 @@ class UserMessanger(models.Model):
         "user.User", related_name="messanger", on_delete=models.CASCADE, verbose_name="Пользователь"
     )
     messanger = models.ForeignKey(Messanger, on_delete=models.CASCADE, verbose_name="Соц. сеть")
+    adress = models.CharField(verbose_name="адресс", max_length=100)

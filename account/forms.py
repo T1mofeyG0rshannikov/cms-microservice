@@ -1,5 +1,6 @@
 from django import forms
 
+from utils.format_phone import get_raw_phone
 from utils.validators import is_valid_email, is_valid_phone
 
 
@@ -48,7 +49,7 @@ class ChangeUserForm(forms.Form):
         if not is_valid_phone(phone):
             self.add_error("phone", "Укажите корректный телефон")
 
-        return phone
+        return get_raw_phone(phone)
 
     def clean_email(self):
         email = self.cleaned_data["email"]

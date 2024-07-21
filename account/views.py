@@ -7,11 +7,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, View
 
 from account.forms import ChangePasswordForm, ChangeSiteForm, ChangeUserForm
-from account.models import Messanger, UserFont, UserSocialNetwork
+from account.models import Messanger, UserFont, UserMessanger, UserSocialNetwork
 from common.models import SocialNetwork
 from domens.models import Site
 from notifications.models import UserNotification
+from user.models import User
 from user.views.base_user_view import BaseUserView, MyLoginRequiredMixin
+from utils.errors import UserErrors
 
 
 class SiteView(MyLoginRequiredMixin, TemplateView):
@@ -91,11 +93,50 @@ class ChangeSiteView(View):
 @method_decorator(csrf_exempt, name="dispatch")
 class ChangeUserView(View):
     def post(self, request):
-        print(request.POST)
-        print(request.FILES)
+        if request.user_from_header is None:
+            return HttpResponse(status=401)
+
         form = ChangeUserForm(request.POST)
         if form.is_valid():
-            print(form.cleaned_data["profile_picture"])
+            user = request.user_from_header
+
+            phone = form.cleaned_data.get("phone")
+            print(phone)
+            email = form.cleaned_data.get("email")
+
+            user_with_phone = User.objects.get_user_by_phone(phone)
+            user_with_email = User.objects.get_user_by_email(email)
+
+            if user_with_email != user and user_with_email and user_with_email.email_is_confirmed:
+                form.add_error("email", UserErrors.username_with_email_alredy_exists.value)
+
+                return JsonResponse({"errors": form.errors}, status=400)
+
+            elif user_with_phone != user:
+                form.add_error("phone", UserErrors.username_with_phone_alredy_exists.value)
+
+                return JsonResponse({"errors": form.errors}, status=400)
+
+            user.username = form.cleaned_data.get("username")
+            user.second_name = form.cleaned_data.get("second_name")
+
+            user.email = form.cleaned_data.get("email")
+            user.phone = form.cleaned_data.get("phone")
+
+            if form.cleaned_data.get("social_network"):
+                social_network = form.cleaned_data.get("social_network")
+                adress = form.cleaned_data.get("adress")
+
+                messanger = Messanger.objects.get(id=social_network)
+
+                UserMessanger.objects.update_or_create(
+                    user_id=user.id, defaults={"messanger": messanger, "adress": adress}
+                )
+
+            if form.cleaned_data.get("profile_picture"):
+                user.profile_picture = form.cleaned_data.get(form.cleaned_data.get("profile_picture"))
+
+            user.save()
 
             return HttpResponse(status=200)
 

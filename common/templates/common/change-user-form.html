@@ -20,7 +20,7 @@
         <div class="fields">
             <div class="field" id="username">
                 <p style="margin-top: 0px;">Имя</p>
-                <input placeholder="Ваше имя" name="name" default="{% if user.username %}{{ user.username }}{% endif %}" value="{% if user.username %}{{ user.username }}{% endif %}" />
+                <input placeholder="Ваше имя" name="username" default="{% if user.username %}{{ user.username }}{% endif %}" value="{% if user.username %}{{ user.username }}{% endif %}" />
             </div>
 
             <div class="field" id="second_name">
@@ -60,14 +60,14 @@
     <div class="field-container messager">
         <div class="field" style="width: 235;">
             <p>Месенджер</p>
-            <input placeholder="Ваш мессенджер" style="width: 100%;" name="adress" default="{{ user_social.adress }}" value="{{ user_social.adress }}" />
+            <input placeholder="Ваш мессенджер" style="width: 100%;" name="adress" default="{{ user.messanger.adress }}" value="{{ user.messanger.adress }}" />
         </div>
 
         <div class="field social">
             <p class="notifications">Уведомления</p>
             <select name="social_network" id="">
                 {% for messanger in messangers %}
-                    <option value="{{ messanger.id }}" {% if user.messanger.id == messanger.id %}selected{% endif %}>{{ messanger }}</option>
+                    <option value="{{ messanger.id }}" {% if user.messanger.messanger.id == messanger.id %}selected{% endif %}>{{ messanger }}</option>
                 {% endfor %}
             </select>
         </div>

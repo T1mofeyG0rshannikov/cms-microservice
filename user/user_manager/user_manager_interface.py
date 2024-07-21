@@ -13,3 +13,9 @@ class UserManagerInterface(Protocol):
 
     def get_user_by_id(self, id: int):
         raise NotImplementedError()
+
+    def filter(*args, **kwargs):
+        raise NotImplementedError()
+
+    def exclude(*args, **kwargs):
+        raise NotImplementedError()

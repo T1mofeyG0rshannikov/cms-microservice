@@ -27,6 +27,9 @@ function onSubmitChangeUserForm(element, event){
             console.log("success");
             location.reload();
         }
+        if (response.status === 401){
+            window.location.href = "/user/login?next=my/site";
+        }
         return response.json();
     }).then(response => {
         setErrors({}, element)
