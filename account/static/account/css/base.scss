@@ -1,41 +1,42 @@
-.menu li{
-    margin: 5px 0px;
-    font-weight: 400;
-    padding: 10px;
-}
-
-.menu li a{
-    display: flex;
-    align-items: center;
-    margin: 0px;
-    gap: 10px;
-}
-
-.menu li::marker{
-    display: none;
-    content: '';
-}
-
-.menu li img{
-    height: 25px;
-}
-
 .menu{
     height: 100%;
-}
 
-.active{
-    border-radius: 15px 0px 0px 15px;
-    background: white;
-}
+    ul{
+        padding-left: 15px;
+    }
 
-.menu li a{
-    font-weight: 400;
-    text-decoration: none;
+    li{
+        margin: 5px 0px;
+        font-weight: 400;
+        padding: 10px;
+
+        img{
+            height: 20px;
+        }
+
+        &::marker{
+            display: none;
+            content: '';
+        }
+
+        a{
+            display: flex;
+            align-items: center;
+            margin: 0px;
+            gap: 10px;
+            font-weight: 400;
+            text-decoration: none;
+        }
+    }
+
+    .active{
+        border-radius: 15px 0px 0px 15px;
+        background: white;
+    }
 }
 
 hr{
-    border: 1px solid var(--dark-color);
+    border-top: 1px solid var(--dark-color);
 }
 
 .account-main{
@@ -51,4 +52,9 @@ body{
 #content{
     display: flex;
     width: 100%;
+}
+
+a, p{
+    font-size: 14px;
+    margin: 22px 0px;
 }

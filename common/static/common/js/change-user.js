@@ -5,7 +5,6 @@ const userLogoLoader = userLogo.querySelector("#file");
 
 userLogoLoader.addEventListener("change", () => displayPhotoOnload(userLogo));
 
-
 function onSubmitChangeUserForm(element, event){
     event.preventDefault();
 
@@ -66,4 +65,12 @@ function sendConfirmEmail(){
             console.log("success")
         }
     })
+}
+
+function openUserForm(form){
+    const userLogo = form.querySelector(".user-logo img");
+    userLogo.src = $(userLogo).attr("default");
+    form.querySelector("#file").value = "";
+
+    openForm(form);
 }

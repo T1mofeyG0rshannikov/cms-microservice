@@ -38,5 +38,13 @@ function activateSite(element){
 
 const siteForm = document.querySelector(".site-form");
 
+function openSiteForm(form){
+    const logo = form.querySelector("#logo img");
+    logo.src = $(logo).attr("default");
+    form.querySelector("#file").value = "";
+
+    openForm(form);
+}
+
 const openSiteFormButton = document.querySelector("#open-site-form");
-openSiteFormButton.addEventListener("click", () => openForm(siteForm));
+openSiteFormButton.addEventListener("click", () => openSiteForm(siteForm));

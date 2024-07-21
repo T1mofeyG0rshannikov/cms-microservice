@@ -20,3 +20,21 @@ class UserSocialNetwork(models.Model):
     class Meta:
         verbose_name = "пользовательская соц. сеть"
         verbose_name_plural = "пользовательские соц. сети"
+
+
+class Messanger(models.Model):
+    social_network = models.ForeignKey(SocialNetwork, on_delete=models.CASCADE, verbose_name="Соц. сеть")
+
+    class Meta:
+        verbose_name = "Мессенджер"
+        verbose_name_plural = "Мессенджеры"
+
+    def __str__(self):
+        return str(self.social_network)
+
+
+class UserMessanger(models.Model):
+    user = models.OneToOneField(
+        "user.User", related_name="messanger", on_delete=models.CASCADE, verbose_name="Пользователь"
+    )
+    messanger = models.ForeignKey(Messanger, on_delete=models.CASCADE, verbose_name="Соц. сеть")

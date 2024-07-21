@@ -111,14 +111,24 @@ input[type=submit]:disabled, button:disabled{
     }
 }
 
+form{
+    .eye{
+        position: absolute;
+        right: 7px;
+        width: 45px;
+        cursor: pointer;
+    }
+}
+
 .form{
     background-color: white;
-    border-radius: 15px;
+    border-radius: 15px 0px 0px 15px;
     padding: 15px 0px;
     border: 1px solid var(--dark-color);
     position: absolute;
     transition: .4s;
     right: -480px;
+    border-right: 1px solid white;
 
     input[type=file]{
         width: 100%;
@@ -155,6 +165,10 @@ input[type=submit]:disabled, button:disabled{
         h3{
             margin: 0;
         }
+    }
+
+    .error{
+        font-size: 14px;
     }
 
     .field-container{

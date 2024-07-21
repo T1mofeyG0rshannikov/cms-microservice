@@ -1,10 +1,14 @@
 header{
-    padding: 15px 0px;
+    padding: 12px 0px;
+
+    .inner{
+        width: calc(100% - 50px);
+    }
 
     .icons{
         display: flex;
         align-items: center;
-        width: 150px;
+        width: 120px;
         justify-content: space-between;
 
         .icon{
@@ -32,7 +36,7 @@ header{
         }
 
         img{
-            height: 25px;
+            height: 18px;
         }
 
         .user-container{

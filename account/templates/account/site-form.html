@@ -16,7 +16,7 @@
             <p>Адрес сайта</p>
             <div style="display: flex; align-items: center;">
                 <div>
-                    <input name="site" value="{% if user.site.subdomain %}{{ user.site.subdomain }}{% endif %}" placeholder="придумайте адрес" />
+                    <input name="site" default="{% if user.site.subdomain %}{{ user.site.subdomain }}{% endif %}" value="{% if user.site.subdomain %}{{ user.site.subdomain }}{% endif %}" placeholder="придумайте адрес" />
                 </div>
                 <a style="margin: 0px;">{{ partner_domain }}</a>
             </div>
@@ -26,7 +26,7 @@
     <div class="field-container">
         <div class="field" id="name">
             <p>Название сайта</p>
-            <input name="name" value="{% if user.site.name %}{{ user.site.name }}{% endif %}" />
+            <input name="name" default="{% if user.site.name %}{{ user.site.name }}{% endif %}" value="{% if user.site.name %}{{ user.site.name }}{% endif %}" />
         </div>
 
         <div class="field" id="font">
@@ -62,7 +62,7 @@
         <div class="field" id="logo">
             <p>Логотип</p>
             <div id="logo" class="logo">
-                <img src="{% if user.site.logo %}{{ user.site.logo.url }}{% else %}{% static 'account/images/baselogo.png' %}{% endif %}" />
+                <img default="{% if user.site.logo %}{{ user.site.logo.url }}{% else %}{% static 'account/images/baselogo.png' %}{% endif %}" src="{% if user.site.logo %}{{ user.site.logo.url }}{% else %}{% static 'account/images/baselogo.png' %}{% endif %}" />
                 <input name="file" type="file" accept="image/*" id="file" />
             </div>
 
@@ -80,14 +80,14 @@
     <div class="field-container">
         <div class="field" style="width: 100%" id="owner">
             <p>Владелец</p>
-            <input name="owner" value="{% if user.site.owner %}{{ user.site.owner }}{% endif %}" style="width: 100%"/>
+            <input name="owner" default="{% if user.site.owner %}{{ user.site.owner }}{% endif %}" value="{% if user.site.owner %}{{ user.site.owner }}{% endif %}" style="width: 100%"/>
         </div>
     </div>
 
     <div class="field-container">
         <div class="field" style="width: 100%" id="contact_info">
             <p>Контактная информация</p>
-            <input name="contact_info" style="width: 100%" value="{% if user.site.contact_info %}{{ user.site.contact_info }}{% endif %}" placeholder="Контактные данные на сайт" />
+            <input name="contact_info" style="width: 100%" default="{% if user.site.contact_info %}{{ user.site.contact_info }}{% endif %}" value="{% if user.site.contact_info %}{{ user.site.contact_info }}{% endif %}" placeholder="Контактные данные на сайт" />
         </div>
     </div>
 
@@ -107,7 +107,7 @@
 
                 <div class="field" style="width: 230;">
                     <p>Адрес</p>
-                    <input style="width: 100%;" name="adress" value="{{ user_social.adress }}" />
+                    <input style="width: 100%;" name="adress" default="{{ user_social.adress }}" value="{{ user_social.adress }}" />
                 </div>
 
                 <div class="trash-container">

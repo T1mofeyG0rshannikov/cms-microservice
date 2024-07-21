@@ -1,5 +1,5 @@
 .change-user-form{
-    top: 270px;
+    top: 75px;
     width: 430px;
 
     .checkmark-container{
@@ -79,5 +79,9 @@
                 width: 100%;
             }
         }
+    }
+
+    .error{
+        text-align: left;
     }
 }

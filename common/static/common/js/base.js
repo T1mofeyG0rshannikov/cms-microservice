@@ -15,8 +15,18 @@ function displayPhotoOnload(element) {
     reader.readAsDataURL(file);
 }
 
+const userNav = document.querySelector(".user-nav");
+
 function closeForm(form){
+    $(document.querySelector(".user-nav")).removeAttr("style");
+
     form.style.right = "-480px";
+}
+
+function closeUserNav(){
+    document.querySelector(".user-nav").style.display = "none";
+
+    setTimeout(() => $(document.querySelector(".user-nav")).removeAttr("style"), 1000);
 }
 
 function openForm(form){
@@ -25,5 +35,18 @@ function openForm(form){
         closeForm(formElem);
     }
 
-    form.style.right = "30px";
+    closeUserNav();
+    resetForm(form);
+    form.style.right = "0px";
+}
+
+function resetForm(element){
+    const inputs = element.querySelectorAll("input");
+
+    for (let input of inputs){
+        if ($(input).attr("default") !== undefined){
+            console.log(input);
+            input.value = $(input).attr("default");
+        }
+    }
 }

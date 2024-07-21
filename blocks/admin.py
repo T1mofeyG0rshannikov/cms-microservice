@@ -1,6 +1,5 @@
 from adminsortable2.admin import SortableAdminBase, SortableStackedInline
 from django.contrib import admin
-from django.contrib.admin import AdminSite
 from django.utils.safestring import mark_safe
 
 from blocks.models.blocks import (
@@ -46,7 +45,6 @@ from styles.admin import (
     StagesCustomStylesInline,
 )
 from user.admin import UserAdmin
-from user.forms import CustomAuthenticationAdminForm
 from user.models import User
 
 
@@ -105,23 +103,11 @@ class BaseBlockAdmin(admin.ModelAdmin):
     clone_button.short_description = ""
 
     def delete_queryset(self, request, queryset):
-        print("==========================delete_queryset==========================")
-        print(queryset)
-
-        """
-        you can do anything here BEFORE deleting the object(s)
-        """
         for block in queryset:
             relation_id = block.block_relation.id
             print(relation_id, "relation_id")
             BlockRelationship.objects.filter(id=relation_id).delete()
         queryset.delete()
-
-        """
-        you can do anything here AFTER deleting the object(s)
-        """
-
-        print("==========================delete_queryset==========================")
 
 
 class NavbarAdmin(BaseBlockAdmin):
@@ -187,21 +173,6 @@ class PageAdmin(SortableAdminBase, admin.ModelAdmin):
     clone_button.short_description = ""
 
 
-class MyAdminSite(AdminSite):
-    site_header = "Bankomag"
-    index_title = "bankomag"
-
-    def get_app_list(self, request):
-        app_order = ["user", "catalog", "blocks", "account", "domens"]
-        app_order_dict = dict(zip(app_order, range(len(app_order))))
-        app_list = list(self._build_app_dict(request).values())
-        app_list.sort(key=lambda x: app_order_dict.get(x["app_label"], 0))
-
-        return app_list
-
-
-admin.site = MyAdminSite()
-admin.site.login_form = CustomAuthenticationAdminForm
 admin.site.register(User, UserAdmin)
 admin.site.register(Page, PageAdmin)
 admin.site.register(Navbar, NavbarAdmin)

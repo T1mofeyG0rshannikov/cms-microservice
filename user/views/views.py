@@ -3,14 +3,14 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import TemplateView, View
+from django.views.generic import View
 
 from domens.models import Domain, Site
 from user.email_service.email_service import get_email_service
 from user.forms import LoginForm, RegistrationForm, ResetPasswordForm, SetPasswordForm
 from user.models import User
 from user.serializers import UserSerializer
-from user.views.base_user_view import BaseUserView, MyLoginRequiredMixin
+from user.views.base_user_view import BaseUserView
 from utils.errors import Errors, UserErrors
 from utils.success_messages import Messages
 from utils.validators import is_valid_email, is_valid_phone
@@ -164,11 +164,6 @@ class Login(BaseUserView):
             return JsonResponse({"acess_token": access_token})
 
         return JsonResponse({"errors": form.errors}, status=400)
-
-
-@method_decorator(csrf_exempt, name="dispatch")
-class Profile(TemplateView, MyLoginRequiredMixin):
-    template_name = "user/profile.html"
 
 
 class GetUserInfo(View):

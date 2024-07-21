@@ -10,7 +10,7 @@
 
     {% csrf_token %}
     {% for field in form %}
-        <div class="field" id="{{ field.name }}">
+        <div class="field {% if field.name == 'password' %}password{% elif field.name == 'repeat_password' %}password{% endif %}" id="{{ field.name }}">
             <div class="field-container">
                 {{ field }}
 

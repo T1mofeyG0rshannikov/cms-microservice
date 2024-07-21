@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, View
 
 from account.forms import ChangePasswordForm, ChangeSiteForm, ChangeUserForm
-from account.models import UserFont, UserSocialNetwork
+from account.models import Messanger, UserFont, UserSocialNetwork
 from common.models import SocialNetwork
 from domens.models import Site
 from notifications.models import UserNotification
@@ -23,6 +23,7 @@ class SiteView(MyLoginRequiredMixin, TemplateView):
         context["socials"] = SocialNetwork.objects.all()
         context["fonts"] = UserFont.objects.all()
         context["notifications"] = UserNotification.objects.all()
+        context["messangers"] = Messanger.objects.select_related("social_network").all()
 
         return context
 
@@ -95,7 +96,6 @@ class ChangeUserView(View):
         form = ChangeUserForm(request.POST)
         if form.is_valid():
             print(form.cleaned_data["profile_picture"])
-            print("success")
 
             return HttpResponse(status=200)
 
@@ -112,14 +112,14 @@ class ChangePasswordView(BaseUserView):
             user = request.user_from_header
 
             if not user.check_password(form.cleaned_data.get("current_password")):
-                form.add_error("current_password", "неверный пароль")
+                form.add_error("current_password", "Неверный пароль")
                 return JsonResponse({"errors": form.errors}, status=400)
 
             password = form.cleaned_data.get("password")
             repeat_password = form.cleaned_data.get("repeat_password")
 
             if password != repeat_password:
-                form.add_error("password", "пароли не совпадают")
+                form.add_error("password", "Пароли не совпадают")
                 return JsonResponse({"errors": form.errors}, status=400)
 
             user.set_password(password)
@@ -134,3 +134,8 @@ class ChangePasswordView(BaseUserView):
             return JsonResponse({"access_token": access_token}, status=200)
 
         return JsonResponse({"errors": form.errors}, status=400)
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class Profile(TemplateView, MyLoginRequiredMixin):
+    template_name = "account/profile.html"
