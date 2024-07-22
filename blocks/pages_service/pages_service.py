@@ -9,7 +9,7 @@ class PageService(PageServiceInterface):
         for f in blocks_name._meta.related_objects:
             if isinstance(f.related_model.objects.first(), BaseBlock):
                 if f.field.model.objects.filter(block_relation=blocks_name).exists():
-                    block = f.field.model.objects.select_related("styles").get(block_relation=blocks_name)
+                    block = f.field.model.objects.select_related("styles").get(block_relation_id=blocks_name.id)
                     break
 
         return block

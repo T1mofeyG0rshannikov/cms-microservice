@@ -35,7 +35,6 @@ class CatalogService(CatalogServiceInterface):
         catalog = CatalogBlock.objects.prefetch_related("styles").get(product_type__slug=slug)
         catalog_relation = BlockRelationship.objects.get(block_name=catalog.name)
         catalog = self.page_service.get_page_block(catalog_relation)
-
         styles = catalog.get_styles()
         # catalog.styles
         if styles is None:

@@ -6,7 +6,7 @@ from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import TemplateView, View
+from django.views.generic import View
 
 from blocks.models.catalog_block import CatalogBlock
 from blocks.models.common import Page, Template
@@ -21,7 +21,7 @@ from settings.models import SiteSettings
 from user.forms import LoginForm
 
 
-class IndexPage(TemplateView, SubdomainMixin):
+class IndexPage(SubdomainMixin):
     template_name = "blocks/page.html"
 
     def get(self, *args, **kwargs):
@@ -55,7 +55,7 @@ class IndexPage(TemplateView, SubdomainMixin):
         return context
 
 
-class ShowPage(TemplateView, SubdomainMixin):
+class ShowPage(SubdomainMixin):
     template_name = "blocks/page.html"
 
     def get_context_data(self, **kwargs):
@@ -70,7 +70,7 @@ class ShowPage(TemplateView, SubdomainMixin):
         return context
 
 
-class ShowCatalogPage(TemplateView, SubdomainMixin):
+class ShowCatalogPage(SubdomainMixin):
     template_name = "blocks/page.html"
     catalog_service: CatalogServiceInterface = get_catalog_service()
 

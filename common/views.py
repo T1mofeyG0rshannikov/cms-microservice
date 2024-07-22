@@ -2,10 +2,11 @@ import re
 
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
-from django.views.generic import View
+from django.views.generic import TemplateView, View
 
 from common.security import LinkEncryptor
 from domens.models import Domain, Site
+from settings.get_settings import get_settings
 from settings.models import SiteSettings
 
 
@@ -14,17 +15,36 @@ class RedirectToLink(View):
 
     def get(self, request):
         tracker = self.request.GET.get("product")
-        print(tracker, "gfdgdddg")
         if tracker:
             link = self.link_encryptor.decrypt(tracker)
-            print(link)
+
             if link:
                 return HttpResponseRedirect(link)
 
         return HttpResponse(status=400)
 
 
-class SubdomainMixin(View):
+class SettingsMixin(TemplateView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        settings = get_settings(self.request.domain, self.request.subdomain)
+
+        if self.request.domain == "localhost":
+            domain = "localhost:8000"
+        else:
+            domain = Domain.objects.filter(is_partners=False).values("domain").first()["domain"]
+
+        partner_domain = Domain.objects.filter(is_partners=True).values("domain").first()["domain"]
+
+        context["settings"] = settings
+        context["domain"] = domain
+        context["partner_domain"] = partner_domain
+
+        return context
+
+
+class SubdomainMixin(SettingsMixin):
     def get_domain(self, request):
         host = request.get_host()
         host = host.replace("127.0.0.1", "localhost")

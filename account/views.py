@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login
 from django.http import HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import TemplateView, View
+from django.views.generic import View
 
 from account.forms import ChangePasswordForm, ChangeSiteForm, ChangeUserForm
 from account.models import Messanger, UserFont, UserMessanger, UserSocialNetwork
@@ -17,7 +17,7 @@ from user.views.base_user_view import BaseUserView, MyLoginRequiredMixin
 from utils.errors import UserErrors
 
 
-class SiteView(MyLoginRequiredMixin, TemplateView, SubdomainMixin):
+class SiteView(MyLoginRequiredMixin, SubdomainMixin):
     template_name = "account/site.html"
 
     def get_context_data(self, **kwargs):
@@ -102,7 +102,6 @@ class ChangeUserView(View):
             user = request.user_from_header
 
             phone = form.cleaned_data.get("phone")
-            print(phone)
             email = form.cleaned_data.get("email")
 
             user_with_phone = User.objects.get_user_by_phone(phone)
@@ -179,5 +178,5 @@ class ChangePasswordView(BaseUserView):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class Profile(TemplateView, MyLoginRequiredMixin, SubdomainMixin):
+class Profile(MyLoginRequiredMixin, SubdomainMixin):
     template_name = "account/profile.html"

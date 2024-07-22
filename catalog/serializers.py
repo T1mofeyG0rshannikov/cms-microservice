@@ -6,7 +6,6 @@ from rest_framework import serializers
 from blocks.models.catalog_block import CatalogBlock
 from catalog.models.product_type import ProductType
 from catalog.models.products import ExclusiveCard, Product
-from common.security import LinkEncryptor
 
 
 class CatalogBlockSerializer(serializers.ModelSerializer):
