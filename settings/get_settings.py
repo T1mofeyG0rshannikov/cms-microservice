@@ -11,7 +11,9 @@ def get_settings(domain: str, subdomain: str) -> dict:
 
     if sites.filter(subdomain=subdomain).exists():
         site = sites.get(subdomain=subdomain)
-        settings = SiteSettings.objects.prefetch_related("icon").prefetch_related("logo").first()
+        settings = (
+            SiteSettings.objects.prefetch_related("icon").prefetch_related("logo").prefetch_related("form_logo").first()
+        )
         settings = SettingsSerializer(settings).data
 
         if site.use_default_settings:
@@ -40,6 +42,8 @@ def get_settings(domain: str, subdomain: str) -> dict:
 
         return settings
 
-    settings = SiteSettings.objects.prefetch_related("icon").prefetch_related("logo").first()
+    settings = (
+        SiteSettings.objects.prefetch_related("icon").prefetch_related("logo").prefetch_related("form_logo").first()
+    )
 
     return SettingsSerializer(settings).data

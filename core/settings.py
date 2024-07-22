@@ -73,7 +73,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_hosts.middleware.HostsRequestMiddleware",
     "django_hosts.middleware.HostsResponseMiddleware",
-    "domens.middleware.DomainMiddleware",
+    # "domens.middleware.DomainMiddleware",
     "user.middleware.JwtAuthMiddleware",
 ]
 

@@ -12,6 +12,6 @@ COPY ./requirements.txt /usr/src/req.txt
 RUN pip install -r /usr/src/req.txt
 
 COPY . /usr/src/app
-RUN python manage.py collectstatic
+RUN python manage.py collectstatic --no-input
 
 EXPOSE 8000

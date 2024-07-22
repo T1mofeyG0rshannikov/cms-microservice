@@ -15,12 +15,13 @@ from blocks.pages_service.pages_service import get_page_service
 from blocks.serializers import PageSerializer, TemplateSerializer
 from catalog.catalog_service.catalog_service import get_catalog_service
 from catalog.catalog_service.catalog_service_interface import CatalogServiceInterface
+from common.views import SubdomainMixin
 from domens.models import Domain
 from settings.models import SiteSettings
 from user.forms import LoginForm
 
 
-class IndexPage(TemplateView):
+class IndexPage(TemplateView, SubdomainMixin):
     template_name = "blocks/page.html"
 
     def get(self, *args, **kwargs):
@@ -54,7 +55,7 @@ class IndexPage(TemplateView):
         return context
 
 
-class ShowPage(TemplateView):
+class ShowPage(TemplateView, SubdomainMixin):
     template_name = "blocks/page.html"
 
     def get_context_data(self, **kwargs):
@@ -69,12 +70,9 @@ class ShowPage(TemplateView):
         return context
 
 
-class ShowCatalogPage(TemplateView):
+class ShowCatalogPage(TemplateView, SubdomainMixin):
     template_name = "blocks/page.html"
-
-    def __init__(self):
-        super().__init__()
-        self.catalog_service: CatalogServiceInterface = get_catalog_service()
+    catalog_service: CatalogServiceInterface = get_catalog_service()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

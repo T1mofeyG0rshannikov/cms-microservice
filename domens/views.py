@@ -3,6 +3,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, View
 
+from common.views import SubdomainMixin
 from domens.forms import CreateSiteForm
 from domens.models import Domain, Site
 from user.models import User
@@ -10,7 +11,7 @@ from utils.errors import UserErrors
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class CreateSite(TemplateView):
+class CreateSite(TemplateView, SubdomainMixin):
     template_name = "domens/create_site.html"
 
     def get_context_data(self, **kwargs):

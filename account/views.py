@@ -9,6 +9,7 @@ from django.views.generic import TemplateView, View
 from account.forms import ChangePasswordForm, ChangeSiteForm, ChangeUserForm
 from account.models import Messanger, UserFont, UserMessanger, UserSocialNetwork
 from common.models import SocialNetwork
+from common.views import SubdomainMixin
 from domens.models import Site
 from notifications.models import UserNotification
 from user.models import User
@@ -16,7 +17,7 @@ from user.views.base_user_view import BaseUserView, MyLoginRequiredMixin
 from utils.errors import UserErrors
 
 
-class SiteView(MyLoginRequiredMixin, TemplateView):
+class SiteView(MyLoginRequiredMixin, TemplateView, SubdomainMixin):
     template_name = "account/site.html"
 
     def get_context_data(self, **kwargs):
@@ -178,5 +179,5 @@ class ChangePasswordView(BaseUserView):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class Profile(TemplateView, MyLoginRequiredMixin):
+class Profile(TemplateView, MyLoginRequiredMixin, SubdomainMixin):
     template_name = "account/profile.html"

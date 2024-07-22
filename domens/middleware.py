@@ -69,7 +69,13 @@ class DomainMiddleware:
             return HttpResponseNotFound("404 Subdomen not found")
 
         if Domain.objects.filter(is_partners=True).exists():
-            partner_domain = Domain.objects.filter(is_partners=True).first().domain
+            import time
+
+            start = time.time()
+            for i in range(500):
+                partner_domain = Domain.objects.filter(is_partners=True).values("domain").first()["domain"]
+
+            print(time.time() - start, 4)
 
             if domain == partner_domain and not subdomain and request.path != "":
                 return HttpResponseNotFound("404 Page not found")

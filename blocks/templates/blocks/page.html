@@ -20,11 +20,12 @@
     <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/stages.scss' %}">
     <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/stages.scss' %}">
     <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/catalog.scss' %}">
+    <link type="text/css" rel="stylesheet" href="{% sass_src 'user/css/main.scss' %}">
 {% endblock %}
 
 {% block content %}
     <div class="login-form-container" style="display: none">
-        {% include "user/login.html" %}
+        {% include "user/login_form.html" %}
     </div>
 
     {% for block in page.blocks %}
@@ -100,4 +101,13 @@
     <script src="{% static 'blocks/js/scroll-to-anchor.js'%}"></script>
     <script src="{% static 'blocks/js/promo.js' %}"></script>
     <script src="{% static 'blocks/js/catalog.js' %}"></script>
+
+    <!-- user -->
+    <script src="{% static "user/js/validators/password_validator.js" %}"></script>
+    <script src="{% static "user/js/password_field.js" %}"></script>
+    <script src="{% static "user/js/set_error.js" %}"></script>
+    <script src="{% static "user/js/validators/email_validator.js" %}"></script>
+    <script src="{% static "user/js/validators/username_validator.js" %}"></script>
+    <script src="{% static "user/js/validators/phone_validator.js" %}"></script>
+    <script src="{% static "user/js/token.js" %}"></script>
 {% endblock %}

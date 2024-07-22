@@ -1,0 +1,46 @@
+{% load static %}
+
+<form onsubmit="submitLoginForm(this, event, '{{domain}}')" class="user-form" id="login-form">
+    <img class="logo" src="{{ settings.form_logo.image }}" />
+
+    <h3>Вход в кабинет</h3>
+
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="field {% if field.name == 'password' %}password{% elif field.name == 'repeat_password' %}password{% endif %}" id="{{ field.name }}">
+            <div class="field-container">
+                {{ field }}
+
+                {% if field.name == "password" %}
+                    <img class="eye" src="{% static 'user/images/eye-cross.png' %}" />
+                {% endif %}
+
+                {% for error in field.errors %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+    <input type="submit" value="Войти в кабинет" />
+
+    <div class="bottom-menu">
+        <label class="agreed-container">Запомнить меня
+            <input type="checkbox">
+            <span class="checkmark"></span>
+        </label>
+
+        <a href="/user/reset-password" class="forget-password">Забыли пароль?</a>
+    </div>
+
+    <p class="already-register">Ещё не зарегистрированы?</p>
+    <a href="/user/register" class="login">Создать кабинет</a>
+</form>
+
+<style>
+    .logo{
+        width: {{settings.form_logo.width}};
+        height: {{settings.form_logo.height}};
+    }
+</style>
+
+<script src="{% static "user/js/login_form.js" %}"></script>

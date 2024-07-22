@@ -29,13 +29,18 @@ class BlockSerializer(serializers.Serializer):
 
     def get_content(self, block):
         content = self.page_service.get_page_block(block.name)
+        self.content = content
 
         if isinstance(content, MainPageCatalogBlock):
-            content.products = [product.product for product in CatalogProductType.objects.filter(block=content)]
+            content.products = [
+                product.product
+                for product in CatalogProductType.objects.select_related("product").filter(block=content)
+            ]
 
         if isinstance(content, AdditionalCatalogBlock):
             content.products = [
-                product.product for product in AdditionalCatalogProductType.objects.filter(block=content)
+                product.product
+                for product in AdditionalCatalogProductType.objects.select_related("product").filter(block=content)
             ]
 
         if content is not None:
@@ -44,7 +49,7 @@ class BlockSerializer(serializers.Serializer):
         return content
 
     def get_styles(self, block):
-        styles = self.get_content(block).get_styles()
+        styles = self.content.get_styles()
         if styles is not None:
             return CustomStylesSerializer(styles).data
 

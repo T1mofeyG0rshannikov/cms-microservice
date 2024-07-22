@@ -4,16 +4,13 @@ from blocks.pages_service.page_service_interface import PageServiceInterface
 
 class PageService(PageServiceInterface):
     def get_page_block(self, blocks_name: BlockRelationship) -> BaseBlock:
-        blocks = [
-            f.field.model.objects.filter(block_relation=blocks_name).first()
-            for f in blocks_name._meta.get_fields()
-            if (f.one_to_many or f.one_to_one) and isinstance(f.field.model.objects.first(), BaseBlock)
-        ]
+        block = None
 
-        if blocks:
-            block = [block for block in blocks if block is not None][0]
-        else:
-            block = None
+        for f in blocks_name._meta.related_objects:
+            if isinstance(f.related_model.objects.first(), BaseBlock):
+                if f.field.model.objects.filter(block_relation=blocks_name).exists():
+                    block = f.field.model.objects.select_related("styles").get(block_relation=blocks_name)
+                    break
 
         return block
 

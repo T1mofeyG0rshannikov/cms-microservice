@@ -1,11 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 
+from common.views import SubdomainMixin
 from user.auth.jwt_processor import get_jwt_processor
 from user.auth.jwt_processor_interface import JwtProcessorInterface
 
 
-class BaseUserView(TemplateView):
+class BaseUserView(TemplateView, SubdomainMixin):
     jwt_processor: JwtProcessorInterface = get_jwt_processor()
 
 
