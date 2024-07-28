@@ -4,7 +4,7 @@
     border-radius: 5px;
     right: 0;
     display: none;
-    width: 400px;
+    width: 415px;
     border: 1px solid var(--dark-color);
     z-index: 3;
 
@@ -29,6 +29,7 @@
         align-items: start;
         justify-content: space-between;
         margin: 10px 0px;
+        gap: 10px;
 
         .status{
             width: 15px;

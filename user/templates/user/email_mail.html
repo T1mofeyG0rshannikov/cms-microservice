@@ -1,0 +1,34 @@
+{% extends "common/base.html" %}
+
+{% block content %}
+
+<div style="display: flex;
+        text-align: center;
+        flex-direction: column;
+        align-items: center;">
+    <img src="{{ logo }}" />
+
+    <p style="margin: 25px 0px;"><strong>Добро пожаловать в BankoMag!</strong></p>
+
+    <p style="width: 320px; margin: 0px;">Для завершения регистрации вам осталось подтвердить email адрес, нажав кнопку:</p>
+
+    <button onclick="location.href='{{ link }}'" style="background-color: {{ main_color }};
+        color: white;
+        border-radius: 5px;
+        border: none;
+        padding: 15px 20px;
+        margin: 25px 0px;">ПОДТВЕРДИТЬ</button>
+
+    <p style="margin-bottom: 5px;">или скопируйте и вставьте в браузере эту ссылку:</p>
+    <a style="margin: 0px;" href="{{ link }}">{{ link }}</a>
+
+    <p>С уважением, команда <a href="bankomag.ru">BankoMag.ru</a></p>
+</div>
+
+<style>
+    img{
+        width: 200px;
+    }
+</style>
+
+{% endblock %}

@@ -15,6 +15,9 @@ class NotificationSerializer(serializers.ModelSerializer):
         if not user:
             return notification.message
 
+        if not user.full_site_name:
+            return notification.message
+
         return notification.message.replace("[user.site]", user.full_site_name)
 
 

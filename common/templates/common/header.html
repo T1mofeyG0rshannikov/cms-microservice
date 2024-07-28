@@ -32,7 +32,7 @@
                                     <img class="status" src="{% if alert.notification.status == 'info' %}{% static 'common/images/tick.png' %}{% elif alert.notification.status == 'warning' %}{% static 'common/images/i.png' %}{% endif %}" />
 
                                     <div class="alert-content">
-                                        <a class="date">{{ alert.date_created|date:"d.m.Y" }}</a>
+                                        <a class="date">{{ alert.date_created }}</a>
                                         <a>{{ alert.notification.message }}</a>
                                     </div>
                                 </div>

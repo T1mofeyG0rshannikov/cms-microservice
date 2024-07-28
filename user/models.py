@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from django.db.models.signals import post_save, pre_save
 
-from domens.models import Domain
+from domens.models import Domain, Site
 from notifications.create_user_notification import create_user_notification
 from notifications.send_message import send_message_to_user
 from user.auth.jwt_processor import get_jwt_processor
@@ -56,7 +56,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def full_site_name(self):
-        return f"{self.site}.{Domain.objects.filter(is_partners=True).values_list('domain').first()[0]}"
+        if Site.objects.filter(user_id=self.id).exists():
+            return f"{self.site}.{Domain.objects.filter(is_partners=True).values_list('domain').first()[0]}"
 
     def __str__(self) -> str:
         return self.username

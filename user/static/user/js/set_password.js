@@ -1,6 +1,8 @@
 function initSetPasswordForm(){
-    const passwordContainer = document.querySelector("#password")
-    const repeatPasswordContainer = document.querySelector("#repeat_password")
+    const form = document.querySelector(".user-form");
+
+    const passwordContainer = form.querySelector("#password")
+    const repeatPasswordContainer = form.querySelector("#repeat_password")
 
     const input1 = passwordContainer.querySelector("input")
     input1.addEventListener("change", validateForm)
@@ -23,7 +25,7 @@ function initSetPasswordForm(){
     })
 
     function validateForm(){
-        const button = document.querySelector("input[type=submit]");
+        const button = form.querySelector("input[type=submit]");
 
         const password1 = input1.value;
         const password2 = input2.value;
