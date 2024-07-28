@@ -36,15 +36,16 @@ function activateSite(element){
     })
 }
 
-const siteForm = document.querySelector(".site-form");
+let siteForm = document.querySelector(".site-form");
 
-function openSiteForm(form){
-    const logo = form.querySelector("#logo img");
+function openSiteForm(){
+    siteForm = document.querySelector(".site-form");
+    const logo = siteForm.querySelector("#logo img");
     logo.src = $(logo).attr("default");
-    form.querySelector("#file").value = "";
+    siteForm.querySelector("#file").value = "";
 
-    openForm(form);
+    openForm(siteForm);
 }
 
 const openSiteFormButton = document.querySelector("#open-site-form");
-openSiteFormButton.addEventListener("click", () => openSiteForm(siteForm));
+openSiteFormButton.addEventListener("click", () => openSiteForm());

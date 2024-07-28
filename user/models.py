@@ -91,7 +91,7 @@ def user_verified_email_handler(sender, instance, *args, **kwargs):
         previous = User.objects.get_user_by_id(id=instance.id)
         if not previous.email_is_confirmed and instance.email_is_confirmed:
             user_alert = create_user_notification(instance, "EMAILVERIFIED")
-
+            print(instance.id)
             send_message_to_user(instance.id, user_alert)
 
 

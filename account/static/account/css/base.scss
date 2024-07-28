@@ -1,5 +1,6 @@
 .menu{
     height: 100%;
+    min-height: 700px;
 
     ul{
         padding-left: 15px;
@@ -26,6 +27,7 @@
             gap: 10px;
             font-weight: 400;
             text-decoration: none;
+            cursor: pointer;
         }
     }
 

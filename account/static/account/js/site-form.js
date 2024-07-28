@@ -58,6 +58,9 @@ function onSubmitSiteForm(domain, element, event){
             console.log("success");
             location.reload();
         }
+        if (response.status === 401){
+            window.location.href="/user/login";
+        }
         return response.json();
     }).then(response => {
         setErrors({}, element)

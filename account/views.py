@@ -2,6 +2,7 @@ import json
 
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponse, JsonResponse
+from django.template import loader
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
@@ -17,29 +18,45 @@ from user.views.base_user_view import BaseUserView, MyLoginRequiredMixin
 from utils.errors import UserErrors
 
 
-class SiteView(MyLoginRequiredMixin, SubdomainMixin):
-    template_name = "account/site.html"
-
+class BaseProfileView(MyLoginRequiredMixin, SubdomainMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context["socials"] = SocialNetwork.objects.all()
-        context["fonts"] = UserFont.objects.all()
-        context["notifications"] = UserNotification.objects.all()
+        context["notifications"] = UserNotification.objects.filter(user_id=self.request.user.id)
         context["messangers"] = Messanger.objects.select_related("social_network").all()
+        context["fonts"] = UserFont.objects.all()
+        context["socials"] = SocialNetwork.objects.all()
 
         return context
+
+
+class SiteView(BaseProfileView):
+    template_name = "account/site.html"
 
 
 @method_decorator(csrf_exempt, name="dispatch")
 class ChangeSiteView(View):
     def post(self, request):
+        user = request.user_from_header
+        if user is None:
+            return HttpResponse(status=401)
+
         print(request.POST)
         form = ChangeSiteForm(request.POST)
         if form.is_valid():
             site_url = form.cleaned_data.get("site")
-            user = request.user_from_header
-            site = user.site
+            if Site.objects.filter(user_id=user.id).exists():
+                site = user.site
+            else:
+                site = Site.objects.create(
+                    subdomain=form.cleaned_data["site"],
+                    name=form.cleaned_data["name"],
+                    owner=form.cleaned_data["owner"],
+                    contact_info=form.cleaned_data["contact_info"],
+                    font=UserFont.objects.get(id=form.cleaned_data["font"]),
+                    font_size=form.cleaned_data["font_size"],
+                    user=user,
+                )
 
             if site.subdomain != site_url and Site.objects.filter(subdomain=site_url).exists():
                 form.add_error("site", "Адрес занят")
@@ -177,6 +194,13 @@ class ChangePasswordView(BaseUserView):
         return JsonResponse({"errors": form.errors}, status=400)
 
 
-@method_decorator(csrf_exempt, name="dispatch")
-class Profile(MyLoginRequiredMixin, SubdomainMixin):
+class Profile(BaseProfileView):
     template_name = "account/profile.html"
+
+
+class ProfileTemplate(BaseProfileView):
+    def get(self, request, template_name, **kwargs):
+        context = self.get_context_data(**kwargs)
+
+        content = loader.render_to_string(f"account/{template_name}.html", context, request, None)
+        return JsonResponse({"content": content})

@@ -1,3 +1,5 @@
+from typing import Any
+
 from blocks.models.blocks import Cover
 from blocks.models.catalog_block import CatalogBlock
 from blocks.pages_service.page_service_interface import PageServiceInterface
@@ -31,12 +33,12 @@ class CatalogService(CatalogServiceInterface):
 
         return page
 
-    def get_catalog_block(self, user, slug: str):
+    def get_catalog_block(self, user: Any, slug: str) -> dict[str, Any]:
         catalog = CatalogBlock.objects.prefetch_related("styles").get(product_type__slug=slug)
         catalog_relation = BlockRelationship.objects.get(block_name=catalog.name)
         catalog = self.page_service.get_page_block(catalog_relation)
         styles = catalog.get_styles()
-        # catalog.styles
+
         if styles is None:
             styles = CatalogCustomStyles.objects.create(block=catalog)
 
@@ -59,7 +61,7 @@ class CatalogService(CatalogServiceInterface):
 
         return {"content": cover, "styles": cover_styles}
 
-    def set_catalog_block(self, page, user, slug: str):
+    def set_catalog_block(self, page, user, slug: str) -> dict[Any, Any]:
         page = PageSerializer(page).data
         catalog = self.get_catalog_block(user, slug)
 

@@ -1,6 +1,5 @@
 from django.urls import path
 
-from domens.views import CreateSite
 from user.views.views import (
     ConfirmEmail,
     GetUserInfo,
@@ -22,6 +21,5 @@ urlpatterns = [
     path("reset-password", SendMailToResetPassword.as_view()),
     path("set-token/<str:token>", SetToken.as_view()),
     path("logout", Logout.as_view()),
-    path("create-site", CreateSite.as_view()),
     path("send-confirm-email", SendConfirmEmail.as_view()),
 ]

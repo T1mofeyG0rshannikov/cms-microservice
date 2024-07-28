@@ -5,7 +5,7 @@ from blocks.models.blocks_components import (
     CatalogProductType,
 )
 from blocks.models.catalog_block import AdditionalCatalogBlock, MainPageCatalogBlock
-from blocks.models.common import Page, Template
+from blocks.models.common import Page
 from blocks.pages_service.pages_service import PageService
 from styles.serializers import CustomStylesSerializer
 
@@ -54,9 +54,3 @@ class BlockSerializer(serializers.Serializer):
             return CustomStylesSerializer(styles).data
 
         return None
-
-
-class TemplateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Template
-        fields = ("name", "file")

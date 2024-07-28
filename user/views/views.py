@@ -5,7 +5,9 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
+from common.views import SubdomainMixin
 from domens.models import Domain, Site
+from settings.get_settings import get_settings
 from user.email_service.email_service import get_email_service
 from user.forms import LoginForm, RegistrationForm, ResetPasswordForm, SetPasswordForm
 from user.models import User
@@ -17,7 +19,7 @@ from utils.validators import is_valid_email, is_valid_phone
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class RegisterUser(BaseUserView):
+class RegisterUser(BaseUserView, SubdomainMixin):
     template_name = "user/register.html"
 
     def get_context_data(self, **kwargs):
@@ -26,13 +28,17 @@ class RegisterUser(BaseUserView):
 
         return context
 
-    def get_subdomain(self):
-        if Site.objects.filter(subdomain=self.request.subdomain).exists():
-            return Site.objects.get(subdomain=self.request.subdomain)
+    @property
+    def subdomain(self):
+        subdomain = self.get_subdomain(self.request)
+        if Site.objects.filter(subdomain=subdomain).exists():
+            return Site.objects.get(subdomain=subdomain)
 
-    def get_domain(self):
-        if Domain.objects.filter(domain=self.request.domain).exists():
-            return Domain.objects.get(domain=self.request.domain)
+    @property
+    def domain(self):
+        domain = self.get_domain(self.request)
+        if Domain.objects.filter(domain=domain).exists():
+            return Domain.objects.get(domain=domain)
 
     def post(self, request):
         form = RegistrationForm(request.POST)
@@ -54,7 +60,7 @@ class RegisterUser(BaseUserView):
                 return JsonResponse({"errors": form.errors}, status=400)
 
             user = User.objects.create_user(
-                **form.cleaned_data, register_on_site=self.get_subdomain(), register_on_domain=self.get_domain()
+                **form.cleaned_data, register_on_site=self.subdomain, register_on_domain=self.domain
             )
 
             print(user)
@@ -74,7 +80,20 @@ class SetPassword(BaseUserView):
     def get(self, request, token):
         form = SetPasswordForm()
 
-        return render(request, "user/set-password.html", {"form": form, "token": token})
+        settings = get_settings(request.domain, request.subdomain)
+
+        if request.domain == "localhost":
+            domain = "localhost:8000"
+        else:
+            domain = Domain.objects.filter(is_partners=False).values("domain").first()["domain"]
+
+        partner_domain = Domain.objects.filter(is_partners=True).values("domain").first()["domain"]
+
+        return render(
+            request,
+            "user/set-password.html",
+            {"form": form, "token": token, "settings": settings, "domain": domain, "partner_domain": partner_domain},
+        )
 
     def post(self, request, token):
         form = SetPasswordForm(request.POST)
@@ -97,7 +116,25 @@ class SetPassword(BaseUserView):
 
             access_token = self.jwt_processor.create_access_token(user.username, user.id)
 
-            return render(request, "user/set-password.html", {"access_token": access_token})
+            settings = get_settings(request.domain, request.subdomain)
+
+            if request.domain == "localhost":
+                domain = "localhost:8000"
+            else:
+                domain = Domain.objects.filter(is_partners=False).values("domain").first()["domain"]
+
+            partner_domain = Domain.objects.filter(is_partners=True).values("domain").first()["domain"]
+
+            return render(
+                request,
+                "user/set-password.html",
+                {
+                    "access_token": access_token,
+                    "settings": settings,
+                    "domain": domain,
+                    "partner_domain": partner_domain,
+                },
+            )
 
         return render(request, "user/set-password.html", {"form": form, "token": token})
 

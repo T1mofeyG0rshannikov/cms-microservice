@@ -10,6 +10,7 @@ class JwtAuthMiddleware:
 
     def __call__(self, request):
         token = request.headers.get("Authorization")
+
         payload = self.jwt_processor.validate_token(token)
 
         if payload:

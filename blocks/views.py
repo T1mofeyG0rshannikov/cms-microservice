@@ -2,17 +2,17 @@ import json
 import sys
 
 from django.db.utils import IntegrityError
-from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
+from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
 from blocks.models.catalog_block import CatalogBlock
-from blocks.models.common import Page, Template
+from blocks.models.common import Page
 from blocks.pages_service.page_service_interface import PageServiceInterface
 from blocks.pages_service.pages_service import get_page_service
-from blocks.serializers import PageSerializer, TemplateSerializer
+from blocks.serializers import PageSerializer
 from catalog.catalog_service.catalog_service import get_catalog_service
 from catalog.catalog_service.catalog_service_interface import CatalogServiceInterface
 from common.views import SubdomainMixin
@@ -83,11 +83,6 @@ class ShowCatalogPage(SubdomainMixin):
         context["form"] = LoginForm()
 
         return context
-
-
-class ShowTemplates(View):
-    def get(self, request):
-        return JsonResponse(TemplateSerializer(Template.objects.all(), many=True).data)
 
 
 def slug_router(request, slug):

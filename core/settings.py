@@ -45,10 +45,10 @@ INSTALLED_APPS = [
     "notifications",
     "qr_code",
     "sass_processor",
+    "daphne",
     "channels",
     "rest_framework",
 ]
-
 ASGI_APPLICATION = "core.asgi.application"
 
 CHANNEL_LAYERS = {
@@ -73,6 +73,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_hosts.middleware.HostsRequestMiddleware",
     "django_hosts.middleware.HostsResponseMiddleware",
+    # "channels.middleware.WebsocketMiddleware",
     # "domens.middleware.DomainMiddleware",
     "user.middleware.JwtAuthMiddleware",
 ]

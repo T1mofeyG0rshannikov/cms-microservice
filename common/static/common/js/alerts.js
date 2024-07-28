@@ -1,3 +1,12 @@
+function getAlertIcon(alert){
+    if (alert.status === "info"){
+        return "/static/common/images/i.png";
+    }
+
+    return "/static/common/images/tick.png";
+}
+
+
 function addAlert(alert){
     const alertSpan = document.querySelector("span.indicator");
 
@@ -8,11 +17,13 @@ function addAlert(alert){
     const newAlertElem =
     `
     <div class="alert-elem">
-        <img src="" />
+        <div class="main">
+            <img class="status" src="${getAlertIcon(alert)}" />
 
-        <div class="alert-content">
-            <a class="date">${ alert.date_created }</a>
-            <a>${ alert.notification.message }</a>
+            <div class="alert-content">
+                <a class="date">${ alert.date_created }</a>
+                <a>${ alert.notification.message }</a>
+            </div>
         </div>
 
         <img class="trash" data-id="${ alert.id }" src="/static/account/images/trash.png" />
