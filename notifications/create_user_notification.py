@@ -7,6 +7,6 @@ def create_user_notification(user, trigger_name: str):
     user_alert = UserNotification(user=user, notification=alert)
     user_alert.save()
 
-    user_alert = UserNotificationSerializer(user_alert).data
+    user_alert = UserNotificationSerializer(user_alert, context={"user": user}).data
 
     return user_alert

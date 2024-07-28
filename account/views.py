@@ -13,6 +13,7 @@ from common.models import SocialNetwork
 from common.views import SubdomainMixin
 from domens.models import Site
 from notifications.models import UserNotification
+from notifications.serializers import UserNotificationSerializer
 from settings.models import SiteSettings
 from user.models import User
 from user.views.base_user_view import BaseUserView, MyLoginRequiredMixin
@@ -23,7 +24,12 @@ class BaseProfileView(MyLoginRequiredMixin, SubdomainMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context["notifications"] = UserNotification.objects.filter(user_id=self.request.user.id)
+        context["notifications"] = UserNotificationSerializer(
+            UserNotification.objects.filter(user_id=self.request.user.id),
+            context={"user": self.request.user},
+            many=True,
+        ).data
+
         context["messangers"] = Messanger.objects.select_related("social_network").all()
         context["fonts"] = UserFont.objects.all()
         context["socials"] = SocialNetwork.objects.all()

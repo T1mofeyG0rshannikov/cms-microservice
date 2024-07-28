@@ -56,7 +56,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def full_site_name(self):
-        return f"{self.site}.{Domain.objects.filter(is_partners=True).first().domain}"
+        return f"{self.site}.{Domain.objects.filter(is_partners=True).values_list('domain').first()[0]}"
 
     def __str__(self) -> str:
         return self.username
@@ -91,7 +91,6 @@ def user_verified_email_handler(sender, instance, *args, **kwargs):
         previous = User.objects.get_user_by_id(id=instance.id)
         if not previous.email_is_confirmed and instance.email_is_confirmed:
             user_alert = create_user_notification(instance, "EMAILVERIFIED")
-            print(instance.id)
             send_message_to_user(instance.id, user_alert)
 
 
