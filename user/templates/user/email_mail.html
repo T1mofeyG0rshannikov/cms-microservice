@@ -12,12 +12,12 @@
 
     <p style="width: 320px; margin: 0px;">Для завершения регистрации вам осталось подтвердить email адрес, нажав кнопку:</p>
 
-    <button onclick="location.href='{{ link }}'" style="background-color: {{ main_color }};
+    <button style="background-color: {{ main_color }};
         color: white;
         border-radius: 5px;
         border: none;
         padding: 15px 20px;
-        margin: 25px 0px;">ПОДТВЕРДИТЬ</button>
+        margin: 25px 0px;"><a style="width: 100%; height: 100%; cursor: pointer; text-decoration: none; color: white;" href="{{ link }}">ПОДТВЕРДИТЬ</a></button>
 
     <p style="margin-bottom: 5px;">или скопируйте и вставьте в браузере эту ссылку:</p>
     <a style="margin: 0px;" href="{{ link }}">{{ link }}</a>

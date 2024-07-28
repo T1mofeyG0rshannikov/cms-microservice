@@ -138,7 +138,7 @@ class ChangeUserView(View):
 
                 return JsonResponse({"errors": form.errors}, status=400)
 
-            elif user_with_phone != user:
+            elif user_with_phone != user and user_with_phone and user_with_phone.phone_is_confirmed:
                 form.add_error("phone", UserErrors.username_with_phone_alredy_exists.value)
 
                 return JsonResponse({"errors": form.errors}, status=400)

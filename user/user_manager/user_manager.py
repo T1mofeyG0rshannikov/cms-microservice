@@ -38,6 +38,12 @@ class UserManager(BaseUserManager, UserManagerInterface):
             return self.get(**{"phone": phone})
         except self.model.DoesNotExist:
             return None
+        except MultipleObjectsReturned:
+            last_user = self.get_queryset().first()
+            users_with_phone_exclude_last = self.get_queryset().exclude(created_at=last_user.created_at)
+            users_with_phone_exclude_last.update(phone=None)
+
+            return last_user
 
     def create_user(self, username: str, phone: str, email: str, **extra_fields):
         return self.model.objects.create(username=username, email=email, phone=phone, **extra_fields)
