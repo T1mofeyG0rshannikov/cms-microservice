@@ -58,7 +58,7 @@ class CustomAuthenticationAdminForm(AuthenticationForm):
     def __init__(self, request=None, *args, **kwargs):
         self.request = request
         self.user_cache = None
-        super(forms.Form, self).__init__(*args, **kwargs)
+        super(AuthenticationForm, self).__init__(*args, **kwargs)
 
         self.fields["username"].label = "Email или телефон"
         self.fields["password"].label = "Пароль"

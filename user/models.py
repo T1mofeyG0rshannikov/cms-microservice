@@ -16,7 +16,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(verbose_name="Имя пользователя", max_length=100)
     second_name = models.CharField(verbose_name="Фамлия", max_length=200, null=True, blank=True)
 
-    phone = models.CharField(verbose_name="Номер телефона", max_length=12)
+    phone = models.CharField(verbose_name="Номер телефона", max_length=12, null=True)
     phone_is_confirmed = models.BooleanField(verbose_name="Телефон подтвержден", default=False)
 
     email = models.CharField(verbose_name="E-mail", max_length=200, null=True)

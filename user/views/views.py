@@ -63,6 +63,9 @@ class RegisterUser(BaseUserView, SubdomainMixin):
                 **form.cleaned_data, register_on_site=self.subdomain, register_on_domain=self.domain
             )
 
+            User.objects.filter(email=email).update(email=None)
+            User.objects.filter(phone=phone).update(phone=None)
+
             print(user)
             request.user = user
             user = authenticate(request)
