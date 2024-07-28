@@ -11,14 +11,14 @@ class JwtProcessor(JwtProcessorInterface):
         self.jwt_settings = jwt_settings
 
     def create_set_password_token(self, user_id: int) -> dict:
-        encode = {"id": user_id}
-        expires = datetime.utcnow() + timedelta(hours=self.jwt_settings.expires_in)
-        encode.update({"exp": expires})
+        expires = datetime.utcnow() + timedelta(hours=int(self.jwt_settings.expires_in))
+        encode = {"id": user_id, "exp": expires}
+
         return jwt.encode(encode, self.jwt_settings.secret_key, algorithm=self.jwt_settings.algorithm)
 
     def create_access_token(self, username: str, user_id: int) -> dict:
         encode = {"sub": username, "id": user_id}
-        expires = datetime.utcnow() + timedelta(hours=self.jwt_settings.expires_in)
+        expires = datetime.utcnow() + timedelta(hours=int(self.jwt_settings.expires_in))
         encode.update({"exp": expires})
         return jwt.encode(encode, self.jwt_settings.secret_key, algorithm=self.jwt_settings.algorithm)
 
@@ -35,7 +35,7 @@ class JwtProcessor(JwtProcessorInterface):
     def create_confirm_email_token(self, user_id: int) -> str:
         payload = {
             "user_id": user_id,
-            "exp": datetime.utcnow() + timedelta(hours=self.jwt_settings.expires_in),
+            "exp": datetime.utcnow() + timedelta(hours=int(self.jwt_settings.expires_in)),
         }
 
         return jwt.encode(payload, self.jwt_settings.secret_key, algorithm=self.jwt_settings.algorithm)

@@ -13,6 +13,7 @@ from common.models import SocialNetwork
 from common.views import SubdomainMixin
 from domens.models import Site
 from notifications.models import UserNotification
+from settings.models import SiteSettings
 from user.models import User
 from user.views.base_user_view import BaseUserView, MyLoginRequiredMixin
 from utils.errors import UserErrors
@@ -26,6 +27,8 @@ class BaseProfileView(MyLoginRequiredMixin, SubdomainMixin):
         context["messangers"] = Messanger.objects.select_related("social_network").all()
         context["fonts"] = UserFont.objects.all()
         context["socials"] = SocialNetwork.objects.all()
+
+        context["default_user_size"] = SiteSettings.objects.values_list("default_users_font_size").first()[0]
 
         return context
 

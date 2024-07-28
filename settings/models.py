@@ -2,10 +2,29 @@ from django.db import models
 
 from common.models import OneInstanceModel
 
+FONT_SIZES = (
+    (6, 6),
+    (8, 8),
+    (9, 9),
+    (10, 10),
+    (12, 12),
+    (14, 14),
+    (18, 18),
+    (24, 24),
+    (30, 30),
+    (36, 36),
+    (48, 48),
+    (60, 60),
+    (72, 72),
+)
+
 
 class SiteSettings(OneInstanceModel):
     disable_partners_sites = models.BooleanField(default=False, verbose_name="Отключить партнёрский домен")
-    
+    default_users_font_size = models.PositiveSmallIntegerField(
+        null=True, choices=FONT_SIZES, verbose_name="Размер пользовательского шрифта по умолчанию"
+    )
+
     class Meta:
         verbose_name = "Настройки сайта"
         verbose_name_plural = "Настройки сайта"

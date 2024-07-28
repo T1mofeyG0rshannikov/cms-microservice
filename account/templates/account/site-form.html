@@ -41,19 +41,35 @@
         <div class="field" id="font_size">
             <p>Размер</p>
             <select name="font_size" id="font_size">
-                <option {% if user.site.font_size == 6 %}selected{% endif %} value="6">6</option>
-                <option {% if user.site.font_size == 8 %}selected{% endif %} value="8">8</option>
-                <option {% if user.site.font_size == 9 %}selected{% endif %} value="9">9</option>
-                <option {% if user.site.font_size == 10 %}selected{% endif %} value="10">10</option>
-                <option {% if user.site.font_size == 12 %}selected{% endif %} value="12">12</option>
-                <option {% if user.site.font_size == 14 %}selected{% endif %} value="14">14</option>
-                <option {% if user.site.font_size == 18 %}selected{% endif %} value="18">18</option>
-                <option {% if user.site.font_size == 24 %}selected{% endif %} value="24">24</option>
-                <option {% if user.site.font_size == 30 %}selected{% endif %} value="30">30</option>
-                <option {% if user.site.font_size == 36 %}selected{% endif %} value="36">36</option>
-                <option {% if user.site.font_size == 48 %}selected{% endif %} value="48">48</option>
-                <option {% if user.site.font_size == 60 %}selected{% endif %} value="60">60</option>
-                <option {% if user.site.font_size == 72 %}selected{% endif %} value="72">72</option>
+                {% if user.site.font_size %}
+                    <option {% if user.site.font_size == 6 %}selected{% endif %} value="6">6</option>
+                    <option {% if user.site.font_size == 8 %}selected{% endif %} value="8">8</option>
+                    <option {% if user.site.font_size == 9 %}selected{% endif %} value="9">9</option>
+                    <option {% if user.site.font_size == 10 %}selected{% endif %} value="10">10</option>
+                    <option {% if user.site.font_size == 12 %}selected{% endif %} value="12">12</option>
+                    <option {% if user.site.font_size == 14 %}selected{% endif %} value="14">14</option>
+                    <option {% if user.site.font_size == 18 %}selected{% endif %} value="18">18</option>
+                    <option {% if user.site.font_size == 24 %}selected{% endif %} value="24">24</option>
+                    <option {% if user.site.font_size == 30 %}selected{% endif %} value="30">30</option>
+                    <option {% if user.site.font_size == 36 %}selected{% endif %} value="36">36</option>
+                    <option {% if user.site.font_size == 48 %}selected{% endif %} value="48">48</option>
+                    <option {% if user.site.font_size == 60 %}selected{% endif %} value="60">60</option>
+                    <option {% if user.site.font_size == 72 %}selected{% endif %} value="72">72</option>
+                {% else %}
+                    <option {% if default_user_size == 6 %}selected{% endif %} value="6">6</option>
+                    <option {% if default_user_size == 8 %}selected{% endif %} value="8">8</option>
+                    <option {% if default_user_size == 9 %}selected{% endif %} value="9">9</option>
+                    <option {% if default_user_size == 10 %}selected{% endif %} value="10">10</option>
+                    <option {% if default_user_size == 12 %}selected{% endif %} value="12">12</option>
+                    <option {% if default_user_size == 14 %}selected{% endif %} value="14">14</option>
+                    <option {% if default_user_size == 18 %}selected{% endif %} value="18">18</option>
+                    <option {% if default_user_size == 24 %}selected{% endif %} value="24">24</option>
+                    <option {% if default_user_size == 30 %}selected{% endif %} value="30">30</option>
+                    <option {% if default_user_size == 36 %}selected{% endif %} value="36">36</option>
+                    <option {% if default_user_size == 48 %}selected{% endif %} value="48">48</option>
+                    <option {% if default_user_size == 60 %}selected{% endif %} value="60">60</option>
+                    <option {% if default_user_size == 72 %}selected{% endif %} value="72">72</option>
+                {% endif %}
             </select>
         </div>
     </div>
