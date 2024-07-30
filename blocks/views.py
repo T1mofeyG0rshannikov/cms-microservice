@@ -18,7 +18,7 @@ from catalog.catalog_service.catalog_service_interface import CatalogServiceInte
 from common.views import SubdomainMixin
 from domens.models import Domain
 from settings.models import SiteSettings
-from user.forms import LoginForm, ResetPasswordForm, RegistrationForm
+from user.forms import LoginForm, RegistrationForm, ResetPasswordForm
 
 
 class IndexPage(SubdomainMixin):

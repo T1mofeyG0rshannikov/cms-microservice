@@ -6,7 +6,7 @@ function initSetPasswordForm(){
 
     const input1 = passwordContainer.querySelector("input");
     const input2 = repeatPasswordContainer.querySelector("input");
-    
+
     input1.addEventListener("input", validateForm)
     input1.addEventListener("change", () => {
         const password1 = input1.value;
