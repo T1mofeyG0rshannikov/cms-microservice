@@ -12,20 +12,17 @@ function initResetPasswordForm(element){
 
     const emailInput = element.querySelector("#email").querySelector("input");
 
-    let validEmail = validateEmail(emailInput.value);
-
-
     emailInput.addEventListener("change", () => {
         validEmail = onchangeEmail(element);
-        formValid()
+        formValid();
     });
 }
 
-const form = document.querySelector(".user-form")
+const form = document.querySelector(".reset-password-form")
 initResetPasswordForm(form);
 
 
-function submitResetPasswordFormForm(element, event){
+function submitResetPasswordForm(element, event){
     event.preventDefault();
 
     const data = new FormData(element);
@@ -41,9 +38,7 @@ function submitResetPasswordFormForm(element, event){
         body: data
     }).then(response => {
         if (response.status === 200){
-            response.json().then((response) => {
-                document.querySelector(".message").innerHTML = response.message;
-            })
+           document.querySelector(".message").innerHTML = "Вам на почту пришло письмо с ссылкой для сброса пароля";
         }
         return response.json();
     }).then(response => {

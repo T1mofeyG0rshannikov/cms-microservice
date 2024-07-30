@@ -6,7 +6,7 @@
     <h3>Вход в кабинет</h3>
 
     {% csrf_token %}
-    {% for field in form %}
+    {% for field in login_form %}
         <div class="field {% if field.name == 'password' %}password{% elif field.name == 'repeat_password' %}password{% endif %}" id="{{ field.name }}">
             <div class="field-container">
                 {{ field }}
@@ -29,11 +29,11 @@
             <span class="checkmark"></span>
         </label>
 
-        <a href="/user/reset-password" class="forget-password">Забыли пароль?</a>
+        <a onclick="openFormPopup(resetPasswordFormContainer)" class="forget-password" style="cursor: pointer;">Забыли пароль?</a>
     </div>
 
     <p class="already-register">Ещё не зарегистрированы?</p>
-    <a href="/user/register" class="login">Создать кабинет</a>
+    <a onclick="openFormPopup(registerFormContainer)" style="cursor: pointer;" class="login">Создать кабинет</a>
 </form>
 
 <style>

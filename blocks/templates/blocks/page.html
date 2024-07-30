@@ -24,8 +24,16 @@
 {% endblock %}
 
 {% block content %}
-    <div class="login-form-container" style="display: none">
-        {% include "user/login_form.html" %}
+    <div class="reset-password-form-container form-container" style="display: none">
+        {% include "user/forms/reset_password.html" %}
+    </div>
+
+    <div class="register-form-container form-container" style="display: none">
+        {% include "user/forms/register.html" %}
+    </div>
+
+    <div class="login-form-container form-container" style="display: none">
+        {% include "user/forms/login.html" %}
     </div>
 
     {% for block in page.blocks %}

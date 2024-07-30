@@ -50,3 +50,18 @@ function resetForm(element){
         }
     }
 }
+
+function closeFormPopup(popup){
+    popup.style.display = "none";
+}
+
+function openFormPopup(popup){
+    popup.style.animation = "auto";
+    const popups = document.querySelectorAll(".form-container");
+    
+    for (let popupElem of popups){
+        closeFormPopup(popupElem);
+    }
+    
+    popup.style.display = "flex";
+}

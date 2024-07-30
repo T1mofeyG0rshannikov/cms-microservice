@@ -18,7 +18,7 @@ from catalog.catalog_service.catalog_service_interface import CatalogServiceInte
 from common.views import SubdomainMixin
 from domens.models import Domain
 from settings.models import SiteSettings
-from user.forms import LoginForm
+from user.forms import LoginForm, ResetPasswordForm, RegistrationForm
 
 
 class IndexPage(SubdomainMixin):
@@ -50,7 +50,9 @@ class IndexPage(SubdomainMixin):
         serialized_page = PageSerializer(page).data
 
         context["page"] = serialized_page
-        context["form"] = LoginForm()
+        context["login_form"] = LoginForm()
+        context["register_form"] = RegistrationForm()
+        context["reset_password_form"] = ResetPasswordForm()
 
         return context
 
@@ -65,7 +67,9 @@ class ShowPage(SubdomainMixin):
         serialized_page = PageSerializer(page).data
 
         context["page"] = serialized_page
-        context["form"] = LoginForm()
+        context["login_form"] = LoginForm()
+        context["register_form"] = RegistrationForm()
+        context["reset_password_form"] = ResetPasswordForm()
 
         return context
 

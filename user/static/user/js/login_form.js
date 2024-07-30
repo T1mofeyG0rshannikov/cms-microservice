@@ -21,8 +21,9 @@ function isRememberMe(){
 
 function compliteLoginForm(){
     if (isRememberMe()){
-        const loginInput = document.querySelector("#phone_or_email input");
-        const passwordInput = document.querySelector("#password input");
+        const form = document.getElementById("login-form");
+        const loginInput = form.querySelector("#phone_or_email input");
+        const passwordInput = form.querySelector("#password input");
 
         const login = localStorage.getItem("bankomagUsername");
         const password = localStorage.getItem("bankomagPassword");
@@ -67,3 +68,7 @@ function submitLoginForm(element, event, domain){
         setErrors(response.errors, element)
     })
 }
+
+const registerFormContainer = document.querySelector(".register-form-container");
+const resetPasswordFormContainer = document.querySelector(".reset-password-form-container");
+const loginFormContainer = document.querySelector(".login-form-container");

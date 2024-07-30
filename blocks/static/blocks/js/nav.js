@@ -25,7 +25,6 @@ const burger = document.querySelector(".burger")
 burger.addEventListener("click", openAsideMenu);
 
 const loginForm = document.getElementById("login-form");
-const loginFormContainer = document.querySelector(".login-form-container")
 
 function openLoginForm(domain){
     const token = getToken();
@@ -49,18 +48,25 @@ function openLoginForm(domain){
     }).then(status => {
         if (status === 401){
             compliteLoginForm();
+            loginFormContainer.style.animation = "showPopup .3s";
             loginFormContainer.style.display = "flex";
         }
     })
 }
 
-
-function closeLoginForm(){
-    loginFormContainer.style.display = "none";
-}
-
-loginFormContainer.addEventListener("mousedown", event => {
-    if (!loginForm.contains(event.target)){
-        closeLoginForm();
-    }
+document.querySelectorAll(".form-container").forEach(form => {
+    form.addEventListener("mousedown", event => {
+        if (!form.querySelector("form").contains(event.target)){
+            closeFormPopup(form);
+        }
+    })
 })
+
+$(document).keyup(function(e) {
+    if (e.key === "Escape"){
+        const popups = document.querySelectorAll(".form-container")
+        for (let popup of popups){
+            closeFormPopup(popup);
+        }
+   }
+});

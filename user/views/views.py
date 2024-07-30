@@ -24,7 +24,7 @@ class RegisterUser(BaseUserView, SubdomainMixin):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["form"] = RegistrationForm()
+        context["register_form"] = RegistrationForm()
 
         return context
 
@@ -134,7 +134,9 @@ class Login(BaseUserView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["form"] = LoginForm()
+        context["login_form"] = LoginForm()
+        context["register_form"] = RegistrationForm()
+        context["reset_password_form"] = ResetPasswordForm()
 
         return context
 
@@ -223,7 +225,7 @@ class SendMailToResetPassword(BaseUserView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["form"] = ResetPasswordForm()
+        context["reset_password_form"] = ResetPasswordForm()
 
         return context
 

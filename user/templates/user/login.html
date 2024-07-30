@@ -3,6 +3,16 @@
 
 {% block content %}
 
-{% include "user/login_form.html" %}
+<div class="reset-password-form-container form-container" style="display: none; background: rgba(0,0,0,0); z-index: 1;">
+    {% include "user/forms/reset_password.html" %}
+</div>
+
+<div class="register-form-container form-container" style="display: none; background: rgba(0,0,0,0); z-index: 2;">
+    {% include "user/forms/register.html" %}
+</div>
+
+<div class="login-form-container form-container" style="background: rgba(0,0,0,0)">
+    {% include "user/forms/login.html" %}
+</div>
 
 {% endblock %}

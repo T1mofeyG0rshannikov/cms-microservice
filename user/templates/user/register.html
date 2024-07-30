@@ -14,42 +14,11 @@
 
 {% block content %}
 
-<form onsubmit="submitRegisterForm(this, event, '{{ domain }}')" method="post" class="user-form">
-    <img class="logo" src="{{ settings.form_logo.image }}" />
+{% include "user/forms/register.html" %}
 
-    <h3>Регистрация</h3>
-
-    {% csrf_token %}
-    {% for field in form %}
-        <div class="field" id="{{ field.name }}">
-            {{ field }}
-            {% for error in field.errors %}
-                <div class="error">{{ error }}</div>
-            {% endfor %}
-        </div>
-    {% endfor %}
-    <input type="submit" disabled value="Зарегистрироваться" />
-
-    <label class="agreed-container">Я прочитал(а) и принимаю Пользовательское соглашение и Политику Конфденциальности
-        <input type="checkbox">
-        <span class="checkmark"></span>
-    </label>
-
-    <p class="already-register">Уже зарегистрированы?</p>
-    <a href="/user/login" class="login">Войти в кабинет</a>
-</form>
-
-<style>
-    .logo{
-        width: {{settings.form_logo.width}};
-        height: {{settings.form_logo.height}};
-    }
-</style>
 {% endblock %}
 
 {% block additional_scripts %}
-<script src="{% static "user/js/register_form.js" %}"></script>
-
-<script src="{% static 'user/js/submit_register_form.js' %}"></script>
-
+    <script src="{% static "user/js/register_form.js" %}"></script>
+    <script src="{% static 'user/js/submit_register_form.js' %}"></script>
 {% endblock %}
