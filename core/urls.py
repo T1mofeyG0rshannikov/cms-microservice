@@ -8,6 +8,7 @@ urlpatterns = [
     path("", include("blocks.urls")),
     path("styles/", include("styles.urls")),
     path("user/", include("user.urls")),
+    path("email/", include("emails.urls")),
     path("admin/", admin.site.urls),
     path("domain/", include("domens.urls")),
     path("my/", include("account.urls")),

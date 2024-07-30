@@ -56,7 +56,7 @@ initChangeUserForm();
 function sendConfirmEmail(){
     const token = getToken();
 
-    fetch(`/user/send-confirm-email`, {
+    fetch(`/email/send-confirm-email`, {
         method: "GET",
         headers: {
             'Accept': 'application/json',

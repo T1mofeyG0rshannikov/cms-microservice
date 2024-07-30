@@ -4,10 +4,10 @@ from django.db import models
 from django.db.models.signals import post_save, pre_save
 
 from domens.models import Domain, Site
+from emails.email_service.email_service import get_email_service
 from notifications.create_user_notification import create_user_notification
 from notifications.send_message import send_message_to_user
 from user.auth.jwt_processor import get_jwt_processor
-from user.email_service.email_service import get_email_service
 from user.user_manager.user_manager import UserManager
 from user.user_manager.user_manager_interface import UserManagerInterface
 

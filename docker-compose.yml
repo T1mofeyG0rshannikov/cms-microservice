@@ -14,19 +14,11 @@ services:
       - '5432:5432'
   web:
     build: .
-    command: sh -c "gunicorn --bind 0.0.0.0:8000 core.wsgi:application"
+    command: sh -c "daphne -b 0.0.0.0 -p 8000 core.asgi:application"
     volumes:
       - static:/usr/src/app/media
     expose:
       - 8000
-    depends_on:
-      - db
-      - redis
-  daphne:
-    build: .
-    command: sh -c "daphne -b 0.0.0.0 -p 8001 core.asgi:application"
-    expose:
-      - 8001
     depends_on:
       - db
       - redis
@@ -45,7 +37,7 @@ services:
 
   worker:
     build: .
-    command: celery -A user.email_service.tasks worker -l INFO --pool=solo
+    command: celery -A emails.email_service.tasks worker -l INFO --pool=solo
     volumes:
       - .:/code
     depends_on:
@@ -53,6 +45,7 @@ services:
       - web
     environment:
       - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+    restart: always
 
 volumes:
   static:

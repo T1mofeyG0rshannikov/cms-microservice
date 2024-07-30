@@ -7,17 +7,26 @@ from core.celery import app
 
 @app.task()
 def send_mail_to_confirm_email(url: str, user_email: str) -> None:
-    from domens.models import Domain
+    from emails.serializers import EmailLogoSerializer
     from settings.models import FormLogo
     from styles.models.colors.colors import ColorStyles
 
-    logo = f"http://{Domain.objects.filter(is_partners=False).first().domain}" + FormLogo.objects.first().image.url
-    main_color = ColorStyles.objects.first().main_color
+    logo = FormLogo.objects.only("image", "width", "height").first()
+    logo = EmailLogoSerializer(logo).data
+
+    main_color = ColorStyles.objects.values_list("main_color").first()[0]
     email = loader.render_to_string(
-        "user/email_mail.html", {"logo": logo, "main_color": main_color, "link": url}, request=None, using=None
+        "emails/confirm_email.html", {"logo": logo, "main_color": main_color, "link": url}, request=None, using=None
     )
 
-    send_mail("Подтвердите почту", "", settings.EMAIL_HOST_USER, [user_email], html_message=email, fail_silently=False)
+    send_mail(
+        "Подтвердите свой email адрес",
+        "",
+        f"BankoMag <{settings.EMAIL_HOST_USER}>",
+        [user_email],
+        html_message=email,
+        fail_silently=False,
+    )
 
 
 @app.task()

@@ -30,6 +30,11 @@
         input[type=submit]{
             width: 180px;
             border: 2px solid var(--main-color);
+            cursor: pointer;
+
+            &:disabled{
+                cursor: not-allowed;
+            }
         }
 
         input{

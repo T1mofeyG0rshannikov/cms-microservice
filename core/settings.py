@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "daphne",
     "channels",
     "rest_framework",
+    "emails",
 ]
 ASGI_APPLICATION = "core.asgi.application"
 

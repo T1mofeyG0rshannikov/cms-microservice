@@ -5,7 +5,18 @@ function initSetPasswordForm(){
     const repeatPasswordContainer = form.querySelector("#repeat_password")
 
     const input1 = passwordContainer.querySelector("input")
-    input1.addEventListener("change", validateForm)
+    input1.addEventListener("input", validateForm)
+    input1.addEventListener("change", () => {
+        const password1 = input1.value;
+        const password2 = input2.value;
+
+        if (password1 !== password2){
+            setError(passwordContainer, "Пароли не совпадают");
+            const button = form.querySelector("input[type=submit]");
+            button.disabled = true;
+            return;
+        }
+    })
 
     const input2 = repeatPasswordContainer.querySelector("input")
     input2.addEventListener("input", () => {
@@ -18,7 +29,8 @@ function initSetPasswordForm(){
         const password2 = input2.value;
 
         if (password1 !== password2){
-            setError(repeatPasswordContainer, "Пароли не совпадают")
+            setError(repeatPasswordContainer, "Пароли не совпадают");
+            const button = form.querySelector("input[type=submit]");
             button.disabled = true;
             return;
         }
@@ -30,6 +42,9 @@ function initSetPasswordForm(){
         const password1 = input1.value;
         const password2 = input2.value;
 
+        setError(passwordContainer, "");
+        setError(repeatPasswordContainer, "");
+
         if (password1.length < 6){
             setError(passwordContainer, "Длина пароля не менее 6 символов")
             button.disabled = true;
@@ -37,7 +52,7 @@ function initSetPasswordForm(){
         }
 
         if (containsCyrillic(password1)){
-            setError(repeatPasswordContainer, "Только латинские буквы, цифры и символы")
+            setError(passwordContainer, "Только латинские буквы, цифры и символы")
             button.disabled = true;
             return;
         }
@@ -47,8 +62,6 @@ function initSetPasswordForm(){
             return;
         }
 
-        setError(passwordContainer, "")
-        setError(repeatPasswordContainer, "")
         button.disabled = false;
     }
 
@@ -56,3 +69,29 @@ function initSetPasswordForm(){
 }
 
 initSetPasswordForm();
+
+
+function submitSetPasswordForm(element, event, domain, token){
+    event.preventDefault();
+    const data = new FormData(element);
+
+    fetch(`http://${domain}/user/password/${token}`, {
+        method: "POST",
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: data
+    }).then(response => {
+        if (response.status === 200){
+            response.json().then((response) => {
+                const token = response.access_token;
+                setToken(token);
+                window.location.replace(`http://${domain}/user/set-token/${token}`);
+            })
+        }
+        return response.json();
+    }).then(response => {
+        setErrors(response.errors, element)
+    })
+}

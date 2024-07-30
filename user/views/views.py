@@ -7,8 +7,8 @@ from django.views.generic import View
 
 from common.views import SubdomainMixin
 from domens.models import Domain, Site
+from emails.email_service.email_service import get_email_service
 from settings.get_settings import get_settings
-from user.email_service.email_service import get_email_service
 from user.forms import LoginForm, RegistrationForm, ResetPasswordForm, SetPasswordForm
 from user.models import User
 from user.serializers import UserSerializer
@@ -59,12 +59,12 @@ class RegisterUser(BaseUserView, SubdomainMixin):
 
                 return JsonResponse({"errors": form.errors}, status=400)
 
+            User.objects.filter(email=email).update(email=None)
+            User.objects.filter(phone=phone).update(phone=None)
+
             user = User.objects.create_user(
                 **form.cleaned_data, register_on_site=self.subdomain, register_on_domain=self.domain
             )
-
-            User.objects.filter(email=email).update(email=None)
-            User.objects.filter(phone=phone).update(phone=None)
 
             print(user)
             request.user = user
@@ -119,41 +119,13 @@ class SetPassword(BaseUserView):
 
             access_token = self.jwt_processor.create_access_token(user.username, user.id)
 
-            settings = get_settings(request.domain, request.subdomain)
-
-            if request.domain == "localhost":
-                domain = "localhost:8000"
-            else:
-                domain = Domain.objects.filter(is_partners=False).values("domain").first()["domain"]
-
-            partner_domain = Domain.objects.filter(is_partners=True).values("domain").first()["domain"]
-
-            return render(
-                request,
-                "user/set-password.html",
+            return JsonResponse(
                 {
                     "access_token": access_token,
-                    "settings": settings,
-                    "domain": domain,
-                    "partner_domain": partner_domain,
                 },
             )
 
-        return render(request, "user/set-password.html", {"form": form, "token": token})
-
-
-class SendConfirmEmail(BaseUserView):
-    def __init__(self):
-        super().__init__()
-        self.email_service = get_email_service(self.jwt_processor)
-
-    def get(self, request):
-        user = request.user_from_header
-
-        if user:
-            self.email_service.send_mail_to_confirm_email(user)
-
-        return HttpResponse(status=200)
+        return JsonResponse({"errors": form.errors}, status=400)
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -293,3 +265,24 @@ class Logout(View):
     def get(self, request):
         logout(request)
         return redirect("/")
+
+
+def email_template(request):
+    from django.template import loader
+
+    from emails.serializers import EmailLogoSerializer
+    from settings.models import FormLogo
+    from styles.models.colors.colors import ColorStyles
+
+    logo = FormLogo.objects.only("image", "width", "height").first()
+    logo = EmailLogoSerializer(logo).data
+
+    main_color = ColorStyles.objects.values_list("main_color").first()[0]
+    email = loader.render_to_string(
+        "emails/confirm_email.html",
+        {"logo": logo, "main_color": main_color, "link": logo["image"]},
+        request=None,
+        using=None,
+    )
+
+    return HttpResponse(email)

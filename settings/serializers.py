@@ -4,8 +4,8 @@ from rest_framework import serializers
 class LogoSerializer(serializers.Serializer):
     image = serializers.SerializerMethodField()
     width = serializers.CharField()
-    width_mobile = serializers.CharField()
-    height_mobile = serializers.CharField()
+    width_mobile = serializers.CharField(required=False)
+    height_mobile = serializers.CharField(required=False)
     height = serializers.CharField()
 
     def get_image(self, obj):
