@@ -1,17 +1,6 @@
 version: "3.3"
 
 services:
-  db:
-    image: postgres
-    container_name: db
-    environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    volumes:
-      - db:/var/lib/postgresql/data/
-    ports:
-      - '5432:5432'
   web:
     build: .
     command: sh -c "daphne -b 0.0.0.0 -p 8000 core.asgi:application"
@@ -20,7 +9,6 @@ services:
     expose:
       - 8000
     depends_on:
-      - db
       - redis
   nginx:
     build: ./nginx
