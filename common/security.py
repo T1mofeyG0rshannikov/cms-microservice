@@ -1,4 +1,3 @@
-import cryptography
 from cryptography.fernet import Fernet
 
 key = Fernet.generate_key()
@@ -13,9 +12,4 @@ class LinkEncryptor:
         return enc_string.decode()
 
     def decrypt(self, string: str) -> str:
-        # try:
         return self.fernet.decrypt(string.encode()).decode()
-
-
-#  except cryptography.fernet.InvalidToken:
-#     return None

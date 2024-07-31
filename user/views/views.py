@@ -10,7 +10,9 @@ from common.views import SubdomainMixin
 from domens.get_domain import get_domain_string, get_partners_domain_string
 from domens.models import Domain, Site
 from emails.email_service.email_service import get_email_service
+from emails.email_service.link_generator.link_generator import get_link_generator
 from settings.get_settings import get_settings
+from user.auth.jwt_processor import get_jwt_processor
 from user.forms import LoginForm, RegistrationForm, ResetPasswordForm, SetPasswordForm
 from user.models import User
 from user.serializers import UserSerializer
@@ -223,12 +225,14 @@ class ConfirmEmail(BaseUserView):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class SendMailToResetPassword(BaseUserView):
+class SendMailToResetPassword(View):
     template_name = "user/reset-password.html"
-
-    def __init__(self):
-        super().__init__()
-        self.email_service = get_email_service(self.jwt_processor)
+    email_service = get_email_service(
+        get_link_generator(
+            get_jwt_processor(),
+            get_domain_string()
+        )
+    )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
