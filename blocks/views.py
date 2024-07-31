@@ -16,7 +16,7 @@ from blocks.serializers import PageSerializer
 from catalog.catalog_service.catalog_service import get_catalog_service
 from catalog.catalog_service.catalog_service_interface import CatalogServiceInterface
 from common.views import SubdomainMixin
-from domens.models import Domain
+from domens.get_domain import get_partners_domain_string
 from settings.models import SiteSettings
 from user.forms import LoginForm, RegistrationForm, ResetPasswordForm
 
@@ -25,17 +25,17 @@ class IndexPage(SubdomainMixin):
     template_name = "blocks/page.html"
 
     def get(self, *args, **kwargs):
-        partner_domain = Domain.objects.filter(is_partners=True).first()
+        partner_domain = get_partners_domain_string()
 
-        if self.request.domain == partner_domain.domain and SiteSettings.objects.first().disable_partners_sites:
+        if self.request.domain == partner_domain and SiteSettings.objects.first().disable_partners_sites:
             return HttpResponse("<h1>Привет :)</h1>")
 
         if (
-            self.request.domain == partner_domain.domain  # or self.request.domain == "localhost"
+            self.request.domain == partner_domain  # or self.request.domain == "localhost"
         ) and self.request.subdomain == "":
             form = LoginForm()
 
-            return render(self.request, "blocks/login.html", {"form": form})
+            return render(self.request, "blocks/login.html", {"login_form": form})
 
         if not Page.objects.filter(url=None).exists():
             return HttpResponseNotFound()

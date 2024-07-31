@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.admin.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
 from utils.errors import UserErrors
 from utils.format_phone import get_raw_phone
@@ -55,11 +56,15 @@ class ResetPasswordForm(forms.Form):
 
 
 class CustomAuthenticationAdminForm(AuthenticationForm):
-    def __init__(self, request=None, *args, **kwargs):
-        self.request = request
-        self.user_cache = None
-        super(AuthenticationForm, self).__init__(*args, **kwargs)
+    error_messages = {
+        "invalid_login": _("Пожалуйста введите корректные %(username)s и пароль. Оба поля чувствительны к регистру."),
+        "inactive": _("This account is inactive."),
+    }
 
+    def __init__(self, request=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.username_field = "логин"
         self.fields["username"].label = "Email или телефон"
         self.fields["password"].label = "Пароль"
 
@@ -77,7 +82,7 @@ class CustomAuthenticationAdminForm(AuthenticationForm):
         return ValidationError(
             self.error_messages["invalid_login"],
             code="invalid_login",
-            params={"username": self.username_field.verbose_name},
+            params={"username": self.username_field},
         )
 
     username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={"placeholder": "Email или телефон"}))

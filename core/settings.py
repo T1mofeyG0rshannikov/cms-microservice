@@ -74,8 +74,6 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_hosts.middleware.HostsRequestMiddleware",
     "django_hosts.middleware.HostsResponseMiddleware",
-    # "channels.middleware.WebsocketMiddleware",
-    # "domens.middleware.DomainMiddleware",
     "user.middleware.JwtAuthMiddleware",
 ]
 

@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.db import transaction
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
@@ -6,6 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
 from common.views import SubdomainMixin
+from domens.get_domain import get_domain_string, get_partners_domain_string
 from domens.models import Domain, Site
 from emails.email_service.email_service import get_email_service
 from settings.get_settings import get_settings
@@ -59,12 +61,17 @@ class RegisterUser(BaseUserView, SubdomainMixin):
 
                 return JsonResponse({"errors": form.errors}, status=400)
 
-            User.objects.filter(email=email).update(email=None)
-            User.objects.filter(phone=phone).update(phone=None)
+            try:
+                with transaction.atomic():
+                    User.objects.filter(email=email).update(email=None)
+                    User.objects.filter(phone=phone).update(phone=None)
 
-            user = User.objects.create_user(
-                **form.cleaned_data, register_on_site=self.subdomain, register_on_domain=self.domain
-            )
+                    user = User.objects.create_user(
+                        **form.cleaned_data, register_on_site=self.subdomain, register_on_domain=self.domain
+                    )
+            except:
+                form.add_error("email", UserErrors.something_went_wrong.value)
+                return JsonResponse({"token_to_set_password": token_to_set_password}, status=400)
 
             print(user)
             request.user = user
@@ -88,9 +95,9 @@ class SetPassword(BaseUserView):
         if request.domain == "localhost":
             domain = "localhost:8000"
         else:
-            domain = Domain.objects.filter(is_partners=False).values("domain").first()["domain"]
+            domain = get_domain_string()
 
-        partner_domain = Domain.objects.filter(is_partners=True).values("domain").first()["domain"]
+        partner_domain = get_partners_domain_string()
 
         return render(
             request,

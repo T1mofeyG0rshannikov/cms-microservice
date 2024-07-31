@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from domens.models import Domain
+from domens.get_domain import get_domain_string
 
 
 class EmailLogoSerializer(serializers.Serializer):
@@ -9,4 +9,4 @@ class EmailLogoSerializer(serializers.Serializer):
     height = serializers.CharField()
 
     def get_image(self, obj):
-        return f"http://{Domain.objects.values_list('domain').filter(is_partners=False).first()[0]}" + obj.image.url
+        return f"http://{get_domain_string()}" + obj.image.url

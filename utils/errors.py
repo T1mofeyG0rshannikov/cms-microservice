@@ -18,3 +18,4 @@ class UserErrors(str, Enum):
     user_by_email_not_found = "Нет пользователя с таким E-mail'ом"
     login_first = "Сначала войдите в аккаунт"
     you_already_have_your_own_website = "вы уже имеете свой сайт"
+    something_went_wrong = "что-то пошло не так, попробуйте позже"
