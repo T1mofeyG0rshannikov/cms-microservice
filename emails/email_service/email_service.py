@@ -1,14 +1,19 @@
-from emails.email_service.email_service_interface import EmailServiceInterface
-from emails.email_service.tasks import (
-    send_email
-)
+from typing import Any
+
 from django.conf import settings
-from emails.email_service.link_generator.link_generator_interface import LinkGeneratorInterface
 from django.template import loader
+
+from domens.get_domain import get_domain_string
+from emails.email_service.email_service_interface import EmailServiceInterface
+from emails.email_service.link_generator.link_generator import get_link_generator
+from emails.email_service.link_generator.link_generator_interface import (
+    LinkGeneratorInterface,
+)
+from emails.email_service.tasks import send_email
 from emails.serializers import EmailLogoSerializer
 from settings.models import FormLogo
 from styles.models.colors.colors import ColorStyles
-from typing import Any
+from user.auth.jwt_processor import get_jwt_processor
 
 
 class EmailService(EmailServiceInterface):
@@ -19,31 +24,20 @@ class EmailService(EmailServiceInterface):
 
     def send_mail_to_confirm_email(self, user) -> None:
         template = self.template_generator.generate_confirm_email_template(user)
-        send_email.delay(
-            "Подтвердите свой email адрес",
-            self.sender,
-            [user.email],
-            template
-        )
+        send_email.delay("Подтвердите свой email адрес", self.sender, [user.email], template)
 
     def send_mail_to_reset_password(self, user) -> None:
         template = self.template_generator.generate_reset_password_template(user)
-        send_email.delay(
-            "Восстановление пароля",
-            self.sender,
-            [user.email],
-            template
-        )
+        send_email.delay("Восстановление пароля", self.sender, [user.email], template)
 
 
 class EmailTemplateGenerator:
     def __init__(self, context_processor) -> None:
         self.context_processor = context_processor
 
-    def generate_template(template_name: str, context: dict[Any: Any]):
-        return loader.render_to_string(
-            template_name, context, request=None, using=None
-        )
+    @staticmethod
+    def generate_template(template_name: str, context: dict[Any:Any]):
+        return loader.render_to_string(template_name, context, request=None, using=None)
 
     def generate_confirm_email_template(self, user):
         context = self.context_processor.confirm_email(user)
@@ -55,20 +49,20 @@ class EmailTemplateGenerator:
 
         return self.generate_template("emails/reset_password.html", context)
 
+def get_email_template_generator(email_context_processor) -> EmailTemplateGenerator:
+    return EmailTemplateGenerator(email_context_processor)
 
 class EmailContextProcessor:
     def __init__(self, link_generator):
         self.link_generator = link_generator
 
-    def get_context() -> dict[Any: Any]:
+    @staticmethod
+    def get_context() -> dict[Any:Any]:
         logo = FormLogo.objects.only("image", "width", "height").first()
         logo = EmailLogoSerializer(logo).data
         main_color = ColorStyles.objects.values_list("main_color").first()[0]
 
-        return {
-            "logo": logo,
-            "main_color": main_color
-        }
+        return {"logo": logo, "main_color": main_color}
 
     def confirm_email(self, user):
         context = self.get_context()
@@ -83,5 +77,17 @@ class EmailContextProcessor:
 
         return context
 
-def get_email_service(link_generator: LinkGeneratorInterface) -> EmailService:
-    return EmailService(link_generator)
+def get_email_context_processor(link_generator) -> EmailContextProcessor:
+    return EmailContextProcessor(link_generator)
+
+def get_email_service() -> EmailService:
+    return EmailService(
+        get_email_template_generator(
+            get_email_context_processor(
+                get_link_generator(
+                    get_jwt_processor(), 
+                    get_domain_string()
+                )
+            )
+        )
+    )

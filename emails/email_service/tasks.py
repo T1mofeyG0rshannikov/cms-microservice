@@ -15,6 +15,7 @@ def send_email(subj: str, sender: str, emails: list[str], html_message: str):
         fail_silently=False,
     )
 
+
 @app.task()
 def send_mail_to_confirm_email(url: str, sender: str, user_email: str) -> None:
     from emails.serializers import EmailLogoSerializer
@@ -52,12 +53,5 @@ def send_mail_to_reset_password(url: str, sender: str, user_email: str) -> None:
     email = loader.render_to_string(
         "emails/confirm_email.html", {"logo": logo, "main_color": main_color, "link": url}, request=None, using=None
     )
-    
-    send_mail(
-        "Восстановление пароля",
-        "",
-        sender,
-        [user_email],
-        html_message=email,
-        fail_silently=False
-    )
+
+    send_mail("Восстановление пароля", "", sender, [user_email], html_message=email, fail_silently=False)

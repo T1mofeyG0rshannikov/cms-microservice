@@ -1,4 +1,5 @@
 from user.auth.jwt_processor_interface import JwtProcessorInterface
+
 from .link_generator_interface import LinkGeneratorInterface
 
 
