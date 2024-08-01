@@ -20,7 +20,6 @@ function initForm(element){
 
     emailInput.addEventListener("input", () => {
         validEmail = validateEmail(element.querySelector("#email input").value);
-        console.log(validEmail, "email");
         formValid();
     });
 

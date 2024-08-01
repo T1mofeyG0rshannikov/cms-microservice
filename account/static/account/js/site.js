@@ -29,7 +29,6 @@ function activateSite(element){
         }
     }).then(respose => {
         if (respose.status === 200){
-            console.log("success");
             element.innerHTML = "остановить"
             $(element).attr("onclick", "stopSite(this)");
         }

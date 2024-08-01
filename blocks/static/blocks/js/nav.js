@@ -28,8 +28,6 @@ const loginForm = document.getElementById("login-form");
 
 function openLoginForm(domain){
     const token = getToken();
-    console.log(domain, "domain")
-    console.log(`http://${domain}/user/get-user-info`, "path")
 
     fetch(`http://${domain}/user/get-user-info`, {
         method: "get",

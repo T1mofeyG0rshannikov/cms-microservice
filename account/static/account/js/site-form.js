@@ -26,13 +26,9 @@ function onSubmitSiteForm(domain, element, event){
 
     let socials = [];
 
-    console.log(socialContainers)
     for (let socialContainer of socialContainers){
-        console.log(socialContainer);
         let social = socialContainer.querySelector(".social").querySelector("select").value;
         let adress = socialContainer.querySelector("input[name=adress]").value;
-
-        console.log(social, adress);
 
         if (social.length > 0 && adress.length > 0){
             socials.push({social: social, adress: adress});
@@ -73,7 +69,6 @@ const socialAdresses = socials.querySelectorAll("input[name=adress]")
 
 function getSocialOptions(){
     let socialOptions = document.querySelector("#socials").querySelector("select").querySelectorAll("option")
-    console.log(socialOptions);
     let socialValues = [""];
     let socialTexts = ["Выбрать"];
 
@@ -83,9 +78,6 @@ function getSocialOptions(){
             socialTexts.push(socialOption.innerText);
         }
     }
-
-    console.log(socialValues);
-    console.log(socialTexts);
 
     let options = '';
 
@@ -150,7 +142,6 @@ function deleteSocial(element){
     const trashes = socials.querySelectorAll(".trash");
 
     const currentIndex = [...trashes].indexOf(element);
-    console.log(currentIndex);
 
     const social = socials.querySelectorAll(".field-container")[currentIndex];
     social.remove();

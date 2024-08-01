@@ -11,8 +11,6 @@ function onSubmitChangeUserForm(element, event){
     const data = new FormData(element);
     const token = getToken();
 
-    console.log(data);
-
     fetch(`/my/change-user`, {
         method: "POST",
         headers: {

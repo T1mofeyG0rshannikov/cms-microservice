@@ -29,7 +29,6 @@ function loadProfileContent(templateName, url){
 
     fetch(`/my/template/${templateName}`).then(response => response.json()).then(response => {
         const template = response.content;
-        console.log(template)
         const content = document.querySelector(".account-main");
         content.innerHTML = template;
     })

@@ -6,8 +6,6 @@ function onSubmitChangePasswordForm(domain, element, event){
     const data = new FormData(element);
     const token = getToken();
 
-    console.log(data);
-
     fetch(`/my/change-password`, {
         method: "POST",
         headers: {
