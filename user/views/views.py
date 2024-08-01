@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import transaction
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -218,6 +218,9 @@ class ConfirmEmail(BaseUserView):
             )
 
         user = User.objects.get_user_by_id(payload["user_id"])
+        if user is None:
+            return HttpResponseRedirect("/?error=Проверочная ссылка некорректная или истек срок ее действия. Запросите проверку email еще раз в личном кабинете.")
+        
         user.confirm_email()
 
         return render(request, "user/confirm_email.html", {"message": "Почта подтверждена!"})
