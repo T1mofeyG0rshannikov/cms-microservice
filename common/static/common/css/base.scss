@@ -240,9 +240,17 @@ form{
 .base-popup{
     right: auto;
     border-radius: 15px;
-    width: 300px;
+    width: 450px;
 
     .main-content{
         padding: 0px 15px;
+    }
+
+    .title{
+        justify-content: end;
+    }
+
+    p{
+        text-align: center;
     }
 }

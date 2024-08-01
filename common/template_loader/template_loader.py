@@ -16,7 +16,7 @@ class TemplateLoader:
         return None
 
     def load_change_user_form(self, request):
-        context = {"request": request}
+        context = {"request": request, "user": request.user}
 
         context["messangers"] = Messanger.objects.select_related("social_network").all()
 
