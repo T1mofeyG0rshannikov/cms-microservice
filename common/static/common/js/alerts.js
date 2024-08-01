@@ -46,7 +46,7 @@ function deleteAlert(alert_id){
     fetch(`/notifications/delete/${alert_id}`);
 }
 
-let url = `ws://localhost:8000/ws/socket-server/`
+let url = `ws://${window.location.hostname}/ws/socket-server/`
 
 const notoficationsSocket = new WebSocket(url)
 

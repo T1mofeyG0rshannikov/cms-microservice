@@ -94,7 +94,7 @@ class SetPassword(BaseUserView):
         if not payload:
             return HttpResponseRedirect(f"/?error={Errors.wrong_reset_password_link.value}")
 
-        user = User.objects.get_user_by_id(payload["user_id"])
+        user = User.objects.get_user_by_id(payload["id"])
         if user is None:
             return HttpResponseRedirect(f"/?error={Errors.wrong_reset_password_link.value}")
 
@@ -230,7 +230,7 @@ class ConfirmEmail(BaseUserView):
 
         user.confirm_email()
 
-        return HttpResponseRedirect("/")
+        return HttpResponseRedirect("/my/")
 
 
 @method_decorator(csrf_exempt, name="dispatch")
