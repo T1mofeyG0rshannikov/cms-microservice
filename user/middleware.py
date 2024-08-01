@@ -4,9 +4,10 @@ from user.models import User
 
 
 class JwtAuthMiddleware:
+    jwt_processor: JwtProcessorInterface = get_jwt_processor()
+
     def __init__(self, get_response):
         self.get_response = get_response
-        self.jwt_processor: JwtProcessorInterface = get_jwt_processor()
 
     def __call__(self, request):
         token = request.headers.get("Authorization")

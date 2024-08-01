@@ -6,6 +6,7 @@ from emails.email_service.link_generator.link_generator_interface import (
 from emails.serializers import EmailLogoSerializer
 from settings.models import FormLogo
 from styles.models.colors.colors import ColorStyles
+from user.user_interface import UserInterface
 
 from .context_processor_interface import EmailContextProcessorInterface
 
@@ -22,13 +23,13 @@ class EmailContextProcessor(EmailContextProcessorInterface):
 
         return {"logo": logo, "main_color": main_color}
 
-    def confirm_email(self, user) -> dict[Any, Any]:
+    def confirm_email(self, user: UserInterface) -> dict[Any, Any]:
         context = self.get_context()
         context["link"] = self.link_generator.get_url_to_confirm_email(user.id)
 
         return context
 
-    def reset_password(self, user) -> dict[Any, Any]:
+    def reset_password(self, user: UserInterface) -> dict[Any, Any]:
         context = self.get_context()
         context["link"] = self.link_generator.get_url_to_reset_password(user.id)
         context["user"] = user

@@ -24,17 +24,10 @@
 {% endblock %}
 
 {% block content %}
-    <div class="reset-password-form-container form-container" style="display: none">
-        {% include "user/forms/reset_password.html" %}
-    </div>
+    {% if request.GET.error %}
+        {% include "common/error.html" %}
+    {% endif %}
 
-    <div class="register-form-container form-container" style="display: none">
-        {% include "user/forms/register.html" %}
-    </div>
-
-    <div class="login-form-container form-container" style="display: none">
-        {% include "user/forms/login.html" %}
-    </div>
 
     {% for block in page.blocks %}
         {% with template_name=block.content.template.file %}

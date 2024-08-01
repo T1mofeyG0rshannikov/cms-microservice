@@ -1,5 +1,7 @@
+const registerForm = document.getElementById("register-form");
+
 function formValid(){
-    const registerButton = document.querySelector("input[type=submit]")
+    const registerButton = registerForm.querySelector("input[type=submit]")
     const agreed = checkbox.checked;
 
     if (validEmail && validPhone && validUsername && agreed){
@@ -10,10 +12,10 @@ function formValid(){
     }
 }
 
-const emailInput = document.querySelector("#email").querySelector("input");
-const usernameInput = document.querySelector("#username").querySelector("input");
-const phoneInput = document.querySelector("#phone").querySelector("input");
-const checkbox = document.querySelector(".agreed-container").querySelector("input[type=checkbox]")
+const emailInput = registerForm.querySelector("#email").querySelector("input");
+const usernameInput = registerForm.querySelector("#username").querySelector("input");
+const phoneInput = registerForm.querySelector("#phone").querySelector("input");
+const checkbox = registerForm.querySelector(".agreed-container").querySelector("input[type=checkbox]")
 
 
 let validEmail = validateEmail(emailInput.value);
@@ -24,22 +26,22 @@ let validPhone = validatePhone(phoneInput.value);
 checkbox.addEventListener("change", formValid)
 
 emailInput.addEventListener("change", () => {
-    validEmail = onchangeEmail(document);
+    validEmail = onchangeEmail(registerForm);
     formValid()
 });
 
 usernameInput.addEventListener("change", () => {
-    validUsername = onchangeUsername(document);
+    validUsername = onchangeUsername(registerForm);
     formValid()
 })
 
 phoneInput.addEventListener("change", () => {
-    validPhone = onchangePhone(document);
+    validPhone = onchangePhone(registerForm);
     formValid()
 })
 
 $("input[name=phone]").mask("+7 (999) 999-99-99")
 $("input[name=phone]").on("change", () => {
-    validPhone = onchangePhone(document);
+    validPhone = onchangePhone(registerForm);
     formValid()
 })

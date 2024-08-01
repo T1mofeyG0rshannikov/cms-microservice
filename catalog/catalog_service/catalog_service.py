@@ -12,6 +12,7 @@ from catalog.serializers import CatalogBlockSerializer
 from common.models import BlockRelationship
 from styles.models.styles.styles import CatalogCustomStyles
 from styles.serializers import CustomStylesSerializer
+from user.user_interface import UserInterface
 
 
 class CatalogService(CatalogServiceInterface):
@@ -24,7 +25,7 @@ class CatalogService(CatalogServiceInterface):
 
         return serialized_page
 
-    def get_page(self, user, slug: str):
+    def get_page(self, user: UserInterface, slug: str):
         page = CatalogPageTemplate.objects.prefetch_related("blocks").first()
 
         page = self.set_catalog_block(page, user, slug)
@@ -33,7 +34,7 @@ class CatalogService(CatalogServiceInterface):
 
         return page
 
-    def get_catalog_block(self, user: Any, slug: str) -> dict[str, Any]:
+    def get_catalog_block(self, user: UserInterface, slug: str) -> dict[str, Any]:
         catalog = CatalogBlock.objects.prefetch_related("styles").get(product_type__slug=slug)
         catalog_relation = BlockRelationship.objects.get(block_name=catalog.name)
         catalog = self.page_service.get_page_block(catalog_relation)
@@ -61,7 +62,7 @@ class CatalogService(CatalogServiceInterface):
 
         return {"content": cover, "styles": cover_styles}
 
-    def set_catalog_block(self, page, user, slug: str) -> dict[Any, Any]:
+    def set_catalog_block(self, page, user: UserInterface, slug: str) -> dict[Any, Any]:
         page = PageSerializer(page).data
         catalog = self.get_catalog_block(user, slug)
 

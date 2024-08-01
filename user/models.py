@@ -55,9 +55,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.staff
 
     @property
-    def full_site_name(self):
+    def full_site_name(self) -> str | None:
         if Site.objects.filter(user_id=self.id).exists():
             return f"{self.site}.{get_partners_domain_string()}"
+
+        return None
 
     def __str__(self) -> str:
         return self.username

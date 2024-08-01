@@ -38,7 +38,8 @@ function submitResetPasswordForm(element, event){
         body: data
     }).then(response => {
         if (response.status === 200){
-           document.querySelector(".message").innerHTML = "Вам на почту пришло письмо с ссылкой для сброса пароля";
+            openFormPopup(resetPasswordDialogContainer);
+           /*document.querySelector(".message").innerHTML = "Вам на почту пришло письмо с ссылкой для сброса пароля";*/
         }
         return response.json();
     }).then(response => {

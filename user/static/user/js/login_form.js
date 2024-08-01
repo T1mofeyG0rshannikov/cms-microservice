@@ -71,4 +71,5 @@ function submitLoginForm(element, event, domain){
 
 const registerFormContainer = document.querySelector(".register-form-container");
 const resetPasswordFormContainer = document.querySelector(".reset-password-form-container");
+const resetPasswordDialogContainer = document.querySelector(".reset-password-dialog-container");
 const loginFormContainer = document.querySelector(".login-form-container");

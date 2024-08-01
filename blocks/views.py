@@ -84,7 +84,9 @@ class ShowCatalogPage(SubdomainMixin):
         page = self.catalog_service.get_page(user=self.request.user, slug=kwargs["products_slug"])
 
         context["page"] = page
-        context["form"] = LoginForm()
+        context["login_form"] = LoginForm()
+        context["register_form"] = RegistrationForm()
+        context["reset_password_form"] = ResetPasswordForm()
 
         return context
 
@@ -101,8 +103,7 @@ def slug_router(request, slug):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class ClonePage(View):
-    def __init__(self):
-        self.page_service: PageServiceInterface = get_page_service()
+    page_service: PageServiceInterface = get_page_service()
 
     def post(self, request):
         data = json.loads(request.body)

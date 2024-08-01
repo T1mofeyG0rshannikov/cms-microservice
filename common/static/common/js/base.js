@@ -52,6 +52,16 @@ function resetForm(element){
 }
 
 function closeFormPopup(popup){
+    for (let input of popup.querySelectorAll("input")){
+        if ($(input).attr("type") != "submit"){
+            input.value = "";
+        }
+    }
+
+    for (let field of popup.querySelectorAll(".field")){
+        setError(field, "")
+    }
+
     popup.style.display = "none";
 }
 

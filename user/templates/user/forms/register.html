@@ -1,4 +1,6 @@
-<form onsubmit="submitRegisterForm(this, event, '{{ domain }}')" autocomplete="off" method="post" class="user-form">
+{% load static %}
+
+<form onsubmit="submitRegisterForm(this, event, '{{ domain }}')" autocomplete="off" method="post" id="register-form" class="user-form">
     <img class="logo" src="{{ settings.form_logo.image }}" />
 
     <h3>Регистрация</h3>
@@ -29,3 +31,6 @@
         height: {{settings.form_logo.height}};
     }
 </style>
+
+<script src="{% static "user/js/register_form.js" %}"></script>
+<script src="{% static 'user/js/submit_register_form.js' %}"></script>

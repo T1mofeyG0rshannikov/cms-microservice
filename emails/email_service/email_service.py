@@ -14,6 +14,7 @@ from emails.email_service.template_generator.template_generator_interface import
     EmailTemplateGeneratorInterface,
 )
 from user.auth.jwt_processor import get_jwt_processor
+from user.user_interface import UserInterface
 
 
 class EmailService(EmailServiceInterface):
@@ -22,11 +23,11 @@ class EmailService(EmailServiceInterface):
     def __init__(self, template_generator: EmailTemplateGeneratorInterface) -> None:
         self.template_generator = template_generator
 
-    def send_mail_to_confirm_email(self, user) -> None:
+    def send_mail_to_confirm_email(self, user: UserInterface) -> None:
         template = self.template_generator.generate_confirm_email_template(user)
         send_email.delay("Подтвердите свой email адрес", self.sender, [user.email], template)
 
-    def send_mail_to_reset_password(self, user) -> None:
+    def send_mail_to_reset_password(self, user: UserInterface) -> None:
         template = self.template_generator.generate_reset_password_template(user)
         send_email.delay("Восстановление пароля", self.sender, [user.email], template)
 

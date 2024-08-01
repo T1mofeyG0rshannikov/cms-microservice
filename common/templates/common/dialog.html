@@ -1,0 +1,14 @@
+{% load static %}
+
+<form class="form base-popup">
+    <div class="title">
+        <h3>Сообщение</h3>
+        <div onclick="closeFormPopup(resetPasswordDialogContainer)" class="cross">
+            <img src="{% static 'common/images/cross.png' %}"/>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <p>На указанный вами email адрес отправлена ссылка для установки нового пароля</p>
+    </div>
+</form>

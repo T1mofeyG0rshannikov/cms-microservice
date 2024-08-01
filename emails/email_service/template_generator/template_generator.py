@@ -5,6 +5,7 @@ from django.template import loader
 from emails.email_service.context_processor.context_processor_interface import (
     EmailContextProcessorInterface,
 )
+from user.user_interface import UserInterface
 
 from .template_generator_interface import EmailTemplateGeneratorInterface
 
@@ -17,12 +18,12 @@ class EmailTemplateGenerator(EmailTemplateGeneratorInterface):
     def generate_template(template_name: str, context: dict[Any, Any]) -> str:
         return loader.render_to_string(template_name, context, request=None, using=None)
 
-    def generate_confirm_email_template(self, user) -> str:
+    def generate_confirm_email_template(self, user: UserInterface) -> str:
         context = self.context_processor.confirm_email(user)
 
         return self.generate_template("emails/confirm_email.html", context)
 
-    def generate_reset_password_template(self, user) -> str:
+    def generate_reset_password_template(self, user: UserInterface) -> str:
         context = self.context_processor.reset_password(user)
 
         return self.generate_template("emails/reset_password.html", context)

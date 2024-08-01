@@ -69,6 +69,22 @@
             {% endif %}
         }
     </style>
-
-    <script src="{% static 'blocks/js/nav.js' %}" ></script>
 </header>
+
+<div class="reset-password-form-container form-container" style="display: none">
+    {% include "user/forms/reset_password.html" %}
+</div>
+
+<div class="reset-password-dialog-container form-container" style="display: none">
+    {% include "common/dialog.html" %}
+</div>
+
+<div class="register-form-container form-container" style="display: none">
+    {% include "user/forms/register.html" %}
+</div>
+
+<div class="login-form-container form-container" style="display: none">
+    {% include "user/forms/login.html" %}
+</div>
+
+<script src="{% static 'blocks/js/nav.js' %}" ></script>

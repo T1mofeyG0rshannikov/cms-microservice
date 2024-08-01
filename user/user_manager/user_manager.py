@@ -5,7 +5,7 @@ from user.user_manager.user_manager_interface import UserManagerInterface
 
 
 class UserManager(BaseUserManager, UserManagerInterface):
-    def get_by_natural_key(self, username):
+    def get_by_natural_key(self, username: str):
         user_by_email = self.get_user_by_email(username)
         user_by_phone = self.get_user_by_phone(username)
 
