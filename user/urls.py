@@ -9,7 +9,6 @@ from user.views.views import (
     SendMailToResetPassword,
     SetPassword,
     SetToken,
-    email_template,
 )
 
 urlpatterns = [
@@ -21,5 +20,4 @@ urlpatterns = [
     path("reset-password", SendMailToResetPassword.as_view()),
     path("set-token/<str:token>", SetToken.as_view()),
     path("logout", Logout.as_view()),
-    path("email-template", email_template),
 ]

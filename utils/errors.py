@@ -6,6 +6,8 @@ class Errors(str, Enum):
     block_with_name_already_exist = "Уже есть блок, привязанный к этому имени"
     template_doesnt_exist = "Нет такого html файла"
     expired_set_password_token = "Срок действия токена для ввода пароля истёк"
+    wrong_confirm_email_link = "Проверочная ссылка некорректная или истек срок ее действия. Запросите проверку email еще раз в личном кабинете."
+    wrong_reset_password_link = "Ссылка для восстановления пароля некорректная или истек срок ее действия. Запросите восстановление пароля еще раз."
 
 
 class UserErrors(str, Enum):

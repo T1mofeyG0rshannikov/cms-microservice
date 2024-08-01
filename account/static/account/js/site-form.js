@@ -1,6 +1,4 @@
-const range = document.querySelector("input[type=range]");
-
-function changeLogoSize(){
+function changeLogoSize(range){
     console.log(range.value);
 
     newLogoWidth = 260 * (range.value / 100);
@@ -8,13 +6,6 @@ function changeLogoSize(){
     const image = document.querySelector("#logo img");
     image.style.width = newLogoWidth;
 }
-
-range.addEventListener("input", changeLogoSize)
-
-const logo = document.querySelector("#logo")
-const logoLoader = logo.querySelector("#file");
-
-logoLoader.addEventListener("change", () => displayPhotoOnload(logo))
 
 function onSubmitSiteForm(domain, element, event){
     event.preventDefault();
@@ -63,9 +54,6 @@ function onSubmitSiteForm(domain, element, event){
         setErrors(response.errors, element)
     })
 }
-
-const socials = document.querySelector("#socials")
-const socialAdresses = socials.querySelectorAll("input[name=adress]")
 
 function getSocialOptions(){
     let socialOptions = document.querySelector("#socials").querySelector("select").querySelectorAll("option")
@@ -133,8 +121,6 @@ function observableNewSocials(){
     }
 }
 
-observableNewSocials();
-
 function deleteSocial(element){
     const newSocial = createNewSocial();
 
@@ -150,4 +136,19 @@ function deleteSocial(element){
         socials.appendChild(newSocial);
         observableNewSocials();
     }
+}
+
+
+function initChangeSiteForm(){
+    siteForm = document.querySelector(".site-form");
+
+    const range = siteForm.querySelector("input[type=range]");
+    range.addEventListener("input", () => changeLogoSize(range))
+
+    const logo = siteForm.querySelector("#logo")
+    const logoLoader = logo.querySelector("#file");
+
+    logoLoader.addEventListener("change", () => displayPhotoOnload(logo))
+
+    observableNewSocials();
 }

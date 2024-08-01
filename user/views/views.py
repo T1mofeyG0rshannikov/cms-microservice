@@ -89,6 +89,17 @@ class RegisterUser(BaseUserView, SubdomainMixin):
 @method_decorator(csrf_exempt, name="dispatch")
 class SetPassword(BaseUserView):
     def get(self, request, token):
+        payload = self.jwt_processor.validate_token(token)
+
+        if not payload:
+            return HttpResponseRedirect(f"/?error={Errors.wrong_reset_password_link.value}")
+
+        user = User.objects.get_user_by_id(payload["user_id"])
+        if user is None:
+            return HttpResponseRedirect(f"/?error={Errors.wrong_reset_password_link.value}")
+
+        user.confirm_email()
+
         form = SetPasswordForm()
 
         settings = get_settings(request.domain, request.subdomain)
@@ -211,19 +222,15 @@ class ConfirmEmail(BaseUserView):
         payload = self.jwt_processor.validate_token(token)
 
         if not payload:
-            return render(
-                request,
-                "user/confirm_email.html",
-                {"message", "Ссылка больше неактивна :/ \n попробуйте получить письмо ещё раз"},
-            )
+            return HttpResponseRedirect(f"/?error={Errors.wrong_confirm_email_link.value}")
 
         user = User.objects.get_user_by_id(payload["user_id"])
         if user is None:
-            return HttpResponseRedirect("/?error=Проверочная ссылка некорректная или истек срок ее действия. Запросите проверку email еще раз в личном кабинете.")
-        
+            return HttpResponseRedirect(f"/?error={Errors.wrong_confirm_email_link.value}")
+
         user.confirm_email()
 
-        return render(request, "user/confirm_email.html", {"message": "Почта подтверждена!"})
+        return HttpResponseRedirect("/")
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -275,24 +282,3 @@ class Logout(View):
     def get(self, request):
         logout(request)
         return redirect("/")
-
-
-def email_template(request):
-    from django.template import loader
-
-    from emails.serializers import EmailLogoSerializer
-    from settings.models import FormLogo
-    from styles.models.colors.colors import ColorStyles
-
-    logo = FormLogo.objects.only("image", "width", "height").first()
-    logo = EmailLogoSerializer(logo).data
-
-    main_color = ColorStyles.objects.values_list("main_color").first()[0]
-    email = loader.render_to_string(
-        "emails/confirm_email.html",
-        {"logo": logo, "main_color": main_color, "link": logo["image"]},
-        request=None,
-        using=None,
-    )
-
-    return HttpResponse(email)

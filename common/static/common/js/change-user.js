@@ -1,10 +1,3 @@
-const changeUserForm = document.querySelector(".change-user-form");
-
-const userLogo = changeUserForm.querySelector(".user-logo");
-const userLogoLoader = userLogo.querySelector("#file");
-
-userLogoLoader.addEventListener("change", () => displayPhotoOnload(userLogo));
-
 function onSubmitChangeUserForm(element, event){
     event.preventDefault();
 
@@ -35,7 +28,16 @@ function onSubmitChangeUserForm(element, event){
     })
 }
 
+let changeUserForm = document.querySelector(".change-user-form");
+
 function initChangeUserForm(){
+    changeUserForm = document.querySelector(".change-user-form");
+
+    const userLogo = changeUserForm.querySelector(".user-logo");
+    const userLogoLoader = userLogo.querySelector("#file");
+
+    userLogoLoader.addEventListener("change", () => displayPhotoOnload(userLogo));
+
     const emailInput = changeUserForm.querySelector("input[name=email]");
     const phoneInput = changeUserForm.querySelector("input[name=phone]");
 
@@ -73,5 +75,9 @@ function openUserForm(form){
     userLogo.src = $(userLogo).attr("default");
     form.querySelector("#file").value = "";
 
-    openForm(form);
+    fetch(`/get-change-user-form`).then(response => response.json()).then(response => {
+        form.innerHTML = response.content;
+        initChangeUserForm();
+        openForm(form);
+    })
 }
