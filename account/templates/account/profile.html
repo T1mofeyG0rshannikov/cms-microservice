@@ -2,6 +2,10 @@
 
 {% block account_content %}
 
+{% if request.GET.info_text %}
+    {% include "common/message.html" %}
+{% endif %}
+
 {% include "account/profile-content.html" %}
 
 {% endblock %}

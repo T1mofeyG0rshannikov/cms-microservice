@@ -233,14 +233,14 @@ class ConfirmEmail(BaseUserView):
         user = authenticate(request)
         login(request, user)
 
-        if user.password is None:
+        if user.password is None or not user.password:
             token_to_set_password = self.jwt_processor.create_set_password_token(user.id)
 
             return HttpResponseRedirect(f"/user/password/{token_to_set_password}")
 
-        access_token = self.jwt_processor.create_access_token(user.username, user.id)
-
-        return JsonResponse({"acess_token": access_token})
+        return HttpResponseRedirect(
+            f"/my/?info_text={'Вы успешно подтвердили email адрес. Можно приступать к созданию вашего партнерского сайта.'}&info_title={'Email подтвержден'}"
+        )
 
 
 @method_decorator(csrf_exempt, name="dispatch")

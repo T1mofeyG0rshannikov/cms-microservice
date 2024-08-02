@@ -1,0 +1,22 @@
+{% load static %}
+
+<div class="form-container" id="message-popup-container">
+    <form class="form" id="message-popup">
+        <div class="title">
+            <h3>{{ request.GET.info_title }}</h3>
+            <div onclick="closeFormPopup(messagePopupContainer)" class="cross">
+                <img src="{% static 'common/images/cross.png' %}"/>
+            </div>
+        </div>
+
+        <hr />
+
+        <div class="main-content">
+            <p>{{ request.GET.info_text }}</p>
+        </div>
+    </form>
+</div>
+
+<script>
+    const messagePopupContainer = document.getElementById("message-popup-container");
+</script>
