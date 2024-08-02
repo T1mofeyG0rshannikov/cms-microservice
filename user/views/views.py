@@ -229,8 +229,18 @@ class ConfirmEmail(BaseUserView):
             return HttpResponseRedirect(f"/?error={Errors.wrong_confirm_email_link.value}")
 
         user.confirm_email()
+        request.user = user
+        user = authenticate(request)
+        login(request, user)
 
-        return HttpResponseRedirect("/my/")
+        if user.password is None:
+            token_to_set_password = self.jwt_processor.create_set_password_token(user.id)
+
+            return HttpResponseRedirect(f"/user/password/{token_to_set_password}")
+
+        access_token = self.jwt_processor.create_access_token(user.username, user.id)
+
+        return JsonResponse({"acess_token": access_token})
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -250,9 +260,10 @@ class SendMailToResetPassword(View):
             email = form.cleaned_data.get("email")
 
             user = User.objects.get_user_by_email(email)
+            print(user)
             if user is None:
                 form.add_error("email", UserErrors.user_by_email_not_found.value)
-                return JsonResponse({"errors": form.errors})
+                return JsonResponse({"errors": form.errors}, status=400)
 
             self.email_service.send_mail_to_reset_password(user)
 
