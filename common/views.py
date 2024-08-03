@@ -1,7 +1,12 @@
 import re
 
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, JsonResponse
+from django.http import (
+    HttpResponse,
+    HttpResponseNotFound,
+    HttpResponseRedirect,
+    JsonResponse,
+)
 from django.views.generic import TemplateView, View
 
 from common.security import LinkEncryptor
@@ -9,18 +14,6 @@ from common.template_loader.template_loader import get_template_loader
 from domens.get_domain import get_domain_string, get_partners_domain_string
 from domens.models import Domain, Site
 from settings.get_settings import get_settings
-from settings.models import SiteSettings
-
-from django.http import HttpResponse, JsonResponse
-from django.views.generic import View
-
-from domens.models import Site
-from settings.models import SiteSettings
-
-from django.http import HttpResponse, JsonResponse
-from django.views.generic import View
-
-from domens.models import Site
 from settings.models import SiteSettings
 
 
@@ -40,7 +33,7 @@ class RedirectToLink(View):
 
 class GetChangeUserFormTemplate(View):
     template_loader = get_template_loader()
-    
+
     def get(self, request):
         template = self.template_loader.load_change_user_form(request)
         return JsonResponse({"content": template})
@@ -48,7 +41,7 @@ class GetChangeUserFormTemplate(View):
 
 class GetChangeSiteFormTemplate(View):
     template_loader = get_template_loader()
-    
+
     def get(self, request):
         template = self.template_loader.load_change_site_form(request)
         return JsonResponse({"content": template})
@@ -148,3 +141,7 @@ class SubdomainMixin(SettingsMixin):
         request.subdomain = subdomain
 
         return super().dispatch(request, *args, **kwargs)
+
+
+class PageNotFound(SubdomainMixin):
+    template_name = "common/404.html"

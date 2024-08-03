@@ -51,7 +51,7 @@ let touchedPassword2 = false;
 input0.addEventListener("input", validateForm)
 input0.addEventListener("change", () => {
     const password0 = input0.value;
-    
+
     if (password0.length === 0){
         setError(currentpasswordContainer, "Введите текущий пароль");
         return;

@@ -1,3 +1,4 @@
+from account.views import Profile
 import json
 import sys
 
@@ -15,7 +16,7 @@ from blocks.pages_service.pages_service import get_page_service
 from blocks.serializers import PageSerializer
 from catalog.catalog_service.catalog_service import get_catalog_service
 from catalog.catalog_service.catalog_service_interface import CatalogServiceInterface
-from common.views import SubdomainMixin
+from common.views import PageNotFound, SubdomainMixin
 from domens.get_domain import get_partners_domain_string
 from settings.models import SiteSettings
 from user.forms import LoginForm, RegistrationForm, ResetPasswordForm
@@ -98,7 +99,10 @@ def slug_router(request, slug):
     if CatalogBlock.objects.filter(product_type__slug=slug).exists():
         return ShowCatalogPage.as_view()(request, products_slug=slug)
 
-    return HttpResponseNotFound("404 Page not found")
+    if slug == "my":
+        return Profile.as_view()(request)
+
+    return PageNotFound.as_view()(request)
 
 
 @method_decorator(csrf_exempt, name="dispatch")

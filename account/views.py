@@ -213,3 +213,7 @@ class ProfileTemplate(BaseProfileView):
 
         content = loader.render_to_string(f"account/{template_name}.html", context, request, None)
         return JsonResponse({"content": content})
+
+
+class PageNotFound(SubdomainMixin):
+    template_name = "account/404.html"
