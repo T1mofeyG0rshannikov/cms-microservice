@@ -51,7 +51,7 @@ class ChangeSiteView(View):
             return HttpResponse(status=401)
 
         print(request.POST)
-        form = ChangeSiteForm(request.POST)
+        form = ChangeSiteForm(request.POST, request.FILES)
         if form.is_valid():
             site_url = form.cleaned_data.get("site")
             if Site.objects.filter(user_id=user.id).exists():
@@ -123,7 +123,7 @@ class ChangeUserView(View):
         if request.user_from_header is None:
             return HttpResponse(status=401)
 
-        form = ChangeUserForm(request.POST)
+        form = ChangeUserForm(request.POST, request.FILES)
         if form.is_valid():
             user = request.user_from_header
 
@@ -160,7 +160,7 @@ class ChangeUserView(View):
                 )
 
             if form.cleaned_data.get("profile_picture"):
-                user.profile_picture = form.cleaned_data.get(form.cleaned_data.get("profile_picture"))
+                user.profile_picture = form.cleaned_data.get("profile_picture")
 
             user.save()
 

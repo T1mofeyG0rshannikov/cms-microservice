@@ -168,7 +168,7 @@ form{
     }
 
     .error{
-        font-size: 14px;
+        font-size: 13px;
     }
 
     .field-container{
@@ -178,10 +178,14 @@ form{
         .field p{
             margin-bottom: 5px;
             margin-top: 10px;
+            font-size: 13px;
         }
 
         input{
             height: 35px;
+            font-family: var(--main-text-font-family);
+            font-size: var(--main-text-font-size);
+            font-weight: var(--main-text-font-weight);
 
             &::-webkit-input-placeholder{
                 color: rgb(200, 200, 200);

@@ -34,7 +34,7 @@ class ChangeUserForm(forms.Form):
     social_network = forms.CharField(required=False)
     adress = forms.CharField(required=False)
 
-    profile_picture = forms.ImageField(required=False)
+    profile_picture = forms.FileField(required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

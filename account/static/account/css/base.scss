@@ -33,7 +33,7 @@
 
     .active{
         border-radius: 15px 0px 0px 15px;
-        background: white;
+        background: var(--background-color);
     }
 }
 
@@ -59,4 +59,8 @@ body{
 a, p{
     font-size: 14px;
     margin: 22px 0px;
+}
+
+h1{
+    font-size: 27px;
 }

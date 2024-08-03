@@ -1,5 +1,6 @@
 function initSetPasswordForm(){
     const form = document.querySelector("form.set-password-form");
+    const button = form.querySelector("input[type=submit]");
 
     const passwordContainer = form.querySelector("#password")
     const repeatPasswordContainer = form.querySelector("#repeat_password")
@@ -12,6 +13,7 @@ function initSetPasswordForm(){
     input1.addEventListener("input", validateForm)
     input1.addEventListener("change", () => {
         const password1 = input1.value;
+        const password2 = input2.value;
 
         if (containsCyrillic(password1)){
             setError(passwordContainer, "Только латинские буквы, цифры и символы");
@@ -23,6 +25,11 @@ function initSetPasswordForm(){
             button.disabled = true;
             return;
         }
+
+        if (password1 !== password2 && password2.length > 0){
+            setError(repeatPasswordContainer, "Пароли не совпадают");
+            return;
+        }
     })
 
     input2.addEventListener("input", () => {
@@ -32,6 +39,7 @@ function initSetPasswordForm(){
 
     input2.addEventListener("change", () => {
         touchedPassword2 = true;
+        const password1 = input1.value;
         const password2 = input2.value;
 
         if (containsCyrillic(password2)){
@@ -42,6 +50,11 @@ function initSetPasswordForm(){
         if (password2.length < 6 && touchedPassword2){
             setError(repeatPasswordContainer, "Длина пароля не менее 6 символов")
             button.disabled = true;
+            return;
+        }
+
+        if (password1 !== password2 && password2.length > 0){
+            setError(repeatPasswordContainer, "Пароли не совпадают");
             return;
         }
     })
@@ -71,8 +84,7 @@ function initSetPasswordForm(){
             return;
         }
 
-        if (password1 !== password2 && password2.length > 0){
-            setError(repeatPasswordContainer, "Пароли не совпадают");
+        if (password1 !== password2){
             const button = form.querySelector("input[type=submit]");
             button.disabled = true;
             return;

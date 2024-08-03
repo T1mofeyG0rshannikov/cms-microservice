@@ -13,7 +13,7 @@
 
     <div class="main-user-content field-container">
         <div class="user-logo">
-            <img default="{% static 'common/images/logo.png' %}" src="{% static 'common/images/logo.png' %}" />
+            <img default="{% static 'common/images/logo.png' %}" src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'common/images/logo.png' %}{% endif %}" />
             <input name="profile_picture" type="file" accept="image/*" id="file" />
         </div>
 
@@ -47,7 +47,7 @@
         <div class="field" style="width: 100%;" id="email">
             <div class="email-title">
                 <p>Email</p>
-                {% if user.email_is_confirmed %}{% else %}<a style="cursor: pointer;" onclick="sendConfirmEmail()" >Подтвердите email</a>{% endif %}
+                {% if user.email_is_confirmed %}{% else %}<a style="cursor: pointer;" onclick="sendConfirmEmail(this)" >Подтвердите email</a>{% endif %}
             </div>
             <div class="checkmark-container">
                 <input placeholder="Ваш емейл" name="email" default="{% if user.email %}{{ user.email }}{% endif %}" value="{% if user.email %}{{ user.email }}{% endif %}" />

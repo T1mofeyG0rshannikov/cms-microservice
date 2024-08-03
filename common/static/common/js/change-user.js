@@ -2,6 +2,8 @@ function onSubmitChangeUserForm(element, event){
     event.preventDefault();
 
     const data = new FormData(element);
+    data.append('profile_picture', element.querySelector("#file").files[0])
+    console.log(element.querySelector("#file").files[0]);
     const token = getToken();
 
     fetch(`/my/change-user`, {
@@ -39,7 +41,6 @@ function initChangeUserForm(){
     userLogoLoader.addEventListener("change", () => displayPhotoOnload(userLogo));
 
     const emailInput = changeUserForm.querySelector("input[name=email]");
-    const phoneInput = changeUserForm.querySelector("input[name=phone]");
 
     emailInput.addEventListener("change", () => {
         validEmail = onchangeEmail(changeUserForm);
@@ -53,7 +54,7 @@ function initChangeUserForm(){
 
 initChangeUserForm();
 
-function sendConfirmEmail(){
+function sendConfirmEmail(elem){
     const token = getToken();
 
     fetch(`/email/send-confirm-email`, {
@@ -65,6 +66,8 @@ function sendConfirmEmail(){
         }
     }).then(response => {
         if (response.status === 200){
+            elem.innerHTML = "Ссылка отправлена на email";
+            elem.style.color = "var(--main-text-color)";
             console.log("success")
         }
     })

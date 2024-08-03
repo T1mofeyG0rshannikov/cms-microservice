@@ -151,6 +151,9 @@ class SetPassword(BaseUserView):
     def get(self, request):
         if request.user is None:
             return HttpResponseRedirect("/user/login")
+        
+        if len(request.user.password) > 0:
+            return HttpResponseRedirect("/my/")
 
         form = SetPasswordForm()
 
