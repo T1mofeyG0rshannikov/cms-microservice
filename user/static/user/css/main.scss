@@ -18,6 +18,9 @@
         border: 1px solid var(--dark-color);
         border-radius: 5px;
         width: 100%;
+        font-family: var(--main-text-font-family);
+        font-size: var(--main-text-font-size);
+        font-weight: var(--main-text-font-weight);
 
         &:-webkit-autofill,
         &:-webkit-autofill:hover,

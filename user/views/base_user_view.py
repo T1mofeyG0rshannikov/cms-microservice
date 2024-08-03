@@ -32,4 +32,7 @@ class MyLoginRequiredMixin(LoginRequiredMixin):
             print(path)
             return HttpResponseRedirect(path)
 
+        if request.user.password is None or not request.user.password:
+            return HttpResponseRedirect("/user/password")
+
         return super().dispatch(request, *args, **kwargs)

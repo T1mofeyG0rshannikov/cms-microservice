@@ -7,31 +7,40 @@ function initSetPasswordForm(){
     const input1 = passwordContainer.querySelector("input");
     const input2 = repeatPasswordContainer.querySelector("input");
 
+    let touchedPassword2 = false;
+
     input1.addEventListener("input", validateForm)
     input1.addEventListener("change", () => {
         const password1 = input1.value;
-        const password2 = input2.value;
 
-        if (password1 !== password2){
-            setError(passwordContainer, "Пароли не совпадают");
-            const button = form.querySelector("input[type=submit]");
+        if (containsCyrillic(password1)){
+            setError(passwordContainer, "Только латинские буквы, цифры и символы");
+            return;
+        }
+
+        if (password1.length < 6){
+            setError(passwordContainer, "Длина пароля не менее 6 символов")
             button.disabled = true;
             return;
         }
     })
 
     input2.addEventListener("input", () => {
+        touchedPassword2 = true;
         validateForm();
-        edited = true;
     })
 
     input2.addEventListener("change", () => {
-        const password1 = input1.value;
+        touchedPassword2 = true;
         const password2 = input2.value;
 
-        if (password1 !== password2){
-            setError(repeatPasswordContainer, "Пароли не совпадают");
-            const button = form.querySelector("input[type=submit]");
+        if (containsCyrillic(password2)){
+            setError(repeatPasswordContainer, "Только латинские буквы, цифры и символы");
+            return;
+        }
+
+        if (password2.length < 6 && touchedPassword2){
+            setError(repeatPasswordContainer, "Длина пароля не менее 6 символов")
             button.disabled = true;
             return;
         }
@@ -46,27 +55,31 @@ function initSetPasswordForm(){
         setError(passwordContainer, "");
         setError(repeatPasswordContainer, "");
 
-        if (password1.length < 6){
-            setError(passwordContainer, "Длина пароля не менее 6 символов")
-            button.disabled = true;
-            return;
-        }
-
         if (containsCyrillic(password1)){
-            setError(passwordContainer, "Только латинские буквы, цифры и символы")
-            button.disabled = true;
+            setError(passwordContainer, "Только латинские буквы, цифры и символы");
+            if (containsCyrillic(password2)){
+                setError(repeatPasswordContainer, "Только латинские буквы, цифры и символы");
+            }
             return;
         }
 
-        if (password1 !== password2){
+        if (containsCyrillic(password2)){
+            setError(repeatPasswordContainer, "Только латинские буквы, цифры и символы");
+            if (containsCyrillic(password1)){
+                setError(passwordContainer, "Только латинские буквы, цифры и символы");
+            }
+            return;
+        }
+
+        if (password1 !== password2 && password2.length > 0){
+            setError(repeatPasswordContainer, "Пароли не совпадают");
+            const button = form.querySelector("input[type=submit]");
             button.disabled = true;
             return;
         }
 
         button.disabled = false;
     }
-
-    edited = false;
 }
 
 initSetPasswordForm();
@@ -76,7 +89,12 @@ function submitSetPasswordForm(element, event, domain, token){
     event.preventDefault();
     const data = new FormData(element);
 
-    fetch(`http://${domain}/user/password/${token}`, {
+    let url = `http://${domain}/user/password`;
+    if (token.length > 0){
+        url += "/" + token;
+    }
+
+    fetch(url, {
         method: "POST",
         headers: {
             'Accept': 'application/json',

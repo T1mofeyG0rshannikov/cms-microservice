@@ -87,7 +87,7 @@ class RegisterUser(BaseUserView, SubdomainMixin):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class SetPassword(BaseUserView):
+class ResetPassword(BaseUserView):
     def get(self, request, token):
         payload = self.jwt_processor.validate_token(token)
 
@@ -97,8 +97,6 @@ class SetPassword(BaseUserView):
         user = User.objects.get_user_by_id(payload["id"])
         if user is None:
             return HttpResponseRedirect(f"/?error={Errors.wrong_reset_password_link.value}")
-
-        user.confirm_email()
 
         form = SetPasswordForm()
 
@@ -129,6 +127,55 @@ class SetPassword(BaseUserView):
             password = form.cleaned_data.get("password")
 
             user = User.objects.get_user_by_id(payload["id"])
+            user.confirm_email()
+            user.set_password(password)
+            user.save()
+
+            request.user = user
+            user = authenticate(request)
+            login(request, user)
+
+            access_token = self.jwt_processor.create_access_token(user.username, user.id)
+
+            return JsonResponse(
+                {
+                    "access_token": access_token,
+                },
+            )
+
+        return JsonResponse({"errors": form.errors}, status=400)
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class SetPassword(BaseUserView):
+    def get(self, request):
+        if request.user is None:
+            return HttpResponseRedirect("/user/login")
+
+        form = SetPasswordForm()
+
+        settings = get_settings(request.domain, request.subdomain)
+
+        if request.domain == "localhost":
+            domain = "localhost:8000"
+        else:
+            domain = get_domain_string()
+
+        partner_domain = get_partners_domain_string()
+
+        return render(
+            request,
+            "user/set-password.html",
+            {"form": form, "settings": settings, "domain": domain, "partner_domain": partner_domain},
+        )
+
+    def post(self, request):
+        form = SetPasswordForm(request.POST)
+
+        if form.is_valid():
+            password = form.cleaned_data.get("password")
+
+            user = request.user
             user.set_password(password)
             user.save()
 

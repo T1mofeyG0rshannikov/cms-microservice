@@ -6,6 +6,7 @@ from user.views.views import (
     Login,
     Logout,
     RegisterUser,
+    ResetPassword,
     SendMailToResetPassword,
     SetPassword,
     SetToken,
@@ -13,7 +14,8 @@ from user.views.views import (
 
 urlpatterns = [
     path("register", RegisterUser.as_view()),
-    path("password/<str:token>", SetPassword.as_view()),
+    path("password", SetPassword.as_view()),
+    path("password/<str:token>", ResetPassword.as_view()),
     path("login", Login.as_view()),
     path("get-user-info", GetUserInfo.as_view()),
     path("confirm-email/<str:token>", ConfirmEmail.as_view()),

@@ -52,7 +52,11 @@ class SetPasswordForm(forms.Form):
 
 
 class ResetPasswordForm(forms.Form):
-    email = forms.EmailField(max_length=200, widget=forms.TextInput(attrs={"placeholder": "Ваш email или телефон"}))
+    email = forms.EmailField(
+        max_length=200,
+        widget=forms.TextInput(attrs={"placeholder": "Ваш email или телефон"}),
+        error_messages={"invalid": "Введите корректный email"},
+    )
 
 
 class CustomAuthenticationAdminForm(AuthenticationForm):

@@ -10,20 +10,26 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("domens", "0001_initial"),
+        ("account", "0002_initial"),
+        ("common", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name="site",
+            model_name="usermessanger",
             name="user",
             field=models.OneToOneField(
-                blank=True,
-                null=True,
                 on_delete=django.db.models.deletion.CASCADE,
-                related_name="site",
+                related_name="messanger",
                 to=settings.AUTH_USER_MODEL,
-                verbose_name="пользователь",
+                verbose_name="Пользователь",
+            ),
+        ),
+        migrations.AddField(
+            model_name="messanger",
+            name="social_network",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="common.socialnetwork", verbose_name="Соц. сеть"
             ),
         ),
     ]
