@@ -6,10 +6,9 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
-from domens.domain_service.domain_service import DomainService, get_domain_service
+from domens.domain_service.domain_service import get_domain_service
 from domens.domain_service.domain_service_interface import DomainServiceInterface
 from emails.email_service.email_service import get_email_service
-from settings.get_settings import get_settings
 from user.forms import LoginForm, RegistrationForm, ResetPasswordForm, SetPasswordForm
 from user.models import User
 from user.serializers import UserSerializer
@@ -94,19 +93,9 @@ class ResetPassword(BaseUserView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        if self.request.domain == "localhost":
-            domain = "localhost:8000"
-        else:
-            domain = DomainService.get_domain_string()
-
-        partner_domain = DomainService.get_partners_domain_string()
         context["form"] = SetPasswordForm()
-
         context["token"] = self.kwargs.get("token")
-        # context["settings"] = get_settings(self.request)
-        # context["domain"] = domain
-        # context["partner_domain"] = partner_domain
+
         return context
 
     def post(self, request, token):
@@ -142,30 +131,23 @@ class ResetPassword(BaseUserView):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class SetPassword(BaseUserView):
+    template_name = "user/set-password.html"
+    
     def get(self, request):
         if request.user is None:
-            return HttpResponseRedirect("/user/login")
+            return HttpResponseRedirect(self.login_url)
 
         if len(request.user.password) > 0:
-            return HttpResponseRedirect("/my/")
+            return HttpResponseRedirect(self.account_url)
 
-        form = SetPasswordForm()
-
-        settings = get_settings(request)
-
-        if request.domain == "localhost":
-            domain = "localhost:8000"
-        else:
-            domain = DomainService.get_domain_string()
-
-        partner_domain = DomainService.get_partners_domain_string()
-
-        return render(
-            request,
-            "user/set-password.html",
-            {"form": form, "settings": settings, "domain": domain, "partner_domain": partner_domain},
-        )
-
+        return super().get(request)
+        
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = SetPasswordForm()
+    
+        return context
+    
     def post(self, request):
         form = SetPasswordForm(request.POST)
 

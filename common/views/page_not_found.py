@@ -3,17 +3,18 @@ from django.views.generic import TemplateView
 
 from domens.domain_service.domain_service import DomainService
 from settings.get_settings import get_settings
+from settings.views import SettingsMixin
 
 
-class BaseNotFoundPage(TemplateView):
+class BaseNotFoundPage(SettingsMixin):
     template_name = "common/404.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context["settings"] = get_settings(self.request)
-        context["domain"] = DomainService.get_domain_string()
-        context["partner_domain"] = DomainService.get_partners_domain_string()
+        #context["settings"] = get_settings(self.request)
+        #context["domain"] = DomainService.get_domain_string()
+        #context["partner_domain"] = DomainService.get_partners_domain_string()
 
         return context
 

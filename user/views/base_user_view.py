@@ -10,6 +10,8 @@ from user.forms import LoginForm, RegistrationForm, ResetPasswordForm
 
 class BaseUserView(SubdomainMixin):
     jwt_processor: JwtProcessorInterface = get_jwt_processor()
+    login_url = "/user/login"
+    account_url = "/my/"
 
 
 class MyLoginRequiredMixin(LoginRequiredMixin):
