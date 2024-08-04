@@ -1,57 +1,20 @@
 import re
 
 from django.db.models import Q
-from django.http import (
-    HttpResponse,
-    HttpResponseNotFound,
-    HttpResponseRedirect,
-    JsonResponse,
-)
-from django.views.generic import TemplateView, View
+from django.http import HttpResponseNotFound, HttpResponseRedirect
+from django.views.generic import TemplateView
 
-from common.security import LinkEncryptor
-from common.template_loader.template_loader import get_template_loader
 from domens.get_domain import get_domain_string, get_partners_domain_string
 from domens.models import Domain, Site
 from settings.get_settings import get_settings
 from settings.models import SiteSettings
 
 
-class RedirectToLink(View):
-    link_encryptor = LinkEncryptor()
-
-    def get(self, request):
-        tracker = self.request.GET.get("product")
-        if tracker:
-            link = self.link_encryptor.decrypt(tracker)
-
-            if link:
-                return HttpResponseRedirect(link)
-
-        return HttpResponse(status=400)
-
-
-class GetChangeUserFormTemplate(View):
-    template_loader = get_template_loader()
-
-    def get(self, request):
-        template = self.template_loader.load_change_user_form(request)
-        return JsonResponse({"content": template})
-
-
-class GetChangeSiteFormTemplate(View):
-    template_loader = get_template_loader()
-
-    def get(self, request):
-        template = self.template_loader.load_change_site_form(request)
-        return JsonResponse({"content": template})
-
-
 class SettingsMixin(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        settings = get_settings(self.request.domain, self.request.subdomain)
+        settings = get_settings(self.request)
 
         if self.request.domain == "localhost":
             domain = "localhost:8000"
@@ -141,7 +104,3 @@ class SubdomainMixin(SettingsMixin):
         request.subdomain = subdomain
 
         return super().dispatch(request, *args, **kwargs)
-
-
-class PageNotFound(SubdomainMixin):
-    template_name = "common/404.html"

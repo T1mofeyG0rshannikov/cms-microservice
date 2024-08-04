@@ -10,7 +10,7 @@ from django.views.generic import View
 from account.forms import ChangePasswordForm, ChangeSiteForm, ChangeUserForm
 from account.models import Messanger, UserFont, UserMessanger, UserSocialNetwork
 from common.models import SocialNetwork
-from common.views import SubdomainMixin
+from common.views.mixins import SubdomainMixin
 from domens.models import Site
 from notifications.models import UserNotification
 from notifications.serializers import UserNotificationSerializer

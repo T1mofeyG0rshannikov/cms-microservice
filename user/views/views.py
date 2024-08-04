@@ -6,7 +6,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
-from common.views import SubdomainMixin
+from common.views.mixins import SubdomainMixin
 from domens.get_domain import get_domain_string, get_partners_domain_string
 from domens.models import Domain, Site
 from emails.email_service.email_service import get_email_service
@@ -100,7 +100,7 @@ class ResetPassword(BaseUserView):
 
         form = SetPasswordForm()
 
-        settings = get_settings(request.domain, request.subdomain)
+        settings = get_settings(request)
 
         if request.domain == "localhost":
             domain = "localhost:8000"
@@ -157,7 +157,7 @@ class SetPassword(BaseUserView):
 
         form = SetPasswordForm()
 
-        settings = get_settings(request.domain, request.subdomain)
+        settings = get_settings(request)
 
         if request.domain == "localhost":
             domain = "localhost:8000"

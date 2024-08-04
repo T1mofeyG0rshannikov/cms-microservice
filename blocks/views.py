@@ -1,4 +1,3 @@
-from account.views import Profile
 import json
 import sys
 
@@ -9,17 +8,15 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
-from blocks.models.catalog_block import CatalogBlock
 from blocks.models.common import Page
 from blocks.pages_service.page_service_interface import PageServiceInterface
 from blocks.pages_service.pages_service import get_page_service
 from blocks.serializers import PageSerializer
-from catalog.catalog_service.catalog_service import get_catalog_service
-from catalog.catalog_service.catalog_service_interface import CatalogServiceInterface
-from common.views import PageNotFound, SubdomainMixin
+from common.views.mixins import SubdomainMixin
 from domens.get_domain import get_partners_domain_string
 from settings.models import SiteSettings
-from user.forms import LoginForm, RegistrationForm, ResetPasswordForm
+from user.forms import LoginForm
+from user.views.base_user_view import UserFormsView
 
 
 class IndexPage(SubdomainMixin):
@@ -45,15 +42,13 @@ class IndexPage(SubdomainMixin):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context |= UserFormsView.get_context_data()
 
         page = Page.objects.prefetch_related("blocks").get(url=None)
 
         serialized_page = PageSerializer(page).data
 
         context["page"] = serialized_page
-        context["login_form"] = LoginForm()
-        context["register_form"] = RegistrationForm()
-        context["reset_password_form"] = ResetPasswordForm()
 
         return context
 
@@ -63,46 +58,14 @@ class ShowPage(SubdomainMixin):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context |= UserFormsView.get_context_data()
 
         page = Page.objects.prefetch_related("blocks").get(url=kwargs["page_url"])
         serialized_page = PageSerializer(page).data
 
         context["page"] = serialized_page
-        context["login_form"] = LoginForm()
-        context["register_form"] = RegistrationForm()
-        context["reset_password_form"] = ResetPasswordForm()
 
         return context
-
-
-class ShowCatalogPage(SubdomainMixin):
-    template_name = "blocks/page.html"
-    catalog_service: CatalogServiceInterface = get_catalog_service()
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        page = self.catalog_service.get_page(user=self.request.user, slug=kwargs["products_slug"])
-
-        context["page"] = page
-        context["login_form"] = LoginForm()
-        context["register_form"] = RegistrationForm()
-        context["reset_password_form"] = ResetPasswordForm()
-
-        return context
-
-
-def slug_router(request, slug):
-    if Page.objects.filter(url=slug).exists():
-        return ShowPage.as_view()(request, page_url=slug)
-
-    if CatalogBlock.objects.filter(product_type__slug=slug).exists():
-        return ShowCatalogPage.as_view()(request, products_slug=slug)
-
-    if slug == "my":
-        return Profile.as_view()(request)
-
-    return PageNotFound.as_view()(request)
 
 
 @method_decorator(csrf_exempt, name="dispatch")

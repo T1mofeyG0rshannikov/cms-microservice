@@ -1,10 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
+from django.views.generic import View
 
-from common.views import SubdomainMixin
+from common.views.mixins import SubdomainMixin
 from domens.get_domain import get_domain_string, get_partners_domain_string
 from user.auth.jwt_processor import get_jwt_processor
 from user.auth.jwt_processor_interface import JwtProcessorInterface
+from user.forms import LoginForm, RegistrationForm, ResetPasswordForm
 
 
 class BaseUserView(SubdomainMixin):
@@ -13,6 +15,7 @@ class BaseUserView(SubdomainMixin):
 
 class MyLoginRequiredMixin(LoginRequiredMixin):
     login_url = "/user/login"
+    set_password_url = "/user/password"
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
@@ -29,10 +32,19 @@ class MyLoginRequiredMixin(LoginRequiredMixin):
         if partner_domain_string in path:
             path = path.replace(request.get_host, domain_string)
 
-            print(path)
             return HttpResponseRedirect(path)
 
         if request.user.password is None or not request.user.password:
-            return HttpResponseRedirect("/user/password")
+            return HttpResponseRedirect(self.set_password_url)
 
         return super().dispatch(request, *args, **kwargs)
+
+
+class UserFormsView:
+    @classmethod
+    def get_context_data(self):
+        context = {}
+        context["login_form"] = LoginForm()
+        context["register_form"] = RegistrationForm()
+        context["reset_password_form"] = ResetPasswordForm()
+        return context
