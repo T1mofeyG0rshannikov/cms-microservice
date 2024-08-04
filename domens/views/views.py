@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.views.generic import TemplateView, View
 
-from user.forms import LoginForm
+from user.forms import LoginForm, ResetPasswordForm
 
 
 class StopSite(View):
@@ -30,5 +30,6 @@ class PartnerIndexPage(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["login_form"] = LoginForm()
+        context["reset_password_form"] = ResetPasswordForm()
 
         return context

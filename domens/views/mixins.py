@@ -71,9 +71,15 @@ class SubdomainMixin(SettingsMixin):
 
         if Domain.objects.filter(is_partners=True).exists():
             partner_domain = get_partners_domain_string()
+            print(domain, "domain")
+            print(partner_domain, "partner_domain")
+            print(subdomain, "subdomain")
+            print(request.path, "path")
 
             if domain == partner_domain and subdomain == "":
-                if request.path == "":
+                if request.get_absolute_uri().endswith(partner_domain) or request.get_absolute_uri().endswith(
+                    partner_domain + "/"
+                ):
                     return PartnerIndexPage.as_view()(request)
 
                 return BaseNotFoundPage.as_view()(request)

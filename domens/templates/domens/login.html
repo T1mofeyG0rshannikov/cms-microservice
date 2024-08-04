@@ -3,58 +3,12 @@
 
 {% block content %}
 
-<form onsubmit="submitLoginForm(this, event, '{{domain}}')" class="user-form" id="login-form">
-    {% if settings.form_logo %}
-        <img class="logo" src="{{ settings.form_logo.image }}" />
-    {% else %}
-        <div class="logo">
-            <a style="font-family: {{settings.site_font}}; color: var(--main-color); font-size: {{settings.site_font_size}};">{{ settings.site_name }}</a>
-        </div>
-    {% endif %}
+<div class="reset-password-form-container form-container" style="display: none; background: rgba(0,0,0,0); z-index: 1;">
+    {% include "user/forms/reset_password.html" %}
+</div>
 
-    <h3>Вход в кабинет</h3>
+<div class="login-form-container form-container" style="background: rgba(0,0,0,0)">
+    {% include "domens/login_form.html" %}
+</div>
 
-    {% csrf_token %}
-    {% for field in form %}
-        <div class="field {% if field.name == 'password' %}password{% elif field.name == 'repeat_password' %}password{% endif %}" id="{{ field.name }}">
-            <div class="field-container">
-                {{ field }}
-
-                {% if field.name == "password" %}
-                    <img class="eye" src="{% static 'user/images/eye-cross.png' %}" />
-                {% endif %}
-
-                {% for error in field.errors %}
-                    <div class="error">{{ error }}</div>
-                {% endfor %}
-            </div>
-        </div>
-    {% endfor %}
-    <input type="submit" value="Войти в кабинет" />
-
-    <div class="bottom-menu">
-        <label class="agreed-container">Запомнить меня
-            <input type="checkbox">
-            <span class="checkmark"></span>
-        </label>
-
-        <a href="/user/reset-password" class="forget-password">Забыли пароль?</a>
-    </div>
-</form>
-
-<style>
-    .logo{
-        width: {{settings.form_logo.width}};
-        height: {{settings.form_logo.height}};
-    }
-
-    #login-form{
-        box-shadow: none;
-        width: 400px;
-    }
-</style>
-{% endblock %}
-
-{% block additional_scripts %}
-<script src="{% static "user/js/login_form.js" %}"></script>
 {% endblock %}
