@@ -1,5 +1,5 @@
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.views.generic import TemplateView, View
+from django.views.generic import View
 
 from account.views import Profile
 from blocks.models.catalog_block import CatalogBlock
@@ -8,7 +8,7 @@ from blocks.views import ShowPage
 from catalog.views import ShowCatalogPage
 from common.security import LinkEncryptor
 from common.template_loader.template_loader import get_template_loader
-from common.views.mixins import SubdomainMixin
+from domens.views.mixins import SubdomainMixin
 
 
 class RedirectToLink(View):
@@ -42,10 +42,6 @@ class GetChangeSiteFormTemplate(View):
 
 
 class PageNotFound(SubdomainMixin):
-    template_name = "common/404.html"
-
-
-class SubdomainNotFoundPage(TemplateView):
     template_name = "common/404.html"
 
 

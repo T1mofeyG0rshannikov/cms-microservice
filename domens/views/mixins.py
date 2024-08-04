@@ -1,33 +1,14 @@
 import re
 
 from django.db.models import Q
-from django.http import HttpResponseNotFound, HttpResponseRedirect
-from django.views.generic import TemplateView
+from django.http import HttpResponseRedirect
 
-from domens.get_domain import get_domain_string, get_partners_domain_string
+from common.views.page_not_found import BaseNotFoundPage
+from domens.get_domain import get_partners_domain_string
 from domens.models import Domain, Site
-from settings.get_settings import get_settings
+from domens.views.views import PartnerIndexPage
 from settings.models import SiteSettings
-
-
-class SettingsMixin(TemplateView):
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        settings = get_settings(self.request)
-
-        if self.request.domain == "localhost":
-            domain = "localhost:8000"
-        else:
-            domain = get_domain_string()
-
-        partner_domain = get_partners_domain_string()
-
-        context["settings"] = settings
-        context["domain"] = domain
-        context["partner_domain"] = partner_domain
-
-        return context
+from settings.views import SettingsMixin
 
 
 class SubdomainMixin(SettingsMixin):
@@ -79,26 +60,29 @@ class SubdomainMixin(SettingsMixin):
         domain = self.get_domain(request)
 
         if not self.valid_subdomain(subdomain):
-            return HttpResponseNotFound("404 Subdomen not found")
+            return BaseNotFoundPage.as_view()(request)
 
         if (
             domain != "localhost"
             and subdomain
             and not Site.objects.filter(Q(domain__domain=domain) & Q(subdomain=subdomain)).exists()
         ):
-            return HttpResponseNotFound("404 Subdomen not found")
+            return BaseNotFoundPage.as_view()(request)
 
         if Domain.objects.filter(is_partners=True).exists():
             partner_domain = get_partners_domain_string()
 
-            if domain == partner_domain and not subdomain and request.path != "":
-                return HttpResponseNotFound("404 Page not found")
+            if domain == partner_domain and subdomain == "":
+                if request.path == "":
+                    return PartnerIndexPage.as_view()(request)
+
+                return BaseNotFoundPage.as_view()(request)
 
             if domain == partner_domain and SiteSettings.objects.first().disable_partners_sites:
                 return HttpResponseRedirect("/")
 
             if request.path.startswith("/admin/") and partner_domain in request.get_host():
-                return HttpResponseNotFound("404 Page not found")
+                return BaseNotFoundPage.as_view()(request)
 
         request.domain = domain
         request.subdomain = subdomain

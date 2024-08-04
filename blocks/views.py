@@ -3,7 +3,6 @@ import sys
 
 from django.db.utils import IntegrityError
 from django.http import HttpResponse, HttpResponseNotFound
-from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
@@ -12,10 +11,9 @@ from blocks.models.common import Page
 from blocks.pages_service.page_service_interface import PageServiceInterface
 from blocks.pages_service.pages_service import get_page_service
 from blocks.serializers import PageSerializer
-from common.views.mixins import SubdomainMixin
 from domens.get_domain import get_partners_domain_string
+from domens.views.mixins import SubdomainMixin
 from settings.models import SiteSettings
-from user.forms import LoginForm
 from user.views.base_user_view import UserFormsView
 
 
@@ -27,13 +25,6 @@ class IndexPage(SubdomainMixin):
 
         if self.request.domain == partner_domain and SiteSettings.objects.first().disable_partners_sites:
             return HttpResponse("<h1>Привет :)</h1>")
-
-        if (
-            self.request.domain == partner_domain  # or self.request.domain == "localhost"
-        ) and self.request.subdomain == "":
-            form = LoginForm()
-
-            return render(self.request, "blocks/login.html", {"login_form": form})
 
         if not Page.objects.filter(url=None).exists():
             return HttpResponseNotFound()

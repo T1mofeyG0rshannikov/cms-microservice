@@ -6,9 +6,9 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
-from common.views.mixins import SubdomainMixin
 from domens.get_domain import get_domain_string, get_partners_domain_string
 from domens.models import Domain, Site
+from domens.views.mixins import SubdomainMixin
 from emails.email_service.email_service import get_email_service
 from settings.get_settings import get_settings
 from user.forms import LoginForm, RegistrationForm, ResetPasswordForm, SetPasswordForm
@@ -259,6 +259,10 @@ class GetUserInfo(View):
             user = user_from_header
         if user_from_request.is_authenticated:
             user = user_from_request
+
+        print(user_from_header)
+        print(user_from_request)
+        print(user)
 
         if user:
             user = UserSerializer(user).data

@@ -1,6 +1,6 @@
 from catalog.catalog_service.catalog_service import get_catalog_service
 from catalog.catalog_service.catalog_service_interface import CatalogServiceInterface
-from common.views.mixins import SubdomainMixin
+from domens.views.mixins import SubdomainMixin
 from user.views.base_user_view import UserFormsView
 
 

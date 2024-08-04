@@ -4,8 +4,11 @@ from domens.get_domain import get_domain_string, get_partners_domain_string
 from settings.get_settings import get_settings
 
 
-class SettingsMixin(TemplateView):
+class BaseNotFoundPage(TemplateView):
+    template_name = "common/404.html"
+
     def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         context = super().get_context_data(**kwargs)
 
         settings = get_settings(self.request)
