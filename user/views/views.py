@@ -6,9 +6,8 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
-from domens.get_domain import get_domain_string, get_partners_domain_string
-from domens.models import Domain, Site
-from domens.views.mixins import SubdomainMixin
+from domens.domain_service.domain_service import DomainService, get_domain_service
+from domens.domain_service.domain_service_interface import DomainServiceInterface
 from emails.email_service.email_service import get_email_service
 from settings.get_settings import get_settings
 from user.forms import LoginForm, RegistrationForm, ResetPasswordForm, SetPasswordForm
@@ -21,26 +20,15 @@ from utils.validators import is_valid_email, is_valid_phone
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class RegisterUser(BaseUserView, SubdomainMixin):
+class RegisterUser(BaseUserView):
     template_name = "user/register.html"
+    domain_service: DomainServiceInterface = get_domain_service()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["register_form"] = RegistrationForm()
 
         return context
-
-    @property
-    def subdomain(self):
-        subdomain = self.get_subdomain(self.request)
-        if Site.objects.filter(subdomain=subdomain).exists():
-            return Site.objects.get(subdomain=subdomain)
-
-    @property
-    def domain(self):
-        domain = self.get_domain(self.request)
-        if Domain.objects.filter(domain=domain).exists():
-            return Domain.objects.get(domain=domain)
 
     def post(self, request):
         form = RegistrationForm(request.POST)
@@ -67,7 +55,9 @@ class RegisterUser(BaseUserView, SubdomainMixin):
                     User.objects.filter(phone=phone).update(phone=None)
 
                     user = User.objects.create_user(
-                        **form.cleaned_data, register_on_site=self.subdomain, register_on_domain=self.domain
+                        **form.cleaned_data,
+                        register_on_site=self.domain_service.get_site_model(request),
+                        register_on_domain=self.domain_service.get_domain_model(request),
                     )
             except Exception as e:
                 print(e)
@@ -88,6 +78,8 @@ class RegisterUser(BaseUserView, SubdomainMixin):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class ResetPassword(BaseUserView):
+    template_name = "user/set-password.html"
+
     def get(self, request, token):
         payload = self.jwt_processor.validate_token(token)
 
@@ -98,22 +90,24 @@ class ResetPassword(BaseUserView):
         if user is None:
             return HttpResponseRedirect(f"/?error={Errors.wrong_reset_password_link.value}")
 
-        form = SetPasswordForm()
+        return super().get(request, token)
 
-        settings = get_settings(request)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-        if request.domain == "localhost":
+        if self.request.domain == "localhost":
             domain = "localhost:8000"
         else:
-            domain = get_domain_string()
+            domain = DomainService.get_domain_string()
 
-        partner_domain = get_partners_domain_string()
+        partner_domain = DomainService.get_partners_domain_string()
+        context["form"] = SetPasswordForm()
 
-        return render(
-            request,
-            "user/set-password.html",
-            {"form": form, "token": token, "settings": settings, "domain": domain, "partner_domain": partner_domain},
-        )
+        context["token"] = self.kwargs.get("token")
+        # context["settings"] = get_settings(self.request)
+        # context["domain"] = domain
+        # context["partner_domain"] = partner_domain
+        return context
 
     def post(self, request, token):
         form = SetPasswordForm(request.POST)
@@ -162,9 +156,9 @@ class SetPassword(BaseUserView):
         if request.domain == "localhost":
             domain = "localhost:8000"
         else:
-            domain = get_domain_string()
+            domain = DomainService.get_domain_string()
 
-        partner_domain = get_partners_domain_string()
+        partner_domain = DomainService.get_partners_domain_string()
 
         return render(
             request,

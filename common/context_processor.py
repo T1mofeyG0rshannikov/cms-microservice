@@ -1,4 +1,4 @@
-from domens.get_domain import get_domain_string, get_partners_domain_string
+from domens.domain_service.domain_service import DomainService
 from settings.get_settings import get_settings
 
 
@@ -8,8 +8,8 @@ def get_site_data(request):
     if request.domain == "localhost":
         domain = "localhost:8000"
     else:
-        domain = get_domain_string()
+        domain = DomainService.get_domain_string()
 
-    partner_domain = get_partners_domain_string()
+    partner_domain = DomainService.get_partners_domain_string()
 
     return {"settings": settings, "domain": domain, "partner_domain": partner_domain}

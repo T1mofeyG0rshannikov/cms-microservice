@@ -1,6 +1,6 @@
 from django.views.generic import TemplateView
 
-from domens.get_domain import get_domain_string, get_partners_domain_string
+from domens.domain_service.domain_service import DomainService
 from settings.get_settings import get_settings
 
 
@@ -8,17 +8,13 @@ class SettingsMixin(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        settings = get_settings(self.request)
-
         if self.request.domain == "localhost":
             domain = "localhost:8000"
         else:
-            domain = get_domain_string()
+            domain = DomainService.get_domain_string()
 
-        partner_domain = get_partners_domain_string()
-
-        context["settings"] = settings
         context["domain"] = domain
-        context["partner_domain"] = partner_domain
+        context["settings"] = get_settings(self.request)
+        context["partner_domain"] = DomainService.get_partners_domain_string()
 
         return context

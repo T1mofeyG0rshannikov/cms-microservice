@@ -1,6 +1,8 @@
 from django.http import HttpResponse
 from django.views.generic import TemplateView, View
 
+from domens.domain_service.domain_service import DomainService
+from settings.get_settings import get_settings
 from user.forms import LoginForm, ResetPasswordForm
 
 
@@ -31,5 +33,8 @@ class PartnerIndexPage(TemplateView):
         context = super().get_context_data(**kwargs)
         context["login_form"] = LoginForm()
         context["reset_password_form"] = ResetPasswordForm()
+
+        context["domain"] = DomainService.get_domain_string()
+        context["settings"] = get_settings(self.request)
 
         return context

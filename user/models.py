@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from django.db.models.signals import post_save, pre_save
 
-from domens.get_domain import get_partners_domain_string
+from domens.domain_service.domain_service import DomainService
 from domens.models import Site
 from emails.email_service.email_service import get_email_service
 from notifications.create_user_notification import create_user_notification
@@ -57,7 +57,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def full_site_name(self) -> str | None:
         if Site.objects.filter(user_id=self.id).exists():
-            return f"{self.site}.{get_partners_domain_string()}"
+            return f"{self.site}.{DomainService.get_partners_domain_string()}"
 
         return None
 

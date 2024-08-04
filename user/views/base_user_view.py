@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 
-from domens.get_domain import get_domain_string, get_partners_domain_string
+from domens.domain_service.domain_service import DomainService
 from domens.views.mixins import SubdomainMixin
 from user.auth.jwt_processor import get_jwt_processor
 from user.auth.jwt_processor_interface import JwtProcessorInterface
@@ -25,8 +25,8 @@ class MyLoginRequiredMixin(LoginRequiredMixin):
 
         path = request.build_absolute_uri()
 
-        partner_domain_string = get_partners_domain_string()
-        domain_string = get_domain_string()
+        partner_domain_string = DomainService.get_partners_domain_string()
+        domain_string = DomainService.get_domain_string()
 
         if partner_domain_string in path:
             path = path.replace(request.get_host, domain_string)

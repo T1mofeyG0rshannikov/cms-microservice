@@ -1,10 +1,9 @@
-import re
-
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 
 from common.views.page_not_found import BaseNotFoundPage
-from domens.get_domain import get_partners_domain_string
+from domens.domain_service.domain_service import DomainService, get_domain_service
+from domens.domain_service.domain_service_interface import DomainServiceInterface
 from domens.models import Domain, Site
 from domens.views.views import PartnerIndexPage
 from settings.models import SiteSettings
@@ -12,54 +11,13 @@ from settings.views import SettingsMixin
 
 
 class SubdomainMixin(SettingsMixin):
-    def get_domain(self, request):
-        host = request.get_host()
-        host = host.replace("127.0.0.1", "localhost")
-        if ":" in host:
-            host = host.split(":")[0]
-
-        subdomain = self.get_subdomain(request)
-        first_domain = host.split(".")[-1]
-
-        domain = re.findall(f"{subdomain}.*?{first_domain}", host)[0]
-        domain = re.sub(subdomain, "", domain)
-        if domain[0] == ".":
-            domain = domain[1::]
-
-        return domain
-
-    def get_subdomain(self, request):
-        host = request.get_host()
-        host = host.replace("127.0.0.1", "localhost")
-
-        if "localhost" in host:
-            if "." not in host:
-                return ""
-
-            return host.split(".")[0]
-
-        if host.count(".") < 2:
-            return ""
-
-        return host.split(".")[0]
-
-    def valid_subdomain(self, subdomain: str) -> bool:
-        if not subdomain:
-            return True
-
-        if Site.objects.filter(subdomain=subdomain).exists() and Site.objects.get(subdomain=subdomain).is_active:
-            return True
-
-        if subdomain == "www":
-            return True
-
-        return False
+    domain_service: DomainServiceInterface = get_domain_service()
 
     def dispatch(self, request, *args, **kwargs):
-        subdomain = self.get_subdomain(request)
-        domain = self.get_domain(request)
+        subdomain = self.domain_service.get_subdomain_from_url(request)
+        domain = self.domain_service.get_domain_from_url(request)
 
-        if not self.valid_subdomain(subdomain):
+        if not self.domain_service.valid_subdomain(subdomain):
             return BaseNotFoundPage.as_view()(request)
 
         if (
@@ -70,14 +28,10 @@ class SubdomainMixin(SettingsMixin):
             return BaseNotFoundPage.as_view()(request)
 
         if Domain.objects.filter(is_partners=True).exists():
-            partner_domain = get_partners_domain_string()
-            print(domain, "domain")
-            print(partner_domain, "partner_domain")
-            print(subdomain, "subdomain")
-            print(request.path, "path")
+            partner_domain = DomainService.get_partners_domain_string()
 
             if domain == partner_domain and subdomain == "":
-                if request.get_absolute_uri().endswith(partner_domain) or request.get_absolute_uri().endswith(
+                if request.build_absolute_uri().endswith(partner_domain) or request.build_absolute_uri().endswith(
                     partner_domain + "/"
                 ):
                     return PartnerIndexPage.as_view()(request)

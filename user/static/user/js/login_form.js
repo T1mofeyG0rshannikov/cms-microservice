@@ -41,7 +41,7 @@ function submitLoginForm(element, event, domain){
     event.preventDefault();
     const data = new FormData(element);
 
-    fetch("/user/login", {
+    fetch(`http://${domain}/user/login`, {
         method: "POST",
         headers: {
             'Accept': 'application/json',

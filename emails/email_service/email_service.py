@@ -1,6 +1,6 @@
 from django.conf import settings
 
-from domens.get_domain import get_domain_string
+from domens.domain_service.domain_service import DomainService
 from emails.email_service.context_processor.context_processor import (
     get_email_context_processor,
 )
@@ -35,6 +35,6 @@ class EmailService(EmailServiceInterface):
 def get_email_service() -> EmailService:
     return EmailService(
         get_email_template_generator(
-            get_email_context_processor(get_link_generator(get_jwt_processor(), get_domain_string()))
+            get_email_context_processor(get_link_generator(get_jwt_processor(), DomainService.get_domain_string()))
         )
     )
