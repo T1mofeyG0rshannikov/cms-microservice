@@ -11,8 +11,8 @@ from .views import (
 )
 
 urlpatterns = [
-    path("my/", Profile.as_view()),
-    path("my/site/", SiteView.as_view()),
+    re_path(r"my/?$", Profile.as_view()),
+    re_path(r"my/site/?$", SiteView.as_view()),
     path("my/change-site", ChangeSiteView.as_view()),
     path("my/change-user", ChangeUserView.as_view()),
     path("my/change-password", ChangePasswordView.as_view()),

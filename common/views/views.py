@@ -1,4 +1,5 @@
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.shortcuts import render
 from django.views.generic import View
 
 from account.views import Profile
@@ -43,6 +44,9 @@ class GetChangeSiteFormTemplate(View):
 
 class PageNotFound(SubdomainMixin):
     template_name = "common/404.html"
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, self.get_context_data(), status=404)
 
 
 def slug_router(request, slug):

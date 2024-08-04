@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from django.views.generic import TemplateView
 
 from domens.get_domain import get_domain_string, get_partners_domain_string
@@ -25,3 +26,6 @@ class BaseNotFoundPage(TemplateView):
         context["partner_domain"] = partner_domain
 
         return context
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, self.get_context_data(), status=404)

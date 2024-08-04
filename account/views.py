@@ -2,6 +2,7 @@ import json
 
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render
 from django.template import loader
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -217,3 +218,6 @@ class ProfileTemplate(BaseProfileView):
 
 class PageNotFound(SubdomainMixin):
     template_name = "account/404.html"
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, self.get_context_data(), status=404)

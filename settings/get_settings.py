@@ -4,7 +4,7 @@ from settings.serializers import SettingsSerializer
 
 
 def get_settings(request) -> dict:
-    if request.domain:
+    if hasattr(request, "domain"):
         domain = request.domain
         subdomain = request.subdomain
 
