@@ -8,8 +8,7 @@ from domens.models import Domain, Site
 
 class DomainService(DomainServiceInterface):
     @staticmethod
-    def get_subdomain_from_url(request):
-        host = request.get_host()
+    def get_subdomain_from_host(host: str) -> str:
         host = host.replace("127.0.0.1", "localhost")
 
         if "localhost" in host:
@@ -52,13 +51,12 @@ class DomainService(DomainServiceInterface):
     def get_partners_domain_string(self) -> str:
         return Domain.objects.values_list("domain").filter(is_partners=True).first()[0]
 
-    def get_domain_from_url(self, request) -> str:
-        host = request.get_host()
+    def get_domain_from_host(self, host: str) -> str:
         host = host.replace("127.0.0.1", "localhost")
         if ":" in host:
             host = host.split(":")[0]
 
-        subdomain = self.get_subdomain_from_url(request)
+        subdomain = self.get_subdomain_from_host(host)
         first_domain = host.split(".")[-1]
 
         domain = re.findall(f"{subdomain}.*?{first_domain}", host)[0]
@@ -69,12 +67,20 @@ class DomainService(DomainServiceInterface):
         return domain
 
     def get_domain_model(self, request):
-        domain = self.get_domain_from_url(request)
+        path = request.META.get("HTTP_ORIGIN")
+        path = path.replace("http://", "")
+        path = path.replace("https://", "")
+
+        domain = self.get_domain_from_host(request.get_host())
         if Domain.objects.filter(domain=domain).exists():
             return Domain.objects.get(domain=domain)
 
     def get_site_model(self, request):
-        subdomain = self.get_subdomain_from_url(request)
+        path = request.META.get("HTTP_ORIGIN")
+        path = path.replace("http://", "")
+        path = path.replace("https://", "")
+
+        subdomain = self.get_subdomain_from_host(request.get_host())
         if Site.objects.filter(subdomain=subdomain).exists():
             return Site.objects.get(subdomain=subdomain)
 

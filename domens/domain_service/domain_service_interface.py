@@ -7,7 +7,7 @@ from domens.models import Domain, Site
 
 class DomainServiceInterface(Protocol):
     @staticmethod
-    def get_subdomain_from_url(request: HttpRequest) -> str:
+    def get_subdomain_from_host(host: str) -> str:
         raise NotImplementedError()
 
     @staticmethod
@@ -22,7 +22,7 @@ class DomainServiceInterface(Protocol):
     def get_partners_domain_string(self) -> str | None:
         return Domain.objects.values_list("domain").filter(is_partners=True).first()[0]
 
-    def get_domain_from_url(self, request: HttpRequest) -> str:
+    def get_domain_from_host(self, host: str) -> str:
         raise NotImplementedError()
 
     def get_domain_model(self, request: HttpRequest) -> Domain | None:

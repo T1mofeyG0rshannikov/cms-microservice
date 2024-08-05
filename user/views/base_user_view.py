@@ -31,7 +31,7 @@ class MyLoginRequiredMixin(LoginRequiredMixin):
         domain_string = DomainService.get_domain_string()
 
         if partner_domain_string in path:
-            path = path.replace(request.get_host, domain_string)
+            path = path.replace(request.get_host(), domain_string)
 
             return HttpResponseRedirect(path)
 

@@ -63,11 +63,6 @@ class RegisterUser(BaseUserView):
                 form.add_error("email", UserErrors.something_went_wrong.value)
                 return JsonResponse({"errors": form.errors}, status=400)
 
-            print(user)
-            request.user = user
-            user = authenticate(request)
-            login(request, user)
-
             token_to_set_password = self.jwt_processor.create_set_password_token(user.id)
 
             return JsonResponse({"token_to_set_password": token_to_set_password})
@@ -88,6 +83,13 @@ class ResetPassword(BaseUserView):
         user = User.objects.get_user_by_id(payload["id"])
         if user is None:
             return HttpResponseRedirect(f"/?error={Errors.wrong_reset_password_link.value}")
+
+        print(user)
+        request.user = user
+        user = authenticate(request)
+        login(request, user)
+        print(user)
+        print(request.user.is_authenticated)
 
         return super().get(request, token)
 
@@ -132,7 +134,7 @@ class ResetPassword(BaseUserView):
 @method_decorator(csrf_exempt, name="dispatch")
 class SetPassword(BaseUserView):
     template_name = "user/set-password.html"
-    
+
     def get(self, request):
         if request.user is None:
             return HttpResponseRedirect(self.login_url)
@@ -141,13 +143,13 @@ class SetPassword(BaseUserView):
             return HttpResponseRedirect(self.account_url)
 
         return super().get(request)
-        
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["form"] = SetPasswordForm()
-    
+
         return context
-    
+
     def post(self, request):
         form = SetPasswordForm(request.POST)
 

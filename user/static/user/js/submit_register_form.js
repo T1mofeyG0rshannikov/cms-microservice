@@ -3,20 +3,18 @@ function submitRegisterForm(element, event, domain){
 
     const data = new FormData(element);
 
-    fetch("/user/register", {
+    fetch(`http://${domain}/user/register`, {
         method: "post",
-        mode: 'same-origin',
         headers: {
             'Accept': 'application/json',
             'X-Requested-With': 'XMLHttpRequest',
-            //'X-CSRFToken': data.get("csrfmiddlewaretoken"),
         },
         body: data
     }).then(response => {
         if (response.status === 200){
             response.json().then((response) => {
                 const token_to_set_password = response.token_to_set_password;
-                window.location.replace(`http://${domain}/user/password`)
+                window.location.replace(`http://${domain}/user/password/${token_to_set_password}`)
             })
         }
         return response.json();

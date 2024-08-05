@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "channels",
     "rest_framework",
     "emails",
+    "corsheaders",
 ]
 ASGI_APPLICATION = "core.asgi.application"
 

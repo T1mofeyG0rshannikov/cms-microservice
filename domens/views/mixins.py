@@ -14,8 +14,8 @@ class SubdomainMixin(SettingsMixin):
     domain_service: DomainServiceInterface = get_domain_service()
 
     def dispatch(self, request, *args, **kwargs):
-        subdomain = self.domain_service.get_subdomain_from_url(request)
-        domain = self.domain_service.get_domain_from_url(request)
+        subdomain = self.domain_service.get_subdomain_from_host(request.get_host())
+        domain = self.domain_service.get_domain_from_host(request.get_host())
 
         if not self.domain_service.valid_subdomain(subdomain):
             return BaseNotFoundPage.as_view()(request)
