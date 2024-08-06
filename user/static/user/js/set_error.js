@@ -4,12 +4,24 @@ function setError(element, message){
     if (errorContainer === null || errorContainer === undefined){
         const errorMessage = document.createElement("div")
         errorMessage.classList.add("error")
-        errorMessage.innerHTML = message
+        errorMessage.innerHTML = message;
+        if (message.length > 0){
+            errorMessage.style.display = "block";
+        }
+        else{
+            errorMessage.style.display = "none";
+        }
 
         element.appendChild(errorMessage);
     }
     else{
-        errorContainer.innerHTML = message
+        errorContainer.innerHTML = message;
+        if (message.length > 0){
+            errorContainer.style.display = "block";
+        }
+        else{
+            errorContainer.style.display = "none";
+        }
     }
 }
 

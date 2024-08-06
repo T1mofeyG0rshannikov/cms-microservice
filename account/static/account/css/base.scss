@@ -33,7 +33,7 @@
 
     .active{
         border-radius: 15px 0px 0px 15px;
-        background: var(--background-color);
+        background-color: #fefbf3;;
     }
 }
 
@@ -49,6 +49,7 @@ hr{
 
 body{
     overflow-x: hidden;
+    background-color: #fefbf3;
 }
 
 #content{
