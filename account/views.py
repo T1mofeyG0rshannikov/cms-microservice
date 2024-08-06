@@ -146,9 +146,7 @@ class ChangeUserView(View):
 
             user.username = form.cleaned_data.get("username")
             user.second_name = form.cleaned_data.get("second_name")
-
-            user.email = form.cleaned_data.get("email")
-            user.phone = form.cleaned_data.get("phone")
+            user.phone = phone
 
             if form.cleaned_data.get("social_network"):
                 social_network = form.cleaned_data.get("social_network")
@@ -162,6 +160,20 @@ class ChangeUserView(View):
 
             if form.cleaned_data.get("profile_picture"):
                 user.profile_picture = form.cleaned_data.get("profile_picture")
+
+            if user.email_is_confirmed and email != user.email:
+                user.change_email(email)
+                user.save()
+
+                return JsonResponse(
+                    {
+                        "info": {
+                            "title": "Вы меняете email",
+                            "text": "На новый email адрес отправлено письмо со ссылкой для подтверждения",
+                        }
+                    },
+                    status=202,
+                )
 
             user.save()
 

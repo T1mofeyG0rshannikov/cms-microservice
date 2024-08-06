@@ -1,3 +1,4 @@
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 
@@ -12,6 +13,11 @@ class BaseUserView(SubdomainMixin):
     jwt_processor: JwtProcessorInterface = get_jwt_processor()
     login_url = "/user/login"
     account_url = "/my/"
+
+    def login(self, user) -> None:
+        self.request.user = user
+        user = authenticate(self.request)
+        login(self.request, user)
 
 
 class MyLoginRequiredMixin(LoginRequiredMixin):

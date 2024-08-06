@@ -23,6 +23,11 @@ class EmailTemplateGenerator(EmailTemplateGeneratorInterface):
 
         return self.generate_template("emails/confirm_email.html", context)
 
+    def generate_confirm_new_email_template(self, user: UserInterface) -> str:
+        context = self.context_processor.confirm_email(user)
+
+        return self.generate_template("emails/confirm_new_email.html", context)
+
     def generate_reset_password_template(self, user: UserInterface) -> str:
         context = self.context_processor.reset_password(user)
 

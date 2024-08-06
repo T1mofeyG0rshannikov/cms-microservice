@@ -71,6 +71,21 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.email_is_confirmed = True
         self.save()
 
+    def change_email(self, new_email: str) -> None:
+        if self.email_is_confirmed:
+            self.new_email = new_email
+
+        else:
+            self.email = new_email
+
+        self.save()
+
+    def confirm_new_email(self) -> None:
+        self.email = self.new_email
+        self.new_email = None
+        self.email_is_confirmed = True
+        self.save()
+
     class Meta:
         ordering = ["-created_at"]
         verbose_name = "Пользователь"
@@ -96,5 +111,18 @@ def user_verified_email_handler(sender, instance, *args, **kwargs):
             send_message_to_user(instance.id, user_alert)
 
 
+def user_change_email_handler(sender, instance, *args, **kwargs):
+    if instance.id is None:
+        pass
+    else:
+        previous = User.objects.get_user_by_id(id=instance.id)
+        if previous.email != instance.email:
+            if previous.email_is_confirmed:
+                instance.email_is_confirmed = False
+                email_service = get_email_service()
+                email_service.send_mail_to_confirm_new_email(instance)
+
+
 post_save.connect(user_created_handler, sender=User)
 pre_save.connect(user_verified_email_handler, sender=User)
+pre_save.connect(user_change_email_handler, sender=User)

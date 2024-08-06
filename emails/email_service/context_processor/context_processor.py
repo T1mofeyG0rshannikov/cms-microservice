@@ -29,6 +29,12 @@ class EmailContextProcessor(EmailContextProcessorInterface):
 
         return context
 
+    def confirm_new_email(self, user: UserInterface) -> dict[Any, Any]:
+        context = self.get_context()
+        context["link"] = self.link_generator.get_url_to_confirm_new_email(user.id)
+
+        return context
+
     def reset_password(self, user: UserInterface) -> dict[Any, Any]:
         context = self.get_context()
         context["link"] = self.link_generator.get_url_to_reset_password(user.id)

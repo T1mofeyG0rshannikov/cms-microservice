@@ -11,5 +11,8 @@ class EmailTemplateGeneratorInterface(Protocol):
     def generate_confirm_email_template(self, user: UserInterface) -> str:
         raise NotImplementedError()
 
+    def generate_confirm_new_email_template(self, user: UserInterface) -> str:
+        raise NotImplementedError()
+
     def generate_reset_password_template(self, user: UserInterface) -> str:
         raise NotImplementedError()

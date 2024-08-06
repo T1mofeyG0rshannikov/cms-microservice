@@ -12,6 +12,10 @@ class LinkGenerator(LinkGeneratorInterface):
         token_to_confirm_email = self.jwt_processor.create_confirm_email_token(user_id)
         return f"http://{self.host}/user/confirm-email/{token_to_confirm_email}"
 
+    def get_url_to_confirm_new_email(self, user_id: int) -> str:
+        token_to_confirm_new_email = self.jwt_processor.create_confirm_email_token(user_id)
+        return f"http://{self.host}/user/confirm-new-email/{token_to_confirm_new_email}"
+
     def get_url_to_reset_password(self, user_id: int) -> str:
         token_to_reset_password = self.jwt_processor.create_set_password_token(user_id)
         return f"http://{self.host}/user/password/{token_to_reset_password}"

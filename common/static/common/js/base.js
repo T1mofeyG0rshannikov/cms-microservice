@@ -29,6 +29,12 @@ function closeUserNav(){
     setTimeout(() => $(document.querySelector(".user-nav")).removeAttr("style"), 1000);
 }
 
+function removeFormErrors(popup){
+    for (let field of popup.querySelectorAll(".field")){
+        setError(field, "")
+    }
+}
+
 function openForm(form){
     const forms = document.querySelectorAll(".form");
     for (let formElem of forms){
@@ -37,6 +43,7 @@ function openForm(form){
 
     closeUserNav();
     resetForm(form);
+    removeFormErrors(form);
     form.style.right = "0px";
 }
 
@@ -58,10 +65,7 @@ function closeFormPopup(popup){
         }
     }
 
-    for (let field of popup.querySelectorAll(".field")){
-        setError(field, "")
-    }
-
+    removeFormErrors(popup)
     popup.style.display = "none";
 }
 

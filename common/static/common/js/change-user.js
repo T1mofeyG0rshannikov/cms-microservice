@@ -18,15 +18,29 @@ function onSubmitChangeUserForm(element, event){
         if (response.status === 200){
             setErrors({}, element)
             console.log("success");
+            window.history.replaceState(null, '', window.location.pathname);
             location.reload();
         }
         if (response.status === 401){
             window.location.href = "/user/login?next=my/site";
         }
-        return response.json();
+        return {
+            json: response.json(),
+            status: response.status
+        };
     }).then(response => {
-        setErrors({}, element)
-        setErrors(response.errors, element)
+        if (response.status === 400){
+            response.json.then(res => {
+                setErrors({}, element)
+                setErrors(res.errors, element)
+            });
+        }
+        else if (response.status === 202){
+            response.json.then(res => {
+                window.history.replaceState(null, '', window.location.pathname + `?info_title=${res.info.title}&info_text=${res.info.text}`);
+                location.reload();
+            })
+        }
     })
 }
 

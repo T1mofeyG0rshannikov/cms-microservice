@@ -68,19 +68,19 @@ class DomainService(DomainServiceInterface):
 
     def get_domain_model(self, request):
         path = request.META.get("HTTP_ORIGIN")
-        path = path.replace("http://", "")
-        path = path.replace("https://", "")
+        host = path.replace("http://", "")
+        host = host.replace("https://", "")
 
-        domain = self.get_domain_from_host(request.get_host())
+        domain = self.get_domain_from_host(host)
         if Domain.objects.filter(domain=domain).exists():
             return Domain.objects.get(domain=domain)
 
     def get_site_model(self, request):
         path = request.META.get("HTTP_ORIGIN")
-        path = path.replace("http://", "")
-        path = path.replace("https://", "")
+        host = path.replace("http://", "")
+        host = host.replace("https://", "")
 
-        subdomain = self.get_subdomain_from_host(request.get_host())
+        subdomain = self.get_subdomain_from_host(host)
         if Site.objects.filter(subdomain=subdomain).exists():
             return Site.objects.get(subdomain=subdomain)
 

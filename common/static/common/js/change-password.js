@@ -90,17 +90,6 @@ input2.addEventListener("change", () => {
     const password1 = input1.value;
     const password2 = input2.value;
 
-    if (containsCyrillic(password2)){
-        setError(repeatPasswordContainer, "Только латинские буквы, цифры и символы");
-        return;
-    }
-
-    if (password2.length < 6 && touchedPassword2){
-        setError(repeatPasswordContainer, "Длина пароля не менее 6 символов")
-        button.disabled = true;
-        return;
-    }
-
     if (password1 !== password2 && password2.length > 0){
         setError(repeatPasswordContainer, "Пароли не совпадают");
         return;
@@ -118,18 +107,11 @@ function validateForm(){
     setError(repeatPasswordContainer, "");
 
     if (containsCyrillic(password1)){
-        setError(passwordContainer, "Только латинские буквы, цифры и символы");
-        if (containsCyrillic(password2)){
-            setError(repeatPasswordContainer, "Только латинские буквы, цифры и символы");
-        }
         return;
     }
 
-    if (containsCyrillic(password2)){
-        setError(repeatPasswordContainer, "Только латинские буквы, цифры и символы");
-        if (containsCyrillic(password1)){
-            setError(passwordContainer, "Только латинские буквы, цифры и символы");
-        }
+    if (password1.length < 6){
+        button.disabled = true;
         return;
     }
 
