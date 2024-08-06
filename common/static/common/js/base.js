@@ -52,7 +52,6 @@ function resetForm(element){
 
     for (let input of inputs){
         if ($(input).attr("default") !== undefined){
-            console.log(input);
             input.value = $(input).attr("default");
         }
     }

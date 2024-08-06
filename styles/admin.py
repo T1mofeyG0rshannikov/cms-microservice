@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.contrib.admin.decorators import register
 
 from styles.models.colors.colors import ColorStyles
 from styles.models.other import IconSize, MarginBlock
@@ -107,12 +106,10 @@ class IconSizeInline(StyleInline):
     model = IconSize
 
 
-@register(Font)
 class FontAdmin(admin.ModelAdmin):
     list_display = ["name", "link"]
 
 
-@register(GlobalStyles)
 class GlobalStylesAdmin(admin.ModelAdmin):
     inlines = [
         ColorStylesInline,
@@ -123,3 +120,7 @@ class GlobalStylesAdmin(admin.ModelAdmin):
         MarginBlockInline,
         IconSizeInline,
     ]
+
+
+admin.site.register(GlobalStyles, GlobalStylesAdmin)
+admin.site.register(Font, FontAdmin)

@@ -11,7 +11,7 @@ function onSubmitSiteForm(domain, element, event){
     event.preventDefault();
 
     const data = new FormData(element);
-    data.append('logo', document.getElementById("file").files[0])
+    data.append('logo', element.querySelector("#file").files[0])
 
     const socialContainers = element.querySelector("#socials").querySelectorAll(".field-container");
 
@@ -27,9 +27,7 @@ function onSubmitSiteForm(domain, element, event){
     }
     const token = getToken();
 
-    console.log(socials);
     data.append("socials", JSON.stringify(socials));
-    console.log(data);
 
     fetch(`http://${domain}/my/change-site`, {
         method: "POST",

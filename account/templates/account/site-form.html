@@ -16,7 +16,7 @@
             <p>Адрес сайта</p>
             <div style="display: flex; align-items: center;">
                 <div>
-                    <input name="site" default="{% if user.site.subdomain %}{{ user.site.subdomain }}{% endif %}" value="{% if user.site.subdomain %}{{ user.site.subdomain }}{% endif %}" placeholder="придумайте адрес" />
+                    <input name="site" default="{% if user.site.subdomain %}{{ user.site.subdomain }}{% endif %}" value="{% if user.site.subdomain %}{{ user.site.subdomain }}{% endif %}" placeholder="Придумайте адрес" />
                 </div>
                 <a style="margin: 0px;">{{ partner_domain }}</a>
             </div>
@@ -26,7 +26,7 @@
     <div class="field-container">
         <div class="field" id="name">
             <p>Название сайта</p>
-            <input name="name" default="{% if user.site.name %}{{ user.site.name }}{% endif %}" value="{% if user.site.name %}{{ user.site.name }}{% endif %}" />
+            <input placeholder="Придумайте название" name="name" default="{% if user.site.name %}{{ user.site.name }}{% endif %}" value="{% if user.site.name %}{{ user.site.name }}{% endif %}" />
         </div>
 
         <div class="field" id="font">
@@ -96,7 +96,7 @@
     <div class="field-container">
         <div class="field" style="width: 100%" id="owner">
             <p>Владелец</p>
-            <input name="owner" default="{% if user.site.owner %}{{ user.site.owner }}{% endif %}" value="{% if user.site.owner %}{{ user.site.owner }}{% endif %}" style="width: 100%"/>
+            <input placeholder="ФИО или название организации" name="owner" default="{% if user.site.owner %}{{ user.site.owner }}{% endif %}" value="{% if user.site.owner %}{{ user.site.owner }}{% endif %}" style="width: 100%"/>
         </div>
     </div>
 

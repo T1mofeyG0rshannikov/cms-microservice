@@ -19,7 +19,7 @@ class MyAdminSite(AdminSite):
     login_form = CustomAuthenticationAdminForm
 
     def get_app_list(self, request, app_label=None):
-        app_order = ["user", "catalog", "blocks", "account", "domens", "common", "settings"]
+        app_order = ["user", "catalog", "blocks", "account", "domens", "common", "settings", "styles"]
         app_order_dict = dict(zip(app_order, range(len(app_order))))
         app_list = list(self._build_app_dict(request).values())
         app_list.sort(key=lambda x: app_order_dict.get(x["app_label"], 0))

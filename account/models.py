@@ -7,6 +7,7 @@ class UserFont(BaseFont):
     class Meta:
         verbose_name = "пользовательский шрифт"
         verbose_name_plural = "пользовательские шрифты"
+        ordering = ["name"]
 
 
 class UserSocialNetwork(models.Model):

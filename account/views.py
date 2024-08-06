@@ -52,6 +52,7 @@ class ChangeSiteView(View):
             return HttpResponse(status=401)
 
         print(request.POST)
+        print(request.FILES)
         form = ChangeSiteForm(request.POST, request.FILES)
         if form.is_valid():
             site_url = form.cleaned_data.get("site")
@@ -109,7 +110,7 @@ class ChangeSiteView(View):
             logo = form.cleaned_data.get("logo", None)
             if logo:
                 site.logo = logo
-                site.logo_width = int(260 * (form.cleaned_data["logo_width"] / 100))
+                site.logo_width = int(260 * (form.cleaned_data["logo_size"] / 100))
 
             site.save()
 

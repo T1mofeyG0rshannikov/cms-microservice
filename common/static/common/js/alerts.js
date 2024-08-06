@@ -10,7 +10,6 @@ function getAlertIcon(alert){
 function addAlert(alert){
     const alertSpan = document.querySelector("span.indicator");
 
-    console.log(alertSpan);
     alertSpan.style.width = "15px";
     alertSpan.style.height = "15px";
 

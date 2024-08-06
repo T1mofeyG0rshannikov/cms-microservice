@@ -28,8 +28,6 @@ function initDesctopSwiper(columns){
 function initSwiper(desctopColumns){
     const pageWidth = document.documentElement.scrollWidth;
 
-    console.log(pageWidth)
-    console.log(pageWidth < 760)
     if (pageWidth < 760){
         initMobileSwiper();
     }
