@@ -116,11 +116,11 @@ def user_change_email_handler(sender, instance, *args, **kwargs):
         pass
     else:
         previous = User.objects.get_user_by_id(id=instance.id)
-        if previous.email != instance.email:
-            if previous.email_is_confirmed:
-                instance.email_is_confirmed = False
-                email_service = get_email_service()
-                email_service.send_mail_to_confirm_new_email(instance)
+        print(previous.email)
+        print(instance.email)
+        if not previous.new_email and instance.new_email:
+            email_service = get_email_service()
+            email_service.send_mail_to_confirm_new_email(instance)
 
 
 post_save.connect(user_created_handler, sender=User)

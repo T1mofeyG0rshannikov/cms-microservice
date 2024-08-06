@@ -43,7 +43,11 @@ function openSiteForm(){
     logo.src = $(logo).attr("default");
     siteForm.querySelector("#file").value = "";
 
-    openForm(siteForm);
+    fetch(`/get-change-site-form`).then(response => response.json()).then(response => {
+        siteForm.innerHTML = response.content;
+        initChangeSiteForm();
+        openForm(siteForm);
+    })
 }
 
 const openSiteFormButton = document.querySelector("#open-site-form");

@@ -29,7 +29,7 @@ class EmailService(EmailServiceInterface):
 
     def send_mail_to_confirm_new_email(self, user: UserInterface) -> None:
         template = self.template_generator.generate_confirm_new_email_template(user)
-        send_email.delay("Подтвердите свой email адрес", self.sender, [user.email], template)
+        send_email.delay("Подтвердите свой email адрес", self.sender, [user.new_email], template)
 
     def send_mail_to_reset_password(self, user: UserInterface) -> None:
         template = self.template_generator.generate_reset_password_template(user)

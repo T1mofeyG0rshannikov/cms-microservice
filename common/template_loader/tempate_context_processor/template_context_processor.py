@@ -18,7 +18,7 @@ class TemplateContextProcessor(TemplateContextProcessorInterface):
 
         return context
 
-    def ger_change_site_form_context(self, request):
+    def get_change_site_form_context(self, request):
         context = self.get_context(request)
 
         context["fonts"] = UserFont.objects.all()

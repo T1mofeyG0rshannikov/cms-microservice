@@ -2,6 +2,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.views.generic import View
 
+from account.views import Profile
 from blocks.models.catalog_block import CatalogBlock
 from blocks.models.common import Page
 from blocks.views import ShowPage
@@ -55,4 +56,7 @@ def slug_router(request, slug):
     if CatalogBlock.objects.filter(product_type__slug=slug).exists():
         return ShowCatalogPage.as_view()(request, products_slug=slug)
 
+    if slug == "my":
+        return Profile.as_view()(request)
+    
     return PageNotFound.as_view()(request)

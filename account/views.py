@@ -175,6 +175,7 @@ class ChangeUserView(View):
                     status=202,
                 )
 
+            user.change_email(email)
             user.save()
 
             return HttpResponse(status=200)

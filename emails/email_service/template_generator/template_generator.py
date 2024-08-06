@@ -24,7 +24,7 @@ class EmailTemplateGenerator(EmailTemplateGeneratorInterface):
         return self.generate_template("emails/confirm_email.html", context)
 
     def generate_confirm_new_email_template(self, user: UserInterface) -> str:
-        context = self.context_processor.confirm_email(user)
+        context = self.context_processor.confirm_new_email(user)
 
         return self.generate_template("emails/confirm_new_email.html", context)
 
