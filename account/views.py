@@ -11,6 +11,8 @@ from django.views.generic import View
 from account.forms import ChangePasswordForm, ChangeSiteForm, ChangeUserForm
 from account.models import Messanger, UserFont, UserMessanger, UserSocialNetwork
 from common.models import SocialNetwork
+from domens.domain_service.domain_service import get_domain_service
+from domens.domain_service.domain_service_interface import DomainServiceInterface
 from domens.models import Site
 from domens.views.mixins import SubdomainMixin
 from notifications.models import UserNotification
@@ -46,6 +48,8 @@ class SiteView(BaseProfileView):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class ChangeSiteView(View):
+    domain_service: DomainServiceInterface = get_domain_service()
+
     def post(self, request):
         user = request.user_from_header
         if user is None:
@@ -67,6 +71,7 @@ class ChangeSiteView(View):
                     font=UserFont.objects.get(id=form.cleaned_data["font"]),
                     font_size=form.cleaned_data["font_size"],
                     user=user,
+                    domain=self.domain_service.get_partner_domain_model(),
                 )
 
             if site.subdomain != site_url and Site.objects.filter(subdomain=site_url).exists():

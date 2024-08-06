@@ -8,10 +8,11 @@ class SettingsMixin(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        if self.request.domain == "localhost":
-            domain = "localhost:8000"
-        else:
-            domain = DomainService.get_domain_string()
+        domain = DomainService.get_domain_string()
+
+        if hasattr(self.request, "domain"):
+            if self.request.domain == "localhost":
+                domain = "localhost:8000"
 
         context["domain"] = domain
         context["settings"] = get_settings(self.request)

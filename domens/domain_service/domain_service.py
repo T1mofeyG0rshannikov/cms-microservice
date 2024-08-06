@@ -66,7 +66,10 @@ class DomainService(DomainServiceInterface):
 
         return domain
 
-    def get_domain_model(self, request):
+    def get_partner_domain_model(self):
+        return Domain.objects.filter(is_partners=True).first()
+
+    def get_domain_model_from_request(self, request):
         path = request.META.get("HTTP_ORIGIN")
         host = path.replace("http://", "")
         host = host.replace("https://", "")

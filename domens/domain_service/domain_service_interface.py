@@ -20,12 +20,15 @@ class DomainServiceInterface(Protocol):
 
     @classmethod
     def get_partners_domain_string(self) -> str | None:
-        return Domain.objects.values_list("domain").filter(is_partners=True).first()[0]
+        raise NotImplementedError()
+
+    def get_partner_domain_model(self) -> Domain | None:
+        raise NotImplementedError()
 
     def get_domain_from_host(self, host: str) -> str:
         raise NotImplementedError()
 
-    def get_domain_model(self, request: HttpRequest) -> Domain | None:
+    def get_domain_model_from_request(self, request: HttpRequest) -> Domain | None:
         raise NotImplementedError()
 
     def get_site_model(self, request: HttpRequest) -> Site | None:

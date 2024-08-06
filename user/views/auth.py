@@ -53,7 +53,7 @@ class RegisterUser(BaseUserView):
                     user = User.objects.create_user(
                         **form.cleaned_data,
                         register_on_site=self.domain_service.get_site_model(request),
-                        register_on_domain=self.domain_service.get_domain_model(request),
+                        register_on_domain=self.domain_service.get_domain_model_from_request(request),
                     )
             except Exception as e:
                 print(e)

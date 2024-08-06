@@ -55,7 +55,7 @@
 
                 <div class="user-nav">
                     <div class="title">
-                        <a>{{ user.username }} {{ user.second_name }}</a>
+                        <a>{{ user.username }} {% if user.second_name %}{{ user.second_name }}{% endif %}</a>
                     </div>
 
                     <hr />
