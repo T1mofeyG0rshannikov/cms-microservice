@@ -1,5 +1,6 @@
 from account.models import Messanger, UserFont
 from common.models import SocialNetwork
+from domens.models import Domain
 from settings.models import SiteSettings
 
 from .template_context_processor_interface import TemplateContextProcessorInterface
@@ -25,6 +26,7 @@ class TemplateContextProcessor(TemplateContextProcessorInterface):
         context["socials"] = SocialNetwork.objects.all()
 
         context["default_user_size"] = SiteSettings.objects.values_list("default_users_font_size").first()[0]
+        context["domains"] = Domain.objects.values("domain", "id").filter(is_partners=True)
 
         return context
 

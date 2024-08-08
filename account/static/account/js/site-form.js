@@ -49,6 +49,7 @@ function onSubmitSiteForm(domain, element, event){
         }
         return response.json();
     }).then(response => {
+        console.log(response.errors);
         setErrors({}, element)
         setErrors(response.errors, element)
     })

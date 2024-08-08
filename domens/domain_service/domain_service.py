@@ -87,6 +87,13 @@ class DomainService(DomainServiceInterface):
         if Site.objects.filter(subdomain=subdomain).exists():
             return Site.objects.get(subdomain=subdomain)
 
+    @staticmethod
+    def get_domain_model_by_id(id: int):
+        if Domain.objects.filter(id=id).exists():
+            return Domain.objects.get(id=id)
+
+        return None
+
 
 def get_domain_service() -> DomainService:
     return DomainService()

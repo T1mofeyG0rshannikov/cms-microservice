@@ -8,6 +8,10 @@
         margin: 10px 0px;
         position: relative;
         overflow: hidden;
+        background: var(--main-color);
+        display: grid;
+        align-items: center;
+        justify-content: center;
     }
 
     img{

@@ -71,14 +71,14 @@ class ChangeSiteView(View):
                     font=UserFont.objects.get(id=form.cleaned_data["font"]),
                     font_size=form.cleaned_data["font_size"],
                     user=user,
-                    domain=self.domain_service.get_partner_domain_model(),
+                    domain=self.domain_service.get_domain_model_by_id(int(form.cleaned_data.get("domain"))),
                 )
 
             if site.subdomain != site_url and Site.objects.filter(subdomain=site_url).exists():
                 form.add_error("site", "Адрес занят")
                 return JsonResponse({"errors": form.errors}, status=400)
 
-            user_social_networks = json.loads(form.cleaned_data.get("socials"))
+            """user_social_networks = json.loads(form.cleaned_data.get("socials"))
             social_networks_ids = [user_social_network["social"] for user_social_network in user_social_networks]
 
             if len({social_network["social"] for social_network in user_social_networks}) < len(user_social_networks):
@@ -102,7 +102,7 @@ class ChangeSiteView(View):
                         social_network=social_network,
                         site=site,
                         defaults={"adress": user_social_network["adress"]},
-                    )
+                    )"""
 
             site.subdomain = form.cleaned_data["site"]
             site.name = form.cleaned_data["name"]

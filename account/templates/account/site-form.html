@@ -22,6 +22,19 @@
             </div>
         </div>
 
+        <div class="field" id="site">
+            <div style="display: flex; align-items: center;">
+                <div>
+                    <select name="domain">
+                        {% for domain_model in domains %}
+                            <option value="{{ domain_model.id }}">{{ domain_model.domain }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <a style="margin: 0px;">{{ partner_domain }}</a>
+            </div>
+        </div>
+
         <div class="context-help">
             <div class="text">
                 Ваш сайт будет доступен по выбранному адресу, например <a href="mysite.idri.ru">mysite.idri.ru</a>
@@ -91,14 +104,14 @@
     </div>
 
     <div class="field-container" style="align-items: start; position: relative;">
-        <div class="field" id="logo">
+        <div class="field" id="logo" style=" margin-bottom: 15px;">
             <p>Логотип</p>
             <div id="logo" class="logo">
                 <img default="{% if user.site.logo %}{{ user.site.logo.url }}{% else %}{% static 'account/images/baselogo.png' %}{% endif %}" src="{% if user.site.logo %}{{ user.site.logo.url }}{% else %}{% static 'account/images/baselogo.png' %}{% endif %}" />
                 <input name="file" type="file" accept="image/*" id="file" />
             </div>
 
-            <a href="/">Как сделать логотип</a>
+            <a href="/" style="font-size: 13px; text-decoration: none;">Как сделать логотип</a>
         </div>
 
         <div class="field" id="logo_size">
@@ -127,7 +140,7 @@
     </div>
 
     <div class="field-container">
-        <div class="field" style="width: 100%" id="contact_info">
+        <div class="field" style="width: 100%; margin-bottom: 15px;" id="contact_info">
             <p>Контактная информация</p>
             <input name="contact_info" style="width: 100%" default="{% if user.site.contact_info %}{{ user.site.contact_info }}{% endif %}" value="{% if user.site.contact_info %}{{ user.site.contact_info }}{% endif %}" placeholder="Контактные данные на сайт" />
         </div>
