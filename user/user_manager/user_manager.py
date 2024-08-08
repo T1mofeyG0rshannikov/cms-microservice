@@ -36,6 +36,6 @@ class UserManager(BaseUserManager, UserManagerInterface):
         return self.model.objects.create(username=username, email=email, phone=phone, **extra_fields)
 
     def create_superuser(self, username: str, phone: str, email: str, **extra_fields):
-        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("staff", True)
         extra_fields.setdefault("is_superuser", True)
         return self.create_user(username, phone, email, **extra_fields)
