@@ -60,12 +60,17 @@ class Site(models.Model):
 
     @property
     def logo_size(self):
+        width = int(self.logo_width)
+
+        return f"{width}x{self.logo_height}px"
+
+    @property
+    def logo_height(self):
         coeff = self.logo.height / self.logo.width
 
         width = int(self.logo_width)
-        height = int(width * coeff)
 
-        return f"{width}x{height}px"
+        return int(width * coeff)
 
 
 def site_created_handler(sender, instance, created, *args, **kwargs):

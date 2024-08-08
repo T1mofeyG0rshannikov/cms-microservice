@@ -21,6 +21,14 @@
                 <a style="margin: 0px;">{{ partner_domain }}</a>
             </div>
         </div>
+
+        <div class="context-help">
+            <div class="text">
+                Ваш сайт будет доступен по выбранному адресу, например <a href="mysite.idri.ru">mysite.idri.ru</a>
+            </div>
+
+            <img src="{% static 'common/images/ico_localhelp.png' %}" />
+        </div>
     </div>
 
     <div class="field-container">
@@ -72,9 +80,17 @@
                 {% endif %}
             </select>
         </div>
+
+        <div class="context-help">
+            <div class="text">
+                Если логотип сайта не загружен, то название используется вместо него, оформленное выбранным шрифтом
+            </div>
+
+            <img src="{% static 'common/images/ico_localhelp.png' %}" />
+        </div>
     </div>
 
-    <div class="field-container">
+    <div class="field-container" style="align-items: start; position: relative;">
         <div class="field" id="logo">
             <p>Логотип</p>
             <div id="logo" class="logo">
@@ -88,6 +104,16 @@
         <div class="field" id="logo_size">
             <p>Размер</p>
             <input name="logo_size" min="0" max="100" value="100" type="range" />
+        </div>
+
+        <div style="position: absolute; right: 10px; bottom: 52px;">
+            <div class="context-help">
+                <div class="text">
+                    PNG или GIF файл на прозрачном фоне
+                </div>
+
+                <img src="{% static 'common/images/ico_localhelp.png' %}" />
+            </div>
         </div>
     </div>
 
@@ -109,6 +135,7 @@
 
     <hr />
 
+    <!--
     <div id="socials">
         {% for user_social in user.site.socials.all %}
             <div class="field-container">
@@ -155,7 +182,7 @@
         </div>
     </div>
 
-    <hr />
+    <hr />-->
 
     <div class="field-container">
         <button><a>Сохранить</a></button>

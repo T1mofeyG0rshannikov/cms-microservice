@@ -38,6 +38,15 @@
     align-items: center;
 }
 
+.logo-container{
+    display: flex;
+    justify-content: center;
+
+    img{
+        width: 100%;
+    }
+}
+
 .container-child{
     max-width: 50%;
     min-width: 45%;

@@ -13,7 +13,7 @@ function onSubmitSiteForm(domain, element, event){
     const data = new FormData(element);
     data.append('logo', element.querySelector("#file").files[0])
 
-    const socialContainers = element.querySelector("#socials").querySelectorAll(".field-container");
+    /*const socialContainers = element.querySelector("#socials").querySelectorAll(".field-container");
 
     let socials = [];
 
@@ -25,9 +25,10 @@ function onSubmitSiteForm(domain, element, event){
             socials.push({social: social, adress: adress});
         }
     }
-    const token = getToken();
 
-    data.append("socials", JSON.stringify(socials));
+   data.append("socials", JSON.stringify(socials));*/
+
+   const token = getToken();
 
     fetch(`http://${domain}/my/change-site`, {
         method: "POST",
@@ -148,5 +149,5 @@ function initChangeSiteForm(){
 
     logoLoader.addEventListener("change", () => displayPhotoOnload(logo))
 
-    observableNewSocials();
+    /*observableNewSocials();*/
 }

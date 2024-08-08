@@ -35,7 +35,9 @@
 
                 <div class="site-container">
                     {% if user.site.logo %}
-                        <img class="site-logo" style="width: {{ user.site.logo_width }}" src="{{ user.site.logo.url }}" />
+                        <div class="logo-container" style="min-width: {{ user.site.logo_width }}; min-height: {{ user.site.logo_height }}; max-width: {{ user.site.logo_width }}; max-height: {{ user.site.logo_height }};">
+                            <img class="site-logo" src="{{ user.site.logo.url }}" />
+                        </div>
 
                         <p>{{ user.site.logo_size }}</p>
                     {% else %}

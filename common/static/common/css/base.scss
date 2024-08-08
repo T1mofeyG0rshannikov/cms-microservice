@@ -71,22 +71,21 @@ form{
     .error{
         color: white;
         text-align: center;
-        font-size: 13px;
+        font-size: 11px;
         font-family: var(--main-text-font-family);
         background: none repeat scroll 0 0 #eeeeee;
         z-index: 999;
         background-color: #C40F18;
         border-radius: 3px;
-        padding: 3px 5px;
+        padding: 3px 7px;
         position: absolute;
         right: 0px;
         top: calc(100% + 10px);
-        width: 200px;
         display: none;
 
         &:before {
             bottom: 100%;
-            left: 50%;
+            right: 5px;
             border: solid transparent;
             content: " ";
             height: 0;
@@ -95,8 +94,7 @@ form{
             pointer-events: none;
             border-color: transparent;
             border-bottom-color: #C40F18;
-            border-width: 10px;
-            margin-left: 70px;
+            border-width: 6px;
         }
     }
 }
@@ -193,12 +191,63 @@ form{
     }
 
     .error{
-        font-size: 13px;
+        font-size: 11px;
     }
 
     .field-container{
         display: flex;
         padding: 0px 15px;
+        align-items: end;
+
+        .context-help{
+            position: relative;
+            width: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            height: 15px;
+
+            .text{
+                /*display: none;*/
+                display: none;
+                width: 150px;
+                border: 1px solid var(--dark-color);
+                padding: 10px;
+                border-radius: 5px;
+                background: white;
+                right: calc(100% - 22px);
+                bottom: calc(100% + 10px);
+                position: absolute;
+                font-size: 11px;
+                font-family: var(--main-text-font-family);
+                color: var(--main-text-color);
+
+                *{
+                    font-size: 11px;
+                }
+
+                &::after {
+                    content: '';
+                    position: absolute;
+                    right: 9px;
+                    bottom: -5px;
+                    width: 7px;
+                    height: 7px;
+                    transform: rotate(45deg);
+                    border-bottom: 1px solid #b1b1b1;
+                    border-right: 1px solid #b1b1b1;
+                    background-color: white;
+                }
+            }
+
+            img{
+                width: 15px;
+                height: 15px;
+            }
+
+            &:hover .text{
+                display: block;
+            }
+        }
 
         .field{
             position: relative;
@@ -208,13 +257,11 @@ form{
                 margin-top: 10px;
                 font-size: 13px;
             }
+
         }
 
         input{
             height: 35px;
-            font-family: var(--main-text-font-family);
-            font-size: var(--main-text-font-size);
-            font-weight: var(--main-text-font-weight);
 
             &::-webkit-input-placeholder{
                 color: rgb(200, 200, 200);
@@ -229,6 +276,14 @@ form{
             border-radius: 4px;
             border: 1px solid var(--dark-color);
             margin-right: 10px;
+            font-family: var(--main-text-font-family);
+            font-size: 14px;
+            font-weight: var(--main-text-font-weight);
+        }
+
+        select{
+            height: 35px;
+            padding: 2px 8px;
         }
     }
 
