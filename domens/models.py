@@ -72,6 +72,10 @@ class Site(models.Model):
 
         return int(width * coeff)
 
+    @property
+    def width_percent(self):
+        return int((int(self.logo_width) / 260) * 100)
+
 
 def site_created_handler(sender, instance, created, *args, **kwargs):
     if created:

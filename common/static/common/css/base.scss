@@ -150,7 +150,7 @@ form{
     border: 1px solid var(--dark-color);
     position: absolute;
     transition: .4s;
-    right: -480px;
+    right: -500px;
     border-right: 1px solid white;
 
     input[type=file]{
@@ -209,7 +209,9 @@ form{
             .text{
                 /*display: none;*/
                 display: none;
-                width: 150px;
+                flex-wrap: wrap;
+                max-width: 300px;
+                min-width: 160px;
                 border: 1px solid var(--dark-color);
                 padding: 10px;
                 border-radius: 5px;

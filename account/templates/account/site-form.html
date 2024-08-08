@@ -107,7 +107,11 @@
         <div class="field" id="logo" style=" margin-bottom: 15px;">
             <p>Логотип</p>
             <div id="logo" class="logo">
-                <img default="{% if user.site.logo %}{{ user.site.logo.url }}{% else %}{% static 'account/images/baselogo.png' %}{% endif %}" src="{% if user.site.logo %}{{ user.site.logo.url }}{% else %}{% static 'account/images/baselogo.png' %}{% endif %}" />
+                <img
+                    default="{% if user.site.logo %}{{ user.site.logo.url }}{% else %}{% static 'account/images/baselogo.png' %}{% endif %}"
+                    src="{% if user.site.logo %}{{ user.site.logo.url }}{% else %}{% static 'account/images/baselogo.png' %}{% endif %}"
+                    style="{% if user.site.logo %}width: {{ user.site.logo_width }}; {% endif %}"
+                />
                 <input name="file" type="file" accept="image/*" id="file" />
             </div>
 
@@ -116,10 +120,16 @@
 
         <div class="field" id="logo_size">
             <p>Размер</p>
-            <input name="logo_size" min="0" max="100" value="100" type="range" />
+            <input name="logo_size" min="0" max="100" value="{% if user.site.logo %}{{ user.site.width_percent }}{% else %}100{% endif %}" type="range" />
         </div>
 
-        <div style="position: absolute; right: 10px; bottom: 52px;">
+        <div class="field">
+            <div class="trash-container" style="margin-top: 48px; margin-left: 0px;">
+                <img class="trash" onclick="deleteLogo()" src="{% static 'account/images/trash.png' %}"/>
+            </div>
+        </div>
+
+        <div style="position: absolute; right: 10px; bottom: 59px;">
             <div class="context-help">
                 <div class="text">
                     PNG или GIF файл на прозрачном фоне

@@ -13,6 +13,7 @@ class ChangeSiteForm(forms.Form):
     logo_size = forms.IntegerField(required=False)
     owner = forms.CharField(max_length=200)
     contact_info = forms.CharField(max_length=200)
+    delete_logo = forms.CharField(max_length=10)
     # socials = forms.CharField(max_length=5000)
 
     def __init__(self, *args, **kwargs):

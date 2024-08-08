@@ -1,5 +1,5 @@
 .site-form{
-    width: 460px;
+    width: 500px;
     top: 75px;
 
     .logo{
@@ -22,16 +22,16 @@
         -webkit-appearance: none !important;
         border: none;
         padding: 0px;
-        height: 5px;
+        height: 2.5px;
         background: var(--dark-color);
-        margin-top: 25px;
+        margin-top: 33px;
 
         &::-webkit-slider-thumb {
             -webkit-appearance: none;
             border: none;
-            height: 22px;
-            width: 5px;
-            border-radius: 0px;
+            height: 11px;
+            width: 11px;
+            border-radius: 50%;
             background: rgb(100, 100, 100);
             cursor: pointer;
         }
@@ -39,9 +39,9 @@
         &::-ms-thumb {
             -webkit-appearance: none;
             border: none;
-            height: 22px;
-            width: 5px;
-            border-radius: 0px;
+            height: 11px;
+            width: 11px;
+            border-radius: 50%;
             background: rgb(100, 100, 100);
             cursor: pointer;
         }
@@ -49,9 +49,9 @@
         &::-moz-range-thumb {
             -webkit-appearance: none;
             border: none;
-            height: 22px;
-            width: 5px;
-            border-radius: 0px;
+            height: 11px;
+            width: 11px;
+            border-radius: 50%;
             background: rgb(100, 100, 100);
             cursor: pointer;
         }

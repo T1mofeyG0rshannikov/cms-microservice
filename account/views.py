@@ -33,12 +33,6 @@ class BaseProfileView(MyLoginRequiredMixin, SubdomainMixin):
             many=True,
         ).data
 
-        context["messangers"] = Messanger.objects.select_related("social_network").all()
-        context["fonts"] = UserFont.objects.all()
-        context["socials"] = SocialNetwork.objects.all()
-
-        context["default_user_size"] = SiteSettings.objects.values_list("default_users_font_size").first()[0]
-
         return context
 
 
@@ -115,7 +109,11 @@ class ChangeSiteView(View):
             logo = form.cleaned_data.get("logo", None)
             if logo:
                 site.logo = logo
-                site.logo_width = int(260 * (form.cleaned_data["logo_size"] / 100))
+
+            if form.cleaned_data.get("delete_logo") == "true":
+                site.logo = None
+
+            site.logo_width = int(260 * (form.cleaned_data["logo_size"] / 100))
 
             site.save()
 

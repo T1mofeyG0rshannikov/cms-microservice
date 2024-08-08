@@ -11,7 +11,15 @@ function onSubmitSiteForm(domain, element, event){
     event.preventDefault();
 
     const data = new FormData(element);
-    data.append('logo', element.querySelector("#file").files[0])
+    data.append('logo', element.querySelector("#file").files[0]);
+    console.log(element.querySelector("#logo").querySelector("img").src)
+    console.log(`${window.location.protocol}//${window.location.host}/static/account/images/baselogo.png`)
+    if (element.querySelector("#logo").querySelector("img").src === `${window.location.protocol}//${window.location.host}/static/account/images/baselogo.png`){
+        data.append('delete_logo', true);
+    }
+    else{
+        data.append('delete_logo', false);
+    }
 
     /*const socialContainers = element.querySelector("#socials").querySelectorAll(".field-container");
 
@@ -42,6 +50,7 @@ function onSubmitSiteForm(domain, element, event){
         if (response.status === 200){
             setErrors({}, element)
             console.log("success");
+            window.history.replaceState(null, '', window.location.pathname);
             location.reload();
         }
         if (response.status === 401){
@@ -151,4 +160,12 @@ function initChangeSiteForm(){
     logoLoader.addEventListener("change", () => displayPhotoOnload(logo))
 
     /*observableNewSocials();*/
+}
+
+function deleteLogo(){
+    siteForm.querySelector("#logo img").src = "/static/account/images/baselogo.png"
+    siteForm.querySelector("#logo input").value = "";
+
+    siteForm.querySelector("input[type=range]").value = 100;
+    changeLogoSize(siteForm.querySelector("input[type=range]"));
 }
