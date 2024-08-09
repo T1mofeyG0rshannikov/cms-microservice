@@ -114,8 +114,6 @@
                 />
                 <input name="file" type="file" accept="image/*" id="file" />
             </div>
-
-            <a href="/" style="font-size: 13px; text-decoration: none;">Как сделать логотип</a>
         </div>
 
         <div class="field" id="logo_size">
@@ -125,11 +123,11 @@
 
         <div class="field">
             <div class="trash-container" style="margin-top: 48px; margin-left: 0px;">
-                <img class="trash" onclick="deleteLogo()" src="{% static 'account/images/trash.png' %}"/>
+                <img class="trash" style="width: 16px; height: 20px;" onclick="deleteLogo()" src="{% static 'account/images/trash.png' %}"/>
             </div>
         </div>
 
-        <div style="position: absolute; right: 10px; bottom: 59px;">
+        <div style="position: absolute; right: 20px; bottom: 41px;">
             <div class="context-help">
                 <div class="text">
                     PNG или GIF файл на прозрачном фоне
@@ -139,20 +137,37 @@
             </div>
         </div>
     </div>
+    <a href="/" style="font-size: 13px; text-decoration: none; margin-left: 20px;">Как сделать логотип</a>
 
     <hr />
 
     <div class="field-container">
-        <div class="field" style="width: 100%" id="owner">
+        <div class="field" style="width: 100%; margin-right: 10px;" id="owner">
             <p>Владелец</p>
             <input placeholder="ФИО или название организации" name="owner" default="{% if user.site.owner %}{{ user.site.owner }}{% endif %}" value="{% if user.site.owner %}{{ user.site.owner }}{% endif %}" style="width: 100%"/>
         </div>
+
+        <div class="context-help">
+            <div class="text">
+                Согласно ФЗ №347 ваше имя или название организации должно быть размещено в контактах сайта
+            </div>
+
+            <img src="{% static 'common/images/ico_localhelp.png' %}" />
+        </div>
     </div>
 
-    <div class="field-container">
-        <div class="field" style="width: 100%; margin-bottom: 15px;" id="contact_info">
+    <div class="field-container" style="margin-bottom: 15px;">
+        <div class="field" style="width: 100%; margin-right: 10px;" id="contact_info">
             <p>Контактная информация</p>
             <input name="contact_info" style="width: 100%" default="{% if user.site.contact_info %}{{ user.site.contact_info }}{% endif %}" value="{% if user.site.contact_info %}{{ user.site.contact_info }}{% endif %}" placeholder="Контактные данные на сайт" />
+        </div>
+
+        <div class="context-help">
+            <div class="text">
+                Ваш емейл, телефон или другой способ связи, который видят посетители сайта
+            </div>
+
+            <img src="{% static 'common/images/ico_localhelp.png' %}" />
         </div>
     </div>
 

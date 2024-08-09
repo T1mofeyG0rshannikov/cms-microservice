@@ -222,6 +222,7 @@ form{
                 font-size: 11px;
                 font-family: var(--main-text-font-family);
                 color: var(--main-text-color);
+                box-shadow: -3px 9px 12px rgba(0, 0, 0, 0.15);
 
                 *{
                     font-size: 11px;
@@ -268,7 +269,7 @@ form{
             &::-webkit-input-placeholder{
                 color: rgb(200, 200, 200);
                 font-family: var(--main-text-font-family);
-                font-size: var(--main-text-font-size);
+                font-size: 14px;
                 font-weight: var(--main-text-font-weight);
             }
         }

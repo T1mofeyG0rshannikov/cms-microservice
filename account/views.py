@@ -69,7 +69,7 @@ class ChangeSiteView(View):
                 )
 
             if site.subdomain != site_url and Site.objects.filter(subdomain=site_url).exists():
-                form.add_error("site", "Адрес занят")
+                form.add_error("site", "Такой адрес уже существует")
                 return JsonResponse({"errors": form.errors}, status=400)
 
             """user_social_networks = json.loads(form.cleaned_data.get("socials"))

@@ -8,6 +8,9 @@ class Errors(str, Enum):
     expired_set_password_token = "Срок действия токена для ввода пароля истёк"
     wrong_confirm_email_link = "Проверочная ссылка некорректная или истек срок ее действия. Запросите проверку email еще раз в личном кабинете."
     wrong_reset_password_link = "Ссылка для восстановления пароля некорректная или истек срок ее действия. Запросите восстановление пароля еще раз."
+    to_large_file = "Изображение не более 100Kb"
+    wrong_image_format = "Используйте изображения в PNG или GIF формате"
+    to_large_image_size = "Максимальный размер логотипа 500x200px"
 
 
 class UserErrors(str, Enum):
