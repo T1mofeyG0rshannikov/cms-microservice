@@ -5,14 +5,19 @@
     align-items: center;
 
     .link{
-        width: 25px;
-        height: 25px;
+        width: 20px;
+        height: 20px;
         position: relative;
         z-index: -1;
     }
 
     p{
         margin: 0px;
+        font-size: 13px;
+    }
+
+    a{
+        font-size: 13px;
     }
 }
 
@@ -35,15 +40,56 @@
 .site-container, .logo-container{
     display: flex;
     justify-content: space-between;
+    align-items: start;
+}
+
+.site-container{
+    margin-top: 20px;
+
+    .left{
+        margin-top: 0px;
+        font-size: 13px;
+    }
+
+    .right{
+        font-size: 14px;
+        text-align: right;
+    }
+}
+
+#open-site-form{
+    margin: 0px;
+    width: 160px;
+    height: 44px;
+    display: flex;
+    justify-content: center;
     align-items: center;
+
+    *{
+        font-size: 13px;
+    }
 }
 
 .logo-container{
     display: flex;
     justify-content: center;
+    width: 260px;
+    height: 63px;
+    background: var(--main-color);
+    overflow: hidden;
+    align-items: center;
+}
 
-    img{
-        width: 100%;
+.site-name{
+    width: 260px;
+    height: 63px;
+    background-color: var(--main-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    p{
+        color: white;
     }
 }
 
@@ -61,6 +107,7 @@
 .stop-site{
     color: rgb(250, 50, 50);
     cursor: pointer;
+    margin: 0px;
 }
 
 .user-social{
@@ -93,4 +140,9 @@
         position: relative;
         z-index: -1;
     }
+}
+
+.adds-link{
+    color: var(--ref-color);
+    text-decoration: none;
 }

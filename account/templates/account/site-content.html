@@ -4,16 +4,22 @@
 
 
 {% include "account/site-form.html" %}
-<h1 style="margin-bottom: 0px;">Мой сайт</h1>
+{% include "account/socials-form.html" %}
+
+<div class="site-container" style="margin-bottom: 15px; align-items: end; margin-top: 10px;">
+    <h1 style="margin-bottom: 0px;">Мой сайт</h1>
+    <button onclick="openSiteForm()" id="open-site-form"><a>Настроить</a></button>
+</div>
+
 <hr />
 
 <div class="container">
     {% if user.site %}
         <div class="container-child">
             <div class="site-container">
-                <div>
-                    <p>Адрес сайта</p>
+                <p class="left">Адрес сайта</p>
 
+                <div class="right">
                     <div class="site">
                         <p>{{ request.user.full_site_name }}</p>
 
@@ -21,67 +27,71 @@
                             <object class="link" data="/static/account/images/external-link.svg"></object>
                         </a>
                     </div>
+                    <p style="margin: 10px 0px; color: rgb(40, 200, 40);">Онлайн с {{ user.site.online_from|date:"d.m.Y" }}</p>
 
                     <p class="stop-site" onclick="stopSite(this)">Остановить</p>
                 </div>
 
-                <p style="margin: 0px; color: rgb(40, 200, 40);">Онлайн с {{ user.site.online_from|date:"d.m.Y" }}</p>
             </div>
 
-            <hr />
+            <div class="site-container">
+                <p class="left">Логотип:</p>
 
-            <div>
-                <p>Логотип:</p>
-
-                <div class="site-container">
+                <div class="right">
                     {% if user.site.logo %}
-                        <div class="logo-container" style="min-width: {{ user.site.logo_width }}; min-height: {{ user.site.logo_height }}; max-width: {{ user.site.logo_width }}; max-height: {{ user.site.logo_height }};">
-                            <img class="site-logo" src="{{ user.site.logo.url }}" />
-                        </div>
+                    <div class="logo-container">
+                        <img class="site-logo" style="min-width: {{ user.site.logo_width }}; min-height: {{ user.site.logo_height }}; max-width: {{ user.site.logo_width }}; max-height: {{ user.site.logo_height }};" src="{{ user.site.logo.url }}" />
+                    </div>
 
-                        <p>{{ user.site.logo_size }}</p>
+                    <p style="margin: 10px 0px;">{{ user.site.logo_size }}</p>
                     {% else %}
-                        <img style="width: 70%;" class="site-logo" src="{% static 'account/images/baselogo.png' %}" />
+                        <p style="margin: 0px;">Логотип не загружен</p>
                     {% endif %}
                 </div>
             </div>
 
-            <hr />
+            <div class="site-container">
+                <p class="left">Название:</p>
 
-            <div>
-                <p>Название:</p>
-
-                <div class="site-container">
+                <div class="right">
                     {% if user.site.name %}
-                        <p style="margin: 0px;">{{ user.site.name }}</p>
+                        <div class="site-name">
+                            <p style="margin: 0px; font-family: {{ user.site.font }}; font-size: {{user.site.font_size}};">{{ user.site.name }}</p>
+                        </div>
                     {% else %}
                         <p style="margin: 0px;">Задайте название сайта</p>
                     {% endif %}
 
-                    <p>{% if user.site.font %}{{ user.site.font }}{% endif %}, {% if user.site.font_size %}{{ user.site.font_size }}pt{% endif %}</p>
+                    <p style="margin: 0px; margin-top: 10px;">{% if user.site.font %}{{ user.site.font }}{% endif %}, {% if user.site.font_size %}{{ user.site.font_size }}pt{% endif %}</p>
                 </div>
-
-                <p>Владелец:</p>
-                {% if user.site.owner %}
-                    <p>{{ user.site.owner }}</p>
-                {% else %}
-                    <p>Нет информации о владельце</p>
-                {% endif %}
             </div>
 
-            <hr />
+            <div class="site-container" style="margin-top: 30px;">
+                <p class="left">Владелец:</p>
 
-            <div>
-                <p>Контактная информация</p>
-                {% if user.site.contact_info %}
-                    <p>{{ user.site.contact_info }}</p>
-                {% else %}
-                    <p>нет контактной информации</p>
-                {% endif %}
+                <div class="right">
+                    {% if user.site.owner %}
+                        <p style="margin: 0px;">{{ user.site.owner }}</p>
+                    {% else %}
+                        <p style="margin: 0px;">Нет информации о владельце</p>
+                    {% endif %}
+                </div>
             </div>
 
-            <button onclick="openSiteForm()" id="open-site-form"><a>Настроить</a></button>
 
+            <div class="site-container" style="margin-top: 10px;">
+                <p class="left">Контактная информация</p>
+
+                <div class="right">
+                    <p style="margin: 0px;">
+                        {% if user.site.contact_info %}
+                            {{ user.site.contact_info }}
+                        {% else %}
+                            нет контактной информации
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
         </div>
 
         <div class="container-child">
@@ -90,28 +100,31 @@
                 {% qr_from_text request.user.full_site_name size="T" %}
             </div>
 
-            <a href="/">Рекламные материалы</a>
+            <a class="adds-link" href="/">Рекламные материалы</a>
 
-            <hr />
+            <hr style="margin-top: 18px;" />
 
-            <p>Каналы</p>
-            {% if user.site.socials %}
-                {% for user_social_network in user.site.socials.all %}
-                    <div class="user-social">
-                        <div class="icon-wrapper" style="background-color: {{ user_social_network.social_network.button_color }}">
-                            <img src="{{ user_social_network.social_network.icon.url }}" />
+            <div class="site-container">
+                <p>Каналы</p>
+
+                {% if user.site.socials.all %}
+                    {% for user_social_network in user.site.socials.all %}
+                        <div class="user-social">
+                            <div class="icon-wrapper" style="background-color: {{ user_social_network.social_network.button_color }}">
+                                <img src="{{ user_social_network.social_network.icon.url }}" />
+                            </div>
+
+                            <a>{{ user_social_network.adress }}</a>
+
+                            <a style="cursor: pointer; margin: 0px;" onclick="openLink('{{ user_social_network.social_network.domain }}{{ user_social_network.adress }}')">
+                                <object class="link" data="/static/account/images/external-link.svg"></object>
+                            </a>
                         </div>
-
-                        <a>{{ user_social_network.adress }}</a>
-
-                        <a style="cursor: pointer; margin: 0px;" onclick="openLink('{{ user_social_network.social_network.domain }}{{ user_social_network.adress }}')">
-                            <object class="link" data="/static/account/images/external-link.svg"></object>
-                        </a>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <p>у вас пока нет своих каналов</p>
-            {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <a onclick="openSocialsForm(socialsForm)">Задать</p>
+                {% endif %}
+            </div>
         </div>
     {% else %}
         <div class="container-child">

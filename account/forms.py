@@ -16,12 +16,11 @@ class ChangeSiteForm(forms.Form):
     owner = forms.CharField(max_length=200)
     contact_info = forms.CharField(max_length=200)
     delete_logo = forms.CharField(max_length=10)
-    # socials = forms.CharField(max_length=5000)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["site"].error_messages = {"required": "Укажите адрес своего сайта"}
-        self.fields["name"].error_messages = {"required": "Это поле обязательное"}
+        self.fields["name"].error_messages = {"required": "Укажите название своего сайта"}
         self.fields["font"].error_messages = {"required": "Это поле обязательное"}
         self.fields["font_size"].error_messages = {"required": "Это поле обязательное"}
         self.fields["owner"].error_messages = {"required": "Укажите свое имя или название организации"}
@@ -47,7 +46,7 @@ class ChangeSiteForm(forms.Form):
     def clean_logo(self):
         logo = self.cleaned_data["logo"]
         if logo:
-            if logo.size > 102400:
+            if logo.size > 204800:
                 self.add_error("logo", Errors.to_large_file.value)
 
             file_extension = logo.name.split(".")[-1].lower()
@@ -118,3 +117,7 @@ class ChangePasswordForm(forms.Form):
             self.add_error("password", "Минимум 6 латинских букв и цифр")
 
         return password
+
+
+class ChangeSocialsForm(forms.Form):
+    socials = forms.CharField(max_length=5000)

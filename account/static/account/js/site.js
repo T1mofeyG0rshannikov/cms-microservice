@@ -36,6 +36,7 @@ function activateSite(element){
 }
 
 let siteForm = document.querySelector(".site-form");
+let socialsForm = document.querySelector(".socials-form");
 
 function openSiteForm(){
     siteForm = document.querySelector(".site-form");

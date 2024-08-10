@@ -42,6 +42,14 @@ class GetChangeSiteFormTemplate(View):
         return JsonResponse({"content": template})
 
 
+class GetChangeSocialsFormTemplate(View):
+    template_loader = get_template_loader()
+
+    def get(self, request):
+        template = self.template_loader.load_change_socials_form(request)
+        return JsonResponse({"content": template})
+
+
 class PageNotFound(SubdomainMixin):
     template_name = "common/404.html"
 
@@ -58,5 +66,5 @@ def slug_router(request, slug):
 
     if slug == "my":
         return Profile.as_view()(request)
-    
+
     return PageNotFound.as_view()(request)

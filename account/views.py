@@ -8,7 +8,12 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
-from account.forms import ChangePasswordForm, ChangeSiteForm, ChangeUserForm
+from account.forms import (
+    ChangePasswordForm,
+    ChangeSiteForm,
+    ChangeSocialsForm,
+    ChangeUserForm,
+)
 from account.models import Messanger, UserFont, UserMessanger, UserSocialNetwork
 from common.models import SocialNetwork
 from domens.domain_service.domain_service import get_domain_service
@@ -17,7 +22,6 @@ from domens.models import Site
 from domens.views.mixins import SubdomainMixin
 from notifications.models import UserNotification
 from notifications.serializers import UserNotificationSerializer
-from settings.models import SiteSettings
 from user.models import User
 from user.views.base_user_view import BaseUserView, MyLoginRequiredMixin
 from utils.errors import UserErrors
@@ -72,7 +76,43 @@ class ChangeSiteView(View):
                 form.add_error("site", "Такой адрес уже существует")
                 return JsonResponse({"errors": form.errors}, status=400)
 
-            """user_social_networks = json.loads(form.cleaned_data.get("socials"))
+            site.subdomain = form.cleaned_data["site"]
+            site.name = form.cleaned_data["name"]
+            site.owner = form.cleaned_data["owner"]
+            site.contact_info = form.cleaned_data["contact_info"]
+
+            site.font = UserFont.objects.get(id=form.cleaned_data["font"])
+            site.font_size = form.cleaned_data["font_size"]
+
+            logo = form.cleaned_data.get("logo", None)
+            if logo:
+                site.logo = logo
+
+            if form.cleaned_data.get("delete_logo") == "true":
+                site.logo = None
+
+            site.logo_width = int(260 * (form.cleaned_data["logo_size"] / 100))
+
+            site.save()
+
+            return HttpResponse(status=200)
+
+        return JsonResponse({"errors": form.errors}, status=400)
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class ChangeSocialsView(View):
+    def post(self, request):
+        user = request.user_from_header
+        if user is None:
+            return HttpResponse(status=401)
+
+        form = ChangeSocialsForm(request.POST)
+        if form.is_valid():
+            site = user.site
+
+            user_social_networks = json.loads(form.cleaned_data.get("socials"))
+            print(user_social_networks)
             social_networks_ids = [user_social_network["social"] for user_social_network in user_social_networks]
 
             if len({social_network["social"] for social_network in user_social_networks}) < len(user_social_networks):
@@ -96,26 +136,7 @@ class ChangeSiteView(View):
                         social_network=social_network,
                         site=site,
                         defaults={"adress": user_social_network["adress"]},
-                    )"""
-
-            site.subdomain = form.cleaned_data["site"]
-            site.name = form.cleaned_data["name"]
-            site.owner = form.cleaned_data["owner"]
-            site.contact_info = form.cleaned_data["contact_info"]
-
-            site.font = UserFont.objects.get(id=form.cleaned_data["font"])
-            site.font_size = form.cleaned_data["font_size"]
-
-            logo = form.cleaned_data.get("logo", None)
-            if logo:
-                site.logo = logo
-
-            if form.cleaned_data.get("delete_logo") == "true":
-                site.logo = None
-
-            site.logo_width = int(260 * (form.cleaned_data["logo_size"] / 100))
-
-            site.save()
+                    )
 
             return HttpResponse(status=200)
 

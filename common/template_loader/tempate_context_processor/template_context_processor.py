@@ -23,10 +23,15 @@ class TemplateContextProcessor(TemplateContextProcessorInterface):
         context = self.get_context(request)
 
         context["fonts"] = UserFont.objects.all()
-        context["socials"] = SocialNetwork.objects.all()
 
         context["default_user_size"] = SiteSettings.objects.values_list("default_users_font_size").first()[0]
         context["domains"] = Domain.objects.values("domain", "id").filter(is_partners=True)
+
+        return context
+
+    def get_change_socials_form_context(self, request):
+        context = self.get_context(request)
+        context["socials"] = SocialNetwork.objects.all()
 
         return context
 

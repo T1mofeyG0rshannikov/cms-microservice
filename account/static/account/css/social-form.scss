@@ -1,0 +1,21 @@
+.socials-form{
+    width: 330px;
+    top: 75px;
+
+    #socials .field-container{
+        align-items: end;
+    }
+
+    .trash-container{
+        display: flex;
+        align-items: center;
+        height: 35px;
+        margin-left: 10px;
+
+        .trash{
+            height: 25px;
+            width: 20px;
+            cursor: pointer;
+        }
+    }
+}

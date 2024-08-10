@@ -82,6 +82,7 @@ form{
         right: 0px;
         top: calc(100% + 10px);
         display: none;
+        box-shadow: -3px 9px 12px rgba(0, 0, 0, 0.15);
 
         &:before {
             bottom: 100%;
@@ -150,7 +151,7 @@ form{
     border: 1px solid var(--dark-color);
     position: absolute;
     transition: .4s;
-    right: -500px;
+    right: -520px;
     border-right: 1px solid white;
 
     input[type=file]{
