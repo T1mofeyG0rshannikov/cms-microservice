@@ -1,4 +1,5 @@
 from django.conf import settings
+from kombu.exceptions import OperationalError
 
 from domens.domain_service.domain_service import DomainService
 from emails.email_service.context_processor.context_processor import (
@@ -13,6 +14,7 @@ from emails.email_service.template_generator.template_generator import (
 from emails.email_service.template_generator.template_generator_interface import (
     EmailTemplateGeneratorInterface,
 )
+from emails.exceptions import CantSendMailError
 from user.auth.jwt_processor import get_jwt_processor
 from user.user_interface import UserInterface
 
@@ -23,17 +25,24 @@ class EmailService(EmailServiceInterface):
     def __init__(self, template_generator: EmailTemplateGeneratorInterface) -> None:
         self.template_generator = template_generator
 
+    @staticmethod
+    def send_email(*args, **kwargs):
+        try:
+            send_email.delay(*args, **kwargs)
+        except OperationalError:
+            raise CantSendMailError(f"cant send mail to user")
+
     def send_mail_to_confirm_email(self, user: UserInterface) -> None:
         template = self.template_generator.generate_confirm_email_template(user)
-        send_email.delay("Подтвердите свой email адрес", self.sender, [user.email], template)
+        self.send_email("Подтвердите свой email адрес", self.sender, [user.email], template)
 
     def send_mail_to_confirm_new_email(self, user: UserInterface) -> None:
         template = self.template_generator.generate_confirm_new_email_template(user)
-        send_email.delay("Подтвердите свой email адрес", self.sender, [user.new_email], template)
+        self.send_email("Подтвердите свой email адрес", self.sender, [user.new_email], template)
 
     def send_mail_to_reset_password(self, user: UserInterface) -> None:
         template = self.template_generator.generate_reset_password_template(user)
-        send_email.delay("Восстановление пароля", self.sender, [user.email], template)
+        self.send_email("Восстановление пароля", self.sender, [user.email], template)
 
 
 def get_email_service() -> EmailService:

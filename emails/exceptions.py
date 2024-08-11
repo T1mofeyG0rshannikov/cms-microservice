@@ -1,0 +1,2 @@
+class CantSendMailError(Exception):
+    pass

@@ -1,3 +1,8 @@
+:root{
+    --service-font-size: 13px;
+    --user-font-size: 14px;
+}
+
 .menu{
     height: 100%;
     min-height: 630px;
@@ -47,7 +52,7 @@ hr{
     min-width: calc(100% - 300px);
 
     a, p{
-        font-size: 13px;
+        font-size: var(--service-font-size);
     }
 }
 

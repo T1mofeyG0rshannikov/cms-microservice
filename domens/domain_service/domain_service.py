@@ -1,6 +1,6 @@
 import re
 
-from django.db.utils import OperationalError
+from django.db.utils import OperationalError, ProgrammingError
 
 from domens.domain_service.domain_service_interface import DomainServiceInterface
 from domens.models import Domain, Site
@@ -44,7 +44,7 @@ class DomainService(DomainServiceInterface):
 
             return domain[0]
 
-        except OperationalError:
+        except (OperationalError, ProgrammingError):
             return None
 
     @classmethod

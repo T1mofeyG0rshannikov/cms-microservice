@@ -1,18 +1,18 @@
 from django.contrib.auth.models import BaseUserManager
 
 from user.user_manager.user_manager_interface import UserManagerInterface
+from utils.validators import is_valid_email, is_valid_phone
 
 
 class UserManager(BaseUserManager, UserManagerInterface):
-    def get_by_natural_key(self, username: str):
-        user_by_email = self.get_user_by_email(username)
-        user_by_phone = self.get_user_by_phone(username)
+    def get_by_natural_key(self, username):
+        if is_valid_phone(username):
+            return self.get_user_by_phone(username)
 
-        if user_by_email:
-            return user_by_email
+        elif is_valid_email(username):
+            return self.get_user_by_email(username)
 
-        if user_by_phone:
-            return user_by_phone
+        return super().get_by_natural_key(username)
 
     def get_user_by_id(self, id: int):
         try:
@@ -22,13 +22,17 @@ class UserManager(BaseUserManager, UserManagerInterface):
 
     def get_user_by_email(self, email: str):
         try:
-            return self.get(**{"email": email})
+            if email:
+                return self.get(**{"email": email})
+            return None
         except self.model.DoesNotExist:
             return None
 
     def get_user_by_phone(self, phone: str):
         try:
-            return self.get(**{"phone": phone})
+            if phone:
+                return self.get(**{"phone": phone})
+            return None
         except self.model.DoesNotExist:
             return None
 

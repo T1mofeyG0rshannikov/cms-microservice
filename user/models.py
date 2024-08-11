@@ -1,13 +1,9 @@
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
-from django.db.models.signals import post_save, pre_save
 
 from domens.domain_service.domain_service import DomainService
 from domens.models import Site
-from emails.email_service.email_service import get_email_service
-from notifications.create_user_notification import create_user_notification
-from notifications.send_message import send_message_to_user
 from user.user_manager.user_manager import UserManager
 from user.user_manager.user_manager_interface import UserManagerInterface
 
@@ -90,44 +86,3 @@ class User(AbstractBaseUser, PermissionsMixin):
         ordering = ["-created_at"]
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
-
-
-def user_created_handler(sender, instance, created, *args, **kwargs):
-    if created:
-        email_service = get_email_service()
-        email_service.send_mail_to_confirm_email(instance)
-
-        user_alert = create_user_notification(instance, "SIGNEDUP")
-        send_message_to_user(instance.id, user_alert)
-
-
-def user_verified_email_handler(sender, instance, *args, **kwargs):
-    if instance.id is None:
-        pass
-    else:
-        previous = User.objects.get_user_by_id(id=instance.id)
-        if not previous.email_is_confirmed and instance.email_is_confirmed:
-            user_alert = create_user_notification(instance, "EMAILVERIFIED")
-            send_message_to_user(instance.id, user_alert)
-
-
-def user_change_email_handler(sender, instance, *args, **kwargs):
-    if instance.id is None:
-        pass
-    else:
-        previous = User.objects.get_user_by_id(id=instance.id)
-
-        email_service = get_email_service()
-
-        if not previous.new_email and instance.new_email:
-            email_service.send_mail_to_confirm_new_email(instance)
-            return
-
-        if previous.email != instance.email:
-            email_service.send_mail_to_confirm_email(instance)
-            return
-
-
-post_save.connect(user_created_handler, sender=User)
-pre_save.connect(user_verified_email_handler, sender=User)
-pre_save.connect(user_change_email_handler, sender=User)

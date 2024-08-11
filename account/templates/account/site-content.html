@@ -105,25 +105,29 @@
             <hr style="margin-top: 18px;" />
 
             <div class="site-container">
-                <p>Каналы</p>
+                <p>Социальные сети</p>
 
-                {% if user.site.socials.all %}
-                    {% for user_social_network in user.site.socials.all %}
+                <div style="display: flex; flex-direction: column;">
+                    {% if user.site.socials.all %}
+                        {% for user_social_network in user.site.socials.all %}
                         <div class="user-social">
-                            <div class="icon-wrapper" style="background-color: {{ user_social_network.social_network.button_color }}">
-                                <img src="{{ user_social_network.social_network.icon.url }}" />
-                            </div>
+                            <div class="content">
+                                <div class="icon-wrapper" style="background-color: {{ user_social_network.social_network.button_color }}">
+                                    <img src="{{ user_social_network.social_network.icon.url }}" />
+                                </div>
 
-                            <a>{{ user_social_network.adress }}</a>
+                                <a>{{ user_social_network.adress }}</a>
+                            </div>
 
                             <a style="cursor: pointer; margin: 0px;" onclick="openLink('{{ user_social_network.social_network.domain }}{{ user_social_network.adress }}')">
                                 <object class="link" data="/static/account/images/external-link.svg"></object>
                             </a>
                         </div>
-                    {% endfor %}
-                {% else %}
-                    <a onclick="openSocialsForm(socialsForm)">Задать</p>
-                {% endif %}
+                        {% endfor %}
+                    {% endif %}
+
+                    <a style="color: var(--light-ref-color); cursor: pointer; text-align: right;" onclick="openSocialsForm(socialsForm)">Настроить</a>
+                </div>
             </div>
         </div>
     {% else %}

@@ -73,15 +73,13 @@ function createNewSocial(){
     newSocial.classList.add("field-container");
     newSocial.innerHTML = `
     <div class="field social">
-        <p>Соцсеть</p>
         <select name="" id="">
             ${options}
         </select>
     </div>
 
     <div class="field adress">
-        <p>Адрес</p>
-        <input name="adress" />
+        <input placeholder="Адрес канала" name="adress" />
     </div>
 
     <div class="trash-container">

@@ -13,11 +13,6 @@
 
     p{
         margin: 0px;
-        font-size: 13px;
-    }
-
-    a{
-        font-size: 13px;
     }
 }
 
@@ -48,19 +43,23 @@
 
     .left{
         margin-top: 0px;
-        font-size: 13px;
+        font-size: var(--service-font-size);
     }
 
     .right{
-        font-size: 14px;
+        font-size: var(--user-font-size);
         text-align: right;
+
+        *{
+            font-size: var(--user-font-size);
+        }
     }
 }
 
 #open-site-form{
     margin: 0px;
     width: 160px;
-    height: 44px;
+    height: 36px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -113,11 +112,17 @@
 .user-social{
     display: flex;
     align-items: center;
+    justify-content: space-between;
     margin: 15px 0px;
 
+    .content{
+        display: flex;
+        align-items: center;
+    }
+
     .icon-wrapper{
-        width: 30px;
-        height: 30px;
+        width: 22px;
+        height: 22px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -131,6 +136,7 @@
     a{
         font-weight: 600;
         margin: 0px 10px;
+        font-size: var(--user-font-size);
     }
 
     .link{
@@ -143,6 +149,6 @@
 }
 
 .adds-link{
-    color: var(--ref-color);
+    color: var(--light-ref-color);
     text-decoration: none;
 }

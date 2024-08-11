@@ -70,6 +70,8 @@ initChangeUserForm();
 
 function sendConfirmEmail(elem){
     const token = getToken();
+    elem.innerHTML = "Отправляем письмо...";
+    elem.style.color = "var(--main-text-color)";
 
     fetch(`/email/send-confirm-email`, {
         method: "GET",
@@ -81,8 +83,13 @@ function sendConfirmEmail(elem){
     }).then(response => {
         if (response.status === 200){
             elem.innerHTML = "Ссылка отправлена на email";
-            elem.style.color = "var(--main-text-color)";
             console.log("success")
+        }
+        if (response.status === 503){
+            response.json().then(response => {
+                elem.style.color = "rgb(250, 20, 20)";
+                elem.innerHTML = response.error;
+            })
         }
     })
 }

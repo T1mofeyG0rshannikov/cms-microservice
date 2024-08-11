@@ -1,10 +1,14 @@
 import re
+from typing import Any
 
 from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator
 
 
-def is_valid_phone(phone: str) -> bool:
+def is_valid_phone(phone: Any) -> bool:
+    if not isinstance(phone, str):
+        return False
+
     phone = phone.replace(" ", "")
     phone = phone.replace("(", "")
     phone = phone.replace(")", "")
@@ -18,13 +22,13 @@ def is_valid_phone(phone: str) -> bool:
     return False
 
 
-def is_valid_email(email: str) -> bool:
+def is_valid_email(email: Any) -> bool:
+    if not isinstance(email, str):
+        return False
+
     email_validator = EmailValidator()
     try:
         email_validator(email)
         return True
     except ValidationError:
         return False
-
-
-# def is_valid_password(password: str) -> bool:

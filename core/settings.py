@@ -105,7 +105,7 @@ WSGI_APPLICATION = "core.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": BASE_DIR.parent / "db.sqlite3",
     }
 }
 
@@ -152,7 +152,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "media")
 STATICFILES_DIR = os.path.join(BASE_DIR, "static")
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "static")
+MEDIA_ROOT = os.path.join(BASE_DIR.parent, "static")
 
 
 # email settings
@@ -188,7 +188,7 @@ SESSION_COOKIE_SECURE = False
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend", "user.backend.CustomAdminAuthentication"]
+AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
 
 SASS_ROOT = os.path.join(BASE_DIR, "static", "scss")
 SASS_PROCESSOR_ROOT = SASS_ROOT

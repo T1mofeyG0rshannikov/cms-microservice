@@ -4,6 +4,7 @@ from django.utils import timezone
 
 from account.models import UserFont
 from notifications.create_user_notification import create_user_notification
+from notifications.error import CantSendNotification
 from notifications.send_message import send_message_to_user
 
 
@@ -79,9 +80,13 @@ class Site(models.Model):
 
 def site_created_handler(sender, instance, created, *args, **kwargs):
     if created:
-        user_alert = create_user_notification(instance.user, "SITECREATED")
+        if instance.user:
+            user_alert = create_user_notification(instance.user, "SITECREATED")
 
-        send_message_to_user(instance.user.id, user_alert)
+            try:
+                send_message_to_user(instance.user.id, user_alert)
+            except CantSendNotification:
+                pass
 
 
 post_save.connect(site_created_handler, sender=Site)
