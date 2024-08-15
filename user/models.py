@@ -50,6 +50,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     sponsor = models.ForeignKey("self", verbose_name="Спонсор", null=True, blank=True, on_delete=models.SET_NULL)
 
+    test = models.BooleanField(default=False, verbose_name="тестовый пользователь")
+
+    test_set = models.ForeignKey("site_tests.TestUserSet", null=True, blank=True, on_delete=models.CASCADE)
+
     @property
     def is_staff(self):
         return self.staff

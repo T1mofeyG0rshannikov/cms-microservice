@@ -116,6 +116,9 @@ class DomainService(DomainServiceInterface):
 
         return ""
 
+    def get_random_site(self) -> Site:
+        return Site.objects.order_by("?").first()
+
 
 def get_domain_service() -> DomainService:
     return DomainService()

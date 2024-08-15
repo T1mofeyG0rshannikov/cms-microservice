@@ -1,6 +1,7 @@
 {% load static %}
 {% load qr_code %}
 {% load sass_tags %}
+{% load range %}
 
 
 <div class="site-container" style="margin-bottom: 15px; align-items: end; margin-top: 10px;">
@@ -71,46 +72,46 @@
 
 <div class="pagination">
     <div class="pages">
-        {% if referrals.paginator.num_pages > 1 %}
-            <a {% if referrals.number == 1 %}class="active"{% endif %} onclick="renderPagination(1, {{ referrals.paginator.num_pages }})">1</a>
-            {% if referrals.number > 4 %}
+        {% if total_pages > 1 %}
+            <a {% if current_page == 1 %}class="active"{% endif %} onclick="loadPagination(1)">1</a>
+            {% if current_page > 4 %}
                 ...
             {% endif %}
 
-            {% if referrals.number == 1 %}
-                {% for num in referrals.paginator.page_range %}
-                    {% if referrals.number < num and num < referrals.number|add:"3" %}
-                        {% if num != "1" and num != referrals.paginator.num_pages and num != 1 %}
-                            <a {% if num == referrals.paginator.num_pages %}class="active"{% endif %} onclick="renderPagination({{ num }}, {{referrals.paginator.num_pages}})">{{ num }}</a>
+            {% if current_page == 1 %}
+                {% for num in total_pages|create_range %}
+                    {% if current_page < num and num < current_page|add:"3" %}
+                        {% if num != total_pages and num != 1 %}
+                            <a {% if num == total_pages %}class="active"{% endif %} onclick="loadPagination({{ num }})">{{ num }}</a>
                         {% endif %}
                     {% endif %}
                 {% endfor %}
 
-            {% elif referrals.number == referrals.paginator.num_pages %}
-                {% for num in referrals.paginator.page_range %}
-                    {% if referrals.number|add:"-3" < num and num < referrals.number %}
-                        {% if num != "1" and num != referrals.paginator.num_pages and num != 1 %}
-                            <a {% if num == referrals.paginator.num_pages %}class="active"{% endif %} onclick="renderPagination({{ num }}, {{referrals.paginator.num_pages}})">{{ num }}</a>
+            {% elif current_page == total_pages %}
+                {% for num in total_pages|create_range %}
+                    {% if current_page|add:"-3" < num and num < current_page %}
+                        {% if num != "1" and num != total_pages and num != 1 %}
+                            <a {% if num == total_pages %}class="active"{% endif %} onclick="loadPagination({{ num }})">{{ num }}</a>
                         {% endif %}
                     {% endif %}
                 {% endfor %}
 
             {% else %}
-                {% for num in referrals.paginator.page_range %}
-                    {% if referrals.number|add:"-2" < num and num < referrals.number|add:"2" %}
-                        {% if num != "1" and num != referrals.paginator.num_pages and num != 1 %}
-                            <a {% if num == referrals.paginator.num_pages %}class="active"{% endif %} onclick="renderPagination({{ num }}, {{referrals.paginator.num_pages}})">{{ num }}</a>
+                {% for num in total_pages|create_range %}
+                    {% if total_pages|add:"-2" < num and num < current_page|add:"2" %}
+                        {% if num != "1" and num != total_pages and num != 1 %}
+                            <a {% if num == total_pages %}class="active"{% endif %} onclick="loadPagination({{ num }}, {{ total_pages }})">{{ num }}</a>
                         {% endif %}
                     {% endif %}
                 {% endfor %}
 
             {% endif %}
 
-            {% if referrals.number < referrals.paginator.num_pages|add:"-3" %}
+            {% if current_page < total_pages|add:"-3" %}
                 ...
             {% endif %}
 
-            <a {% if referrals.number == referrals.paginator.num_pages %}class="active"{% endif %} onclick="renderPagination({{referrals.paginator.num_pages}}, {{referrals.paginator.num_pages}})">{{ referrals.paginator.num_pages }}</a>
+            <a {% if current_page == total_pages %}class="active"{% endif %} onclick="loadPagination({{ total_pages }}, {{ total_pages }})">{{ total_pages }}</a>
         {% endif %}
     </div>
 

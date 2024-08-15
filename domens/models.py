@@ -81,12 +81,13 @@ class Site(models.Model):
 def site_created_handler(sender, instance, created, *args, **kwargs):
     if created:
         if instance.user:
-            user_alert = create_user_notification(instance.user, "SITECREATED")
+            if not instance.user.test:
+                user_alert = create_user_notification(instance.user, "SITECREATED")
 
-            try:
-                send_message_to_user(instance.user.id, user_alert)
-            except CantSendNotification:
-                pass
+                try:
+                    send_message_to_user(instance.user.id, user_alert)
+                except CantSendNotification:
+                    pass
 
 
 post_save.connect(site_created_handler, sender=Site)

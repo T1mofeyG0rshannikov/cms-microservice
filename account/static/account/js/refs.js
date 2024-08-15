@@ -27,7 +27,7 @@ function renderRefs(refs){
 }
 
 function renderPagination(pageNum, totalPages){
-    let pagination = `<a ${ pageNum == 1 ? 'class="active"' : "" } onclick="renderPagination(1, ${totalPages})">1</a>`;
+    let pagination = `<a ${ pageNum == 1 ? 'class="active"' : "" } onclick="loadPagination(1)">1</a>`;
 
     if (pageNum > 4){
         pagination += `...`;
@@ -37,7 +37,7 @@ function renderPagination(pageNum, totalPages){
         for (let num = 1; num <= totalPages; num++){
             if (pageNum < num && num < pageNum + 3){
                 if (num != 1 && num != totalPages){
-                    pagination += `<a ${ num == pageNum ? 'class="active"' : "" } onclick="renderPagination(${ num }, ${totalPages})">${ num }</a>`;
+                    pagination += `<a ${ num == pageNum ? 'class="active"' : "" } onclick="loadPagination(${ num })">${ num }</a>`;
                 }
             }
         }
@@ -47,7 +47,7 @@ function renderPagination(pageNum, totalPages){
         for (let num = 1; num <= totalPages; num++){
             if (pageNum-3 < num && num < pageNum){
                 if (num != totalPages && num != 1){
-                    pagination += `<a ${ num == pageNum ? 'class="active"' : "" } onclick="renderPagination(${ num }, ${totalPages})">${ num }</a>`;
+                    pagination += `<a ${ num == pageNum ? 'class="active"' : "" } onclick="loadPagination(${ num }, ${totalPages})">${ num }</a>`;
                 }
             }
         }
@@ -56,7 +56,7 @@ function renderPagination(pageNum, totalPages){
         for (let num =1; num <= totalPages; num++){
             if (pageNum-2 < num && num < pageNum + 2){
                 if (num != totalPages && num != 1){
-                    pagination += `<a ${ num == pageNum ? 'class="active"' : "" } onclick="renderPagination(${ num }, ${totalPages})">${ num }</a>`;
+                    pagination += `<a ${ num == pageNum ? 'class="active"' : "" } onclick="loadPagination(${ num }, ${totalPages})">${ num }</a>`;
                 }
             }
         }
@@ -67,7 +67,7 @@ function renderPagination(pageNum, totalPages){
     }
 
     if (totalPages > 1){
-        pagination += `<a ${ pageNum == totalPages ? 'class="active"' : "" } onclick="renderPagination(${ totalPages }, ${totalPages})">${ totalPages }</a>`;
+        pagination += `<a ${ pageNum == totalPages ? 'class="active"' : "" } onclick="loadPagination(${ totalPages }, ${totalPages})">${ totalPages }</a>`;
     }
 
     if (totalPages > 1){
@@ -76,7 +76,9 @@ function renderPagination(pageNum, totalPages){
     else{
         document.querySelector(".pages").innerHTML = '';
     }
+}
 
+function loadPagination(pageNum){
     const level = $("select[name=level]").val();
     const page_size = $("select[name=page_size]").val();
     const sorted_by = $("select[name=sort_by]").val()
@@ -86,6 +88,7 @@ function renderPagination(pageNum, totalPages){
             response.json().then(response => {
                 console.log(response);
                 renderRefs(response.referrals);
+                renderPagination(pageNum, response.total_pages);
             })
         }
     })
@@ -95,8 +98,9 @@ function initRefsContent(){
     document.querySelector("select[name=level]").addEventListener("change", () => {
         const level = $("select[name=level]").val();
         const page_size = $("select[name=page_size]").val();
+        const sorted_by = $("select[name=sort_by")
 
-        fetch(`/my/get-referrals?level=${level}&page_size=${page_size}`).then(response => {
+        fetch(`/my/get-referrals?level=${level}&page_size=${page_size}&sorted_by=${sorted_by}`).then(response => {
             if (response.status === 200){
                 response.json().then(response => {
                     console.log(response);

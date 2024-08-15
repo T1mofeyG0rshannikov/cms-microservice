@@ -50,7 +50,9 @@ INSTALLED_APPS = [
     "rest_framework",
     "emails",
     "corsheaders",
+    "site_tests",
 ]
+
 ASGI_APPLICATION = "core.asgi.application"
 
 CHANNEL_LAYERS = {

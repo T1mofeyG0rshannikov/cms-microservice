@@ -14,7 +14,7 @@ from user.models import User
 
 
 def user_created_handler(sender, instance, created, *args, **kwargs):
-    if created:
+    if created and not instance.test:
         email_service = get_email_service()
         try:
             email_service.send_mail_to_confirm_email(instance)
