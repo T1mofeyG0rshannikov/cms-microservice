@@ -44,7 +44,9 @@ class RefsView(BaseProfileView):
         sorted_by = self.request.GET.get("sorted_by")
 
         try:
+            print(1111111)
             referrals = self.user_service.get_referrals(level=level, user=self.request.user, sorted_by=sorted_by)
+            print(2222222)
         except InvalidSortedByField as e:
             return JsonResponse({"error": str(e)}, status=400)
         except InvalidReferalLevel as e:
