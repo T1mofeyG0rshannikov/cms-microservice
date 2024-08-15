@@ -1,15 +1,18 @@
 from django.contrib.auth.models import BaseUserManager
 
 from user.user_manager.user_manager_interface import UserManagerInterface
-from utils.validators import is_valid_email, is_valid_phone
+from user.validator.validator import get_user_validator
+from user.validator.validator_interface import UserValidatorInterface
 
 
 class UserManager(BaseUserManager, UserManagerInterface):
+    validator: UserValidatorInterface = get_user_validator()
+
     def get_by_natural_key(self, username):
-        if is_valid_phone(username):
+        if self.validator.is_valid_phone(username):
             return self.get_user_by_phone(username)
 
-        elif is_valid_email(username):
+        elif self.validator.is_valid_email(username):
             return self.get_user_by_email(username)
 
         return super().get_by_natural_key(username)

@@ -6,6 +6,10 @@
     display: flex;
     justify-content: center;
 
+    .field{
+        position: relative;
+    }
+
     .inner{
         display: flex;
         flex-direction: column;

@@ -16,7 +16,7 @@ from emails.email_service.template_generator.template_generator_interface import
 )
 from emails.exceptions import CantSendMailError
 from user.auth.jwt_processor import get_jwt_processor
-from user.user_interface import UserInterface
+from user.interfaces import UserInterface
 
 
 class EmailService(EmailServiceInterface):
@@ -30,7 +30,7 @@ class EmailService(EmailServiceInterface):
         try:
             send_email.delay(*args, **kwargs)
         except OperationalError:
-            raise CantSendMailError(f"cant send mail to user")
+            raise CantSendMailError("cant send mail to user")
 
     def send_mail_to_confirm_email(self, user: UserInterface) -> None:
         template = self.template_generator.generate_confirm_email_template(user)

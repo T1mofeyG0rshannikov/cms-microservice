@@ -31,5 +31,9 @@ function loadProfileContent(templateName, url){
         const template = response.content;
         const content = document.querySelector(".account-main");
         content.innerHTML = template;
+
+        if (templateName === "refs-content"){
+            initRefsContent();
+        }
     })
 }

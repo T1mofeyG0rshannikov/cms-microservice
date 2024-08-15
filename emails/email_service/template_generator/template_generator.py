@@ -5,7 +5,7 @@ from django.template import loader
 from emails.email_service.context_processor.context_processor_interface import (
     EmailContextProcessorInterface,
 )
-from user.user_interface import UserInterface
+from user.interfaces import UserInterface
 
 from .template_generator_interface import EmailTemplateGeneratorInterface
 

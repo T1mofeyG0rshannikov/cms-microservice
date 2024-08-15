@@ -1,47 +1,18 @@
 import json
 
-from django.contrib.auth import authenticate, login
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
-from django.template import loader
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
-from account.forms import (
-    ChangePasswordForm,
-    ChangeSiteForm,
-    ChangeSocialsForm,
-    ChangeUserForm,
-)
+from account.forms import ChangeSiteForm, ChangeSocialsForm, ChangeUserForm
 from account.models import Messanger, UserFont, UserMessanger, UserSocialNetwork
 from common.models import SocialNetwork
 from domens.domain_service.domain_service import get_domain_service
 from domens.domain_service.domain_service_interface import DomainServiceInterface
 from domens.models import Site
-from domens.views.mixins import SubdomainMixin
-from notifications.models import UserNotification
-from notifications.serializers import UserNotificationSerializer
 from user.models import User
-from user.views.base_user_view import BaseUserView, MyLoginRequiredMixin
 from utils.errors import UserErrors
-
-
-class BaseProfileView(MyLoginRequiredMixin, SubdomainMixin):
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        context["notifications"] = UserNotificationSerializer(
-            UserNotification.objects.filter(user_id=self.request.user.id),
-            context={"user": self.request.user},
-            many=True,
-        ).data
-
-        return context
-
-
-class SiteView(BaseProfileView):
-    template_name = "account/site.html"
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -53,8 +24,6 @@ class ChangeSiteView(View):
         if user is None:
             return HttpResponse(status=401)
 
-        print(request.POST)
-        print(request.FILES)
         form = ChangeSiteForm(request.POST, request.FILES)
         if form.is_valid():
             site_url = form.cleaned_data.get("site")
@@ -112,7 +81,6 @@ class ChangeSocialsView(View):
             site = user.site
 
             user_social_networks = json.loads(form.cleaned_data.get("socials"))
-            print(user_social_networks)
             social_networks_ids = [user_social_network["social"] for user_social_network in user_social_networks]
 
             if len({social_network["social"] for social_network in user_social_networks}) < len(user_social_networks):
@@ -206,56 +174,3 @@ class ChangeUserView(View):
             return HttpResponse(status=200)
 
         return JsonResponse({"errors": form.errors}, status=400)
-
-
-@method_decorator(csrf_exempt, name="dispatch")
-class ChangePasswordView(BaseUserView):
-    def post(self, request):
-        print(request.POST)
-
-        form = ChangePasswordForm(request.POST)
-        if form.is_valid():
-            user = request.user_from_header
-
-            if not user.check_password(form.cleaned_data.get("current_password")):
-                form.add_error("current_password", "Неверный пароль")
-                return JsonResponse({"errors": form.errors}, status=400)
-
-            password = form.cleaned_data.get("password")
-            repeat_password = form.cleaned_data.get("repeat_password")
-
-            if password != repeat_password:
-                form.add_error("password", "Пароли не совпадают")
-                return JsonResponse({"errors": form.errors}, status=400)
-
-            user.set_password(password)
-            user.save()
-
-            request.user = user
-            user = authenticate(request)
-            login(request, user)
-
-            access_token = self.jwt_processor.create_access_token(user.username, user.id)
-
-            return JsonResponse({"access_token": access_token}, status=200)
-
-        return JsonResponse({"errors": form.errors}, status=400)
-
-
-class Profile(BaseProfileView):
-    template_name = "account/profile.html"
-
-
-class ProfileTemplate(BaseProfileView):
-    def get(self, request, template_name, **kwargs):
-        context = self.get_context_data(**kwargs)
-
-        content = loader.render_to_string(f"account/{template_name}.html", context, request, None)
-        return JsonResponse({"content": content})
-
-
-class PageNotFound(SubdomainMixin):
-    template_name = "account/404.html"
-
-    def get(self, request, *args, **kwargs):
-        return render(request, self.template_name, self.get_context_data(), status=404)

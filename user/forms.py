@@ -3,9 +3,9 @@ from django.contrib.admin.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
+from user.validator.validator import get_user_validator
+from user.validator.validator_interface import UserValidatorInterface
 from utils.errors import UserErrors
-from utils.format_phone import get_raw_phone
-from utils.validators import is_valid_email, is_valid_phone
 
 
 class RegistrationForm(forms.Form):
@@ -13,11 +13,13 @@ class RegistrationForm(forms.Form):
     phone = forms.CharField(max_length=18, widget=forms.TextInput(attrs={"placeholder": "+7 (777) 777-7777"}))
     email = forms.EmailField(max_length=200, widget=forms.TextInput(attrs={"placeholder": "Email"}))
 
+    validator: UserValidatorInterface = get_user_validator()
+
     def clean_phone(self):
         phone = self.cleaned_data["phone"]
-        phone = get_raw_phone(phone)
+        phone = self.validator.get_raw_phone(phone)
 
-        if not is_valid_phone(phone):
+        if not self.validator.is_valid_phone(phone):
             self.add_error("phone", UserErrors.incorrect_phone.value)
 
         return phone
@@ -29,19 +31,16 @@ class LoginForm(forms.Form):
         max_length=18, widget=forms.PasswordInput(attrs={"placeholder": "Пароль", "autocomplete": "off"})
     )
 
+    validator: UserValidatorInterface = get_user_validator()
+
     def clean_phone_or_email(self):
         phone_or_email = self.cleaned_data["phone_or_email"]
+        phone_or_email = self.validator.validate_phome_or_email(phone_or_email)
 
-        valid_as_email = is_valid_email(phone_or_email)
-        valid_as_phone = is_valid_phone(get_raw_phone(phone_or_email))
-
-        if not valid_as_email and not valid_as_phone:
+        if phone_or_email is None:
             self.add_error("phone_or_email", UserErrors.incorrect_login.value)
 
-        if valid_as_email:
-            return phone_or_email
-        else:
-            return get_raw_phone(phone_or_email)
+        return phone_or_email
 
 
 class SetPasswordForm(forms.Form):
@@ -64,6 +63,8 @@ class CustomAuthenticationAdminForm(AuthenticationForm):
         "invalid_login": _("Пожалуйста введите корректные %(username)s и пароль. Оба поля чувствительны к регистру."),
         "inactive": _("This account is inactive."),
     }
+
+    validator: UserValidatorInterface = get_user_validator()
 
     def __init__(self, request=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -96,14 +97,9 @@ class CustomAuthenticationAdminForm(AuthenticationForm):
 
     def clean_phone_or_email(self):
         phone_or_email = self.cleaned_data["phone_or_email"]
+        phone_or_email = self.validator.validate_phome_or_email(phone_or_email)
 
-        valid_as_email = is_valid_email(phone_or_email)
-        valid_as_phone = is_valid_phone(get_raw_phone(phone_or_email))
-
-        if not valid_as_email and not valid_as_phone:
+        if phone_or_email is None:
             self.add_error("phone_or_email", UserErrors.incorrect_login.value)
 
-        if valid_as_email:
-            return phone_or_email
-        else:
-            return get_raw_phone(phone_or_email)
+        return phone_or_email

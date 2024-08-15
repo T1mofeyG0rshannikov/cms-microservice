@@ -10,15 +10,18 @@ from domens.domain_service.domain_service import get_domain_service
 from domens.domain_service.domain_service_interface import DomainServiceInterface
 from user.forms import LoginForm, RegistrationForm, ResetPasswordForm
 from user.models import User
+from user.user_service.user_service import get_user_service
+from user.validator.validator import get_user_validator
+from user.validator.validator_interface import UserValidatorInterface
 from user.views.base_user_view import BaseUserView
 from utils.errors import UserErrors
-from utils.validators import is_valid_email, is_valid_phone
 
 
 @method_decorator(csrf_exempt, name="dispatch")
 class RegisterUser(BaseUserView):
     template_name = "user/register.html"
     domain_service: DomainServiceInterface = get_domain_service()
+    user_service = get_user_service()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -50,10 +53,12 @@ class RegisterUser(BaseUserView):
                     User.objects.filter(email=email).update(email=None)
                     User.objects.filter(phone=phone).update(phone=None)
 
+                    domain = self.domain_service.get_domain_model_from_request(request)
+                    site = self.domain_service.get_site_model(request)
+                    sponsor = self.user_service.get_user_from_site(site, domain)
+
                     user = User.objects.create_user(
-                        **form.cleaned_data,
-                        register_on_site=self.domain_service.get_site_model(request),
-                        register_on_domain=self.domain_service.get_domain_model_from_request(request),
+                        **form.cleaned_data, register_on_site=site, register_on_domain=domain, sponsor=sponsor
                     )
             except Exception as e:
                 print(e)
@@ -70,6 +75,7 @@ class RegisterUser(BaseUserView):
 @method_decorator(csrf_exempt, name="dispatch")
 class Login(BaseUserView):
     template_name = "user/login.html"
+    validator: UserValidatorInterface = get_user_validator()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -85,14 +91,14 @@ class Login(BaseUserView):
             phone_or_email = form.cleaned_data.get("phone_or_email")
             password = form.cleaned_data.get("password")
 
-            if is_valid_phone(phone_or_email):
+            if self.validator.is_valid_phone(phone_or_email):
                 user = User.objects.get_user_by_phone(phone_or_email)
                 if user is None:
                     form.add_error("phone_or_email", UserErrors.user_by_phone_not_found.value)
 
                     return JsonResponse({"errors": form.errors}, status=400)
 
-            elif is_valid_email(phone_or_email):
+            elif self.validator.is_valid_email(phone_or_email):
                 user = User.objects.get_user_by_email(phone_or_email)
                 if user is None:
                     form.add_error("phone_or_email", UserErrors.user_by_email_not_found.value)

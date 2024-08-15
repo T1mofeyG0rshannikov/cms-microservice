@@ -2,7 +2,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.views.generic import View
 
-from account.views import Profile
+from account.views.templates import Profile
 from blocks.models.catalog_block import CatalogBlock
 from blocks.models.common import Page
 from blocks.views import ShowPage

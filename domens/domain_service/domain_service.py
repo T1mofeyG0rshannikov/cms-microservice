@@ -4,6 +4,7 @@ from django.db.utils import OperationalError, ProgrammingError
 
 from domens.domain_service.domain_service_interface import DomainServiceInterface
 from domens.models import Domain, Site
+from user.interfaces import UserInterface
 
 
 class DomainService(DomainServiceInterface):
@@ -93,6 +94,27 @@ class DomainService(DomainServiceInterface):
             return Domain.objects.get(id=id)
 
         return None
+
+    @staticmethod
+    def get_domain_model():
+        try:
+            domain = Domain.objects.filter(is_partners=False).first()
+            if domain is None:
+                return None
+
+            return domain
+
+        except (OperationalError, ProgrammingError):
+            return None
+
+    def get_register_on_site(self, user: UserInterface) -> str:
+        if user.register_on_domain == self.get_domain_model():
+            return str(user.register_on_domain)
+
+        if user.register_on_site:
+            return ".".join([str(user.register_on_site), str(user.register_on_domain)])
+
+        return ""
 
 
 def get_domain_service() -> DomainService:

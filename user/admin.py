@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin.decorators import register
 
+from domens.domain_service.domain_service import DomainService
 from user.models import User
 
 from .forms import CustomAuthenticationAdminForm
@@ -12,13 +13,8 @@ class UserAdmin(admin.ModelAdmin):
     exclude = ["password", "staff"]
 
     def register_on(self, obj):
-        site = obj.register_on_site
-        domain = obj.register_on_domain
-
-        if site and domain:
-            return ".".join([str(site), str(domain)])
-
-        return ""
+        domain_service = DomainService()
+        return domain_service.get_register_on_site(obj)
 
     register_on.short_description = "зарегистрирован на"
     register_on.allow_tags = True

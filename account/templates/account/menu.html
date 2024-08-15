@@ -5,7 +5,7 @@
         <li {% if request.path == "/my/" %} class="active"{% endif %}><a onclick="loadProfileContent('profile-content', '/my/')"><img src="{% static 'account/images/menu/menu_site.png' %}" />Обзор</a></li>
         <li {% if request.path == "/my/site" %} class="active"{% endif %}><a onclick="loadProfileContent('site-content', '/my/site')"><img src="{% static 'account/images/menu/menu_site.png' %}" />Мой сайт</a></li>
         <li {% if request.path == "/my/links" %} class="active"{% endif %}><a><img src="{% static 'account/images/menu/menu_links.png' %}" />Мои ссылки</a></li>
-        <li {% if request.path == "/my/refs" %} class="active"{% endif %}><a><img src="{% static 'account/images/menu/menu_refs.png' %}" />Рефералы</a></li>
+        <li {% if request.path == "/my/refs" %} class="active"{% endif %}><a onclick="loadProfileContent('refs-content', '/my/refs')"><img src="{% static 'account/images/menu/menu_refs.png' %}" />Рефералы</a></li>
         <li {% if request.path == "/my/ads" %} class="active"{% endif %}><a><img src="{% static 'account/images/menu/menu_ads.png' %}" />Реклама</a></li>
         <li {% if request.path == "/my/materials" %} class="active"{% endif %}><a><img src="{% static 'account/images/menu/menu_site.png' %}" />Материалы</a></li>
         <li {% if request.path == "/my/stat" %} class="active"{% endif %}><a><img src="{% static 'account/images/menu/menu_stat.png' %}" />Статистика</a></li>
@@ -14,4 +14,5 @@
     </ul>
 </aside>
 
+<script src="{% static 'account/js/refs.js' %}" ></script>
 <script src="{% static 'account/js/menu.js' %}" ></script>

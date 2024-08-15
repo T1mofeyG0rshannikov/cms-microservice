@@ -37,3 +37,7 @@ class DomainServiceInterface(Protocol):
     @staticmethod
     def get_domain_model_by_id(id: int) -> Domain | None:
         raise NotImplementedError()
+
+    @staticmethod
+    def get_domain_model() -> Domain | None:
+        raise NotImplementedError()

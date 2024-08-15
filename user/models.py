@@ -46,6 +46,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects: UserManagerInterface = UserManager()
 
+    supersponsor = models.BooleanField(verbose_name="Главный спонсор", default=False)
+
+    sponsor = models.ForeignKey("self", verbose_name="Спонсор", null=True, blank=True, on_delete=models.SET_NULL)
+
     @property
     def is_staff(self):
         return self.staff

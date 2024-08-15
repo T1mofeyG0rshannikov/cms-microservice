@@ -12,7 +12,7 @@ from catalog.serializers import CatalogBlockSerializer
 from common.models import BlockRelationship
 from styles.models.styles.styles import CatalogCustomStyles
 from styles.serializers import CustomStylesSerializer
-from user.user_interface import UserInterface
+from user.interfaces import UserInterface
 
 
 class CatalogService(CatalogServiceInterface):

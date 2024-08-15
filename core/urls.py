@@ -12,9 +12,9 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("domain/", include("domens.urls")),
     path("notifications/", include("notifications.urls")),
-    path("", include("common.urls")),
-    path("", include("blocks.urls")),
     path("", include("account.urls")),
+    path("", include("blocks.urls")),
+    path("", include("common.urls")),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

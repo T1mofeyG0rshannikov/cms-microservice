@@ -1,9 +1,9 @@
 from django import forms
 from PIL import Image
 
+from user.validator.validator import get_user_validator
+from user.validator.validator_interface import UserValidatorInterface
 from utils.errors import Errors
-from utils.format_phone import get_raw_phone
-from utils.validators import is_valid_email, is_valid_phone
 
 
 class ChangeSiteForm(forms.Form):
@@ -75,6 +75,8 @@ class ChangeUserForm(forms.Form):
 
     profile_picture = forms.FileField(required=False)
 
+    validator: UserValidatorInterface = get_user_validator()
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["username"].error_messages = {"required": "Укажите свое имя"}
@@ -85,15 +87,15 @@ class ChangeUserForm(forms.Form):
     def clean_phone(self):
         phone = self.cleaned_data["phone"]
 
-        if not is_valid_phone(phone):
+        if not self.validator.is_valid_phone(phone):
             self.add_error("phone", "Укажите корректный телефон")
 
-        return get_raw_phone(phone)
+        return self.validator.get_raw_phone(phone)
 
     def clean_email(self):
         email = self.cleaned_data["email"]
 
-        if not is_valid_email(email):
+        if not self.validator.is_valid_email(email):
             self.add_error("email", "Введите корректный email")
 
         return email

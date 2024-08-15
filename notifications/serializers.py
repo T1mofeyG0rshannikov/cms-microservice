@@ -11,7 +11,7 @@ class NotificationSerializer(serializers.ModelSerializer):
         fields = ["message", "status"]
 
     def get_message(self, notification):
-        user = self.context["user"]
+        user = self.context.get("user")
         if not user:
             return notification.message
 

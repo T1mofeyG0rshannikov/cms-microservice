@@ -1,6 +1,6 @@
 from notifications.models import Notification, UserNotification
 from notifications.serializers import UserNotificationSerializer
-from user.user_interface import UserInterface
+from user.interfaces import UserInterface
 
 
 def create_user_notification(user: UserInterface, trigger_name: str):

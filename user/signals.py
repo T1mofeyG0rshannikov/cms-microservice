@@ -5,7 +5,11 @@ from emails.exceptions import CantSendMailError
 from notifications.create_user_notification import create_user_notification
 from notifications.error import CantSendNotification
 from notifications.send_message import send_message_to_user
-from user.exceptions import UserWithEmailAlredyExists, UserWithPhoneAlreadyExists
+from user.exceptions import (
+    SingleSuperSponsorExistError,
+    UserWithEmailAlredyExists,
+    UserWithPhoneAlreadyExists,
+)
 from user.models import User
 
 
@@ -63,6 +67,13 @@ def check_existing_user(sender, instance, *args, **kwargs):
     if user_by_phone:
         if instance.pk != user_by_phone.pk:
             raise UserWithPhoneAlreadyExists(f"user with phone '{instance.phone}' already exists")
+
+
+def check_supersponsor(sender, instance, *args, **kwargs):
+    supersponsor = User.objects.filter(supersponsor=True).first()
+    if supersponsor:
+        if supersponsor.pk == instance.pk:
+            raise SingleSuperSponsorExistError("there can only be a single super sponsor on the site")
 
 
 post_save.connect(user_created_handler, sender=User)

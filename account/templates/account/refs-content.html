@@ -1,0 +1,127 @@
+{% load static %}
+{% load qr_code %}
+{% load sass_tags %}
+
+
+<div class="site-container" style="margin-bottom: 15px; align-items: end; margin-top: 10px;">
+    <h1 style="margin-bottom: 0px;">Мои рефералы</h1>
+</div>
+
+<hr />
+
+<div class="selects">
+    <div>
+        <select name="level" id="level">
+            <option value="" selected>Все уровни</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+        </select>
+
+        <select name="" id="">
+            <option value="">Все рефералы</option>
+            <option value="days=7">Новые за 7 дней</option>
+        </select>
+    </div>
+
+    <select name="sort_by" id="sort_by" class="no-border">
+        <option value="created_at">Дата регистрации</option>
+        <option value="username">Имя пользователя</option>
+        <option value="-first_level_referrals">Рефералы</option>
+    </select>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Реферал</th>
+            <th>Дата</th>
+            <th>Уровень</th>
+            <th>Канал</th>
+            <th>Рефералы</th>
+            <th>Переходы</th>
+            <th style="width: 100px; text-align: right;">Сообщения</th>
+            <th class="settings"><img src="{% static 'account/images/settings.png' %}" /></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for referral in referrals %}
+            <tr>
+                <td class="ref">
+                    <div class="logo">
+                        <img src="{% if referral.profile_picture %}{{ referral.profile_picture }}{% else %}{% static 'account/images/nophoto.jpg' %}{% endif %}" />
+                    </div>
+
+                    <p>{{ referral.username }} {% if referral.second_name %}{{ referral.second_name }}{% endif %}</p>
+                </td>
+
+                <td>{{ referral.created_at }}</td>
+                <td>{{ referral.level }}</td>
+                <td>{{ referral.channel }}</td>
+                <td>{{ referral.referrals }}</td>
+                <td>{{ referral.redirections }}</td>
+                <td class="message"><img {% if referral.level != 1 %}class="inactive"{% endif %} src="{% static 'account/images/my_msg.png' %}" /></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<hr />
+
+<div class="pagination">
+    <div class="pages">
+        {% if referrals.paginator.num_pages > 1 %}
+            <a {% if referrals.number == 1 %}class="active"{% endif %} onclick="renderPagination(1, {{ referrals.paginator.num_pages }})">1</a>
+            {% if referrals.number > 4 %}
+                ...
+            {% endif %}
+
+            {% if referrals.number == 1 %}
+                {% for num in referrals.paginator.page_range %}
+                    {% if referrals.number < num and num < referrals.number|add:"3" %}
+                        {% if num != "1" and num != referrals.paginator.num_pages and num != 1 %}
+                            <a {% if num == referrals.paginator.num_pages %}class="active"{% endif %} onclick="renderPagination({{ num }}, {{referrals.paginator.num_pages}})">{{ num }}</a>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+
+            {% elif referrals.number == referrals.paginator.num_pages %}
+                {% for num in referrals.paginator.page_range %}
+                    {% if referrals.number|add:"-3" < num and num < referrals.number %}
+                        {% if num != "1" and num != referrals.paginator.num_pages and num != 1 %}
+                            <a {% if num == referrals.paginator.num_pages %}class="active"{% endif %} onclick="renderPagination({{ num }}, {{referrals.paginator.num_pages}})">{{ num }}</a>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+
+            {% else %}
+                {% for num in referrals.paginator.page_range %}
+                    {% if referrals.number|add:"-2" < num and num < referrals.number|add:"2" %}
+                        {% if num != "1" and num != referrals.paginator.num_pages and num != 1 %}
+                            <a {% if num == referrals.paginator.num_pages %}class="active"{% endif %} onclick="renderPagination({{ num }}, {{referrals.paginator.num_pages}})">{{ num }}</a>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+
+            {% endif %}
+
+            {% if referrals.number < referrals.paginator.num_pages|add:"-3" %}
+                ...
+            {% endif %}
+
+            <a {% if referrals.number == referrals.paginator.num_pages %}class="active"{% endif %} onclick="renderPagination({{referrals.paginator.num_pages}}, {{referrals.paginator.num_pages}})">{{ referrals.paginator.num_pages }}</a>
+        {% endif %}
+    </div>
+
+    <select name="page_size" id="page_size" class="no-border">
+        <option value="1">1 на странице</option>
+        <option value="2">2 на странице</option>
+        <option value="3" selected>3 на странице</option>
+        <option value="25">25 на странице</option>
+    </select>
+</div>
+
+<script>
+    initRefsContent();
+</script>
