@@ -6,9 +6,7 @@ from site_tests.user_generator.user_generator import get_user_generator
 
 
 class TestUserSet(models.Model):
-    users_count = models.PositiveSmallIntegerField(
-        verbose_name="Количество пользователей", validators=[MaxValueValidator(300)]
-    )
+    users_count = models.PositiveSmallIntegerField(verbose_name="Количество пользователей")
 
     def __str__(self):
         return f"Тестовый набор пользователей №{self.id}"

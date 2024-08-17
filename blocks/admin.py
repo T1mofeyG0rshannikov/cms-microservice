@@ -105,7 +105,6 @@ class BaseBlockAdmin(admin.ModelAdmin):
     def delete_queryset(self, request, queryset):
         for block in queryset:
             relation_id = block.block_relation.id
-            print(relation_id, "relation_id")
             BlockRelationship.objects.filter(id=relation_id).delete()
         queryset.delete()
 

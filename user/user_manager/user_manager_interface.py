@@ -19,3 +19,9 @@ class UserManagerInterface(Protocol):
 
     def exclude(*args, **kwargs):
         raise NotImplementedError()
+
+    def get(*args, **kwargs):
+        raise NotImplementedError()
+
+    def count(*args, **kwargs):
+        raise NotImplementedError()

@@ -24,3 +24,4 @@ class UserErrors(str, Enum):
     login_first = "Сначала войдите в аккаунт"
     you_already_have_your_own_website = "вы уже имеете свой сайт"
     something_went_wrong = "что-то пошло не так, попробуйте позже"
+    user_does_not_exist = "пользователь не найден"

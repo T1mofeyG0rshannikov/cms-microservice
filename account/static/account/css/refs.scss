@@ -8,8 +8,8 @@ table{
     }
 
     .logo{
-        height: 40px;
-        width: 40px;
+        height: 30px;
+        width: 30px;
         overflow: hidden;
         border-radius: 50%;
 
@@ -22,6 +22,7 @@ table{
         display: flex;
         align-items: center;
         gap: 15px;
+        cursor: pointer;
     }
 
     .settings{
@@ -38,11 +39,15 @@ table{
         text-align: left;
     }
 
+    p{
+        margin: 3px 0px;
+    }
+
     .message{
         text-align: right;
 
         img{
-            height: 30px;
+            height: 22px;
             cursor: pointer;
 
             &.inactive{
@@ -86,8 +91,77 @@ select{
     padding: 5px 10px;
     border-radius: 5px;
     border: 1.5px solid var(--dark-color);
+
+    &:focus {
+        outline: none;
+        box-shadow: none;
+    }
 }
 
 select.no-border{
     border: none;
+}
+
+.ref-popup{
+    bottom: 10px;
+    width: 370px;
+
+    .level{
+        a{
+            cursor: pointer;
+            color: var(--light-ref-color);
+        }
+    }
+
+    p{
+        margin: 5px 0px;
+    }
+
+    .title{
+        align-items: start;
+
+        .user-main-info{
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+
+            h2{
+                margin-top: 0px;
+                margin-bottom: 0;
+                font-size: 16px;
+            }
+
+            .profile-picture{
+                width: 70px;
+                height: 70px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                img{
+                    width: 100%;
+                }
+            }
+        }
+    }
+
+    .active-info{
+        padding: 5px 20px;
+    }
+
+    .activities{
+        padding: 5px 20px;
+    }
+
+    .field{
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+
+        .context-help{
+            position: inherit;
+            margin: 0;
+        }
+    }
 }

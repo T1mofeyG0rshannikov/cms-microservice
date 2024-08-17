@@ -13,6 +13,10 @@ class UserGenerator:
     def __init__(self, domain_service: DomainServiceInterface, test_user_set):
         self.domain_service = domain_service
         self.test_user_set = test_user_set
+        self.partner_domain = self.domain_service.get_partner_domain_model()
+
+    def ger_user_english_slug(self, name, second_name):
+        return unidecode.unidecode(name) + unidecode.unidecode(second_name)
 
     def create_test_users(self, count):
         rn = RussianNames(count=count, patronymic=False, transliterate=False)
@@ -24,21 +28,18 @@ class UserGenerator:
                 self.create_test_site(user)
 
     @staticmethod
-    def generate_email(name, second_name):
-        return f"{unidecode.unidecode(name)}{unidecode.unidecode(second_name)}@mail.ru"
+    def generate_email(user_slug):
+        return f"{user_slug}@mail.ru"
 
-    def generate_phone(self):
-        return f"+79{''.join(map(str, [random.randrange(10) for _ in range(9)]))}"
-
-    def generate_subdomain(self, user):
-        return unidecode.unidecode(user.username) + unidecode.unidecode(user.second_name)
+    @staticmethod
+    def generate_phone():
+        return f"+79{''.join(random.choices('0123456789', k=9))}"
 
     def create_test_site(self, user):
-        partner_domain = self.domain_service.get_partner_domain_model()
-        subdomain = self.generate_subdomain(user)
+        subdomain = self.ger_user_english_slug(user.username, user.second_name)
 
         Site.objects.create(
-            domain=partner_domain,
+            domain=self.partner_domain,
             subdomain=subdomain,
             is_active=True,
             use_default_settings=True,
@@ -48,7 +49,8 @@ class UserGenerator:
         )
 
     def create_test_user(self, name, second_name):
-        email = self.generate_email(name, second_name)
+        user_slug = self.ger_user_english_slug(name, second_name)
+        email = self.generate_email(user_slug)
         phone = self.generate_phone()
 
         partner_domain = self.domain_service.get_partner_domain_model()

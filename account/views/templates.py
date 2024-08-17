@@ -3,10 +3,13 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.template import loader
 from django.utils.decorators import method_decorator
+from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
 from account.forms import ChangePasswordForm
+from account.serializers import ReferralsSerializer
 from common.pagination import Pagination
+from common.template_loader.template_loader import get_template_loader
 from domens.views.mixins import SubdomainMixin
 from notifications.models import UserNotification
 from notifications.serializers import UserNotificationSerializer
@@ -44,9 +47,7 @@ class RefsView(BaseProfileView):
         sorted_by = self.request.GET.get("sorted_by")
 
         try:
-            print(1111111)
             referrals = self.user_service.get_referrals(level=level, user=self.request.user, sorted_by=sorted_by)
-            print(2222222)
         except InvalidSortedByField as e:
             return JsonResponse({"error": str(e)}, status=400)
         except InvalidReferalLevel as e:
@@ -55,6 +56,7 @@ class RefsView(BaseProfileView):
         pagination = Pagination(self.request)
 
         referrals = pagination.paginate(referrals, "referrals")
+        # referrals["referrals"] = ReferralsSerializer(referrals["referrals"], many=True).data
 
         context = {**context, **referrals}
 
@@ -64,8 +66,6 @@ class RefsView(BaseProfileView):
 @method_decorator(csrf_exempt, name="dispatch")
 class ChangePasswordView(BaseUserView):
     def post(self, request):
-        print(request.POST)
-
         form = ChangePasswordForm(request.POST)
         if form.is_valid():
             user = request.user_from_header
@@ -130,3 +130,11 @@ class PageNotFound(SubdomainMixin):
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, self.get_context_data(), status=404)
+
+
+class GetReferralPopupTemplate(View):
+    template_loader = get_template_loader()
+
+    def get(self, request):
+        template = self.template_loader.load_referral_popup(request)
+        return JsonResponse({"content": template})

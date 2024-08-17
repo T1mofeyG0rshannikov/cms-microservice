@@ -1,6 +1,4 @@
-from django.db.models import Q
-
-from account.serializers import ReferralSerializer
+from account.serializers import ReferralsSerializer
 from domens.domain_service.domain_service import get_domain_service
 from domens.domain_service.domain_service_interface import DomainServiceInterface
 from user.models import User
@@ -14,24 +12,6 @@ class UserService(UserServiceInterface):
         self.validator = validator
         self.domain_service = domain_service
 
-    def get_referrals_count(self, level, referral) -> int:
-        count = 0
-        for i in range(level):
-            field = "sponsor__" * i + "sponsor_id"
-            count += User.objects.filter(Q(**{field: referral.id})).count()
-
-        return count
-
-    def set_referrals(self, referrals) -> None:
-        for referral in referrals:
-            first_level_referrals = self.get_referrals_count(1, referral)
-            referral.first_level_referrals = first_level_referrals
-
-            all_referrals = (
-                first_level_referrals + self.get_referrals_count(2, referral) + self.get_referrals_count(3, referral)
-            )
-            referral.referrals = f"{first_level_referrals}({all_referrals})"
-
     def sort_referrals(self, referrals, sorted_by):
         reverse = False
 
@@ -39,7 +19,7 @@ class UserService(UserServiceInterface):
             sorted_by = sorted_by[1::]
             reverse = True
 
-        return sorted(referrals, key=lambda x: x.__getattribute__(sorted_by), reverse=reverse)
+        return sorted(referrals, key=lambda x: x[sorted_by], reverse=reverse)
 
     def get_user_from_site(self, site, domain) -> User:
         if domain == self.domain_service.get_domain_model():
@@ -76,20 +56,15 @@ class UserService(UserServiceInterface):
                 referrals = self.get_referrals_from_users(sponsors)
                 sponsors = referrals
                 self.set_referral_level(referrals, i + 1)
-                self.set_referrals(referrals)
 
                 all_referrals.extend(referrals)
-            # all_referrals = []
-            # all_referrals.append(User.objects.filter(sponsor_id=user.id))
-            # all_referrals.append(User.objects.filter(sponsor__sponsor_id=user.id))
-            # all_referrals.append(User.objects.filter(sponsor__sponsor__sponsor_id=user.id))
-            # self.set_referral_level(all_referrals, 1)
-            # self.set_referrals(all_referrals)
+
+            all_referrals = ReferralsSerializer(all_referrals, many=True).data
 
             if sorted_by:
                 all_referrals = self.sort_referrals(all_referrals, sorted_by)
 
-            return ReferralSerializer(all_referrals, many=True).data
+            return all_referrals
 
         referrals = []
         for _ in range(level):
@@ -97,12 +72,13 @@ class UserService(UserServiceInterface):
             sponsors = referrals
 
         self.set_referral_level(referrals, level)
-        self.set_referrals(referrals)
+
+        referrals = ReferralsSerializer(referrals, many=True).data
 
         if sorted_by:
             referrals = self.sort_referrals(referrals, sorted_by)
 
-        return ReferralSerializer(referrals, many=True).data
+        return referrals
 
 
 def get_user_service() -> UserService:

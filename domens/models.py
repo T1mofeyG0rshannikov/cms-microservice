@@ -43,6 +43,8 @@ class Site(models.Model):
     owner = models.CharField(max_length=150, verbose_name="Владелец", null=True)
     contact_info = models.CharField(max_length=200, verbose_name="Контактная информация", null=True)
 
+    created_at = models.DateTimeField(verbose_name="сайт создан", auto_now_add=True, null=True)
+
     class Meta:
         verbose_name = "сайт"
         verbose_name_plural = "сайты партнёров"

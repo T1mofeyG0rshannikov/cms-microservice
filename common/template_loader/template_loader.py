@@ -38,6 +38,11 @@ class TemplateLoader(TemplateLoaderInterface):
 
         return self.load_template(app_name="account", template_name="socials-form", request=request, context=context)
 
+    def load_referral_popup(self, request):
+        context = self.context_processor.get_referral_popup_context(request)
+
+        return self.load_template(app_name="account", template_name="referral-popup", request=request, context=context)
+
 
 def get_template_loader() -> TemplateLoader:
     return TemplateLoader(get_template_context_processor())

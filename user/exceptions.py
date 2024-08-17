@@ -16,3 +16,7 @@ class InvalidReferalLevel(Exception):
 
 class InvalidSortedByField(Exception):
     pass
+
+
+class UserIsNotReferral(Exception):
+    pass

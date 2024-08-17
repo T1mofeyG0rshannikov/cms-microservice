@@ -65,6 +65,14 @@ class User(AbstractBaseUser, PermissionsMixin):
 
         return None
 
+    @property
+    def full_name(self) -> str:
+        full_name = self.username
+        if self.second_name:
+            full_name += " " + self.second_name
+
+        return full_name
+
     def __str__(self) -> str:
         return self.username
 

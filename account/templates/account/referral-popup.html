@@ -1,0 +1,69 @@
+{% load static %}
+
+
+<div class="title">
+    <div class="user-main-info">
+        <div class="profile-picture br50">
+            <img
+                src="{% if user.profile_picture %}{{ user.profile_picture }}{% else %}{% static 'account/images/nophoto.jpg' %}{% endif %}"
+                alt="{{ user.full_name }}"
+            >
+        </div>
+
+        <div>
+            <h2>{{ user.full_name }}</h2>
+            <p class="level">{{ user.level }} <a {% if user.level != "Уровень 1" %}onclick="getReferralPopup({{ user.sponsor_id}})"{% endif %} >({{ user.sponsor }})</a></p>
+            <p>{{ user.created_at }}</p>
+        </div>
+    </div>
+
+    <div onclick="closeRefPopup()" class="cross">
+        <img src="{% static 'common/images/cross.png' %}" />
+    </div>
+</div>
+
+<hr />
+
+<div class="active-info">
+    <p>Сайт создан: {{ user.site_created }}</p>
+    <div class="field">
+        <p>Ссылки: {{ user.links }}</p>
+
+        <div class="context-help">
+            <div class="text">
+                Количество продуктов, оформленных по вашим партнерским ссылкам / Общее количество добавленных банковских ссылок
+            </div>
+
+            <img src="{% static 'common/images/ico_localhelp.png' %}" />
+        </div>
+    </div>
+
+    <div class="field">
+        <p>Активность: {{ user.active }}</p>
+
+        <div class="context-help">
+            <div class="text">
+                Суммарный показатель активности вашего реферала. Если показатель ниже 5-6, то стоит предложить ему помощь и поддержку.
+            </div>
+
+            <img src="{% static 'common/images/ico_localhelp.png' %}" />
+        </div>
+    </div>
+    <p>Заходила: {{ user.last_login }}</p>
+</div>
+
+<hr />
+
+<div class="activities">
+    {% for active in user.activities %}
+        <p>{{ active.date }}: {{ active.content }}</p>
+    {% endfor %}
+
+    <a>Вся активность</a>
+</div>
+
+<hr />
+
+<!--<div class="message">
+
+</div>-->

@@ -6,6 +6,7 @@ from rest_framework import serializers
 from blocks.models.catalog_block import CatalogBlock
 from catalog.models.product_type import ProductType
 from catalog.models.products import ExclusiveCard, Product
+from utils.date_russian import get_date_in_russian
 
 
 class CatalogBlockSerializer(serializers.ModelSerializer):
@@ -82,26 +83,7 @@ class CatalogProductSerializer(serializers.ModelSerializer):
         if date is None:
             date = datetime.date.today() + relativedelta(years=+1)
 
-        month = date.month
-        day = date.day
-        year = date.year
-
-        months = [
-            "января",
-            "февраля",
-            "марта",
-            "апреля",
-            "мая",
-            "июня",
-            "июля",
-            "августа",
-            "сентября",
-            "октября",
-            "ноября",
-            "декабря",
-        ]
-
-        return f"{day} {months[month - 1]} {year}"
+        return get_date_in_russian(date)
 
     def get_cover(self, product):
         return product.cover.url

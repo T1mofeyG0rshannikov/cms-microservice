@@ -1,7 +1,10 @@
 from account.models import Messanger, UserFont
+from account.referrals_service.referrals_service import get_referral_service
+from account.serializers import ReferralSerializer
 from common.models import SocialNetwork
 from domens.models import Domain
 from settings.models import SiteSettings
+from user.models import User
 
 from .template_context_processor_interface import TemplateContextProcessorInterface
 
@@ -32,6 +35,25 @@ class TemplateContextProcessor(TemplateContextProcessorInterface):
     def get_change_socials_form_context(self, request):
         context = self.get_context(request)
         context["socials"] = SocialNetwork.objects.all()
+
+        return context
+
+    def get_referral_popup_context(self, request):
+        context = self.get_context(request)
+
+        user_id = request.GET.get("user_id")
+        referral_service = get_referral_service()
+
+        try:
+            referral = User.objects.get(id=user_id)
+            referral.level = referral_service.get_referral_level(referral, request.user)
+        except User.DoesNotExist:
+            pass
+
+        referral = ReferralSerializer(referral).data
+        print(referral)
+
+        context["user"] = referral
 
         return context
 
