@@ -3,7 +3,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path, re_path
 
-from common.views.views import PageNotFound
+from template.views.views import PageNotFound
 
 urlpatterns = [
     path("styles/", include("styles.urls")),
@@ -14,6 +14,7 @@ urlpatterns = [
     path("notifications/", include("notifications.urls")),
     path("", include("account.urls")),
     path("", include("blocks.urls")),
+    path("", include("template.urls")),
     path("", include("common.urls")),
 ]
 

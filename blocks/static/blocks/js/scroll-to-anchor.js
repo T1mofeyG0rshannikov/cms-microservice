@@ -2,6 +2,7 @@ function smoothScroll(blockID){
     closeAsideMenu();
 
     if (blockID[0] != "#"){
+        openLink(window.location.href + blockID);
         blockID = "#" + blockID;
     }
 

@@ -27,10 +27,11 @@ function loadProfileContent(templateName, url){
     history.pushState(null, '', url);
     activeMenuItem(url)
 
-    fetch(`/my/template/${templateName}`).then(response => response.json()).then(response => {
+    fetch(`/get-template-${templateName}`).then(response => response.json()).then(response => {
         const template = response.content;
         const content = document.querySelector(".account-main");
         content.innerHTML = template;
+        document.title = response.title;
 
         if (templateName === "refs-content"){
             initRefsContent();

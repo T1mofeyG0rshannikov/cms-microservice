@@ -13,10 +13,10 @@
 <div class="selects">
     <div>
         <select name="level" id="level">
-            <option value="" selected>Все уровни</option>
-            <option value="1">Уровень 1</option>
-            <option value="2">Уровень 2</option>
-            <option value="3">Уровень 3</option>
+            <option value="" {% if request.GET.level == "" %}selected{% endif %}>Все уровни</option>
+            <option value="1" {% if request.GET.level == "1" %}selected{% endif %}>Уровень 1</option>
+            <option value="2" {% if request.GET.level == "2" %}selected{% endif %}>Уровень 2</option>
+            <option value="3" {% if request.GET.level == "3" %}selected{% endif %}>Уровень 3</option>
         </select>
 
         <select name="" id="">
@@ -35,14 +35,14 @@
 <table>
     <thead>
         <tr>
-            <th>Реферал</th>
-            <th>Дата</th>
-            <th>Уровень</th>
-            <th>Канал</th>
-            <th>Рефералы</th>
-            <th>Переходы</th>
-            <th style="width: 100px; text-align: right;">Сообщения</th>
-            <th class="settings"><img src="{% static 'account/images/settings.png' %}" /></th>
+            <th><div>Реферал</div></th>
+            <th><div>Дата</div></th>
+            <th><div>Уровень</div></th>
+            <th><div>Канал</div></th>
+            <th><div>Рефералы</div></th>
+            <th><div>Переходы</div></th>
+            <th style="width: 100px; text-align: right;"><div>Сообщения</div></th>
+            <th class="settings"><div><img src="{% static 'account/images/settings.png' %}" /></div></th>
         </tr>
     </thead>
 
@@ -50,7 +50,7 @@
         {% for referral in referrals %}
             <tr>
                 <td class="ref" onclick="getReferralPopup({{ referral.id }})">
-                    <div class="logo">
+                    <div class="logo br50 b1dc">
                         <img src="{% if referral.profile_picture %}{{ referral.profile_picture }}{% else %}{% static 'account/images/nophoto.jpg' %}{% endif %}" />
                     </div>
 
@@ -71,8 +71,9 @@
 <hr />
 
 <div class="pagination">
-    <p>Всего рефералов: <a id="referrals-count">{{ count }}</a></p>
-    <div class="pages">
+    <div style="display: flex; gap: 50px;">
+        <p class="referrals-count">Всего рефералов: <a id="referrals-count">{{ count }}</a></p>
+        <div class="pages">
         {% if total_pages > 1 %}
             <a {% if current_page == 1 %}class="active"{% endif %} onclick="loadPagination(1)">1</a>
             {% if current_page > 4 %}
@@ -86,14 +87,14 @@
                             <a {% if num == total_pages %}class="active"{% endif %} onclick="loadPagination({{ num }})">{{ num }}</a>
                         {% endif %}
                     {% endif %}
-                {% endfor %}
+                    {% endfor %}
 
-            {% elif current_page == total_pages %}
-                {% for num in total_pages|create_range %}
+                    {% elif current_page == total_pages %}
+                    {% for num in total_pages|create_range %}
                     {% if current_page|add:"-3" < num and num < current_page %}
-                        {% if num != total_pages and num > 1 %}
-                            <a {% if num == total_pages %}class="active"{% endif %} onclick="loadPagination({{ num }})">{{ num }}</a>
-                        {% endif %}
+                    {% if num != total_pages and num > 1 %}
+                    <a {% if num == total_pages %}class="active"{% endif %} onclick="loadPagination({{ num }})">{{ num }}</a>
+                    {% endif %}
                     {% endif %}
                 {% endfor %}
 
@@ -109,15 +110,16 @@
             {% endif %}
 
             {% if current_page < total_pages|add:"-3" %}
-                ...
+            ...
             {% endif %}
 
             <a {% if current_page == total_pages %}class="active"{% endif %} onclick="loadPagination({{ total_pages }}, {{ total_pages }})">{{ total_pages }}</a>
-        {% endif %}
+            {% endif %}
+        </div>
     </div>
 
-    <select name="page_size" id="page_size" class="no-border">
-        <option value="10" selected>10 на странице</option>
+        <select name="page_size" id="page_size" class="no-border">
+            <option value="10" selected>10 на странице</option>
         <option value="25">25 на странице</option>
         <option value="50">50 на странице</option>
         <option value="100">100 на странице</option>

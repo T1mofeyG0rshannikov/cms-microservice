@@ -4,7 +4,7 @@ function renderRefs(refs){
         const refHTML = `
         <tr>
             <td class="ref"  onclick="getReferralPopup(${ referral.id })">
-                <div class="logo">
+                <div class="logo br50 b1dc">
                     <img src="${ referral.profile_picture ? referral.profile_picture : '/static/account/images/nophoto.jpg' }" />
                 </div>
 

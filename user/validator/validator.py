@@ -53,7 +53,6 @@ class UserValidator(UserValidatorInterface):
 
     @staticmethod
     def validate_sorted_by(sorted_by):
-        print(sorted_by, "sfsfs")
         if sorted_by[0] == "-":
             field = sorted_by[1::]
         else:
@@ -62,7 +61,7 @@ class UserValidator(UserValidatorInterface):
         if field in ReferralInterface.__dataclass_fields__:
             return sorted_by
 
-        raise InvalidSortedByField(f"user has no field '{sorted_by}'")
+        raise InvalidSortedByField(f"User has no field '{sorted_by}'")
 
     @staticmethod
     def validate_referral_level(level) -> int:

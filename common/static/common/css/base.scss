@@ -4,6 +4,7 @@
     --ref-color: #5f6d87;
     --dark-color: rgb(200, 200, 200);
     --light-ref-color: rgb(150, 150, 250);
+    --medium-ref-color: rgb(70, 70, 240);
 }
 
 body{
@@ -14,7 +15,7 @@ body{
     flex-direction: column;
 }
 
-a, p, li{
+a, p, li, th, td{
     color: var(--main-text-color);
     font-size: var(--main-text-font-size);
     font-weight: var(--main-text-font-weight);
@@ -353,4 +354,8 @@ form{
     &:hover .text{
         display: block;
     }
+}
+
+.b1dc{
+    border: 1px solid var(--dark-color);
 }

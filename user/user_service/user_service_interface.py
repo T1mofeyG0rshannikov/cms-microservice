@@ -9,15 +9,3 @@ class UserServiceInterface(Protocol):
 
     def get_user_from_site(self, site, domain) -> User:
         raise NotImplementedError()
-
-    def get_referrals_from_users(self, users: list[User]) -> list[User]:
-        raise NotImplementedError()
-
-    def get_referrals(self, user: User, level=None, sorted_by=None) -> list[User]:
-        raise NotImplementedError()
-
-    def sort_referrals(self, referrals: list[User], sorted_by: str):
-        raise NotImplementedError()
-
-    def set_referral_level(self, referrals: list[User], level: int) -> list[User]:
-        raise NotImplementedError()

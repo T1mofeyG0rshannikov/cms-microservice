@@ -2,16 +2,33 @@ table{
     width: 100%;
     border-collapse: collapse;
 
+    th{
+        font-weight: 700;
+    }
+
     thead{
-        border-bottom: 1px solid var(--dark-color);
         height: 40px;
+
+        div{
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            position: relative;
+
+            &::after {
+                content: '';
+                position: absolute;
+                left: -2px; /* Задайте отрицательное значение для смещения влево */
+                right: -2px; /* Задайте отрицательное значение для смещения вправо */
+                bottom: 0; /* Позиционируем относительно нижней части элемента */
+                height: 1px; /* Высота линии */
+                background: var(--dark-color); /* Цвет линии */
+            }
+        }
     }
 
     .logo{
         height: 30px;
         width: 30px;
-        overflow: hidden;
-        border-radius: 50%;
 
         img{
             width: 100%;
@@ -23,6 +40,10 @@ table{
         align-items: center;
         gap: 15px;
         cursor: pointer;
+    }
+
+    td{
+        color: black;
     }
 
     .settings{
@@ -40,7 +61,7 @@ table{
     }
 
     p{
-        margin: 3px 0px;
+        margin: 10px 0px;
     }
 
     .message{
@@ -60,6 +81,19 @@ table{
 .pagination{
     display: flex;
     justify-content: space-between;
+    padding-bottom: 40px;
+
+    p{
+        margin: 3px;
+    }
+
+    .referrals-count{
+        font-weight: 600;
+
+        a{
+            font-weight: 600;
+        }
+    }
 
     .pages{
         display: flex;
@@ -103,13 +137,13 @@ select.no-border{
 }
 
 .ref-popup{
-    bottom: 10px;
-    width: 370px;
+    width: 420px;
+    top: 75px;
 
     .level{
         a{
             cursor: pointer;
-            color: var(--light-ref-color);
+            color: var(--medium-ref-color);
         }
     }
 
@@ -128,7 +162,8 @@ select.no-border{
             h2{
                 margin-top: 0px;
                 margin-bottom: 0;
-                font-size: 16px;
+                font-family: var(--main-text-font-family);
+                font-size: var(--service-font-size);
             }
 
             .profile-picture{
@@ -146,18 +181,45 @@ select.no-border{
     }
 
     .active-info{
+        display: flex;
         padding: 5px 20px;
+
+        p{
+            margin: 3px 0px;
+        }
+    }
+
+    .context-help{
+        .text{
+            width: 240px;
+        }
     }
 
     .activities{
         padding: 5px 20px;
+
+        a{
+            color: var(--medium-ref-color);
+        }
     }
 
     .field{
-        position: relative;
+        min-width: 100px;
         display: flex;
-        align-items: center;
-        gap: 5px;
+        flex-direction: column;
+        /* justify-content: start; */
+        align-items: start;
+
+        .text-with-help{
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        a{
+            margin: 3px 0px;
+        }
 
         .context-help{
             position: inherit;

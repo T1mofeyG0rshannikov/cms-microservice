@@ -77,10 +77,13 @@ class Product(models.Model):
             for j in range(links[i].percent):
                 link_change.append(i)
 
-        link = links[random.choice(link_change)].text
-        link = self.link_encryptor.encrypt(link)
+        if link_change:
+            link = links[random.choice(link_change)].text
+            link = self.link_encryptor.encrypt(link)
 
-        return link
+            return link
+
+        return ""
 
     class Meta:
         verbose_name = "продукт/акция"

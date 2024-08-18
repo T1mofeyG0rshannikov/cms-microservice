@@ -1,21 +1,23 @@
 from django.contrib.auth import authenticate, login
 from django.http import JsonResponse
 from django.shortcuts import render
-from django.template import loader
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
 from account.forms import ChangePasswordForm
-from account.serializers import ReferralsSerializer
-from common.pagination import Pagination
-from common.template_loader.template_loader import get_template_loader
 from domens.views.mixins import SubdomainMixin
 from notifications.models import UserNotification
 from notifications.serializers import UserNotificationSerializer
+from template.template_loader.tempate_context_processor.template_context_processor import (
+    get_template_context_processor,
+)
+from template.template_loader.tempate_context_processor.template_context_processor_interface import (
+    TemplateContextProcessorInterface,
+)
+from template.template_loader.template_loader import get_template_loader
+from template.template_loader.template_loader_interface import TemplateLoaderInterface
 from user.exceptions import InvalidReferalLevel, InvalidSortedByField
-from user.user_service.user_service import get_user_service
-from user.user_service.user_service_interface import UserServiceInterface
 from user.views.base_user_view import BaseUserView, MyLoginRequiredMixin
 
 
@@ -38,27 +40,17 @@ class SiteView(BaseProfileView):
 
 class RefsView(BaseProfileView):
     template_name = "account/refs.html"
-    user_service: UserServiceInterface = get_user_service()
+    template_context_processor: TemplateContextProcessorInterface = get_template_context_processor()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        level = self.request.GET.get("level")
-        sorted_by = self.request.GET.get("sorted_by")
-
         try:
-            referrals = self.user_service.get_referrals(level=level, user=self.request.user, sorted_by=sorted_by)
-        except InvalidSortedByField as e:
-            return JsonResponse({"error": str(e)}, status=400)
-        except InvalidReferalLevel as e:
-            return JsonResponse({"error": str(e)}, status=400)
+            page_context = self.template_context_processor.get_refs_template_context(self.request)
+            context = {**context, **page_context}
 
-        pagination = Pagination(self.request)
-
-        referrals = pagination.paginate(referrals, "referrals")
-        # referrals["referrals"] = ReferralsSerializer(referrals["referrals"], many=True).data
-
-        context = {**context, **referrals}
+        except (InvalidSortedByField, InvalidReferalLevel) as e:
+            pass
 
         return context
 
@@ -99,32 +91,6 @@ class Profile(BaseProfileView):
     template_name = "account/profile.html"
 
 
-class ProfileTemplate(BaseProfileView):
-    user_service = get_user_service()
-
-    def get(self, request, template_name, **kwargs):
-        context = self.get_context_data(**kwargs)
-
-        if template_name == "refs-content":
-            level = self.request.GET.get("level")
-            sorted_by = self.request.GET.get("sorted_by")
-
-            try:
-                referrals = self.user_service.get_referrals(level=level, user=self.request.user, sorted_by=sorted_by)
-            except InvalidSortedByField as e:
-                return JsonResponse({"error": str(e)}, status=400)
-            except InvalidReferalLevel as e:
-                return JsonResponse({"error": str(e)}, status=400)
-
-            pagination = Pagination(request)
-
-            referrals = pagination.paginate(referrals, "referrals")
-            context = {**context, **referrals}
-
-        content = loader.render_to_string(f"account/{template_name}.html", context, request, None)
-        return JsonResponse({"content": content})
-
-
 class PageNotFound(SubdomainMixin):
     template_name = "account/404.html"
 
@@ -133,7 +99,7 @@ class PageNotFound(SubdomainMixin):
 
 
 class GetReferralPopupTemplate(View):
-    template_loader = get_template_loader()
+    template_loader: TemplateLoaderInterface = get_template_loader()
 
     def get(self, request):
         template = self.template_loader.load_referral_popup(request)

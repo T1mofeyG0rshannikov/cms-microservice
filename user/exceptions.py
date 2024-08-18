@@ -20,3 +20,7 @@ class InvalidSortedByField(Exception):
 
 class UserIsNotReferral(Exception):
     pass
+
+
+class UserDoesNotExist(Exception):
+    pass

@@ -1,5 +1,4 @@
 import json
-import sys
 
 from django.db.utils import IntegrityError
 from django.http import HttpResponse, HttpResponseNotFound
@@ -15,6 +14,7 @@ from domens.domain_service.domain_service import DomainService
 from domens.views.mixins import SubdomainMixin
 from settings.models import SiteSettings
 from user.views.base_user_view import UserFormsView
+from utils.files import find_class_in_directory
 
 
 class IndexPage(SubdomainMixin):
@@ -78,7 +78,8 @@ class CloneBlock(View):
         data = json.loads(request.body)
         block_id = data.get("block_id")
         block_class = data.get("block_class")
-        block_class = getattr(sys.modules[__name__], block_class)
+
+        block_class = find_class_in_directory("blocks/models", block_class)
 
         block = block_class.objects.get(id=block_id)
 
@@ -93,11 +94,12 @@ class CloneBlock(View):
                 print(f"Found a one-to-many field: {field.name}")
 
                 # 'field' is a ManyToOneRel which is not iterable, we need to get the object attribute itself
-                related_object_manager = getattr(block, field.name)
-                related_objects = list(related_object_manager.all())
-                if related_objects:
-                    print(f" - {len(related_objects)} related objects to copy")
-                    related_objects_to_copy += related_objects
+                if hasattr(block, field.name):
+                    related_object_manager = getattr(block, field.name)
+                    related_objects = list(related_object_manager.all())
+                    if related_objects:
+                        print(f" - {len(related_objects)} related objects to copy")
+                        related_objects_to_copy += related_objects
 
             elif field.many_to_one:
                 # In testing so far, these relationships are preserved when the parent object is copied,

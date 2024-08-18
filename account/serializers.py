@@ -1,24 +1,13 @@
 from datetime import datetime
 
-from django.db.models import Q
 from rest_framework import serializers
 
 from user.models import User
 from utils.date_russian import get_date_in_russian
 
 
-def get_referrals_count(level, referral) -> int:
-    count = 0
-    for i in range(level):
-        field = "sponsor__" * i + "sponsor_id"
-        count += User.objects.filter(Q(**{field: referral.id})).count()
-
-    return count
-
-
 class ReferralsSerializer(serializers.ModelSerializer):
     referrals = serializers.SerializerMethodField()
-    first_level_referrals = serializers.SerializerMethodField()
     channel = serializers.SerializerMethodField()
     level = serializers.IntegerField()
     redirections = serializers.SerializerMethodField()
@@ -38,18 +27,10 @@ class ReferralsSerializer(serializers.ModelSerializer):
             "level",
             "redirections",
             "sponsor",
-            "first_level_referrals",
         ]
 
-    def get_first_level_referrals(self, referral):
-        return get_referrals_count(1, referral)
-
     def get_referrals(self, referral):
-        first_level_referrals = get_referrals_count(1, referral)
-
-        all_referrals = first_level_referrals + get_referrals_count(2, referral) + get_referrals_count(3, referral)
-
-        return f"{first_level_referrals}({all_referrals})"
+        return f"{referral.first_level_referrals}({referral.referrals})"
 
     def get_redirections(self, referral):
         return 0

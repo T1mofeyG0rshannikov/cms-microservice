@@ -49,6 +49,18 @@ class DomainService(DomainServiceInterface):
             return None
 
     @classmethod
+    def get_site_name(self) -> str | None:
+        try:
+            domain = Domain.objects.values_list("name").filter(is_partners=False).first()
+            if domain is None:
+                return None
+
+            return domain[0]
+
+        except (OperationalError, ProgrammingError):
+            return None
+
+    @classmethod
     def get_partners_domain_string(self) -> str:
         return Domain.objects.values_list("domain").filter(is_partners=True).first()[0]
 

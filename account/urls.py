@@ -6,7 +6,6 @@ from .views.templates import (
     GetReferralPopupTemplate,
     PageNotFound,
     Profile,
-    ProfileTemplate,
     RefsView,
     SiteView,
 )
@@ -20,7 +19,6 @@ urlpatterns = [
     path("my/change-socials", ChangeSocialsView.as_view()),
     path("my/change-user", ChangeUserView.as_view()),
     path("my/change-password", ChangePasswordView.as_view()),
-    path("my/template/<str:template_name>", ProfileTemplate.as_view()),
     path("my/get-referrals", GetReferals.as_view()),
     path("my/get-referral/<int:user_id>", GetReferral.as_view()),
     path("get-referral-popup", GetReferralPopupTemplate.as_view()),

@@ -17,5 +17,5 @@ class SettingsMixin(TemplateView):
         context["domain"] = domain
         context["settings"] = get_settings(self.request)
         context["partner_domain"] = DomainService.get_partners_domain_string()
-
+        context["site_name"] = DomainService.get_site_name()
         return context

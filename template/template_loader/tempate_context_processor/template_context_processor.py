@@ -1,15 +1,21 @@
 from account.models import Messanger, UserFont
 from account.referrals_service.referrals_service import get_referral_service
-from account.serializers import ReferralSerializer
+from account.referrals_service.referrals_service_interface import (
+    ReferralServiceInterface,
+)
+from account.serializers import ReferralsSerializer
 from common.models import SocialNetwork
+from common.pagination import Pagination
 from domens.models import Domain
 from settings.models import SiteSettings
-from user.models import User
 
 from .template_context_processor_interface import TemplateContextProcessorInterface
 
 
 class TemplateContextProcessor(TemplateContextProcessorInterface):
+    def __init__(self, referral_service: ReferralServiceInterface):
+        self.referral_service = referral_service
+
     @staticmethod
     def get_context(request):
         context = {"request": request, "user": request.user}
@@ -42,21 +48,37 @@ class TemplateContextProcessor(TemplateContextProcessorInterface):
         context = self.get_context(request)
 
         user_id = request.GET.get("user_id")
-        referral_service = get_referral_service()
 
-        try:
-            referral = User.objects.get(id=user_id)
-            referral.level = referral_service.get_referral_level(referral, request.user)
-        except User.DoesNotExist:
-            pass
+        context["user"] = self.referral_service.get_referral(user_id, request.user)
 
-        referral = ReferralSerializer(referral).data
-        print(referral)
+        return context
 
-        context["user"] = referral
+    def get_profile_template_context(self, request):
+        context = self.get_context(request)
+
+        return context
+
+    def get_site_template_context(self, request):
+        context = self.get_context(request)
+
+        return context
+
+    def get_refs_template_context(self, request):
+        context = self.get_context(request)
+
+        level = request.GET.get("level")
+        sorted_by = request.GET.get("sorted_by")
+
+        referrals = self.referral_service.get_referrals(level=level, user=request.user, sorted_by=sorted_by)
+
+        pagination = Pagination(request)
+
+        referrals = pagination.paginate(referrals, "referrals", ReferralsSerializer)
+
+        context = {**context, **referrals}
 
         return context
 
 
 def get_template_context_processor() -> TemplateContextProcessor:
-    return TemplateContextProcessor()
+    return TemplateContextProcessor(get_referral_service())
