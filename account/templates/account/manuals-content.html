@@ -1,0 +1,27 @@
+{% load static %}
+
+<div class="site-container" style="margin-bottom: 15px; align-items: end; margin-top: 10px;">
+    <h1 style="margin-bottom: 0px;">Руководства</h1>
+</div>
+
+<hr />
+
+<div class="container">
+    <div class="documents">
+        {% for document in manuals %}
+            <section class="document">
+                <img src="{{ document.image.url }}" alt="{{ document.title }}">
+
+                <div>
+                    <h2>{{ document.title }}</h2>
+
+                    {{ document.text|safe }}
+                </div>
+            </section>
+        {% endfor %}
+    </div>
+
+    <div class="right-menu">
+
+    </div>
+</div>

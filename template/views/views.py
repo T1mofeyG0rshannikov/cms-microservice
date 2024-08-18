@@ -7,8 +7,13 @@ from blocks.models.catalog_block import CatalogBlock
 from blocks.models.common import Page
 from blocks.views import ShowPage
 from catalog.views import ShowCatalogPage
-from domens.domain_service.domain_service import DomainService
 from domens.views.mixins import SubdomainMixin
+from template.profile_template_loader.profile_template_loader import (
+    get_profile_template_loader,
+)
+from template.profile_template_loader.profile_template_loader_interface import (
+    ProfileTemplateLoaderInterface,
+)
 from template.template_loader.template_loader import get_template_loader
 from user.exceptions import InvalidReferalLevel, InvalidSortedByField
 
@@ -58,32 +63,31 @@ class PageNotFound(SubdomainMixin):
 
 
 class ProfileTemplate(View):
-    template_loader = get_template_loader()
+    template_loader: ProfileTemplateLoaderInterface = get_profile_template_loader()
 
     def get(self, request):
-        content = self.template_loader.load_profile_template(request)
-
-        return JsonResponse({"content": content, "title": f"Обзор | {DomainService.get_site_name()}"})
+        return JsonResponse(self.template_loader.load_profile_template(request))
 
 
 class RefsTemplate(View):
-    template_loader = get_template_loader()
+    template_loader: ProfileTemplateLoaderInterface = get_profile_template_loader()
 
     def get(self, request):
         try:
-            content = self.template_loader.load_refs_template(request)
-        except InvalidSortedByField as e:
-            return JsonResponse({"error": str(e)}, status=400)
-        except InvalidReferalLevel as e:
+            return JsonResponse(self.template_loader.load_refs_template(request))
+        except (InvalidSortedByField, InvalidReferalLevel) as e:
             return JsonResponse({"error": str(e)}, status=400)
 
-        return JsonResponse({"content": content, "title": f"Мои рефералы | {DomainService.get_site_name()}"})
+
+class ManualsTemplate(View):
+    template_loader: ProfileTemplateLoaderInterface = get_profile_template_loader()
+
+    def get(self, request):
+        return JsonResponse(self.template_loader.load_manuals_template(request))
 
 
 class SiteTemplate(View):
-    template_loader = get_template_loader()
+    template_loader: ProfileTemplateLoaderInterface = get_profile_template_loader()
 
     def get(self, request):
-        content = self.template_loader.load_site_template(request)
-
-        return JsonResponse({"content": content, "title": f"Мой сайт | {DomainService.get_site_name()}"})
+        return JsonResponse(self.template_loader.load_site_template(request))

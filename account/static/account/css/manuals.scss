@@ -1,0 +1,31 @@
+.container{
+    gap: 50px;
+    padding-bottom: 40px;
+
+    .documents{
+        .document{
+            margin-bottom: 30px;
+            width: 100%;
+            background-color: white;
+
+            div{
+                padding: 10px 20px 20px 20px;
+                width: calc(100% - 40px);
+            }
+
+            img{
+                width: 100%;
+            }
+
+            h2{
+                font-family: var(--main-text-font-family);
+            }
+        }
+    }
+
+    .right-menu{
+        min-width: 200px;
+        margin-bottom: 30px;
+        border: 1px solid var(--dark-color);
+    }
+}

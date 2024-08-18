@@ -43,21 +43,6 @@ class TemplateLoader(TemplateLoaderInterface):
 
         return self.load_template(app_name="account", template_name="referral-popup", request=request, context=context)
 
-    def load_profile_template(self, request):
-        context = self.context_processor.get_profile_template_context(request)
-
-        return self.load_template(app_name="account", template_name="profile-content", request=request, context=context)
-
-    def load_refs_template(self, request):
-        context = self.context_processor.get_refs_template_context(request)
-
-        return self.load_template(app_name="account", template_name="refs-content", request=request, context=context)
-
-    def load_site_template(self, request):
-        context = self.context_processor.get_site_template_context(request)
-
-        return self.load_template(app_name="account", template_name="site-content", request=request, context=context)
-
 
 def get_template_loader() -> TemplateLoader:
     return TemplateLoader(get_template_context_processor())

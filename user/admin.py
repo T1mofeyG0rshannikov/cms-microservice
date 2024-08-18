@@ -1,13 +1,8 @@
 from django.contrib import admin
-from django.contrib.admin.decorators import register
 
 from domens.domain_service.domain_service import DomainService
-from user.models import User
-
-from .forms import CustomAuthenticationAdminForm
 
 
-@register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = ["username", "phone", "email", "register_on", "email_is_confirmed"]
     exclude = ["password", "staff"]
@@ -18,6 +13,3 @@ class UserAdmin(admin.ModelAdmin):
 
     register_on.short_description = "зарегистрирован на"
     register_on.allow_tags = True
-
-
-admin.site.login_form = CustomAuthenticationAdminForm

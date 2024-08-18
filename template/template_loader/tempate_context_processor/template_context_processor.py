@@ -1,4 +1,4 @@
-from account.models import Messanger, UserFont
+from account.models import Document, Messanger, UserFont
 from account.referrals_service.referrals_service import get_referral_service
 from account.referrals_service.referrals_service_interface import (
     ReferralServiceInterface,
@@ -76,6 +76,13 @@ class TemplateContextProcessor(TemplateContextProcessorInterface):
         referrals = pagination.paginate(referrals, "referrals", ReferralsSerializer)
 
         context = {**context, **referrals}
+
+        return context
+
+    def get_manuals_template_context(self, request):
+        context = self.get_context(request)
+
+        context["manuals"] = Document.objects.all()
 
         return context
 

@@ -1,3 +1,4 @@
+from ckeditor.fields import RichTextField
 from django.db import models
 
 from common.models import BaseFont, SocialNetwork
@@ -40,3 +41,16 @@ class UserMessanger(models.Model):
     )
     messanger = models.ForeignKey(Messanger, on_delete=models.CASCADE, verbose_name="Соц. сеть")
     adress = models.CharField(verbose_name="адресс", max_length=100)
+
+
+class Document(models.Model):
+    image = models.ImageField(upload_to="docs", verbose_name="Обложка")
+    title = models.CharField(max_length=300, verbose_name="Заголовок")
+    text = RichTextField(max_length=7000, verbose_name="Содержание")
+
+    class Meta:
+        verbose_name = "Документ"
+        verbose_name_plural = "Документы"
+
+    def __str__(self):
+        return self.title

@@ -11,7 +11,7 @@ const menuUrls = [
     "/my/ads",
     "/my/materials",
     "/my/stat",
-    "/my/te",
+    "/my/manuals",
     "/my/si"
 ]
 

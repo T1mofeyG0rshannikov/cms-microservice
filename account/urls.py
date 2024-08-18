@@ -4,6 +4,7 @@ from .views.api import GetReferals, GetReferral
 from .views.templates import (
     ChangePasswordView,
     GetReferralPopupTemplate,
+    ManualsView,
     PageNotFound,
     Profile,
     RefsView,
@@ -15,6 +16,7 @@ urlpatterns = [
     re_path(r"my/?$", Profile.as_view()),
     re_path(r"my/site/?$", SiteView.as_view()),
     re_path(r"my/refs/?$", RefsView.as_view()),
+    re_path(r"my/manuals/?$", ManualsView.as_view()),
     path("my/change-site", ChangeSiteView.as_view()),
     path("my/change-socials", ChangeSocialsView.as_view()),
     path("my/change-user", ChangeUserView.as_view()),

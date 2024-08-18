@@ -49,8 +49,21 @@ class RefsView(BaseProfileView):
             page_context = self.template_context_processor.get_refs_template_context(self.request)
             context = {**context, **page_context}
 
-        except (InvalidSortedByField, InvalidReferalLevel) as e:
+        except (InvalidSortedByField, InvalidReferalLevel):
             pass
+
+        return context
+
+
+class ManualsView(BaseProfileView):
+    template_name = "account/manuals.html"
+    template_context_processor: TemplateContextProcessorInterface = get_template_context_processor()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        page_context = self.template_context_processor.get_manuals_template_context(self.request)
+        context = {**context, **page_context}
 
         return context
 
