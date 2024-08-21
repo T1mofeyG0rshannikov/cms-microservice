@@ -30,7 +30,7 @@ class CatalogBlockSerializer(serializers.ModelSerializer):
 
     def get_exclusive_card(self, catalog):
         if catalog.add_exclusive:
-            return ExclusiveCard.objects.all().first()
+            return ExclusiveCard.objects.first()
 
     def get_template(self, catalog):
         template = catalog.template
@@ -42,12 +42,9 @@ class CatalogBlockSerializer(serializers.ModelSerializer):
         user = self.context["user"]
 
         if user.is_authenticated:
-            products = [catalog_product.product for catalog_product in catalog.products.all()]
+            products = Product.objects.filter(status="Опубликовано", catalog_product__block=catalog)
         else:
-            products = filter(
-                lambda product: not product.private,
-                [catalog_product.product for catalog_product in catalog.products.all()],
-            )
+            products = Product.objects.filter(status="Опубликовано", catalog_product__block=catalog, private=False)
 
         return CatalogProductSerializer(products, many=True).data
 

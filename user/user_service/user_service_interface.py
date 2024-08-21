@@ -1,7 +1,7 @@
 from typing import Protocol
 
 from domens.domain_service.domain_service_interface import DomainServiceInterface
-from user.models import User
+from user.models.user import User
 
 
 class UserServiceInterface(Protocol):

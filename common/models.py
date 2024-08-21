@@ -1,4 +1,3 @@
-from colorfield.fields import ColorField
 from django.db import models
 
 
@@ -43,21 +42,6 @@ class BasePageBlock(Sortable):
 
     def __str__(self):
         return str(self.name)
-
-
-class SocialNetwork(models.Model):
-    name = models.CharField(max_length=100, verbose_name="Название")
-    domain = models.CharField(max_length=100, verbose_name="Домен")
-
-    icon = models.ImageField(upload_to="images/social/icons/", verbose_name="иконка")
-    button_color = ColorField(verbose_name="Цвет кнопки")
-
-    class Meta:
-        verbose_name = "Социальная сеть"
-        verbose_name_plural = "Социальные сети"
-
-    def __str__(self):
-        return self.name
 
 
 class BaseFont(models.Model):

@@ -44,8 +44,6 @@ from styles.admin import (
     SocialCustomStylesInline,
     StagesCustomStylesInline,
 )
-from user.admin import UserAdmin
-from user.models import User
 
 
 class QuestionInline(BaseInline):
@@ -172,7 +170,6 @@ class PageAdmin(SortableAdminBase, admin.ModelAdmin):
     clone_button.short_description = ""
 
 
-admin.site.register(User, UserAdmin)
 admin.site.register(Page, PageAdmin)
 admin.site.register(Navbar, NavbarAdmin)
 admin.site.register(Cover, CoverAdmin)

@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "emails",
     "corsheaders",
     "site_tests",
+    "materials",
 ]
 
 ASGI_APPLICATION = "core.asgi.application"
@@ -211,3 +212,21 @@ SASS_PROCESSOR_ENABLED = True
 
 FILE_UPLOAD_MAX_MEMORY_SIZE = 3 * 1024 * 1024  # (3MEGABYTES)
 DATA_UPLOAD_MAX_MEMORY_SIZE = FILE_UPLOAD_MAX_MEMORY_SIZE
+
+
+CKEDITOR_CONFIGS = {
+    "default": {
+        "toolbar": "Custom",
+        "toolbar_Custom": [
+            ["Styles", "Format"],
+            ["Bold", "Italic", "Underline", "Strike", "Undo", "Redo"],
+            ["NumberedList", "BulletedList"],
+            ["Link", "Unlink", "Anchor"],
+            ["Image", "Table", "HorizontalRule"],
+            ["JustifyLeft", "JustifyCenter", "JustifyRight"],
+            ["TextColor"],
+            ["Smiley"],
+            ["Source"],
+        ],
+    },
+}

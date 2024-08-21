@@ -3,11 +3,10 @@ import json
 from django.http import HttpResponse, JsonResponse
 from django.views.generic import View
 
-from account.models import UserFont
+from settings.models import Font, UserFont
 
 from .models.colors.colors import ColorStyles
 from .models.other import IconSize, MarginBlock
-from .models.texts.font import Font
 from .models.texts.texts import ExplanationText, HeaderText, MainText, SubheaderText
 from .serializers import (
     ColorsSerializer,

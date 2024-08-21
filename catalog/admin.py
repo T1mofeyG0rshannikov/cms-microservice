@@ -93,6 +93,7 @@ class ProductAdmin(admin.ModelAdmin):
                 None,
                 {
                     "fields": (
+                        "status",
                         "organization",
                         "cover",
                         "name",
@@ -100,6 +101,7 @@ class ProductAdmin(admin.ModelAdmin):
                         "annotation",
                         "profit",
                         "description",
+                        #   "terms_of_the_promotion",
                         "promotion",
                         "start_promotion",
                         "end_promotion",

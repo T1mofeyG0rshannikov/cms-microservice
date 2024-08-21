@@ -1,7 +1,7 @@
 from django.db import models
 
 from common.models import OneInstanceModel
-from styles.models.styles.styles import GlobalStyles
+from settings.models import GlobalStyles
 
 
 class BaseStyles(OneInstanceModel):

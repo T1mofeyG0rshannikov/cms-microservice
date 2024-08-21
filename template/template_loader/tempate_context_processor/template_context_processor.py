@@ -1,13 +1,12 @@
-from account.models import Document, Messanger, UserFont
+from account.models import Messanger
 from account.referrals_service.referrals_service import get_referral_service
 from account.referrals_service.referrals_service_interface import (
     ReferralServiceInterface,
 )
 from account.serializers import ReferralsSerializer
-from common.models import SocialNetwork
 from common.pagination import Pagination
-from domens.models import Domain
-from settings.models import SiteSettings
+from materials.models import Document
+from settings.models import Domain, SiteSettings, SocialNetwork, UserFont
 
 from .template_context_processor_interface import TemplateContextProcessorInterface
 
@@ -82,7 +81,7 @@ class TemplateContextProcessor(TemplateContextProcessorInterface):
     def get_manuals_template_context(self, request):
         context = self.get_context(request)
 
-        context["manuals"] = Document.objects.all()
+        context["manuals"] = Document.objects.values("title", "slug").all()
 
         return context
 

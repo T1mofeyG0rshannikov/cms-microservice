@@ -6,12 +6,12 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
 from account.forms import ChangeSiteForm, ChangeSocialsForm, ChangeUserForm
-from account.models import Messanger, UserFont, UserMessanger, UserSocialNetwork
-from common.models import SocialNetwork
+from account.models import Messanger, UserMessanger, UserSocialNetwork
 from domens.domain_service.domain_service import get_domain_service
 from domens.domain_service.domain_service_interface import DomainServiceInterface
-from domens.models import Site
-from user.models import User
+from settings.models import SocialNetwork, UserFont
+from user.models.site import Site
+from user.models.user import User
 from utils.errors import UserErrors
 
 

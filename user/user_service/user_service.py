@@ -1,6 +1,6 @@
 from domens.domain_service.domain_service import get_domain_service
 from domens.domain_service.domain_service_interface import DomainServiceInterface
-from user.models import User
+from user.models.user import User
 from user.user_service.user_service_interface import UserServiceInterface
 
 

@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 
 from domens.domain_service.domain_service import DomainService
-from domens.models import Site
+from user.models.site import Site
 from user.user_manager.user_manager import UserManager
 from user.user_manager.user_manager_interface import UserManagerInterface
 
@@ -24,7 +24,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     profile_picture = models.ImageField(verbose_name="аватарка", null=True, blank=True)
 
     register_on_site = models.ForeignKey(
-        "domens.Site",
+        Site,
         verbose_name="зарегистрирован на сайте",
         related_name="register_on_site",
         on_delete=models.SET_NULL,
@@ -32,7 +32,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         blank=True,
     )
     register_on_domain = models.ForeignKey(
-        "domens.Domain",
+        "settings.Domain",
         verbose_name="зарегистрирован на домене",
         related_name="register_on_domain",
         on_delete=models.SET_NULL,

@@ -1,6 +1,7 @@
+from colorfield.fields import ColorField
 from django.db import models
 
-from common.models import OneInstanceModel
+from common.models import BaseFont, OneInstanceModel
 
 FONT_SIZES = (
     (6, 6),
@@ -26,8 +27,8 @@ class SiteSettings(OneInstanceModel):
     )
 
     class Meta:
-        verbose_name = "Настройки сайта"
-        verbose_name_plural = "Настройки сайта"
+        verbose_name = "Айдентика"
+        verbose_name_plural = "Айдентика"
 
 
 class BaseLogo(OneInstanceModel):
@@ -84,3 +85,68 @@ class Icon(OneInstanceModel):
     class Meta:
         verbose_name = "Иконка"
         verbose_name_plural = "Иконка"
+
+
+class Domain(models.Model):
+    domain = models.CharField(max_length=50, verbose_name="домен")
+    is_partners = models.BooleanField(default=True, verbose_name="партнёрский сайт")
+    name = models.CharField(max_length=50, verbose_name="Название", null=True, blank=True)
+
+    def __str__(self):
+        return self.domain
+
+    class Meta:
+        db_table = "domens_domain"
+        verbose_name = "домен"
+        verbose_name_plural = "домены"
+
+
+class GlobalStyles(OneInstanceModel):
+    class Meta:
+        db_table = "styles_globalstyles"
+        verbose_name = "стили"
+        verbose_name_plural = "стили"
+
+
+class Font(BaseFont):
+    class Meta:
+        db_table = "styles_font"
+        verbose_name = "Шрифт"
+        verbose_name_plural = "Шрифты"
+        ordering = ["name"]
+
+
+class SocialNetwork(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Название")
+    domain = models.CharField(max_length=100, verbose_name="Домен")
+
+    icon = models.ImageField(upload_to="images/social/icons/", verbose_name="иконка")
+    button_color = ColorField(verbose_name="Цвет кнопки")
+
+    class Meta:
+        db_table = "common_socialnetwork"
+        verbose_name = "Социальная сеть"
+        verbose_name_plural = "Социальные сети"
+
+    def __str__(self):
+        return self.name
+
+
+class Messanger(models.Model):
+    social_network = models.ForeignKey(SocialNetwork, on_delete=models.CASCADE, verbose_name="Соц. сеть")
+
+    class Meta:
+        db_table = "account_messanger"
+        verbose_name = "Мессенджер"
+        verbose_name_plural = "Мессенджеры"
+
+    def __str__(self):
+        return str(self.social_network)
+
+
+class UserFont(BaseFont):
+    class Meta:
+        db_table = "account_userfont"
+        verbose_name = "Бренд шрифт"
+        verbose_name_plural = "Бренд шрифты"
+        ordering = ["name"]

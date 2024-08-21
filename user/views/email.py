@@ -1,6 +1,6 @@
 from django.http import HttpResponseRedirect
 
-from user.models import User
+from user.models.user import User
 from user.views.base_user_view import BaseUserView
 from utils.errors import Errors
 

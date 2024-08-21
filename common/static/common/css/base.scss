@@ -31,6 +31,12 @@ h1{
     margin: var(--margin-inside-block-desctop) 0px;
 }
 
+h2{
+    font-weight: var(--header-font-weight);
+    color: var(--header-color);
+    font-family: var(--header-font-family);
+}
+
 h3{
     font-size: var(--subheader-font-size);
     font-weight: var(--subheader-font-weight);

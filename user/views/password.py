@@ -5,7 +5,7 @@ from django.views.generic import View
 
 from emails.email_service.email_service import get_email_service
 from user.forms import ResetPasswordForm, SetPasswordForm
-from user.models import User
+from user.models.user import User
 from user.views.base_user_view import BaseUserView
 from utils.errors import Errors, UserErrors
 from utils.success_messages import Messages

@@ -15,6 +15,9 @@ class UserManager(BaseUserManager, UserManagerInterface):
         elif self.validator.is_valid_email(username):
             return self.get_user_by_email(username)
 
+        elif isinstance(username, str):
+            return self.model.objects.filter(username=username).first()
+
         return super().get_by_natural_key(username)
 
     def get_user_by_id(self, id: int):

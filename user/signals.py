@@ -10,7 +10,7 @@ from user.exceptions import (
     UserWithEmailAlredyExists,
     UserWithPhoneAlreadyExists,
 )
-from user.models import User
+from user.models.user import User
 
 
 def user_created_handler(sender, instance, created, *args, **kwargs):

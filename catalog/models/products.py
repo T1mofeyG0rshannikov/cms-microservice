@@ -38,14 +38,14 @@ class Organization(models.Model):
         return self.name
 
 
-PRODUCT_STATUS = (("Новое", "Новое"), ("Опубликовано", "Опубликовано"))
+PRODUCT_STATUS = (("Черновик", "Черновик"), ("Архив", "Архив"), ("Опубликовано", "Опубликовано"))
 
 
 class Product(models.Model):
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, verbose_name="организация")
     cover = models.ImageField(upload_to="products/covers", verbose_name="Обложка")
 
-    name = models.CharField(max_length=100, verbose_name="Название продукта")
+    name = models.CharField(max_length=100, verbose_name="Название")
     type = models.ForeignKey(ProductType, on_delete=models.CASCADE, verbose_name="Тип продукта")
     annotation = models.CharField(max_length=300, verbose_name="Аннотация")
     description = RichTextField(max_length=5000, verbose_name="Описание")
@@ -64,6 +64,8 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True)
 
     status = models.CharField(verbose_name="статус", choices=PRODUCT_STATUS, max_length=50, default="Новое")
+
+    # terms_of_the_promotion = models.URLField(max_length=1000, null=True, blank=True, verbose_name="условия акции")
 
     link_encryptor = LinkEncryptor()
 

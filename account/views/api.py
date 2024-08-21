@@ -10,7 +10,7 @@ from account.referrals_service.referrals_service_interface import (
 from account.serializers import ReferralSerializer, ReferralsSerializer
 from common.pagination import Pagination
 from user.exceptions import InvalidReferalLevel, InvalidSortedByField
-from user.models import User
+from user.models.user import User
 from utils.errors import UserErrors
 
 

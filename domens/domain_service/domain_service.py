@@ -3,8 +3,9 @@ import re
 from django.db.utils import OperationalError, ProgrammingError
 
 from domens.domain_service.domain_service_interface import DomainServiceInterface
-from domens.models import Domain, Site
+from settings.models import Domain
 from user.interfaces import UserInterface
+from user.models.site import Site
 
 
 class DomainService(DomainServiceInterface):

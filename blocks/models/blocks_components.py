@@ -10,7 +10,8 @@ from blocks.models.blocks import (
 )
 from blocks.models.mixins import ButtonMixin, TitleMixin
 from catalog.models.products import Product
-from common.models import SocialNetwork, Sortable
+from common.models import Sortable
+from settings.models import SocialNetwork
 
 
 class NavMenuItem(ButtonMixin):
@@ -80,21 +81,12 @@ class Stage(TitleMixin):
 
 class CatalogProduct(Sortable):
     block = models.ForeignKey("blocks.CatalogBlock", on_delete=models.CASCADE, related_name="products")
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Продукт", null=True)
+    product = models.ForeignKey(
+        Product, related_name="catalog_product", on_delete=models.CASCADE, verbose_name="Продукт", null=True
+    )
 
     def __str__(self):
         return str(self.product)
-
-    def save(self, *args, **kwargs):
-        self.product.status = "Опубликовано"
-        self.product.save()
-        super().save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        self.product.status = "Новое"
-        self.product.save()
-
-        super().delete(*args, **kwargs)
 
 
 class CatalogProductType(Sortable):
@@ -103,17 +95,6 @@ class CatalogProductType(Sortable):
 
     def __str__(self):
         return str(self.product)
-
-    """def save(self, *args, **kwargs):
-        self.product.status = "Опубликовано"
-        self.product.save()
-        super().save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        self.product.status = "Новое"
-        self.product.save()
-
-        super().delete(*args, **kwargs)"""
 
 
 class AdditionalCatalogProductType(Sortable):

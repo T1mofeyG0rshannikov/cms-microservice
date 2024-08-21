@@ -1,6 +1,6 @@
-from domens.models import Site
 from settings.models import SiteSettings
 from settings.serializers import SettingsSerializer
+from user.models.site import Site
 
 
 def get_settings(request) -> dict:

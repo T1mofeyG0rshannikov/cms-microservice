@@ -7,8 +7,10 @@ from django.views.decorators.csrf import csrf_exempt
 
 from account.forms import ChangePasswordForm
 from domens.views.mixins import SubdomainMixin
+from materials.models import Document
 from notifications.models import UserNotification
 from notifications.serializers import UserNotificationSerializer
+from settings.views import SettingsMixin
 from template.template_loader.tempate_context_processor.template_context_processor import (
     get_template_context_processor,
 )
@@ -117,3 +119,22 @@ class GetReferralPopupTemplate(View):
     def get(self, request):
         template = self.template_loader.load_referral_popup(request)
         return JsonResponse({"content": template})
+
+
+class DocumentPage(SettingsMixin):
+    template_name = "account/manual.html"
+
+    def dispatch(self, request, slug, *args, **kwargs):
+        try:
+            print(slug)
+            Document.objects.get(slug=slug)
+        except Document.DoesNotExist:
+            return PageNotFound.as_view()(request)
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["document"] = Document.objects.get(slug=self.kwargs.get("slug"))
+
+        return context

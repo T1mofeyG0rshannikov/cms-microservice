@@ -1,7 +1,7 @@
 from typing import Protocol
 
 from user.interfaces import UserInterface
-from user.models import User
+from user.models.user import User
 
 
 class ReferralServiceInterface(Protocol):

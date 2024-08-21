@@ -1,6 +1,6 @@
 from django.db import models
 
-from styles.models.texts.font import Font
+from settings.models import Font
 
 
 class FontMixin(models.Model):

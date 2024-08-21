@@ -1,6 +1,8 @@
 from django.contrib import admin
 
+from domens.admin import SiteAdmin
 from domens.domain_service.domain_service import DomainService
+from user.models.site import Site
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -13,3 +15,6 @@ class UserAdmin(admin.ModelAdmin):
 
     register_on.short_description = "зарегистрирован на"
     register_on.allow_tags = True
+
+
+admin.site.register(Site, SiteAdmin)

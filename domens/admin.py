@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from domens.models import Domain, Site
+from settings.models import Domain
 
 
 class SiteAdmin(admin.ModelAdmin):
@@ -11,5 +11,4 @@ class DomainAdmin(admin.ModelAdmin):
     pass
 
 
-admin.site.register(Site, SiteAdmin)
 admin.site.register(Domain, DomainAdmin)

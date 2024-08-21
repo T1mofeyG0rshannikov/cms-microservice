@@ -1,14 +1,6 @@
-from ckeditor.fields import RichTextField
 from django.db import models
 
-from common.models import BaseFont, SocialNetwork
-
-
-class UserFont(BaseFont):
-    class Meta:
-        verbose_name = "пользовательский шрифт"
-        verbose_name_plural = "пользовательские шрифты"
-        ordering = ["name"]
+from settings.models import Messanger, SocialNetwork
 
 
 class UserSocialNetwork(models.Model):
@@ -16,23 +8,12 @@ class UserSocialNetwork(models.Model):
     adress = models.CharField(max_length=100, verbose_name="адресс")
 
     site = models.ForeignKey(
-        "domens.Site", on_delete=models.SET_NULL, null=True, verbose_name="сайт", related_name="socials"
+        "user.Site", on_delete=models.SET_NULL, null=True, verbose_name="сайт", related_name="socials"
     )
 
     class Meta:
         verbose_name = "пользовательская соц. сеть"
         verbose_name_plural = "пользовательские соц. сети"
-
-
-class Messanger(models.Model):
-    social_network = models.ForeignKey(SocialNetwork, on_delete=models.CASCADE, verbose_name="Соц. сеть")
-
-    class Meta:
-        verbose_name = "Мессенджер"
-        verbose_name_plural = "Мессенджеры"
-
-    def __str__(self):
-        return str(self.social_network)
 
 
 class UserMessanger(models.Model):
@@ -41,16 +22,3 @@ class UserMessanger(models.Model):
     )
     messanger = models.ForeignKey(Messanger, on_delete=models.CASCADE, verbose_name="Соц. сеть")
     adress = models.CharField(verbose_name="адресс", max_length=100)
-
-
-class Document(models.Model):
-    image = models.ImageField(upload_to="docs", verbose_name="Обложка")
-    title = models.CharField(max_length=300, verbose_name="Заголовок")
-    text = RichTextField(max_length=7000, verbose_name="Содержание")
-
-    class Meta:
-        verbose_name = "Документ"
-        verbose_name_plural = "Документы"
-
-    def __str__(self):
-        return self.title

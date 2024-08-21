@@ -3,9 +3,9 @@
 <header>
     <div class="inner">
         {% if settings.logo %}
-            <img onclick="location.href='/partners'" class="logo"/>
+            <img onclick="location.href='/'" class="logo"/>
         {% else %}
-            <div onclick="location.href='/partners'" class="logo">
+            <div onclick="location.href='/'" class="logo">
                 <a style="font-family: {{settings.site_font}}; font-size: {{settings.site_font_size}}; color: var(--main-text-inverted-color);">{{ settings.site_name }}</a>
             </div>
         {% endif %}

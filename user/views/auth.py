@@ -9,7 +9,7 @@ from django.views.generic import View
 from domens.domain_service.domain_service import get_domain_service
 from domens.domain_service.domain_service_interface import DomainServiceInterface
 from user.forms import LoginForm, RegistrationForm, ResetPasswordForm
-from user.models import User
+from user.models.user import User
 from user.user_service.user_service import get_user_service
 from user.validator.validator import get_user_validator
 from user.validator.validator_interface import UserValidatorInterface

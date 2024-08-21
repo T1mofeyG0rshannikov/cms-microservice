@@ -2,7 +2,7 @@ from typing import Protocol
 
 from django.http.request import HttpRequest
 
-from domens.models import Domain, Site
+from domens.interfaces import DomainInterface, SiteInterface
 
 
 class DomainServiceInterface(Protocol):
@@ -22,22 +22,22 @@ class DomainServiceInterface(Protocol):
     def get_partners_domain_string(self) -> str | None:
         raise NotImplementedError()
 
-    def get_partner_domain_model(self) -> Domain | None:
+    def get_partner_domain_model(self) -> DomainInterface | None:
         raise NotImplementedError()
 
     def get_domain_from_host(self, host: str) -> str:
         raise NotImplementedError()
 
-    def get_domain_model_from_request(self, request: HttpRequest) -> Domain | None:
+    def get_domain_model_from_request(self, request: HttpRequest) -> DomainInterface | None:
         raise NotImplementedError()
 
-    def get_site_model(self, request: HttpRequest) -> Site | None:
-        raise NotImplementedError()
-
-    @staticmethod
-    def get_domain_model_by_id(id: int) -> Domain | None:
+    def get_site_model(self, request: HttpRequest) -> SiteInterface | None:
         raise NotImplementedError()
 
     @staticmethod
-    def get_domain_model() -> Domain | None:
+    def get_domain_model_by_id(id: int) -> DomainInterface | None:
+        raise NotImplementedError()
+
+    @staticmethod
+    def get_domain_model() -> DomainInterface | None:
         raise NotImplementedError()

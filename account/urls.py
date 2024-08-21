@@ -3,6 +3,7 @@ from django.urls import path, re_path
 from .views.api import GetReferals, GetReferral
 from .views.templates import (
     ChangePasswordView,
+    DocumentPage,
     GetReferralPopupTemplate,
     ManualsView,
     PageNotFound,
@@ -17,6 +18,7 @@ urlpatterns = [
     re_path(r"my/site/?$", SiteView.as_view()),
     re_path(r"my/refs/?$", RefsView.as_view()),
     re_path(r"my/manuals/?$", ManualsView.as_view()),
+    path("my/manual/<str:slug>", DocumentPage.as_view()),
     path("my/change-site", ChangeSiteView.as_view()),
     path("my/change-socials", ChangeSocialsView.as_view()),
     path("my/change-user", ChangeUserView.as_view()),

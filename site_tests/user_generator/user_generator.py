@@ -5,8 +5,8 @@ from russian_names import RussianNames
 
 from domens.domain_service.domain_service import get_domain_service
 from domens.domain_service.domain_service_interface import DomainServiceInterface
-from domens.models import Site
-from user.models import User
+from user.models.site import Site
+from user.models.user import User
 
 
 class UserGenerator:

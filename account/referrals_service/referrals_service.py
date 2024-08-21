@@ -6,7 +6,7 @@ from account.referrals_service.referrals_service_interface import (
 from account.serializers import ReferralSerializer
 from user.exceptions import InvalidSortedByField, UserIsNotReferral
 from user.interfaces import UserInterface
-from user.models import User
+from user.models.user import User
 from user.validator.validator import get_user_validator
 from user.validator.validator_interface import UserValidatorInterface
 from utils.sort import sort_list_by_attr

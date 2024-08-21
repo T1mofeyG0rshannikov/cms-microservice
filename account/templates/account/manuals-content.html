@@ -9,19 +9,7 @@
 <div class="container">
     <div class="documents">
         {% for document in manuals %}
-            <section class="document">
-                <img src="{{ document.image.url }}" alt="{{ document.title }}">
-
-                <div>
-                    <h2>{{ document.title }}</h2>
-
-                    {{ document.text|safe }}
-                </div>
-            </section>
+            <a class="manual-link" href="{{ request.scheme }}://{{ request.META.HTTP_HOST }}/my/manual/{{ document.slug }}">{{ document.title }}</a>
         {% endfor %}
-    </div>
-
-    <div class="right-menu">
-
     </div>
 </div>

@@ -2,7 +2,7 @@ from datetime import datetime
 
 from rest_framework import serializers
 
-from user.models import User
+from user.models.user import User
 from utils.date_russian import get_date_in_russian
 
 

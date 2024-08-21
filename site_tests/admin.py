@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from site_tests.models import TestUserSet
-from user.models import User
+from user.models.user import User
 
 
 class TestUserInline(admin.StackedInline):

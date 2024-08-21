@@ -33,7 +33,7 @@ function loadProfileContent(templateName, url){
         content.innerHTML = template;
         document.title = response.title;
 
-        if (templateName === "refs-content"){
+        if (templateName === "refs"){
             initRefsContent();
         }
     })

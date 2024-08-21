@@ -43,8 +43,8 @@ class AdditionalCatalogBlock(BaseCatalogBlock):
     add_button = models.BooleanField(verbose_name="добавлять кнопку к карточке", default=True)
 
     class Meta:
-        verbose_name = "Дополнительный каталог"
-        verbose_name_plural = "Дополнительные каталоги"
+        verbose_name = "Мини витрина"
+        verbose_name_plural = "Мини витрины"
 
 
 class PromoCatalog(BaseBlock, TitleMixin):

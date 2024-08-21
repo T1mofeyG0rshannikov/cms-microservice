@@ -49,6 +49,9 @@ class BlockSerializer(serializers.Serializer):
         return content
 
     def get_styles(self, block):
+        if not self.content:
+            return False
+
         styles = self.content.get_styles()
         if styles is not None:
             return CustomStylesSerializer(styles).data

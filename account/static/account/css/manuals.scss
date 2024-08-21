@@ -3,6 +3,11 @@
     padding-bottom: 40px;
 
     .documents{
+        a{
+            color: var(--light-ref-color);
+            text-decoration: none;
+        }
+
         .document{
             margin-bottom: 30px;
             width: 100%;
@@ -28,4 +33,8 @@
         margin-bottom: 30px;
         border: 1px solid var(--dark-color);
     }
+}
+
+.manual-link{
+    display: block;
 }

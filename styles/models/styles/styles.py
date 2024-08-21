@@ -18,18 +18,12 @@ from blocks.models.catalog_block import (
     MainPageCatalogBlock,
     PromoCatalog,
 )
-from common.models import OneInstanceModel
+
 from styles.models.mixins.text_mixins import (
     ExplanationTextStylesMixin,
     SubheaderStylesMixin,
 )
 from styles.models.styles.base_custom_styles import BaseCustomStyles
-
-
-class GlobalStyles(OneInstanceModel):
-    class Meta:
-        verbose_name = "Глобальные стили"
-        verbose_name_plural = "Глобальные стили"
 
 
 def related_block(block_class):

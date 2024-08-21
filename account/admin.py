@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from account.models import Document, Messanger, UserFont, UserSocialNetwork
+from account.models import Messanger, UserSocialNetwork
 
 
 class UserFontAdmin(admin.ModelAdmin):
@@ -16,10 +16,8 @@ class MessangerAdmin(admin.ModelAdmin):
 
 
 class DocumentAdmin(admin.ModelAdmin):
-    pass
+    prepopulated_fields = {"slug": ("title",)}
 
 
-admin.site.register(UserFont, UserFontAdmin)
 admin.site.register(UserSocialNetwork, UserSocialNetworkAdmin)
 admin.site.register(Messanger, MessangerAdmin)
-admin.site.register(Document, DocumentAdmin)

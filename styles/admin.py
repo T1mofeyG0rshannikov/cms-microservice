@@ -8,7 +8,6 @@ from styles.models.styles.styles import (
     ContentCustomStyles,
     CoverCustomStyles,
     FeaturesCustomStyles,
-    GlobalStyles,
     MainPageCatalogCustomStyles,
     NavbarCustomStyles,
     PromoCatalogCustomStyles,
@@ -17,7 +16,6 @@ from styles.models.styles.styles import (
     SocialCustomStyles,
     StagesCustomStyles,
 )
-from styles.models.texts.font import Font
 from styles.models.texts.texts import (
     ExplanationText,
     HeaderText,
@@ -120,7 +118,3 @@ class GlobalStylesAdmin(admin.ModelAdmin):
         MarginBlockInline,
         IconSizeInline,
     ]
-
-
-admin.site.register(GlobalStyles, GlobalStylesAdmin)
-admin.site.register(Font, FontAdmin)
