@@ -28,7 +28,8 @@ class Organization(models.Model):
     logo = models.ImageField(upload_to="organizations/logos/", verbose_name="Лого")
     site = models.URLField(verbose_name="сайт", max_length=500)
 
-    admin_hint = RichTextField(max_length=1500, verbose_name="пояснение для админа")
+    admin_hint = RichTextField(max_length=1500, verbose_name="пояснение", null=True, blank=True)
+    partner_program = models.CharField(max_length=100, null=True, blank=True, verbose_name="Партнерская программа")
 
     class Meta:
         verbose_name = "Организация"
@@ -42,12 +43,16 @@ PRODUCT_STATUS = (("Черновик", "Черновик"), ("Архив", "Ар
 
 
 class Product(models.Model):
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, verbose_name="организация")
+    organization = models.ForeignKey(
+        Organization, related_name="products", on_delete=models.CASCADE, verbose_name="организация"
+    )
     cover = models.ImageField(upload_to="products/covers", verbose_name="Обложка")
 
     name = models.CharField(max_length=100, verbose_name="Название")
-    type = models.ForeignKey(ProductType, on_delete=models.CASCADE, verbose_name="Тип продукта")
-    annotation = models.CharField(max_length=300, verbose_name="Аннотация")
+    type = models.ForeignKey(
+        ProductType, on_delete=models.CASCADE, verbose_name="Тип продукта", related_name="products"
+    )
+    annotation = models.TextField(max_length=300, verbose_name="Аннотация")
     description = RichTextField(max_length=5000, verbose_name="Описание")
 
     banner = models.ImageField(upload_to="products/banners/", verbose_name="Баннер", null=True, blank=True)
@@ -66,7 +71,7 @@ class Product(models.Model):
     status = models.CharField(verbose_name="статус", choices=PRODUCT_STATUS, max_length=50, default="Новое")
 
     terms_of_the_promotion = models.URLField(max_length=1000, null=True, blank=True, verbose_name="условия акции")
-    partner_annotation = models.CharField(max_length=1000, null=True, blank=True, verbose_name="Партнерская аннотация")
+    partner_annotation = models.TextField(max_length=1000, null=True, blank=True, verbose_name="Партнерская аннотация")
     partner_bonus = models.CharField(max_length=1000, null=True, blank=True, verbose_name="Партнерский бонус")
     partner_description = RichTextField(max_length=5000, null=True, blank=True, verbose_name="Партнерское описание")
 

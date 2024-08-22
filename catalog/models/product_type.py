@@ -5,6 +5,9 @@ from blocks.models.blocks import Cover
 
 
 class ProductType(models.Model):
+    PRODUCT_TYPE_STATUSES = (("Опубликовано", "Опубликовано"), ("Скрыто", "Скрыто"))
+
+    status = models.CharField(verbose_name="статус", choices=PRODUCT_TYPE_STATUSES, null=True, max_length=100)
     name = models.CharField(max_length=100, unique=True, verbose_name="Название")
     slug = models.SlugField(max_length=200, unique=True, blank=True, null=True, verbose_name="URL")
 

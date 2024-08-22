@@ -34,13 +34,17 @@ class BlockSerializer(serializers.Serializer):
         if isinstance(content, MainPageCatalogBlock):
             content.products = [
                 product.product
-                for product in CatalogProductType.objects.select_related("product").filter(block=content)
+                for product in CatalogProductType.objects.select_related("product").filter(
+                    block=content, product__status="Опубликовано"
+                )
             ]
 
         if isinstance(content, AdditionalCatalogBlock):
             content.products = [
                 product.product
-                for product in AdditionalCatalogProductType.objects.select_related("product").filter(block=content)
+                for product in AdditionalCatalogProductType.objects.select_related("product").filter(
+                    block=content, product__status="Опубликовано"
+                )
             ]
 
         if content is not None:

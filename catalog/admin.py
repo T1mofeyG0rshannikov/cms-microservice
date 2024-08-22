@@ -2,6 +2,7 @@ from adminsortable2.admin import SortableAdminBase, SortableStackedInline
 from django.contrib import admin
 from django.contrib.admin.widgets import AdminFileWidget
 from django.db import models
+from django.db.models import Q
 from django.utils.html import format_html, mark_safe
 
 from catalog.models.blocks import Block, CatalogPageTemplate
@@ -169,7 +170,33 @@ class OrganizationTypeAdmin(admin.ModelAdmin):
     pass
 
 
+class ProductInline(BaseInline):
+    model = Product
+    ordering = ["name"]
+
+
 class OrganizationAdmin(admin.ModelAdmin):
+    list_display = ["image_tag", "name_tag", "site", "products"]
+    inlines = [ProductInline]
+    formfield_overrides = {models.ImageField: {"widget": CustomAdminFileWidget}}
+
+    def products(self, obj):
+        return obj.products.count()
+
+    products.short_description = "Продукты"
+
+    def name_tag(self, obj):
+        return mark_safe(f'<a href="/admin/catalog/organization/{obj.pk}/change/" >{obj.name}</a>')
+
+    name_tag.short_description = "Название"
+
+    ordering = ["name"]
+
+    def image_tag(self, obj):
+        return mark_safe('<img src="%s" width="75" />' % (obj.logo.url))
+
+    image_tag.short_description = ""
+
     def get_fieldsets(self, request, obj):
         fieldsets = (
             (
@@ -184,7 +211,11 @@ class OrganizationAdmin(admin.ModelAdmin):
 
 
 class ProductTypeAdmin(admin.ModelAdmin):
+    list_display = ["name", "status", "products_tag"]
     prepopulated_fields = {"slug": ("name",)}
+
+    def products_tag(self, obj):
+        return f'{obj.products.filter(status="Опубликовано").count()} ({obj.products.filter(Q(status="Опубликовано") | Q(status="Черновик")).count()})'
 
 
 class ExclusiveCardAdmin(admin.ModelAdmin):
