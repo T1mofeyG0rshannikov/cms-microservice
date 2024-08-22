@@ -1,0 +1,11 @@
+.timezonewarning{
+    display: none;
+}
+
+.field-promotion .flex-container{
+    align-items: center;
+}
+
+.field-start_promotion .inline{
+    width: 80px;
+}

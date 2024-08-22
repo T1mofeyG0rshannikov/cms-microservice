@@ -126,7 +126,6 @@ class DocumentPage(SettingsMixin):
 
     def dispatch(self, request, slug, *args, **kwargs):
         try:
-            print(slug)
             Document.objects.get(slug=slug)
         except Document.DoesNotExist:
             return PageNotFound.as_view()(request)

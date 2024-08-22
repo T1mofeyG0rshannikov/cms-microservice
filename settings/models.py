@@ -96,21 +96,18 @@ class Domain(models.Model):
         return self.domain
 
     class Meta:
-        db_table = "domens_domain"
         verbose_name = "домен"
         verbose_name_plural = "домены"
 
 
 class GlobalStyles(OneInstanceModel):
     class Meta:
-        db_table = "styles_globalstyles"
         verbose_name = "стили"
         verbose_name_plural = "стили"
 
 
 class Font(BaseFont):
     class Meta:
-        db_table = "styles_font"
         verbose_name = "Шрифт"
         verbose_name_plural = "Шрифты"
         ordering = ["name"]
@@ -124,7 +121,6 @@ class SocialNetwork(models.Model):
     button_color = ColorField(verbose_name="Цвет кнопки")
 
     class Meta:
-        db_table = "common_socialnetwork"
         verbose_name = "Социальная сеть"
         verbose_name_plural = "Социальные сети"
 
@@ -136,7 +132,6 @@ class Messanger(models.Model):
     social_network = models.ForeignKey(SocialNetwork, on_delete=models.CASCADE, verbose_name="Соц. сеть")
 
     class Meta:
-        db_table = "account_messanger"
         verbose_name = "Мессенджер"
         verbose_name_plural = "Мессенджеры"
 
@@ -146,7 +141,6 @@ class Messanger(models.Model):
 
 class UserFont(BaseFont):
     class Meta:
-        db_table = "account_userfont"
         verbose_name = "Бренд шрифт"
         verbose_name_plural = "Бренд шрифты"
         ordering = ["name"]

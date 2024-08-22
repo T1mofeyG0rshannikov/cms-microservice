@@ -9,7 +9,6 @@ class Document(models.Model):
     slug = models.SlugField(null=True, blank=True)
 
     class Meta:
-        db_table = "account_document"
         verbose_name = "Документ"
         verbose_name_plural = "Документы"
 

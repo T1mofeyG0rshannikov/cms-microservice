@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from account.models import Messanger, UserSocialNetwork
+from account.models import UserSocialNetwork
 
 
 class UserFontAdmin(admin.ModelAdmin):
@@ -20,4 +20,3 @@ class DocumentAdmin(admin.ModelAdmin):
 
 
 admin.site.register(UserSocialNetwork, UserSocialNetworkAdmin)
-admin.site.register(Messanger, MessangerAdmin)

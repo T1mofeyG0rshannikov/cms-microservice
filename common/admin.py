@@ -24,11 +24,11 @@ class MyAdminSite(AdminSite):
     def get_app_list(self, request, app_label=None):
         app_order = [
             "user",
-            "settings",
-            "notifications",
             "catalog",
             "materials",
             "blocks",
+            "settings",
+            "notifications",
             "account",
             "domens",
             "common",
@@ -39,7 +39,6 @@ class MyAdminSite(AdminSite):
         app_list = list(self._build_app_dict(request).values())
         app_list.sort(key=lambda x: app_order_dict.get(x["app_label"], 0))
 
-        print(app_list)
         return app_list
 
 

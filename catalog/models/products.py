@@ -65,7 +65,23 @@ class Product(models.Model):
 
     status = models.CharField(verbose_name="статус", choices=PRODUCT_STATUS, max_length=50, default="Новое")
 
-    # terms_of_the_promotion = models.URLField(max_length=1000, null=True, blank=True, verbose_name="условия акции")
+    terms_of_the_promotion = models.URLField(max_length=1000, null=True, blank=True, verbose_name="условия акции")
+    partner_annotation = models.CharField(max_length=1000, null=True, blank=True, verbose_name="Партнерская аннотация")
+    partner_bonus = models.CharField(max_length=1000, null=True, blank=True, verbose_name="Партнерский бонус")
+    partner_description = RichTextField(max_length=5000, null=True, blank=True, verbose_name="Партнерское описание")
+
+    partner_programs = (
+        ("Приведи друга", "Приведи друга"),
+        ("CPA сеть", "CPA сеть"),
+        ("Друзья/CPA", "Друзья/CPA"),
+        ("Только админ", "Только админ"),
+        ("Нет", "Нет"),
+    )
+
+    partner_program = models.CharField(
+        max_length=100, choices=partner_programs, null=True, verbose_name="Партнерская программа"
+    )
+    verification_of_registration = models.BooleanField(default=False, verbose_name="Верификация оформления")
 
     link_encryptor = LinkEncryptor()
 

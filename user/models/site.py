@@ -34,7 +34,6 @@ class Site(models.Model):
     created_at = models.DateTimeField(verbose_name="сайт создан", auto_now_add=True, null=True)
 
     class Meta:
-        db_table = "domens_site"
         verbose_name = "сайт"
         verbose_name_plural = "сайты"
 

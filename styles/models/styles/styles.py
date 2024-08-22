@@ -18,7 +18,6 @@ from blocks.models.catalog_block import (
     MainPageCatalogBlock,
     PromoCatalog,
 )
-
 from styles.models.mixins.text_mixins import (
     ExplanationTextStylesMixin,
     SubheaderStylesMixin,

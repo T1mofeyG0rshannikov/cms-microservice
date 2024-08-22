@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from account.admin import UserFontAdmin
+from account.admin import MessangerAdmin, UserFontAdmin
 from common.admin import SocialNetworkAdmin
 from domens.admin import DomainAdmin
 from styles.admin import FontAdmin, GlobalStylesAdmin
@@ -12,6 +12,7 @@ from .models import (
     GlobalStyles,
     Icon,
     Logo,
+    Messanger,
     SiteSettings,
     SocialNetwork,
     UserFont,
@@ -39,4 +40,5 @@ admin.site.register(SiteSettings, SettingsAdmin)
 admin.site.register(GlobalStyles, GlobalStylesAdmin)
 admin.site.register(Font, FontAdmin)
 admin.site.register(SocialNetwork, SocialNetworkAdmin)
+admin.site.register(Messanger, MessangerAdmin)
 admin.site.register(UserFont, UserFontAdmin)
