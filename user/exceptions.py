@@ -24,3 +24,7 @@ class UserIsNotReferral(Exception):
 
 class UserDoesNotExist(Exception):
     pass
+
+
+class UserProductAlreadyExists(Exception):
+    pass

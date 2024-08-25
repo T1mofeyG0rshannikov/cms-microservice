@@ -1,11 +1,12 @@
+import datetime
 import random
 
 from ckeditor.fields import RichTextField
+from dateutil.relativedelta import relativedelta
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from blocks.models.mixins import ButtonMixin
-from catalog.models.product_type import ProductType
 from common.models import OneInstanceModel
 from common.security import LinkEncryptor
 
@@ -49,9 +50,11 @@ class Product(models.Model):
     cover = models.ImageField(upload_to="products/covers", verbose_name="Обложка")
 
     name = models.CharField(max_length=100, verbose_name="Название")
-    type = models.ForeignKey(
-        ProductType, on_delete=models.CASCADE, verbose_name="Тип продукта", related_name="products"
+
+    category = models.ForeignKey(
+        "catalog.ProductCategory", on_delete=models.SET_NULL, null=True, verbose_name="категория"
     )
+
     annotation = models.TextField(max_length=300, verbose_name="Аннотация")
     description = RichTextField(max_length=5000, verbose_name="Описание")
 
@@ -89,6 +92,14 @@ class Product(models.Model):
     verification_of_registration = models.BooleanField(default=False, verbose_name="Верификация оформления")
 
     link_encryptor = LinkEncryptor()
+
+    @property
+    def get_end_promotion(self):
+        date = self.end_promotion
+        if date is None:
+            date = datetime.date.today() + relativedelta(years=+1)
+
+        return date
 
     @property
     def link(self):

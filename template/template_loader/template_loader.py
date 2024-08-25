@@ -31,7 +31,7 @@ class TemplateLoader(TemplateLoaderInterface):
     def load_change_site_form(self, request):
         context = self.context_processor.get_change_site_form_context(request)
 
-        return self.load_template(app_name="account", template_name="site-form", request=request, context=context)
+        return self.load_template(app_name="account", template_name="forms/site-form", request=request, context=context)
 
     def load_change_socials_form(self, request):
         context = self.context_processor.get_change_socials_form_context(request)
@@ -42,6 +42,20 @@ class TemplateLoader(TemplateLoaderInterface):
         context = self.context_processor.get_referral_popup_context(request)
 
         return self.load_template(app_name="account", template_name="referral-popup", request=request, context=context)
+
+    def load_choice_product_form(self, request):
+        context = self.context_processor.get_choice_product_form(request)
+
+        return self.load_template(
+            app_name="account", template_name="forms/choice-product-form", request=request, context=context
+        )
+
+    def load_create_user_product_form(self, request):
+        context = self.context_processor.get_create_user_product_form(request)
+
+        return self.load_template(
+            app_name="account", template_name="forms/create-user-product-form", request=request, context=context
+        )
 
 
 def get_template_loader() -> TemplateLoader:

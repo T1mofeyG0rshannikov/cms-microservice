@@ -1,7 +1,7 @@
 {% load static %}
 
 
-<form onsubmit="onSubmitSiteForm('{{ domain }}', this, event)" class="site-form form">
+<form onsubmit="onSubmitSiteForm(this, event)" class="site-form form">
     <div class="title">
         <h3>Настройки сайта</h3>
         <div onclick="closeForm(siteForm)" class="cross">

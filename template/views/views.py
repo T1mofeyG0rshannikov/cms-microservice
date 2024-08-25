@@ -91,3 +91,26 @@ class SiteTemplate(View):
 
     def get(self, request):
         return JsonResponse(self.template_loader.load_site_template(request))
+
+
+class UserProductsTemplate(View):
+    template_loader: ProfileTemplateLoaderInterface = get_profile_template_loader()
+
+    def get(self, request):
+        return JsonResponse(self.template_loader.load_products_template(request))
+
+
+class GetChoiceProductForm(View):
+    template_loader = get_template_loader()
+
+    def get(self, request):
+        template = self.template_loader.load_choice_product_form(request)
+        return JsonResponse({"content": template})
+
+
+class GetCreateUserProductForm(View):
+    template_loader = get_template_loader()
+
+    def get(self, request):
+        template = self.template_loader.load_create_user_product_form(request)
+        return JsonResponse({"content": template})

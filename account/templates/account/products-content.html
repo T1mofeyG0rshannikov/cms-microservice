@@ -1,0 +1,143 @@
+{% load static %}
+{% load qr_code %}
+{% load sass_tags %}
+{% load range %}
+
+
+<div class="site-container" style="margin-bottom: 15px; align-items: end; margin-top: 10px;">
+    <h1 style="margin-bottom: 0px;">Мои продукты</h1>
+    <button onclick="openProductForm()" class="title-button" id="open-choice-product-form"><a>Добавить</a></button>
+</div>
+
+<hr />
+
+<div class="selects">
+    <div>
+        <select name="level" id="level">
+            <option value="" {% if request.GET.level == "" %}selected{% endif %}>Все уровни</option>
+            <option value="1" {% if request.GET.level == "1" %}selected{% endif %}>Уровень 1</option>
+            <option value="2" {% if request.GET.level == "2" %}selected{% endif %}>Уровень 2</option>
+            <option value="3" {% if request.GET.level == "3" %}selected{% endif %}>Уровень 3</option>
+        </select>
+
+        <select name="" id="">
+            <option value="">Статистика за сегодня</option>
+            <option value="">Статистика за вчера</option>
+            <option value="">Статистика за 7 дней</option>
+            <option value="">Статистика за 30 дней</option>
+            <option value="">Статистика за все время</option>
+        </select>
+    </div>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th style="width: 400px;"><div>Продукт/банк</div></th>
+            <th><div>Акция</div></th>
+            <th><div>Подключен</div></th>
+            <th><div>Доход</div></th>
+            <th><div>Переходы</div></th>
+            <th><div style="color: transparent;">111</div></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for user_product in products %}
+            <tr>
+                <td class="product">
+                    <img src="{{ user_product.product.image }}" />
+
+                    <div>
+                        <p>{{ user_product.product.name }}</p>
+                        <p>{{ user_product.product.organization }}</p>
+                    </div>
+                </td>
+
+                <td>{{ user_product.end_promotion }}</td>
+                <td>{{ user_product.connected }}</td>
+                <td>{{ user_product.gain }}</td>
+                <td>{{ user_product.redirections }}</td>
+
+                <td>
+                    <div class="icons">
+                        <img src="{% static 'account/images/settings.png' %}" />
+                        <img src="{% static 'account/images/icoint_stat.png' %}" />
+                        <img src="{% static 'account/images/icoint_doc.png' %}" />
+                        <img src="{% static 'account/images/icoint_del.png' %}" />
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<hr />
+
+<div class="pagination">
+    <div style="display: flex; gap: 50px;">
+        <p class="referrals-count">Всего продуктов: <a id="referrals-count">{{ count }}</a></p>
+        <div class="pages">
+        {% if total_pages > 1 %}
+            <a {% if current_page == 1 %}class="active"{% endif %} onclick="loadPagination(1)">1</a>
+            {% if current_page > 4 %}
+                ...
+            {% endif %}
+
+            {% if current_page == 1 %}
+                {% for num in total_pages|create_range %}
+                    {% if current_page < num and num < current_page|add:"3" %}
+                        {% if num > 1 and num != total_pages %}
+                            <a {% if num == total_pages %}class="active"{% endif %} onclick="loadPagination({{ num }})">{{ num }}</a>
+                        {% endif %}
+                    {% endif %}
+                    {% endfor %}
+
+                    {% elif current_page == total_pages %}
+                    {% for num in total_pages|create_range %}
+                    {% if current_page|add:"-3" < num and num < current_page %}
+                    {% if num != total_pages and num > 1 %}
+                    <a {% if num == total_pages %}class="active"{% endif %} onclick="loadPagination({{ num }})">{{ num }}</a>
+                    {% endif %}
+                    {% endif %}
+                {% endfor %}
+
+            {% else %}
+                {% for num in total_pages|create_range %}
+                    {% if current_page|add:"-2" < num and num < current_page|add:"2" %}
+                        {% if num > 1 and num != total_pages %}
+                            <a {% if num == current_page %}class="active"{% endif %} onclick="loadPagination({{ num }}, {{ total_pages }})">{{ num }}</a>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+
+            {% endif %}
+
+            {% if current_page < total_pages|add:"-3" %}
+            ...
+            {% endif %}
+
+            <a {% if current_page == total_pages %}class="active"{% endif %} onclick="loadPagination({{ total_pages }}, {{ total_pages }})">{{ total_pages }}</a>
+            {% endif %}
+        </div>
+    </div>
+
+        <select name="page_size" id="page_size" class="no-border">
+            <option value="10" selected>10 на странице</option>
+        <option value="25">25 на странице</option>
+        <option value="50">50 на странице</option>
+        <option value="100">100 на странице</option>
+    </select>
+</div>
+
+<form class="form choice-product-form">
+
+</form>
+
+<form class="form create-product-form" onsubmit="onSubmitCreateUserProductForm(this, event, 23)">
+
+</form>
+
+<script>
+    initProductsContent();
+</script>

@@ -4,6 +4,7 @@ from django.contrib.admin import AdminSite
 from domens.admin import SiteAdmin
 from user.admin import UserAdmin
 from user.forms import CustomAuthenticationAdminForm
+from user.models.product import UserProduct
 from user.models.site import Site
 from user.models.user import User
 
@@ -45,3 +46,4 @@ class MyAdminSite(AdminSite):
 admin.site = MyAdminSite()
 admin.site.register(User, UserAdmin)
 admin.site.register(Site, SiteAdmin)
+admin.site.register(UserProduct)

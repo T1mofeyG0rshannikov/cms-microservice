@@ -2,6 +2,18 @@ from ckeditor.fields import RichTextField
 from django.db import models
 
 from blocks.models.blocks import Cover
+from catalog.models.products import Product
+
+
+class ProductCategory(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Категория")
+
+    class Meta:
+        verbose_name = "Категория продуктов"
+        verbose_name_plural = "Категории продуктов"
+
+    def __str__(self):
+        return self.name
 
 
 class ProductType(models.Model):
@@ -25,3 +37,15 @@ class ProductType(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class ProductTypeRelation(models.Model):
+    product = models.ForeignKey(
+        Product, on_delete=models.SET_NULL, null=True, verbose_name="Тип продукта", related_name="types"
+    )
+    type = models.ForeignKey(
+        ProductType, on_delete=models.SET_NULL, null=True, verbose_name="продукт", related_name="products"
+    )
+
+    def __str__(self):
+        return str(self.type)

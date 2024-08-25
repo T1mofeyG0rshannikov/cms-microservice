@@ -6,6 +6,7 @@ content.style.minHeight = `calc(100% - ${nav.getBoundingClientRect().height}px)`
 const menuUrls = [
     "/my/",
     "/my/site",
+    "/my/products",
     "/my/links",
     "/my/refs",
     "/my/ads",

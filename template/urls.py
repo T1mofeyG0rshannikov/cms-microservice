@@ -4,10 +4,13 @@ from .views.views import (
     GetChangeSiteFormTemplate,
     GetChangeSocialsFormTemplate,
     GetChangeUserFormTemplate,
+    GetChoiceProductForm,
+    GetCreateUserProductForm,
     ManualsTemplate,
     ProfileTemplate,
     RefsTemplate,
     SiteTemplate,
+    UserProductsTemplate,
     slug_router,
 )
 
@@ -18,6 +21,9 @@ urlpatterns = [
     path("get-template-profile", ProfileTemplate.as_view()),
     path("get-template-manuals", ManualsTemplate.as_view()),
     path("get-template-refs", RefsTemplate.as_view()),
+    path("get-template-products", UserProductsTemplate.as_view()),
     path("get-template-site", SiteTemplate.as_view()),
+    path("get-choice-product-form", GetChoiceProductForm.as_view()),
+    path("get-create-user-product-form", GetCreateUserProductForm.as_view()),
     path("<slug>", slug_router),
 ]

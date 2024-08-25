@@ -4,9 +4,13 @@ from account.referrals_service.referrals_service_interface import (
     ReferralServiceInterface,
 )
 from account.serializers import ReferralsSerializer
+from catalog.models.products import Organization, Product
+from catalog.serializers import ProductSerializer, ProductsSerializer
 from common.pagination import Pagination
 from materials.models import Document
 from settings.models import Domain, SiteSettings, SocialNetwork, UserFont
+from user.models.product import UserProduct
+from user.serializers import UserProductsSerializer
 
 from .template_context_processor_interface import TemplateContextProcessorInterface
 
@@ -82,6 +86,36 @@ class TemplateContextProcessor(TemplateContextProcessorInterface):
         context = self.get_context(request)
 
         context["manuals"] = Document.objects.values("title", "slug").all()
+
+        return context
+
+    def get_choice_product_form(self, request):
+        context = self.get_context(request)
+        context["organizations"] = Organization.objects.values("name", "id").all()
+
+        user_products = request.user.products.values_list("product__id", flat=True).all()
+        products = Product.objects.select_related("category", "organization").exclude(id__in=user_products)
+
+        context["products"] = ProductsSerializer(products, many=True).data
+
+        return context
+
+    def get_create_user_product_form(self, request):
+        context = self.get_context(request)
+
+        product_id = request.GET.get("product")
+        try:
+            product = Product.objects.get(id=product_id)
+            context["product"] = ProductSerializer(product).data
+
+        except Product.DoesNotExist:
+            pass
+
+        return context
+
+    def get_products_template_context(self, request):
+        context = self.get_context(request)
+        context["products"] = UserProductsSerializer(UserProduct.objects.filter(user=request.user), many=True).data
 
         return context
 

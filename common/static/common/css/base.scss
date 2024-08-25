@@ -159,8 +159,9 @@ form{
     border: 1px solid var(--dark-color);
     position: absolute;
     transition: .4s;
-    right: -520px;
+    right: -560px;
     border-right: 1px solid white;
+    z-index: 1;
 
     input[type=file]{
         width: 100%;
@@ -364,4 +365,18 @@ form{
 
 .b1dc{
     border: 1px solid var(--dark-color);
+}
+
+.bottom{
+    padding: 0px 20px 10px 20px;
+
+    a{
+        margin: 0;
+        cursor: pointer;
+        width: 100px;
+    }
+}
+
+.fw600{
+    font-weight: 600;
 }

@@ -3,12 +3,12 @@
 {% load sass_tags %}
 
 
-{% include "account/site-form.html" %}
-{% include "account/socials-form.html" %}
+{% include "account/forms/site-form.html" %}
+{% include "account/forms/socials-form.html" %}
 
 <div class="site-container" style="margin-bottom: 15px; align-items: end; margin-top: 10px;">
     <h1 style="margin-bottom: 0px;">Мой сайт</h1>
-    <button onclick="openSiteForm()" id="open-site-form"><a>Настроить</a></button>
+    <button onclick="openSiteForm()" class="title-button" id="open-site-form"><a>Настроить</a></button>
 </div>
 
 <hr />

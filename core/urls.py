@@ -13,6 +13,7 @@ urlpatterns = [
     path("domain/", include("domens.urls")),
     path("notifications/", include("notifications.urls")),
     path("", include("account.urls")),
+    path("", include("catalog.urls")),
     path("", include("blocks.urls")),
     path("", include("template.urls")),
     path("", include("common.urls")),

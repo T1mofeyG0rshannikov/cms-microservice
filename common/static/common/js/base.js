@@ -20,7 +20,7 @@ const userNav = document.querySelector(".user-nav");
 function closeForm(form){
     $(document.querySelector(".user-nav")).removeAttr("style");
 
-    form.style.right = "-520px";
+    form.style.right = "-560px";
 }
 
 function closeUserNav(){

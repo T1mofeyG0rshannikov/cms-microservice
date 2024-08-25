@@ -7,13 +7,13 @@ function changeLogoSize(range){
     image.style.width = newLogoWidth;
 }
 
-function onSubmitSiteForm(domain, element, event){
+function onSubmitSiteForm(element, event){
     event.preventDefault();
 
     const data = new FormData(element);
     data.append('logo', element.querySelector("#file").files[0]);
     console.log(element.querySelector("#logo").querySelector("img").src)
-    console.log(`${window.location.protocol}//${window.location.host}/static/account/images/baselogo.png`)
+
     if (element.querySelector("#logo").querySelector("img").src === `${window.location.protocol}//${window.location.host}/static/account/images/baselogo.png`){
         data.append('delete_logo', true);
     }
@@ -23,7 +23,7 @@ function onSubmitSiteForm(domain, element, event){
 
    const token = getToken();
 
-    fetch(`http://${domain}/my/change-site`, {
+    fetch(`/my/change-site`, {
         method: "POST",
         headers: {
             'Accept': 'application/json',

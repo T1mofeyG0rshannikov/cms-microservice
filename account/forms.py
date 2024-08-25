@@ -123,3 +123,25 @@ class ChangePasswordForm(forms.Form):
 
 class ChangeSocialsForm(forms.Form):
     socials = forms.CharField(max_length=5000)
+
+
+class AddUserProductForm(forms.Form):
+    product = forms.IntegerField()
+    link = forms.CharField()
+    comment = forms.CharField()
+    connected_with_link = forms.CharField()
+    connected = forms.DateField()
+    got = forms.DateField()
+    profit = forms.DateField()
+
+    screen = forms.ImageField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["link"].error_messages = {"required": "Это поле обязательное"}
+        self.fields["comment"].error_messages = {"required": "Это поле обязательное"}
+        self.fields["connected"].error_messages = {"required": "Это поле обязательное"}
+        self.fields["connected_with_link"].error_messages = {"required": "Это поле обязательное"}
+        self.fields["got"].error_messages = {"required": "Это поле обязательное"}
+        self.fields["profit"].error_messages = {"required": "Это поле обязательное"}
+        self.fields["screen"].error_messages = {"required": "Это поле обязательное"}

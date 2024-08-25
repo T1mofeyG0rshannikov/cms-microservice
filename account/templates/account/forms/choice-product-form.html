@@ -1,0 +1,38 @@
+{% load static %}
+
+<form>
+    <div class="title">
+        <h3>Финансовые продукты</h3>
+
+        <div class="cross">
+            <img onclick="closeForm(choiceProductForm)" src="{% static 'common/images/cross.png' %}" />
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="content">
+        <select name="organization" id="organization">
+            <option value="">Все банки</option>
+            {% for organization in organizations %}
+                <option value="{{ organization.id }}">{{ organization.name }}</option>
+            {% endfor %}
+        </select>
+
+        <div class="products">
+            {% if products %}
+                {% for product in products %}
+                    <div class="product" onclick="choiceProduct({{ product.id }})">
+                        <img src="{{ product.image }}" alt="{{ product.name }}">
+                        <div>
+                            <p>{{ product.name }}</p>
+                            <p>{{ product.organization }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>Нет финансовых продуктов</p>
+            {% endif %}
+        </div>
+    </div>
+</form>

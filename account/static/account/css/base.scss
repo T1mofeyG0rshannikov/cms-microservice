@@ -80,3 +80,16 @@ th, td{
 h1{
     font-size: 27px;
 }
+
+.title-button{
+    margin: 0px;
+    width: 160px;
+    height: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    *{
+        font-size: 13px;
+    }
+}

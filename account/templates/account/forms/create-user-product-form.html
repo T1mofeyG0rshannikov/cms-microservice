@@ -1,0 +1,187 @@
+{% load static %}
+
+<form class="form create-product-form" onsubmit="onSubmitCreateUserProductForm(this, event, {{ product.id }})">
+    <div class="title">
+        <h3>Партнёрская ссылка</h3>
+
+        <div class="cross">
+            <img onclick="closeForm(createProductForm)" src="{% static 'common/images/cross.png' %}" />
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="content">
+        <div class="product">
+            <div class="product-main">
+                <img src="{{ product.image }}" alt="{{ product.name }}">
+
+                <div>
+                    <p class="fw600">{{ product.name }}</p>
+                    <p class="fw600">{{ product.organization }}</p>
+                    <p class="fw600">Акция: {{ product.promotion }}</p>
+                    <p class="fw600">Ваш бонус: {{ product.profit }}</p>
+                </div>
+            </div>
+
+            <a>Описание акции</a>
+        </div>
+
+        <p style="margin-top: 10px;">{{ product.partner_annotation }}</p>
+
+        <div class="field-container w100">
+            <div class="field" id="link">
+                <div class="field-title">
+                    <p>Ваша ссылка</p>
+                    <div class="context-help">
+                        <div class="text">
+                            Откройте банковское приложение, найдите раздел "Пригласи друга" и скопируйте в нем свою реферальную ссылку.
+                        </div>
+
+                        <img src="{% static 'common/images/ico_localhelp.png' %}" />
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <div style="width: 100%;">
+                        <input onchange="changeProductLink(event)" name="link" placeholder='Скопируйте ссылку "Приведи друга"' />
+                    </div>
+
+                    <img id="go_link" src="{% static 'account/images/icoint_go.png' %}" alt="перейти">
+                    <img id="copy_link" src="{% static 'account/images/icoint_copy.png' %}" alt="копировать">
+                </div>
+            </div>
+        </div>
+
+        <div class="field-container w100">
+            <div class="field" id="comment">
+                <div class="field-title">
+                    <p>Комментарий</p>
+                    <div class="context-help">
+                        <div class="text">
+                            Вы можете добавить для себя краткое пояснение к продукту
+                        </div>
+
+                        <img src="{% static 'common/images/ico_localhelp.png' %}" />
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <div style="width: 100%;">
+                        <input name="comment" placeholder='Добавьте пояснение' />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="field checkbox-container" id="connected_with_link">
+            <input name="connected_with_link" type="checkbox">
+            <p>Оформлен по ссылке на {{ site_name }} или {{ user.site.name }}</p>
+
+            <div class="context-help">
+                <div class="text">
+                    Вы получите бонусы и более выгодные условия, если оформили продукт по ссылке на сайте Банкомаг или партнерском сайте
+                </div>
+
+                <img src="{% static 'common/images/ico_localhelp.png' %}" />
+            </div>
+        </div>
+
+        <div class="columns">
+            <div style="min-width: 150px;">
+                <div class="field-container w100">
+                    <div class="field" id="connected">
+                        <div class="field-title">
+                            <p class="fw600">Оформлен</p>
+                            <div class="context-help">
+                                <div class="text">
+                                    Дата оформления заявки на продукт на сайте банка
+                                </div>
+
+                                <img src="{% static 'common/images/ico_localhelp.png' %}" />
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <div style="width: 100%;">
+                                <input type="date" name="connected" placeholder='01.01.24' />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field-container w100">
+                    <div class="field" id="got">
+                        <div class="field-title">
+                            <p class="fw600">Получен</p>
+                            <div class="context-help">
+                                <div class="text">
+                                    Дата, когда вы фактически получили продукт
+                                </div>
+
+                                <img src="{% static 'common/images/ico_localhelp.png' %}" />
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <div style="width: 100%;">
+                                <input type="date" name="got" placeholder='01.01.24' />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field-container w100">
+                    <div class="field" id="profit">
+                        <div class="field-title">
+                            <p class="fw600">Бонус</p>
+                            <div class="context-help">
+                                <div class="text">
+                                    Дата зачисления бонуса от банка (если предусмотрено партнерской программой банка)
+                                </div>
+
+                                <img src="{% static 'common/images/ico_localhelp.png' %}" />
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <div style="width: 100%;">
+                                <input type="date" name="profit" placeholder='01.01.24' />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="screen">
+                <div class="screen-text">
+                    <p class="fw600">скриншот</p>
+
+                    <div class="context-help">
+                        <div class="text">
+                            Сделайте и загрузите скриншот уведомления о зачислении бонуса в банковском приложении. Проверка может занять до 5 рабочих дней. Подтвержденная ссылка автоматически получит премиальный статус.
+                        </div>
+
+                        <img src="{% static 'common/images/ico_localhelp.png' %}" />
+                    </div>
+                </div>
+                <div class="field" id="screen" style="position: relative; height: 100;">
+                    <div class="photo">
+                        <img src="{% static 'account/images/noscreen.jpg' %}" />
+                        <input name="file" type="file" accept="image/*" id="file" />
+                    </div>
+                </div>
+
+                <p class="introductury">
+                    Проверка может занять до 5 рабочих дней. Проверенная ссылка получит премиальный статус автоматически.
+                </p>
+            </div>
+        </div>
+
+        <div class="hints">
+            <a>Инструкция</a>
+            <a>Зачем верифицировать продукт</a>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="bottom">
+        <button><a>Сохранить</a></button>
+    </div>
+</form>

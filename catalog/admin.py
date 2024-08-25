@@ -6,13 +6,17 @@ from django.db.models import Q
 from django.utils.html import format_html, mark_safe
 
 from catalog.models.blocks import Block, CatalogPageTemplate
+from catalog.models.product_type import (
+    ProductCategory,
+    ProductType,
+    ProductTypeRelation,
+)
 from catalog.models.products import (
     ExclusiveCard,
     Link,
     Organization,
     OrganizationType,
     Product,
-    ProductType,
 )
 from common.admin import BaseInline
 
@@ -51,12 +55,16 @@ class CustomAdminFileWidget(AdminFileWidget):
         return format_html("".join(result))
 
 
+class ProductTypeRelationInline(BaseInline):
+    model = ProductTypeRelation
+
+
 class ProductAdmin(admin.ModelAdmin):
     list_display = [
         "image_tag",
         "name_tag",
         "status_tag",
-        "type",
+        "category",
         "organization",
         "created_at_tag",
         "end_promotion_tag",
@@ -64,9 +72,20 @@ class ProductAdmin(admin.ModelAdmin):
         "is_promote",
         "for_partners",
     ]
-    inlines = [LinkInline]
+    inlines = [LinkInline, ProductTypeRelationInline]
     formfield_overrides = {models.ImageField: {"widget": CustomAdminFileWidget}}
     ordering = ["organization"]
+
+    '''def type(self, obj):
+        if obj.types.first():
+            if obj.types.count() > 1:
+                return f"{obj.types.first()} + {obj.types.count() - 1}"
+
+            return obj.types.first()
+
+        return ""
+
+    type.short_description = "Тип продукта"'''
 
     def is_promote(self, obj):
         if obj.promote:
@@ -109,10 +128,7 @@ class ProductAdmin(admin.ModelAdmin):
         return obj.created_at.strftime("%Y-%m-%d")
 
     def end_promotion_tag(self, obj):
-        if obj.end_promotion is None:
-            return None
-
-        return obj.end_promotion.strftime("%Y-%m-%d")
+        return obj.get_end_promotion.strftime("%Y-%m-%d")
 
     image_tag.short_description = ""
     image_tag.allow_tags = True
@@ -145,7 +161,7 @@ class ProductAdmin(admin.ModelAdmin):
                         "organization",
                         "cover",
                         "name",
-                        "type",
+                        "category",
                         "annotation",
                         "profit",
                         "description",
@@ -224,6 +240,7 @@ class ExclusiveCardAdmin(admin.ModelAdmin):
 
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Organization, OrganizationAdmin)
+admin.site.register(ProductCategory)
 admin.site.register(ProductType, ProductTypeAdmin)
 admin.site.register(OrganizationType, OrganizationTypeAdmin)
 admin.site.register(CatalogPageTemplate, CatalogPageTemplateAdmin)

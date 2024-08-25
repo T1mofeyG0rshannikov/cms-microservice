@@ -230,3 +230,5 @@ CKEDITOR_CONFIGS = {
         ],
     },
 }
+
+USE_L10N = False

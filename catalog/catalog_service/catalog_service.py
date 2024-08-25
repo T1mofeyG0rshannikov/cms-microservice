@@ -7,7 +7,7 @@ from blocks.pages_service.pages_service import get_page_service
 from blocks.serializers import PageSerializer
 from catalog.catalog_service.catalog_service_interface import CatalogServiceInterface
 from catalog.models.blocks import CatalogPageTemplate
-from catalog.models.products import ProductType
+from catalog.models.product_type import ProductType
 from catalog.serializers import CatalogBlockSerializer
 from common.models import BlockRelationship
 from styles.models.styles.styles import CatalogCustomStyles
@@ -20,8 +20,7 @@ class CatalogService(CatalogServiceInterface):
         self.page_service = page_service
 
     def set_page_title(self, serialized_page, slug: str):
-        product_type = ProductType.objects.get(slug=slug)
-        serialized_page["title"] = product_type.name
+        serialized_page["title"] = ProductType.objects.values("name").get(slug=slug)["name"]
 
         return serialized_page
 
@@ -50,10 +49,8 @@ class CatalogService(CatalogServiceInterface):
         return {"content": catalog, "styles": catalog_styles}
 
     def get_catalog_cover(self, slug: str):
-        product_type = ProductType.objects.select_related("cover").get(slug=slug)
-        cover = product_type.cover
-
-        cover_relation = BlockRelationship.objects.get(block_name=cover.name)
+        cover = Cover.objects.values("name").get(producttype__slug=slug)
+        cover_relation = BlockRelationship.objects.get(block_name=cover["name"])
 
         cover = self.page_service.get_page_block(cover_relation)
         cover.template.file = "blocks/" + cover.template.file

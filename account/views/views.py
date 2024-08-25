@@ -5,11 +5,19 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
-from account.forms import ChangeSiteForm, ChangeSocialsForm, ChangeUserForm
+from account.forms import (
+    AddUserProductForm,
+    ChangeSiteForm,
+    ChangeSocialsForm,
+    ChangeUserForm,
+)
 from account.models import Messanger, UserMessanger, UserSocialNetwork
+from catalog.models.products import Product
 from domens.domain_service.domain_service import get_domain_service
 from domens.domain_service.domain_service_interface import DomainServiceInterface
 from settings.models import SocialNetwork, UserFont
+from user.exceptions import UserProductAlreadyExists
+from user.models.product import UserProduct
 from user.models.site import Site
 from user.models.user import User
 from utils.errors import UserErrors
@@ -170,6 +178,41 @@ class ChangeUserView(View):
 
             user.change_email(email)
             user.save()
+
+            return HttpResponse(status=200)
+
+        return JsonResponse({"errors": form.errors}, status=400)
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class AddUserProduct(View):
+    def post(self, request):
+        print(request.POST, request.FILES)
+
+        print(request.user)
+
+        if not request.user.is_authenticated:
+            return HttpResponse(status=401)
+
+        form = AddUserProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            product = form.cleaned_data.get("product")
+            product = Product.objects.get(id=product)
+
+            try:
+                UserProduct.objects.create(
+                    product=product,
+                    user=request.user,
+                    link=form.cleaned_data.get("link"),
+                    comment=form.cleaned_data.get("comment"),
+                    connected=form.cleaned_data.get("connected"),
+                    profit=form.cleaned_data.get("profit"),
+                    got=form.cleaned_data.get("got"),
+                    screen=form.cleaned_data.get("screen"),
+                    connected_with_link=form.cleaned_data.get("connected_with_link") == "true",
+                )
+            except UserProductAlreadyExists:
+                return JsonResponse({"errors": f'Вы уже добавили себе продукт "{product}"'})
 
             return HttpResponse(status=200)
 

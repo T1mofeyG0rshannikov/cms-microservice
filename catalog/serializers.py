@@ -1,6 +1,3 @@
-import datetime
-
-from dateutil.relativedelta import relativedelta
 from rest_framework import serializers
 
 from blocks.models.catalog_block import CatalogBlock
@@ -62,7 +59,6 @@ class CatalogProductSerializer(serializers.ModelSerializer):
             "link",
             "cover",
             "name",
-            "type",
             "annotation",
             "description",
             "banner",
@@ -76,11 +72,7 @@ class CatalogProductSerializer(serializers.ModelSerializer):
         return product.organization
 
     def get_end_promotion(self, product):
-        date = product.end_promotion
-        if date is None:
-            date = datetime.date.today() + relativedelta(years=+1)
-
-        return get_date_in_russian(date)
+        return get_date_in_russian(product.get_end_date)
 
     def get_cover(self, product):
         return product.cover.url
@@ -115,3 +107,61 @@ class MainPageCatalogBlockSerializer(serializers.ModelSerializer):
         products = [catalog_product.product for catalog_product in catalog.products.all()]
 
         return MainPageCatalogProductSerializer(products, many=True).data
+
+
+class ProductsSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    organization = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Product
+        fields = ["id", "name", "organization", "image"]
+
+    def get_image(self, product):
+        return product.cover.url
+
+    def get_name(self, product):
+        return f"{product.name} ({product.category})"
+
+    def get_organization(self, product):
+        return product.organization.name
+
+
+class ProductSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    organization = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField()
+    promotion = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Product
+        fields = [
+            "id",
+            "name",
+            "organization",
+            "image",
+            "profit",
+            "promotion",
+            "partner_description",
+            "partner_annotation",
+        ]
+
+    def get_promotion(self, product):
+        if product.promotion:
+            start_promotion = product.start_promotion.strftime("%d.%m.%Y")
+            end_promotion = product.get_end_promotion
+            end_promotion = end_promotion.strftime("%d.%m.%Y")
+
+            return f"{start_promotion}-{end_promotion}"
+
+        return "-"
+
+    def get_image(self, product):
+        return product.cover.url
+
+    def get_name(self, product):
+        return f"{product.name} ({product.category})"
+
+    def get_organization(self, product):
+        return product.organization.name
