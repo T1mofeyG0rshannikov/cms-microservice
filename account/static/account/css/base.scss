@@ -54,6 +54,12 @@ hr{
     a, p{
         font-size: var(--service-font-size);
     }
+
+    button{
+        background-color: var(--main-color);
+        border: none;
+        width: 110px;
+    }
 }
 
 body{

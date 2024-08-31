@@ -52,7 +52,11 @@ class Product(models.Model):
     name = models.CharField(max_length=100, verbose_name="Название")
 
     category = models.ForeignKey(
-        "catalog.ProductCategory", on_delete=models.SET_NULL, null=True, verbose_name="категория"
+        "catalog.ProductCategory",
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="products",
+        verbose_name="категория",
     )
 
     annotation = models.TextField(max_length=300, verbose_name="Аннотация")

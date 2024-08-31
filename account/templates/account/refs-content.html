@@ -72,7 +72,7 @@
 
 <div class="pagination">
     <div style="display: flex; gap: 50px;">
-        <p class="referrals-count">Всего рефералов: <a id="referrals-count">{{ count }}</a></p>
+        <p class="pagination-count">Всего рефералов: <a>{{ count }}</a></p>
         <div class="pages">
         {% if total_pages > 1 %}
             <a {% if current_page == 1 %}class="active"{% endif %} onclick="loadPagination(1)">1</a>

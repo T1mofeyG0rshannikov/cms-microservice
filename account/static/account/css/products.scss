@@ -42,16 +42,26 @@
         cursor: pointer;
 
         img{
-            height: 70px;
+            width: 75px;
         }
 
         p{
-            margin: 10px 0px;
+            margin: 3px 0px;
         }
 
         p:first-child{
             margin-top: 0px;
         }
+    }
+}
+
+.additional-fields{
+    margin-top: 10px;
+}
+
+#link{
+    .error{
+        right: 70;
     }
 }
 
@@ -105,8 +115,10 @@
             }
 
             a{
-                margin-top: 0px;
-                color: var(--light-ref-color)
+                color: var(--light-ref-color);
+                cursor: pointer;
+                height: 17px;
+                margin: 0;
             }
         }
 
@@ -125,6 +137,7 @@
                 align-items: center;
                 gap: 5px;
                 margin-bottom: 5px;
+                margin-top: 10px;
 
                 a, p{
                     margin: 0;
@@ -201,6 +214,16 @@ table{
 
         img{
             height: 40px;
+        }
+    }
+
+    span{
+        display: flex;
+        align-items: center;
+        gap: 5px;
+
+        .verified{
+            width: 20px;
         }
     }
 }

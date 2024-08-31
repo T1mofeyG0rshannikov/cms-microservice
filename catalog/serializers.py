@@ -72,7 +72,7 @@ class CatalogProductSerializer(serializers.ModelSerializer):
         return product.organization
 
     def get_end_promotion(self, product):
-        return get_date_in_russian(product.get_end_date)
+        return get_date_in_russian(product.get_end_promotion)
 
     def get_cover(self, product):
         return product.cover.url
@@ -145,6 +145,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "promotion",
             "partner_description",
             "partner_annotation",
+            "partner_bonus",
         ]
 
     def get_promotion(self, product):
@@ -155,7 +156,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
             return f"{start_promotion}-{end_promotion}"
 
-        return "-"
+        return "Бессрочно"
 
     def get_image(self, product):
         return product.cover.url

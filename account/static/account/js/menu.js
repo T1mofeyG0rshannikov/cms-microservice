@@ -37,5 +37,9 @@ function loadProfileContent(templateName, url){
         if (templateName === "refs"){
             initRefsContent();
         }
+
+        else if (templateName === "products"){
+            initUserProducts();
+        }
     })
 }

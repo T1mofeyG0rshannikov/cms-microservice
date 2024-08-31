@@ -145,6 +145,6 @@ class UserProductsView(BaseProfileView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context |= self.template_context_processor.get_products_template_context(self.request)
 
-        context |= self.template_context_processor.get_products_template_context()
         return context

@@ -26,7 +26,7 @@ function renderRefs(refs){
     document.querySelector("tbody").innerHTML = refsHTML;
 }
 
-function renderPagination(pageNum, totalPages){
+function renderRefsPagination(pageNum, totalPages){
     let pagination = `<a ${ pageNum == 1 ? 'class="active"' : "" } onclick="loadPagination(1)">1</a>`;
 
     if (pageNum > 4){
@@ -101,10 +101,6 @@ function addPageToSearch(page){
     window.history.replaceState(null, '', window.location.pathname + url.search);
 }
 
-function changeReferralsCount(count){
-    document.querySelector("#referrals-count").innerHTML = count
-}
-
 function loadPagination(pageNum){
     const level = $("select[name=level]").val();
     const page_size = $("select[name=page_size]").val();
@@ -115,11 +111,11 @@ function loadPagination(pageNum){
             response.json().then(response => {
                 console.log(response);
                 renderRefs(response.referrals);
-                renderPagination(pageNum, response.total_pages);
+                renderRefsPagination(pageNum, response.total_pages);
 
                 rememberFilters();
                 addPageToSearch(pageNum);
-                changeReferralsCount(response.count);
+                changePaginationCount(response.count);
             })
         }
     })
@@ -137,9 +133,9 @@ function initRefsContent(){
                     console.log(response);
                     renderRefs(response.referrals);
                     console.log(response.total_pages);
-                    renderPagination(1, response.total_pages);
+                    renderRefsPagination(1, response.total_pages);
                     rememberFilters();
-                    changeReferralsCount(response.count);
+                    changePaginationCount(response.count);
                 })
             }
         })
@@ -155,9 +151,9 @@ function initRefsContent(){
                     console.log(response);
                     renderRefs(response.referrals);
                     console.log(response.total_pages);
-                    renderPagination(1, response.total_pages);
+                    renderRefsPagination(1, response.total_pages);
                     rememberFilters();
-                    changeReferralsCount(response.count);
+                    changePaginationCount(response.count);
                 })
             }
         })
@@ -174,9 +170,9 @@ function initRefsContent(){
                     console.log(response);
                     renderRefs(response.referrals);
                     console.log(response.total_pages);
-                    renderPagination(1, response.total_pages);
+                    renderRefsPagination(1, response.total_pages);
                     rememberFilters();
-                    changeReferralsCount(response.count);
+                    changePaginationCount(response.count);
                 })
             }
         })

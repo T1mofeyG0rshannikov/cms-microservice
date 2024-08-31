@@ -1,23 +1,28 @@
+from django.db.models import Count, Q
+
 from account.models import Messanger
 from account.referrals_service.referrals_service import get_referral_service
 from account.referrals_service.referrals_service_interface import (
     ReferralServiceInterface,
 )
 from account.serializers import ReferralsSerializer
+from catalog.models.product_type import ProductCategory
 from catalog.models.products import Organization, Product
+from catalog.products_service.products_service import get_products_service
 from catalog.serializers import ProductSerializer, ProductsSerializer
 from common.pagination import Pagination
+from domens.domain_service.domain_service import DomainService
 from materials.models import Document
 from settings.models import Domain, SiteSettings, SocialNetwork, UserFont
-from user.models.product import UserProduct
 from user.serializers import UserProductsSerializer
 
 from .template_context_processor_interface import TemplateContextProcessorInterface
 
 
 class TemplateContextProcessor(TemplateContextProcessorInterface):
-    def __init__(self, referral_service: ReferralServiceInterface):
+    def __init__(self, referral_service: ReferralServiceInterface, products_service):
         self.referral_service = referral_service
+        self.products_service = products_service
 
     @staticmethod
     def get_context(request):
@@ -91,10 +96,17 @@ class TemplateContextProcessor(TemplateContextProcessorInterface):
 
     def get_choice_product_form(self, request):
         context = self.get_context(request)
-        context["organizations"] = Organization.objects.values("name", "id").all()
+        context["organizations"] = (
+            Organization.objects.annotate(
+                count=Count("products"),
+                user_products_count=Count("products", filter=Q(products__user_products__user=request.user)),
+            )
+            .values("name", "id")
+            .filter(count__gte=1, user_products_count__lte=0)
+            .order_by("name")
+        )
 
-        user_products = request.user.products.values_list("product__id", flat=True).all()
-        products = Product.objects.select_related("category", "organization").exclude(id__in=user_products)
+        products = self.products_service.get_enabled_products_to_create(request.user)
 
         context["products"] = ProductsSerializer(products, many=True).data
 
@@ -102,6 +114,7 @@ class TemplateContextProcessor(TemplateContextProcessorInterface):
 
     def get_create_user_product_form(self, request):
         context = self.get_context(request)
+        context["site_name"] = DomainService.get_site_name()
 
         product_id = request.GET.get("product")
         try:
@@ -115,10 +128,22 @@ class TemplateContextProcessor(TemplateContextProcessorInterface):
 
     def get_products_template_context(self, request):
         context = self.get_context(request)
-        context["products"] = UserProductsSerializer(UserProduct.objects.filter(user=request.user), many=True).data
+        product_categories = ProductCategory.objects.annotate(
+            count=Count("products", filter=Q(products__user_products__user=request.user))
+        ).filter(count__gte=1)
+        context["product_categories"] = product_categories
+
+        product_category = request.GET.get("product_category")
+
+        products = self.products_service.filter_user_products(category_id=product_category, user=request.user)
+
+        pagination = Pagination(request)
+
+        products = pagination.paginate(products, "products", UserProductsSerializer)
+        context |= products
 
         return context
 
 
 def get_template_context_processor() -> TemplateContextProcessor:
-    return TemplateContextProcessor(get_referral_service())
+    return TemplateContextProcessor(get_referral_service(), get_products_service())

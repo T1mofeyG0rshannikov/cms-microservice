@@ -126,22 +126,21 @@ class ChangeSocialsForm(forms.Form):
 
 
 class AddUserProductForm(forms.Form):
-    product = forms.IntegerField()
-    link = forms.CharField()
-    comment = forms.CharField()
-    connected_with_link = forms.CharField()
-    connected = forms.DateField()
-    got = forms.DateField()
-    profit = forms.DateField()
+    product = forms.IntegerField(required=False)
+    link = forms.CharField(required=False)
+    comment = forms.CharField(required=False)
+    connected_with_link = forms.CharField(required=False)
+    connected = forms.DateField(required=False)
+    got = forms.DateField(required=False)
+    profit = forms.DateField(required=False)
 
-    screen = forms.ImageField()
+    screen = forms.ImageField(required=False)
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["link"].error_messages = {"required": "Это поле обязательное"}
-        self.fields["comment"].error_messages = {"required": "Это поле обязательное"}
-        self.fields["connected"].error_messages = {"required": "Это поле обязательное"}
-        self.fields["connected_with_link"].error_messages = {"required": "Это поле обязательное"}
-        self.fields["got"].error_messages = {"required": "Это поле обязательное"}
-        self.fields["profit"].error_messages = {"required": "Это поле обязательное"}
-        self.fields["screen"].error_messages = {"required": "Это поле обязательное"}
+    def clean(self, *args, **kwargs):
+        link = self.cleaned_data.get("link")
+        connected = self.cleaned_data.get("connected")
+
+        if not link and not connected:
+            self.add_error("link", "Укажите вашу партнерскую ссылку или дату оформления продукта")
+
+        super().clean(*args, **kwargs)

@@ -22,7 +22,7 @@ class Site(models.Model):
         "user.User", on_delete=models.CASCADE, verbose_name="пользователь", null=True, blank=True, related_name="site"
     )
 
-    online_from = models.DateField(verbose_name="онлайн с", default=timezone.now())
+    online_from = models.DateField(verbose_name="онлайн с", default=timezone.now)
 
     name = models.CharField(verbose_name="Название сайта", max_length=50, null=True)
     font = models.ForeignKey(UserFont, on_delete=models.SET_NULL, null=True, verbose_name="шрифт")

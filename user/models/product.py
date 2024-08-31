@@ -3,7 +3,6 @@ from django.db.models.signals import pre_save
 
 from catalog.models.products import Product
 from user.exceptions import UserProductAlreadyExists
-from user.models.user import User
 
 
 def user_directory_path(instance, filename):
@@ -11,18 +10,22 @@ def user_directory_path(instance, filename):
 
 
 class UserProduct(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="products")
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    connected = models.DateField(null=True)
-    profit = models.DateField(null=True)
-    got = models.DateField(null=True)
-    connected_with_link = models.BooleanField(null=True)
-    redirections = models.PositiveIntegerField(default=0)
-    screen = models.ImageField(upload_to=user_directory_path, null=True)
-    comment = models.CharField(null=True, max_length=1000)
+    user = models.ForeignKey(
+        "user.User", on_delete=models.CASCADE, related_name="products", verbose_name="Пользователь"
+    )
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="user_products", verbose_name="Продукт")
+    connected = models.DateField(null=True, verbose_name="Подключен")
+    profit = models.DateField(null=True, verbose_name="Бонус")
+    got = models.DateField(null=True, verbose_name="Получен")
+    connected_with_link = models.BooleanField(null=True, verbose_name="Подключен по ссылке")
+    redirections = models.PositiveIntegerField(default=0, verbose_name="Переходы")
+    screen = models.ImageField(upload_to=user_directory_path, null=True, verbose_name="скриншот")
+    comment = models.CharField(null=True, max_length=1000, verbose_name="Комментарий")
 
-    link = models.CharField(null=True, max_length=1000)
-    gain = models.PositiveIntegerField(default=0)
+    link = models.CharField(null=True, max_length=1000, verbose_name="Ссылка")
+    gain = models.PositiveIntegerField(default=0, verbose_name="Доход")
+
+    fully_verified = models.BooleanField(default=False, verbose_name="Полностью подтверждён")
 
     class Meta:
         verbose_name = "Пользовательские продукты"

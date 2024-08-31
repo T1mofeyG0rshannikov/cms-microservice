@@ -1,8 +1,8 @@
 from adminsortable2.admin import SortableAdminBase, SortableStackedInline
+from django import forms
 from django.contrib import admin
 from django.contrib.admin.widgets import AdminFileWidget
 from django.db import models
-from django.db.models import Q
 from django.utils.html import format_html, mark_safe
 
 from catalog.models.blocks import Block, CatalogPageTemplate
@@ -35,19 +35,32 @@ class CatalogPageTemplateAdmin(SortableAdminBase, admin.ModelAdmin):
 
 
 class CustomAdminFileWidget(AdminFileWidget):
+    height = 100
+
     def render(self, name, value, attrs=None, renderer=None):
         result = []
         try:
             if hasattr(value, "url"):
-                result.append(
-                    f"""<a href="{value.url}" target="_blank">
-                        <img
-                            src="{value.url}" alt="{value}"
-                            height="100"
-                            style="object-fit: cover; margin-right: 30px;"
-                        />
-                        </a>"""
-                )
+                if self.height:
+                    result.append(
+                        f"""<a href="{value.url}" target="_blank">
+                            <img
+                                src="{value.url}" alt="{value}"
+                                height="{self.height}"
+                                style="object-fit: cover; margin-right: 30px;"
+                            />
+                            </a>"""
+                    )
+                elif self.width:
+                    result.append(
+                        f"""<a href="{value.url}" target="_blank">
+                            <img
+                                src="{value.url}" alt="{value}"
+                                width="{self.width}"
+                                style="object-fit: cover; margin-right: 30px;"
+                            />
+                            </a>"""
+                    )
         except ValueError:
             pass
 
@@ -55,11 +68,66 @@ class CustomAdminFileWidget(AdminFileWidget):
         return format_html("".join(result))
 
 
-class ProductTypeRelationInline(BaseInline):
-    model = ProductTypeRelation
+class CustomOrganizationLogo(CustomAdminFileWidget):
+    height = None
+    width = 300
+
+
+def get_product_types():
+    product_types = [("", "---------")]
+    product_types.extend(list(ProductType.objects.all().values_list("id", "name")))
+
+    return product_types
+
+
+def get_initial_product_type(product_id, index):
+    product_types = list(
+        ProductTypeRelation.objects.select_related("type")
+        .filter(product_id=product_id)
+        .values_list("type_id", flat=True)
+    )
+
+    try:
+        return product_types[index]
+    except IndexError:
+        return 0
+
+
+class ProductAdminForm(forms.ModelForm):
+    product_types_choices = [("", "---------")] + [
+        (product_type.id, product_type.name) for product_type in ProductType.objects.all()
+    ]
+    type1 = forms.ChoiceField(label="Первый тип продукта", choices=product_types_choices, required=False)
+    type2 = forms.ChoiceField(label="Второй тип продукта", choices=product_types_choices, required=False)
+    type3 = forms.ChoiceField(label="Третий тип продукта", choices=product_types_choices, required=False)
+    type4 = forms.ChoiceField(label="Четвертый тип продукта", choices=product_types_choices, required=False)
+
+    class Meta:
+        model = Product
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        instance = kwargs.get("instance")
+        super().__init__(*args, **kwargs)
+
+        if instance:
+            # Здесь вы можете использовать ваш объект для изменения полей формы
+            self.fields["type1"].choices = get_product_types()
+            self.fields["type1"].initial = get_initial_product_type(instance, 0)
+
+            self.fields["type2"].choices = get_product_types()
+            self.fields["type2"].initial = get_initial_product_type(instance, 1)
+
+            self.fields["type3"].choices = get_product_types()
+            self.fields["type3"].initial = get_initial_product_type(instance, 2)
+
+            self.fields["type4"].choices = get_product_types()
+            self.fields["type4"].initial = get_initial_product_type(instance, 3)
 
 
 class ProductAdmin(admin.ModelAdmin):
+    form = ProductAdminForm
+
     list_display = [
         "image_tag",
         "name_tag",
@@ -72,7 +140,7 @@ class ProductAdmin(admin.ModelAdmin):
         "is_promote",
         "for_partners",
     ]
-    inlines = [LinkInline, ProductTypeRelationInline]
+    inlines = [LinkInline]
     formfield_overrides = {models.ImageField: {"widget": CustomAdminFileWidget}}
     ordering = ["organization"]
 
@@ -162,6 +230,10 @@ class ProductAdmin(admin.ModelAdmin):
                         "cover",
                         "name",
                         "category",
+                        "type1",
+                        "type2",
+                        "type3",
+                        "type4",
                         "annotation",
                         "profit",
                         "description",
@@ -181,6 +253,37 @@ class ProductAdmin(admin.ModelAdmin):
         )
         return fieldsets
 
+    def save_model(self, request, obj, form, change):
+        type1 = form.cleaned_data["type1"]
+        type2 = form.cleaned_data["type2"]
+        type3 = form.cleaned_data["type3"]
+        type4 = form.cleaned_data["type4"]
+
+        ProductTypeRelation.objects.filter(product=obj).delete()
+
+        if type1:
+            product_type1, _ = ProductTypeRelation.objects.update_or_create(
+                product=obj, type=ProductType.objects.get(id=type1)
+            )
+
+        if type2:
+            product_type2, _ = ProductTypeRelation.objects.update_or_create(
+                product=obj, type=ProductType.objects.get(id=type2)
+            )
+
+        if type3:
+            product_type3, _ = ProductTypeRelation.objects.update_or_create(
+                product=obj, type=ProductType.objects.get(id=type3)
+            )
+
+        if type4:
+            product_type4, _ = ProductTypeRelation.objects.update_or_create(
+                product=obj, type=ProductType.objects.get(id=type4)
+            )
+
+        # Вызовем метод сохранения объекта
+        super().save_model(request, obj, form, change)
+
 
 class OrganizationTypeAdmin(admin.ModelAdmin):
     pass
@@ -188,13 +291,15 @@ class OrganizationTypeAdmin(admin.ModelAdmin):
 
 class ProductInline(BaseInline):
     model = Product
+    fields = ["name"]
+    readonly_fields = ["name"]
     ordering = ["name"]
 
 
 class OrganizationAdmin(admin.ModelAdmin):
-    list_display = ["image_tag", "name_tag", "site", "products"]
+    list_display = ["image_tag", "name_tag", "type", "site", "products"]
     inlines = [ProductInline]
-    formfield_overrides = {models.ImageField: {"widget": CustomAdminFileWidget}}
+    formfield_overrides = {models.ImageField: {"widget": CustomOrganizationLogo}}
 
     def products(self, obj):
         return obj.products.count()
@@ -218,7 +323,7 @@ class OrganizationAdmin(admin.ModelAdmin):
             (
                 None,
                 {
-                    "fields": ("name", "type", "logo", "site", "admin_hint"),
+                    "fields": ("name", "type", "logo", "site", "admin_hint", "partner_program"),
                     "description": obj.admin_hint if obj else None,
                 },
             ),
@@ -227,11 +332,7 @@ class OrganizationAdmin(admin.ModelAdmin):
 
 
 class ProductTypeAdmin(admin.ModelAdmin):
-    list_display = ["name", "status", "products_tag"]
     prepopulated_fields = {"slug": ("name",)}
-
-    def products_tag(self, obj):
-        return f'{obj.products.filter(status="Опубликовано").count()} ({obj.products.filter(Q(status="Опубликовано") | Q(status="Черновик")).count()})'
 
 
 class ExclusiveCardAdmin(admin.ModelAdmin):

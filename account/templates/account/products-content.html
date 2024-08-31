@@ -11,16 +11,18 @@
 
 <hr />
 
+{% if products %}
+
 <div class="selects">
     <div>
-        <select name="level" id="level">
-            <option value="" {% if request.GET.level == "" %}selected{% endif %}>Все уровни</option>
-            <option value="1" {% if request.GET.level == "1" %}selected{% endif %}>Уровень 1</option>
-            <option value="2" {% if request.GET.level == "2" %}selected{% endif %}>Уровень 2</option>
-            <option value="3" {% if request.GET.level == "3" %}selected{% endif %}>Уровень 3</option>
+        <select name="category" id="category">
+            <option value="" {% if request.GET.category == "" %}selected{% endif %}>Все продукты</option>
+            {% for category in product_categories %}
+                <option value="{{ category.id }}" {% if request.GET.product_category == category.id %}selected{% endif %}>{{ category.name }}</option>
+            {% endfor %}
         </select>
 
-        <select name="" id="">
+        <select name="date" id="date">
             <option value="">Статистика за сегодня</option>
             <option value="">Статистика за вчера</option>
             <option value="">Статистика за 7 дней</option>
@@ -55,7 +57,12 @@
                 </td>
 
                 <td>{{ user_product.end_promotion }}</td>
-                <td>{{ user_product.connected }}</td>
+                <td>
+                    <span>
+                        {{ user_product.connected }}
+                        {% if user_product.fully_verified %}<img class="verified" src="{% static 'account/images/icoint_premium.png' %}"/>{% endif %}
+                    </span>
+                </td>
                 <td>{{ user_product.gain }}</td>
                 <td>{{ user_product.redirections }}</td>
 
@@ -76,10 +83,10 @@
 
 <div class="pagination">
     <div style="display: flex; gap: 50px;">
-        <p class="referrals-count">Всего продуктов: <a id="referrals-count">{{ count }}</a></p>
+        <p class="pagination-count">Всего продуктов: <a>{{ count }}</a></p>
         <div class="pages">
         {% if total_pages > 1 %}
-            <a {% if current_page == 1 %}class="active"{% endif %} onclick="loadPagination(1)">1</a>
+            <a {% if current_page == 1 %}class="active"{% endif %} onclick="loadUserProductsPagination(1)">1</a>
             {% if current_page > 4 %}
                 ...
             {% endif %}
@@ -88,7 +95,7 @@
                 {% for num in total_pages|create_range %}
                     {% if current_page < num and num < current_page|add:"3" %}
                         {% if num > 1 and num != total_pages %}
-                            <a {% if num == total_pages %}class="active"{% endif %} onclick="loadPagination({{ num }})">{{ num }}</a>
+                            <a {% if num == total_pages %}class="active"{% endif %} onclick="loadUserProductsPagination({{ num }})">{{ num }}</a>
                         {% endif %}
                     {% endif %}
                     {% endfor %}
@@ -97,7 +104,7 @@
                     {% for num in total_pages|create_range %}
                     {% if current_page|add:"-3" < num and num < current_page %}
                     {% if num != total_pages and num > 1 %}
-                    <a {% if num == total_pages %}class="active"{% endif %} onclick="loadPagination({{ num }})">{{ num }}</a>
+                    <a {% if num == total_pages %}class="active"{% endif %} onclick="loadUserProductsPagination({{ num }})">{{ num }}</a>
                     {% endif %}
                     {% endif %}
                 {% endfor %}
@@ -106,7 +113,7 @@
                 {% for num in total_pages|create_range %}
                     {% if current_page|add:"-2" < num and num < current_page|add:"2" %}
                         {% if num > 1 and num != total_pages %}
-                            <a {% if num == current_page %}class="active"{% endif %} onclick="loadPagination({{ num }}, {{ total_pages }})">{{ num }}</a>
+                            <a {% if num == current_page %}class="active"{% endif %} onclick="loadUserProductsPagination({{ num }}, {{ total_pages }})">{{ num }}</a>
                         {% endif %}
                     {% endif %}
                 {% endfor %}
@@ -117,7 +124,7 @@
             ...
             {% endif %}
 
-            <a {% if current_page == total_pages %}class="active"{% endif %} onclick="loadPagination({{ total_pages }}, {{ total_pages }})">{{ total_pages }}</a>
+            <a {% if current_page == total_pages %}class="active"{% endif %} onclick="loadUserProductsPagination({{ total_pages }}, {{ total_pages }})">{{ total_pages }}</a>
             {% endif %}
         </div>
     </div>
@@ -130,6 +137,10 @@
     </select>
 </div>
 
+{% else %}
+<h3>Вы еще не добавили ни одного продукта</h3>
+{% endif %}
+
 <form class="form choice-product-form">
 
 </form>
@@ -137,7 +148,3 @@
 <form class="form create-product-form" onsubmit="onSubmitCreateUserProductForm(this, event, 23)">
 
 </form>
-
-<script>
-    initProductsContent();
-</script>

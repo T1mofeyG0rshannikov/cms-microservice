@@ -5,8 +5,11 @@ from django.views import View
 from catalog.catalog_service.catalog_service import get_catalog_service
 from catalog.catalog_service.catalog_service_interface import CatalogServiceInterface
 from catalog.models.products import Organization, Product
+from catalog.products_service.products_service import get_products_service
 from catalog.serializers import ProductsSerializer
+from common.pagination import Pagination
 from domens.views.mixins import SubdomainMixin
+from user.serializers import UserProductsSerializer
 from user.views.base_user_view import UserFormsView
 
 
@@ -25,23 +28,29 @@ class ShowCatalogPage(SubdomainMixin):
 
 
 class GetProducts(View):
+    products_service = get_products_service()
+
     def get(self, request):
         organization = request.GET.get("organization")
 
-        filters = Q()
-
-        if organization:
-            try:
-                organization = Organization.objects.get(id=organization)
-
-                filters |= Q(organization=organization)
-            except Organization.DoesNotExist:
-                return JsonResponse({"error": f"no organization with id '{organization}'"})
-
-        user_products = request.user.products.values_list("product__id", flat=True).all()
-        products = (
-            Product.objects.select_related("category", "organization").filter(filters).exclude(id__in=user_products)
-        )
+        try:
+            products = self.products_service.filter_enabled_products(organization_id=organization, user=request.user)
+        except Organization.DoesNotExist:
+            return JsonResponse({"error": f"no organization with id '{organization}'"})
 
         products = ProductsSerializer(products, many=True).data
         return JsonResponse({"products": products})
+
+
+class GetUserProducts(View):
+    products_service = get_products_service()
+
+    def get(self, request):
+        product_category = request.GET.get("category")
+
+        products = self.products_service.filter_user_products(category_id=product_category, user=request.user)
+
+        pagination = Pagination(request)
+        products = pagination.paginate(products, "products", UserProductsSerializer)
+
+        return JsonResponse(products)
