@@ -22,10 +22,14 @@ class UserSerializer(serializers.ModelSerializer):
 class UserProductsSerializer(serializers.ModelSerializer):
     product = ProductsSerializer()
     end_promotion = serializers.SerializerMethodField()
+    created = serializers.SerializerMethodField()
 
     class Meta:
         model = UserProduct
-        fields = ["product", "connected", "gain", "end_promotion", "redirections", "fully_verified"]
+        fields = ["product", "connected", "gain", "end_promotion", "redirections", "fully_verified", "created"]
 
     def get_end_promotion(self, user_product):
         return user_product.product.get_end_promotion.strftime("%d.%m.%Y")
+
+    def get_created(self, user_product):
+        return user_product.created_at.strftime("%d.%m.%Y")

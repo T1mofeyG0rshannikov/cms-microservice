@@ -1,4 +1,4 @@
-function renderProducts(products){
+function renderUserProducts(products){
     let productsHTML = '';
     for (let user_product of products){
         const productHTML = `
@@ -13,7 +13,7 @@ function renderProducts(products){
             </td>
 
             <td>${ user_product.end_promotion }</td>
-            <td>${ user_product.connected }</td>
+            <td>${ user_product.created }</td>
             <td>${ user_product.gain }</td>
             <td>${ user_product.redirections }</td>
 
@@ -34,10 +34,45 @@ function renderProducts(products){
     document.querySelector("tbody").innerHTML = productsHTML;
 }
 
-function loadUserProducts(organizationId){
+function renderProducts(products){
+    let productsHTML = '';
+    for (let product of products){
+        productsHTML +=
+        `<div class="product" onclick="choiceProduct(${ product.id })">
+            <img src="${ product.image }" alt="${ product.name }">
+            <div>
+                <p>${ product.name }</p>
+                <p>${ product.organization }</p>
+            </div>
+        </div>`;
+    }
+
+    choiceProductForm.querySelector('.products').innerHTML = productsHTML.length > 0 ? productsHTML : `<p>Нет финансовых продуктов</p>`;
+}
+
+function loadProducts(organizationId){
     fetch(`/products?organization=${organizationId}`).then(response => response.json()).then(response => {
         console.log(response.products);
         renderProducts(response.products);
+    })
+}
+
+function loadUserProducts(page=1){
+    const category = $("select[name=category]").val();
+    const page_size = $("select[name=page_size]").val();
+    const date = $("select[name=date]").val();
+
+    fetch(`/user-products?category=${category}&page_size=${page_size}&date=${date}&page=${page}`).then(response => {
+        if (response.status === 200){
+            response.json().then(response => {
+                console.log(response);
+                renderUserProducts(response.products);
+                console.log(response.total_pages);
+                renderProductsPagination(page, response.total_pages);
+                rememberProductsFilters();
+                changePaginationCount(response.count);
+            })
+        }
     })
 }
 
@@ -139,45 +174,15 @@ function changeProductLink(event){
     })
 }
 
-function filterProducts(event){
-    fetch(`/user-products?category=${event.target.value}`).then(
-        response => response.json()
-    ).then(response => {
-        console.log(response);
-        renderProducts(response.products)
-        renderProductsPagination(1, response.total_pages);
-        rememberProductsFilters();
-        addPageToSearch(1);
-        changePaginationCount(response.count);
-    })
-}
 
 function initUserProducts(){
-    document.querySelector("select[name=category").addEventListener("change", filterProducts);
-
-    document.querySelector("select[name=page_size]").addEventListener("change", () => {
-        const category = $("select[name=category]").val();
-        const page_size = $("select[name=page_size]").val();
-        const date = $("select[name=date]").val();
-
-        fetch(`/user-products?category=${category}&page_size=${page_size}&date=${date}`).then(response => {
-            if (response.status === 200){
-                response.json().then(response => {
-                    console.log(response);
-                    renderProducts(response.products);
-                    console.log(response.total_pages);
-                    renderProductsPagination(1, response.total_pages);
-                    rememberProductsFilters();
-                    changeProductsPaginationCount(response.count);
-                })
-            }
-        })
-    });
+    document.querySelector("select[name=category").addEventListener("change", () => loadUserProducts());
+    document.querySelector("select[name=page_size]").addEventListener("change", () => loadUserProducts());
 }
 
 
 function renderProductsPagination(pageNum, totalPages){
-    let pagination = `<a ${ pageNum == 1 ? 'class="active"' : "" } onclick="loadUserProductsPagination(1)">1</a>`;
+    let pagination = `<a ${ pageNum == 1 ? 'class="active"' : "" } onclick="loadUserProducts(1)">1</a>`;
 
     if (pageNum > 4){
         pagination += `...`;
@@ -187,7 +192,7 @@ function renderProductsPagination(pageNum, totalPages){
         for (let num = 1; num <= totalPages; num++){
             if (pageNum < num && num < pageNum + 3){
                 if (num != 1 && num != totalPages){
-                    pagination += `<a ${ num == pageNum ? 'class="active"' : "" } onclick="loadUserProductsPagination(${ num })">${ num }</a>`;
+                    pagination += `<a ${ num == pageNum ? 'class="active"' : "" } onclick="loadUserProducts(${ num })">${ num }</a>`;
                 }
             }
         }
@@ -197,7 +202,7 @@ function renderProductsPagination(pageNum, totalPages){
         for (let num = 1; num <= totalPages; num++){
             if (pageNum-3 < num && num < pageNum){
                 if (num != totalPages && num != 1){
-                    pagination += `<a ${ num == pageNum ? 'class="active"' : "" } onclick="loadUserProductsPagination(${ num }, ${totalPages})">${ num }</a>`;
+                    pagination += `<a ${ num == pageNum ? 'class="active"' : "" } onclick="loadUserProducts(${ num }, ${totalPages})">${ num }</a>`;
                 }
             }
         }
@@ -206,7 +211,7 @@ function renderProductsPagination(pageNum, totalPages){
         for (let num =1; num <= totalPages; num++){
             if (pageNum-2 < num && num < pageNum + 2){
                 if (num != totalPages && num != 1){
-                    pagination += `<a ${ num == pageNum ? 'class="active"' : "" } onclick="loadUserProductsPagination(${ num }, ${totalPages})">${ num }</a>`;
+                    pagination += `<a ${ num == pageNum ? 'class="active"' : "" } onclick="loadUserProducts(${ num }, ${totalPages})">${ num }</a>`;
                 }
             }
         }
@@ -217,7 +222,7 @@ function renderProductsPagination(pageNum, totalPages){
     }
 
     if (totalPages > 1){
-        pagination += `<a ${ pageNum == totalPages ? 'class="active"' : "" } onclick="loadUserProductsPagination(${ totalPages }, ${totalPages})">${ totalPages }</a>`;
+        pagination += `<a ${ pageNum == totalPages ? 'class="active"' : "" } onclick="loadUserProducts(${ totalPages }, ${totalPages})">${ totalPages }</a>`;
     }
 
     if (totalPages > 1){
@@ -249,26 +254,6 @@ function addPageToSearch(page){
     url.searchParams.set('page', page);
 
     window.history.replaceState(null, '', window.location.pathname + url.search);
-}
-
-function loadProductsPagination(pageNum){
-    const category = $("select[name=category]").val();
-    const page_size = $("select[name=page_size]").val();
-    const date = $("select[name=date]").val();
-
-    fetch(`/user-products?category=${category}&page_size=${page_size}&page=${pageNum}&date=${date}`).then(response => {
-        if (response.status === 200){
-            response.json().then(response => {
-                console.log(response);
-                renderProducts(response.products);
-                renderProductsPagination(pageNum, response.total_pages);
-
-                rememberProductsFilters();
-                addPageToSearch(pageNum);
-                changePaginationCount(response.count);
-            })
-        }
-    })
 }
 
 initUserProducts();

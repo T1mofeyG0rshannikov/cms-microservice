@@ -33,7 +33,7 @@ class ProductsService:
         if category_id:
             filters &= Q(product__category_id=category_id)
 
-        return UserProduct.objects.filter(filters)
+        return list(UserProduct.objects.filter(filters)) * 60
 
 
 def get_products_service() -> ProductsService:

@@ -18,7 +18,7 @@ class UserSocialNetwork(models.Model):
 
 class UserMessanger(models.Model):
     user = models.OneToOneField(
-        "user.User", related_name="messanger", on_delete=models.CASCADE, verbose_name="Пользователь"
+        "user.User", related_name="messanger", on_delete=models.CASCADE, verbose_name="Пользователь", null=True
     )
-    messanger = models.ForeignKey(Messanger, on_delete=models.CASCADE, verbose_name="Соц. сеть")
+    messanger = models.ForeignKey(Messanger, on_delete=models.CASCADE, verbose_name="Соц. сеть", null=True)
     adress = models.CharField(verbose_name="адресс", max_length=100)

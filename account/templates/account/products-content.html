@@ -59,7 +59,7 @@
                 <td>{{ user_product.end_promotion }}</td>
                 <td>
                     <span>
-                        {{ user_product.connected }}
+                        {{ user_product.created }}
                         {% if user_product.fully_verified %}<img class="verified" src="{% static 'account/images/icoint_premium.png' %}"/>{% endif %}
                     </span>
                 </td>
@@ -86,7 +86,7 @@
         <p class="pagination-count">Всего продуктов: <a>{{ count }}</a></p>
         <div class="pages">
         {% if total_pages > 1 %}
-            <a {% if current_page == 1 %}class="active"{% endif %} onclick="loadUserProductsPagination(1)">1</a>
+            <a {% if current_page == 1 %}class="active"{% endif %} onclick="loadUserProducts(1)">1</a>
             {% if current_page > 4 %}
                 ...
             {% endif %}
@@ -95,7 +95,7 @@
                 {% for num in total_pages|create_range %}
                     {% if current_page < num and num < current_page|add:"3" %}
                         {% if num > 1 and num != total_pages %}
-                            <a {% if num == total_pages %}class="active"{% endif %} onclick="loadUserProductsPagination({{ num }})">{{ num }}</a>
+                            <a {% if num == total_pages %}class="active"{% endif %} onclick="loadUserProducts({{ num }})">{{ num }}</a>
                         {% endif %}
                     {% endif %}
                     {% endfor %}
@@ -104,7 +104,7 @@
                     {% for num in total_pages|create_range %}
                     {% if current_page|add:"-3" < num and num < current_page %}
                     {% if num != total_pages and num > 1 %}
-                    <a {% if num == total_pages %}class="active"{% endif %} onclick="loadUserProductsPagination({{ num }})">{{ num }}</a>
+                    <a {% if num == total_pages %}class="active"{% endif %} onclick="loadUserProducts({{ num }})">{{ num }}</a>
                     {% endif %}
                     {% endif %}
                 {% endfor %}
@@ -113,7 +113,7 @@
                 {% for num in total_pages|create_range %}
                     {% if current_page|add:"-2" < num and num < current_page|add:"2" %}
                         {% if num > 1 and num != total_pages %}
-                            <a {% if num == current_page %}class="active"{% endif %} onclick="loadUserProductsPagination({{ num }}, {{ total_pages }})">{{ num }}</a>
+                            <a {% if num == current_page %}class="active"{% endif %} onclick="loadUserProducts({{ num }}, {{ total_pages }})">{{ num }}</a>
                         {% endif %}
                     {% endif %}
                 {% endfor %}
@@ -124,7 +124,7 @@
             ...
             {% endif %}
 
-            <a {% if current_page == total_pages %}class="active"{% endif %} onclick="loadUserProductsPagination({{ total_pages }}, {{ total_pages }})">{{ total_pages }}</a>
+            <a {% if current_page == total_pages %}class="active"{% endif %} onclick="loadUserProducts({{ total_pages }}, {{ total_pages }})">{{ total_pages }}</a>
             {% endif %}
         </div>
     </div>

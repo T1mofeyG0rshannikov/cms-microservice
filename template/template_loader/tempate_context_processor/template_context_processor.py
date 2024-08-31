@@ -89,7 +89,6 @@ class TemplateContextProcessor(TemplateContextProcessorInterface):
 
     def get_manuals_template_context(self, request):
         context = self.get_context(request)
-
         context["manuals"] = Document.objects.values("title", "slug").all()
 
         return context
