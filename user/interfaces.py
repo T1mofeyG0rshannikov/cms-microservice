@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from domens.interfaces import DomainInterface, SiteInterface
-from user.models.product import UserProduct
 
 
 @dataclass
@@ -22,7 +21,6 @@ class UserInterface:
 
     register_on_site: SiteInterface | None
     register_on_domain: DomainInterface | None
-    products: list[UserProduct]
 
 
 @dataclass

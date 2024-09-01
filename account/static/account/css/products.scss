@@ -8,7 +8,7 @@
 
     select{
         margin-bottom: 20px;
-        width: 300px;
+        width: 100%;
     }
 
     .products{
@@ -109,7 +109,7 @@
                     margin-bottom: 2px;
                 }
 
-                img{
+                img.logo{
                     height: 75px;
                 }
             }
@@ -129,18 +129,6 @@
             &.w100{
                 input, .field{
                     width: 100%;
-                }
-            }
-
-            .field-title{
-                display: flex;
-                align-items: center;
-                gap: 5px;
-                margin-bottom: 5px;
-                margin-top: 10px;
-
-                a, p{
-                    margin: 0;
                 }
             }
         }
@@ -181,13 +169,28 @@
 
         .hints{
             display: flex;
-            justify-content: space-between;
+            align-items: flex-end;
+            flex-direction: column;
             margin-top: 15px;
 
             a{
                 color: var(--light-ref-color);
                 margin: 0;
             }
+        }
+    }
+
+    .field-title{
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-bottom: 5px;
+        margin-top: 10px;
+
+        a, p{
+            margin: 0;
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
         }
     }
 }
@@ -227,4 +230,10 @@ table{
             width: 20px;
         }
     }
+}
+
+.no-products{
+    text-align: center;
+    font-size: var(--service-font-size);
+    font-family: var(--main-text-font-family);
 }

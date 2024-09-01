@@ -7,18 +7,17 @@ from user.models.product import UserProduct
 
 class ProductsService:
     @staticmethod
-    def get_enabled_products_to_create(user: UserInterface) -> list[Product]:
-        user_products = user.products.values_list("product__id", flat=True).all()
+    def get_enabled_products_to_create(user_id: int) -> list[Product]:
         products = (
             Product.objects.select_related("category", "organization")
-            .exclude(id__in=user_products)
+            .exclude(user_products__user_id=user_id)
             .filter(status="Опубликовано")
         )
 
         return products
 
     def filter_enabled_products(self, organization_id: int, user: UserInterface) -> list[Product]:
-        products = self.get_enabled_products_to_create(user)
+        products = self.get_enabled_products_to_create(user.id)
 
         if organization_id:
             organization = Organization.objects.get(id=organization_id)
@@ -33,7 +32,7 @@ class ProductsService:
         if category_id:
             filters &= Q(product__category_id=category_id)
 
-        return list(UserProduct.objects.filter(filters)) * 60
+        return UserProduct.objects.filter(filters)
 
 
 def get_products_service() -> ProductsService:

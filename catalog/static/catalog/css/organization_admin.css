@@ -1,0 +1,7 @@
+#products-group .inline-related fieldset.module{
+    display: flex;
+}
+
+input[name=partner_program]{
+    width: 100%;
+}

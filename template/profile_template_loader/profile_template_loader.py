@@ -1,18 +1,18 @@
 from domens.domain_service.domain_service import DomainService
+from template.profile_template_loader.context_processor.context_processor import (
+    ProfileTemplateContextProcessor,
+    get_profile_template_context_processor,
+)
 from template.profile_template_loader.profile_template_loader_interface import (
     ProfileTemplateLoaderInterface,
 )
 from template.template_loader.base_template_loader import BaseTemplateLoader
-from template.template_loader.tempate_context_processor.template_context_processor import (
-    TemplateContextProcessor,
-    get_template_context_processor,
-)
 
 
 class ProfileTemplateLoader(BaseTemplateLoader, ProfileTemplateLoaderInterface):
     app_name = "account"
 
-    def __init__(self, context_processor: TemplateContextProcessor):
+    def __init__(self, context_processor: ProfileTemplateContextProcessor):
         self.context_processor = context_processor
 
     def load_template(self, template_name: str, request=None, context=None) -> str | None:
@@ -63,4 +63,4 @@ class ProfileTemplateLoader(BaseTemplateLoader, ProfileTemplateLoaderInterface):
 
 
 def get_profile_template_loader() -> ProfileTemplateLoader:
-    return ProfileTemplateLoader(get_template_context_processor())
+    return ProfileTemplateLoader(get_profile_template_context_processor())

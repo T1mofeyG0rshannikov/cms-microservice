@@ -1,0 +1,23 @@
+.timezonewarning{
+    display: none;
+}
+
+.field-promotion .flex-container{
+    align-items: center;
+}
+
+.field-start_promotion .inline{
+    width: 80px;
+}
+
+label[for=id_type2], label[for=id_type3], label[for=id_type4]{
+    display: none;
+}
+
+select[name=type1], select[name=type2], select[name=type3], select[name=type4]{
+    width: 160px;
+}
+
+.field-type1, .field-type2, .field-type3, .field-type4{
+    margin-right: 10px!important;
+}

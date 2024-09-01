@@ -97,10 +97,10 @@ class ProductAdminForm(forms.ModelForm):
     product_types_choices = [("", "---------")] + [
         (product_type.id, product_type.name) for product_type in ProductType.objects.all()
     ]
-    type1 = forms.ChoiceField(label="Первый тип продукта", choices=product_types_choices, required=False)
-    type2 = forms.ChoiceField(label="Второй тип продукта", choices=product_types_choices, required=False)
-    type3 = forms.ChoiceField(label="Третий тип продукта", choices=product_types_choices, required=False)
-    type4 = forms.ChoiceField(label="Четвертый тип продукта", choices=product_types_choices, required=False)
+    type1 = forms.ChoiceField(label="Тип", choices=product_types_choices, required=False)
+    type2 = forms.ChoiceField(label="", choices=product_types_choices, required=False)
+    type3 = forms.ChoiceField(label="", choices=product_types_choices, required=False)
+    type4 = forms.ChoiceField(label="", choices=product_types_choices, required=False)
 
     class Meta:
         model = Product
@@ -143,17 +143,6 @@ class ProductAdmin(admin.ModelAdmin):
     inlines = [LinkInline]
     formfield_overrides = {models.ImageField: {"widget": CustomAdminFileWidget}}
     ordering = ["organization"]
-
-    '''def type(self, obj):
-        if obj.types.first():
-            if obj.types.count() > 1:
-                return f"{obj.types.first()} + {obj.types.count() - 1}"
-
-            return obj.types.first()
-
-        return ""
-
-    type.short_description = "Тип продукта"'''
 
     def is_promote(self, obj):
         if obj.promote:
@@ -211,7 +200,7 @@ class ProductAdmin(admin.ModelAdmin):
     name_tag.allow_tags = True
 
     class Media:
-        css = {"all": ("catalog/css/custom_admin.css",)}
+        css = {"all": ("catalog/css/product_admin.css",)}
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
@@ -230,10 +219,7 @@ class ProductAdmin(admin.ModelAdmin):
                         "cover",
                         "name",
                         "category",
-                        "type1",
-                        "type2",
-                        "type3",
-                        "type4",
+                        ("type1", "type2", "type3", "type4"),
                         "annotation",
                         "profit",
                         "description",
@@ -291,9 +277,92 @@ class OrganizationTypeAdmin(admin.ModelAdmin):
 
 class ProductInline(BaseInline):
     model = Product
-    fields = ["name"]
-    readonly_fields = ["name"]
+
+    readonly_fields = [
+        "image_tag",
+        "name_tag",
+        "status_tag",
+        "category",
+        "organization",
+        "created_at_tag",
+        "end_promotion_tag",
+        "links",
+        "is_promote",
+        "for_partners",
+    ]
+
+    fields = (
+        "image_tag",
+        "name_tag",
+        "status_tag",
+        "category",
+        "organization",
+        "created_at_tag",
+        "end_promotion_tag",
+        "links",
+        "is_promote",
+        "for_partners",
+    )
+
     ordering = ["name"]
+
+    def is_promote(self, obj):
+        if obj.promote:
+            return True
+
+        return False
+
+    def for_partners(self, obj):
+        return obj.partner_program
+
+    for_partners.short_description = "Партнерам"
+
+    is_promote.boolean = True
+    is_promote.short_description = "Промо"
+
+    def links(self, obj):
+        return obj.links.count()
+
+    links.short_description = "Ссылки"
+
+    def status_tag(self, obj):
+        if obj.status == "Опубликовано":
+            return True
+
+        if obj.status == "Архив":
+            return False
+
+        return None
+
+    status_tag.boolean = True
+    status_tag.short_description = "статус"
+
+    def name_tag(self, obj):
+        return mark_safe(f'<a href="/admin/catalog/product/{obj.pk}/change/" >{obj.name}</a>')
+
+    def image_tag(self, obj):
+        return mark_safe('<img src="%s" height="35" />' % (obj.cover.url))
+
+    def created_at_tag(self, obj):
+        return obj.created_at.strftime("%Y-%m-%d")
+
+    def end_promotion_tag(self, obj):
+        return obj.get_end_promotion.strftime("%Y-%m-%d")
+
+    image_tag.short_description = "картинка"
+    image_tag.allow_tags = True
+
+    created_at_tag.short_description = "дата создания"
+    created_at_tag.allow_tags = True
+
+    end_promotion_tag.short_description = "Акция"
+    end_promotion_tag.allow_tags = True
+
+    name_tag.short_description = "имя"
+    name_tag.allow_tags = True
+
+    def has_add_permission(self, *args, **kwargs):
+        return False
 
 
 class OrganizationAdmin(admin.ModelAdmin):
@@ -329,6 +398,9 @@ class OrganizationAdmin(admin.ModelAdmin):
             ),
         )
         return fieldsets
+
+    class Media:
+        css = {"all": ("catalog/css/organization_admin.css",)}
 
 
 class ProductTypeAdmin(admin.ModelAdmin):

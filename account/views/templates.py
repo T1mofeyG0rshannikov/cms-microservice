@@ -11,11 +11,11 @@ from materials.models import Document
 from notifications.models import UserNotification
 from notifications.serializers import UserNotificationSerializer
 from settings.views import SettingsMixin
-from template.template_loader.tempate_context_processor.template_context_processor import (
-    get_template_context_processor,
+from template.profile_template_loader.context_processor.context_processor import (
+    get_profile_template_context_processor,
 )
-from template.template_loader.tempate_context_processor.template_context_processor_interface import (
-    TemplateContextProcessorInterface,
+from template.profile_template_loader.context_processor.context_processor_interface import (
+    ProfileTemplateContextProcessorInterface,
 )
 from template.template_loader.template_loader import get_template_loader
 from template.template_loader.template_loader_interface import TemplateLoaderInterface
@@ -42,7 +42,7 @@ class SiteView(BaseProfileView):
 
 class RefsView(BaseProfileView):
     template_name = "account/refs.html"
-    template_context_processor: TemplateContextProcessorInterface = get_template_context_processor()
+    template_context_processor: ProfileTemplateContextProcessorInterface = get_profile_template_context_processor()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -59,7 +59,7 @@ class RefsView(BaseProfileView):
 
 class ManualsView(BaseProfileView):
     template_name = "account/manuals.html"
-    template_context_processor: TemplateContextProcessorInterface = get_template_context_processor()
+    template_context_processor: ProfileTemplateContextProcessorInterface = get_profile_template_context_processor()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -141,7 +141,7 @@ class DocumentPage(SettingsMixin):
 
 class UserProductsView(BaseProfileView):
     template_name = "account/products.html"
-    template_context_processor: TemplateContextProcessorInterface = get_template_context_processor()
+    template_context_processor: ProfileTemplateContextProcessorInterface = get_profile_template_context_processor()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
