@@ -1,24 +1,25 @@
-from django.db.models import Count, Q
-
 from account.models import Messanger
 from account.referrals_service.referrals_service import get_referral_service
 from account.referrals_service.referrals_service_interface import (
     ReferralServiceInterface,
 )
-from catalog.models.products import Organization, Product
+from catalog.models.products import Product
 from catalog.products_service.products_service import get_products_service
-from catalog.serializers import ProductSerializer, ProductsSerializer
+from catalog.products_service.products_service_interface import ProductsServiceInterface
+from catalog.serializers import ProductSerializer
 from domens.domain_service.domain_service import DomainService
+from materials.models import Document
 from settings.models import Domain, SiteSettings, SocialNetwork, UserFont
 from template.template_loader.tempate_context_processor.base_context_processor import (
     BaseContextProcessor,
 )
+from user.models.product import UserProduct
 
 from .template_context_processor_interface import TemplateContextProcessorInterface
 
 
 class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInterface):
-    def __init__(self, referral_service: ReferralServiceInterface, products_service):
+    def __init__(self, referral_service: ReferralServiceInterface, products_service: ProductsServiceInterface):
         self.referral_service = referral_service
         self.products_service = products_service
 
@@ -56,19 +57,8 @@ class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInt
 
     def get_choice_product_form(self, request):
         context = self.get_context(request)
-        context["organizations"] = (
-            Organization.objects.annotate(
-                count=Count("products", filter=Q(products__status="Опубликовано")),
-                user_products_count=Count("products", filter=Q(products__user_products__user=request.user)),
-            )
-            .values("name", "id")
-            .filter(count__gte=1, user_products_count__lte=0)
-            .order_by("name")
-        )
-
-        products = self.products_service.get_enabled_products_to_create(request.user)
-
-        context["products"] = ProductsSerializer(products, many=True).data
+        context["organizations"] = self.products_service.get_enabled_organizations(request.user.id)
+        context["products"] = self.products_service.get_enabled_products_to_create(request.user.id)
 
         return context
 
@@ -81,10 +71,36 @@ class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInt
             product = Product.objects.get(id=product_id)
             context["product"] = ProductSerializer(product).data
 
+            if UserProduct.objects.filter(user=request.user, product=product, deleted=False).exists():
+                context["user_product"] = UserProduct.objects.filter(user=request.user, product=product).first()
+
         except Product.DoesNotExist:
             pass
 
         return context
+
+    def get_product_description_popup(self, request):
+        product_id = request.GET.get("product")
+        context = dict()
+        context["product"] = (
+            Product.objects.select_related("organization")
+            .values("partner_description", "organization__partner_program")
+            .get(id=product_id)
+        )
+
+        return context
+
+    def get_delete_product_popup(self, request):
+        product_id = request.GET.get("product")
+        context = dict()
+        context["product"] = UserProduct.objects.values("id").get(id=product_id)
+
+        return context
+
+    def get_document_popup(self, request):
+        document_slug = request.GET.get("document")
+
+        return {"document": Document.objects.values("name", "text").get(slug=document_slug)}
 
 
 def get_template_context_processor() -> TemplateContextProcessor:

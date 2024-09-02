@@ -68,10 +68,10 @@
 
                 <td>
                     <div class="icons">
-                        <img src="{% static 'account/images/settings.png' %}" />
+                        <img onclick="choiceProduct({{ user_product.product.id }})" src="{% static 'account/images/settings.png' %}" />
                         <img src="{% static 'account/images/icoint_stat.png' %}" />
-                        <img src="{% static 'account/images/icoint_doc.png' %}" />
-                        <img src="{% static 'account/images/icoint_del.png' %}" />
+                        <img onclick="openProductDescription({{ user_product.product.id }})" src="{% static 'account/images/icoint_doc.png' %}" />
+                        <img onclick="openDeleteProductPopup({{ user_product.id }})" src="{% static 'account/images/icoint_del.png' %}" />
                     </div>
                 </td>
             </tr>
@@ -129,8 +129,8 @@
         </div>
     </div>
 
-        <select name="page_size" id="page_size" class="no-border">
-            <option value="10" selected>10 на странице</option>
+    <select name="page_size" id="page_size" class="no-border">
+        <option value="10" selected>10 на странице</option>
         <option value="25">25 на странице</option>
         <option value="50">50 на странице</option>
         <option value="100">100 на странице</option>

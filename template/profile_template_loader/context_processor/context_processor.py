@@ -7,6 +7,7 @@ from account.referrals_service.referrals_service_interface import (
 from account.serializers import ReferralsSerializer
 from catalog.models.product_type import ProductCategory
 from catalog.products_service.products_service import get_products_service
+from catalog.products_service.products_service_interface import ProductsServiceInterface
 from common.pagination import Pagination
 from materials.models import Document
 from template.profile_template_loader.context_processor.context_processor_interface import (
@@ -19,7 +20,7 @@ from user.serializers import UserProductsSerializer
 
 
 class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateContextProcessorInterface):
-    def __init__(self, referral_service: ReferralServiceInterface, products_service):
+    def __init__(self, referral_service: ReferralServiceInterface, products_service: ProductsServiceInterface):
         self.referral_service = referral_service
         self.products_service = products_service
 
@@ -57,10 +58,10 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
 
     def get_products_template_context(self, request):
         context = self.get_context(request)
-        product_categories = ProductCategory.objects.annotate(
+
+        context["product_categories"] = ProductCategory.objects.annotate(
             count=Count("products", filter=Q(products__user_products__user=request.user))
         ).filter(count__gte=1)
-        context["product_categories"] = product_categories
 
         product_category = request.GET.get("product_category")
 

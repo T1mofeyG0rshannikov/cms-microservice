@@ -1,0 +1,14 @@
+{% load static %}
+
+<div class="popup-background document-popup">
+    <div class="description-popup popup">
+        <div class="title">
+            <h3>{{ document.name }}</h3>
+            <img onclick="closeDocumentPopup()" class="cross" src="{% static 'blocks/images/cross-gray.png' %}" />
+        </div>
+
+        <div class="text">
+            <a>{{ document.text|safe }}</a>
+        </div>
+    </div>
+</div>

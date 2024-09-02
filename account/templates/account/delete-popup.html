@@ -1,0 +1,19 @@
+{% load static %}
+
+<div class="popup-background delete-popup">
+    <div class="popup description-popup">
+        <div class="title">
+            <h3>Удаление продукта</h3>
+            <img onclick="closeDeleteProduct()" class="cross" src="{% static 'blocks/images/cross-gray.png' %}" />
+        </div>
+
+        <div class="text">
+            <a><p>Вы действительно хотите удалить продукт?</p></a>
+        </div>
+
+        <div class="buttons">
+            <button onclick="deleteProduct({{ product.id }})" class="bc-mc"><a>Удалить</a></button>
+            <button onclick="closeDeleteProduct()"><a style="color: black !important;">Отменить</a></button>
+        </div>
+    </div>
+</div>

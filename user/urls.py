@@ -3,7 +3,7 @@ from django.urls import path
 from user.views.auth import Login, Logout, RegisterUser, SetToken
 from user.views.email import ConfirmEmail, ConfirmNewEmail
 from user.views.password import ResetPassword, SendMailToResetPassword, SetPassword
-from user.views.views import GetUserInfo
+from user.views.views import DeleteUserProduct, GetUserInfo
 
 urlpatterns = [
     path("register", RegisterUser.as_view()),
@@ -15,5 +15,6 @@ urlpatterns = [
     path("confirm-new-email/<str:token>", ConfirmNewEmail.as_view()),
     path("reset-password", SendMailToResetPassword.as_view()),
     path("set-token/<str:token>", SetToken.as_view()),
+    path("delete-user-product", DeleteUserProduct.as_view()),
     path("logout", Logout.as_view()),
 ]

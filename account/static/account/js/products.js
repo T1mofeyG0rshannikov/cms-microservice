@@ -41,7 +41,7 @@ function renderProducts(products){
         `<div class="product" onclick="choiceProduct(${ product.id })">
             <img src="${ product.image }" alt="${ product.name }">
             <div>
-                <p>${ product.name }</p>
+                <p class="fw600">${ product.name }</p>
                 <p>${ product.organization }</p>
             </div>
         </div>`;
@@ -263,20 +263,43 @@ function closeCreateProductForm(){
     openForm(choiceProductForm);
 }
 
-function openTextPopup(element){
-    element.style.display = "block";
-}
-
-function openProductDescription(){
-    const element = document.querySelector(".product-description")
-    openTextPopup(element);
-}
-
-function closeTextPopup(element){
-    element.style.display = "none";
+function openProductDescription(productId){
+    fetch(`/get-product-description-popup?product=${productId}`).then(response => response.json()).then(response => {
+        const popup = document.createElement('div');
+        document.body.appendChild(popup);
+        console.log(popup);
+        popup.outerHTML = response.content;
+        const element = document.querySelector(".text-popup")
+        openTextPopup(element);
+    })
 }
 
 function closeProductDescription(){
-    const element = document.querySelector(".product-description");
+    const element = document.querySelector(".text-popup");
     closeTextPopup(element);
+}
+
+function closeDeleteProduct(){
+    const element = document.querySelector(".delete-popup");
+    closeTextPopup(element);
+}
+
+function openDeleteProductPopup(productId){
+    fetch(`/get-delete-product-popup?product=${productId}`).then(response => response.json()).then(response => {
+        const popup = document.createElement('div');
+        document.body.appendChild(popup);
+        console.log(popup);
+        popup.outerHTML = response.content;
+        const element = document.querySelector(".delete-popup")
+        openTextPopup(element);
+    })
+}
+
+function deleteProduct(productId){
+    fetch(`/user/delete-user-product?product=${productId}`, {method: "delete", body: `product=${productId}`}).then(response => {
+        if (response.status === 204){
+            console.log("success");
+            window.location.reload();
+        }
+    })
 }

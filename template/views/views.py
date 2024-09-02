@@ -31,28 +31,27 @@ def slug_router(request, slug):
     return PageNotFound.as_view()(request)
 
 
-class GetChangeUserFormTemplate(View):
+class BaseTemplateLoadView(View):
     template_loader = get_template_loader()
 
     def get(self, request):
-        template = self.template_loader.load_change_user_form(request)
+        template = self.get_content(request)
         return JsonResponse({"content": template})
 
 
-class GetChangeSiteFormTemplate(View):
-    template_loader = get_template_loader()
-
-    def get(self, request):
-        template = self.template_loader.load_change_site_form(request)
-        return JsonResponse({"content": template})
+class GetChangeUserFormTemplate(BaseTemplateLoadView):
+    def get_content(self, request):
+        return self.template_loader.load_change_user_form(request)
 
 
-class GetChangeSocialsFormTemplate(View):
-    template_loader = get_template_loader()
+class GetChangeSiteFormTemplate(BaseTemplateLoadView):
+    def get_content(self, request):
+        return self.template_loader.load_change_site_form(request)
 
-    def get(self, request):
-        template = self.template_loader.load_change_socials_form(request)
-        return JsonResponse({"content": template})
+
+class GetChangeSocialsFormTemplate(BaseTemplateLoadView):
+    def get_content(self, request):
+        return self.template_loader.load_change_socials_form(request)
 
 
 class PageNotFound(SubdomainMixin):
@@ -100,17 +99,21 @@ class UserProductsTemplate(View):
         return JsonResponse(self.template_loader.load_products_template(request))
 
 
-class GetChoiceProductForm(View):
-    template_loader = get_template_loader()
-
-    def get(self, request):
-        template = self.template_loader.load_choice_product_form(request)
-        return JsonResponse({"content": template})
+class GetChoiceProductForm(BaseTemplateLoadView):
+    def get_content(self, request):
+        return self.template_loader.load_choice_product_form(request)
 
 
-class GetCreateUserProductForm(View):
-    template_loader = get_template_loader()
+class GetCreateUserProductForm(BaseTemplateLoadView):
+    def get_content(self, request):
+        return self.template_loader.load_create_user_product_form(request)
 
-    def get(self, request):
-        template = self.template_loader.load_create_user_product_form(request)
-        return JsonResponse({"content": template})
+
+class GetProductDescriptionPopup(BaseTemplateLoadView):
+    def get_content(self, request):
+        return self.template_loader.load_product_description_popup(request)
+
+
+class GetDeleteProductPopup(BaseTemplateLoadView):
+    def get_content(self, request):
+        return self.template_loader.load_delete_product_popup(request)

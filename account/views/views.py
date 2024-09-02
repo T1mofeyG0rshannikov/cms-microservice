@@ -200,16 +200,19 @@ class AddUserProduct(View):
             product = Product.objects.get(id=product)
 
             try:
-                UserProduct.objects.create(
+                UserProduct.objects.update_or_create(
                     product=product,
                     user=request.user,
-                    link=form.cleaned_data.get("link"),
-                    comment=form.cleaned_data.get("comment"),
-                    connected=form.cleaned_data.get("connected"),
-                    profit=form.cleaned_data.get("profit"),
-                    got=form.cleaned_data.get("got"),
-                    screen=form.cleaned_data.get("screen"),
-                    connected_with_link=form.cleaned_data.get("connected_with_link") == "true",
+                    defaults={
+                        "link": form.cleaned_data.get("link"),
+                        "comment": form.cleaned_data.get("comment"),
+                        "connected": form.cleaned_data.get("connected"),
+                        "profit": form.cleaned_data.get("profit"),
+                        "got": form.cleaned_data.get("got"),
+                        "screen": form.cleaned_data.get("screen"),
+                        "connected_with_link": form.cleaned_data.get("connected_with_link") == "true",
+                        "deleted": False,
+                    },
                 )
             except UserProductAlreadyExists:
                 return JsonResponse({"errors": f'Вы уже добавили себе продукт "{product}"'})

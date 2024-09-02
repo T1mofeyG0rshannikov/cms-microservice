@@ -1,12 +1,11 @@
-from django.db.models import Q
 from django.http import JsonResponse
 from django.views import View
 
 from catalog.catalog_service.catalog_service import get_catalog_service
 from catalog.catalog_service.catalog_service_interface import CatalogServiceInterface
-from catalog.models.products import Organization, Product
+from catalog.models.products import Organization
 from catalog.products_service.products_service import get_products_service
-from catalog.serializers import ProductsSerializer
+from catalog.products_service.products_service_interface import ProductsServiceInterface
 from common.pagination import Pagination
 from domens.views.mixins import SubdomainMixin
 from user.serializers import UserProductsSerializer
@@ -28,7 +27,7 @@ class ShowCatalogPage(SubdomainMixin):
 
 
 class GetProducts(View):
-    products_service = get_products_service()
+    products_service: ProductsServiceInterface = get_products_service()
 
     def get(self, request):
         organization = request.GET.get("organization")
@@ -38,12 +37,11 @@ class GetProducts(View):
         except Organization.DoesNotExist:
             return JsonResponse({"error": f"no organization with id '{organization}'"})
 
-        products = ProductsSerializer(products, many=True).data
         return JsonResponse({"products": products})
 
 
 class GetUserProducts(View):
-    products_service = get_products_service()
+    products_service: ProductsServiceInterface = get_products_service()
 
     def get(self, request):
         product_category = request.GET.get("category")

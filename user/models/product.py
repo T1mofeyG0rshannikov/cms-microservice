@@ -28,6 +28,7 @@ class UserProduct(models.Model):
     fully_verified = models.BooleanField(default=False, verbose_name="Полностью подтверждён")
 
     created_at = models.DateField(auto_now_add=True, null=True)
+    deleted = models.BooleanField(default=False, verbose_name="Удален")
 
     class Meta:
         verbose_name = "Пользовательские продукты"

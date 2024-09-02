@@ -84,6 +84,7 @@
 
         .columns{
             display: flex;
+            justify-content: space-between;
             gap: 20px;
         }
 
@@ -198,12 +199,15 @@
 table{
     .icons{
         display: flex;
+        justify-content: flex-end;
         gap: 5px;
 
         img{
             height: 20;
+            cursor: pointer;
         }
     }
+
     td.product{
         display: flex;
         max-width: 300px;
@@ -236,4 +240,33 @@ table{
     text-align: center;
     font-size: var(--service-font-size);
     font-family: var(--main-text-font-family);
+}
+
+.text-popup{
+    .description-popup{
+        width: 720;
+        height: auto!important;
+        /*height: 540;*/
+    }
+
+    .text{
+        max-height: 450px!important;
+    }
+}
+
+.delete-popup{
+    .popup{
+        height: auto;
+        width: 500px;
+    }
+
+    .buttons{
+        display: flex;
+        gap: 10px;
+
+        button{
+            padding: 8px 18px;
+            margin: 0;
+        }
+    }
 }

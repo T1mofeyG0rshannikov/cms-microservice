@@ -78,3 +78,11 @@ function openFormPopup(popup){
 
     popup.style.display = "flex";
 }
+
+function openTextPopup(element){
+    element.style.display = "block";
+}
+
+function closeTextPopup(element){
+    document.body.removeChild(element)
+}

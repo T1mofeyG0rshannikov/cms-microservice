@@ -50,6 +50,7 @@ button{
     margin: var(--margin-inside-block-desctop) 0px;
     cursor: pointer;
     border-radius: 5px;
+    border: none;
 
     a{
         margin: 0px;
@@ -249,7 +250,6 @@ form{
 
     button{
         background-color: var(--main-color);
-        border: none;
         margin: 0px;
         margin-top: 5px;
         padding: 9px 17px;
@@ -391,21 +391,8 @@ form{
     z-index: 2;
 
     .description-popup{
-        position: fixed;
         width: 500px;
         height: 500px;
-        animation: showProductPopup 0.3s;
-        padding: 20px;
-        border-radius: 12px;
-        border: 1px solid var(--dark-color);
-        background: var(--second-background-color);
-        text-align: center;
-        align-items: center;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        box-shadow: 0px 0px 0px 100vw rgba(0, 0, 0, .3);
 
         .text{
             max-height: 400px;
@@ -455,4 +442,33 @@ form{
             }
         }
     }
+}
+
+.popup{
+    .title{
+        align-items: center;
+        justify-content: space-between!important;
+
+        h3{
+            margin: 0;
+        }
+    }
+
+    position: fixed;
+    animation: showProductPopup 0.3s;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--dark-color);
+    background: var(--second-background-color);
+    text-align: center;
+    align-items: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0px 0px 0px 100vw rgba(0, 0, 0, 0.3);
+}
+
+.bc-mc{
+    background-color: var(--main-color);
 }

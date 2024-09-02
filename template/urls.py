@@ -6,6 +6,8 @@ from .views.views import (
     GetChangeUserFormTemplate,
     GetChoiceProductForm,
     GetCreateUserProductForm,
+    GetDeleteProductPopup,
+    GetProductDescriptionPopup,
     ManualsTemplate,
     ProfileTemplate,
     RefsTemplate,
@@ -25,5 +27,7 @@ urlpatterns = [
     path("get-template-site", SiteTemplate.as_view()),
     path("get-choice-product-form", GetChoiceProductForm.as_view()),
     path("get-create-user-product-form", GetCreateUserProductForm.as_view()),
+    path("get-product-description-popup", GetProductDescriptionPopup.as_view()),
+    path("get-delete-product-popup", GetDeleteProductPopup.as_view()),
     path("<slug>", slug_router),
 ]

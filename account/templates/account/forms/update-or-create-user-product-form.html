@@ -33,7 +33,7 @@
                 </div>
             </div>
 
-            <a style="cursor: pointer;" onclick="openProductDescription()">Описание акции</a>
+            <a style="cursor: pointer;" onclick="openProductDescription({{product.id}})">Описание акции</a>
         </div>
 
         <div class="field-container w100">
@@ -50,7 +50,7 @@
                 </div>
                 <div style="display: flex; align-items: center;">
                     <div style="width: 100%;">
-                        <input onchange="changeProductLink(event)" name="link" placeholder='Скопируйте ссылку "Приведи друга"' />
+                        <input value="{{ user_product.link }}" onchange="changeProductLink(event)" name="link" placeholder='Скопируйте ссылку "Приведи друга"' />
                     </div>
 
                     <img id="go_link" src="{% static 'account/images/icoint_go.png' %}" alt="перейти">
@@ -73,7 +73,7 @@
                 </div>
                 <div style="display: flex; align-items: center;">
                     <div style="width: 100%;">
-                        <input name="comment" placeholder='Добавьте пояснение' />
+                        <input value="{{ user_product.comment }}" name="comment" placeholder='Добавьте пояснение' />
                     </div>
                 </div>
             </div>
@@ -109,7 +109,7 @@
                             </div>
                             <div style="display: flex; align-items: center;">
                                 <div style="width: 100%;">
-                                    <input type="date" name="connected" placeholder='01.01.24' />
+                                    <input type="date" name="connected" value="{{ user_product.connected|date:'Y-m-d' }}" placeholder='01.01.24' />
                                 </div>
                             </div>
                         </div>
@@ -130,7 +130,7 @@
 
                             <div style="display: flex; align-items: center;">
                                 <div style="width: 100%;">
-                                    <input type="date" name="got" placeholder='01.01.24' />
+                                    <input type="date" name="got" value="{{ user_product.got|date:'Y-m-d' }}" placeholder='01.01.24' />
                                 </div>
                             </div>
                         </div>
@@ -151,7 +151,7 @@
 
                             <div style="display: flex; align-items: center;">
                                 <div style="width: 100%;">
-                                    <input type="date" name="profit" placeholder='01.01.24' />
+                                    <input type="date" value="{{ user_product.profit|date:'Y-m-d' }}" name="profit" placeholder='01.01.24' />
                                 </div>
                             </div>
                         </div>
@@ -173,7 +173,7 @@
                         </div>
                         <div class="field" id="screen" style="position: relative; height: 100;">
                             <div class="photo">
-                                <img src="{% static 'account/images/noscreen.jpg' %}" />
+                                <img src="{% if user_product.screen %}{{ user_product.screen.url }}{% else %}{% static 'account/images/noscreen.jpg' %}{% endif %}" />
                                 <input name="file" type="file" accept="image/*" id="file" />
                             </div>
                         </div>
@@ -184,8 +184,8 @@
                     </div>
 
                     <div class="hints">
-                        <a>Зачем верифицировать продукт</a>
-                        <a>Инструкция</a>
+                        <a onclick="openDocumentPopup('help-product-verification-benefits')">Зачем верифицировать продукт</a>
+                        <a onclick="openDocumentPopup('guide-product-settings')">Инструкция</a>
                     </div>
                 </div>
             </div>
@@ -198,15 +198,3 @@
         <button><a>Сохранить</a></button>
     </div>
 </form>
-
-<div class="popup-background product-description">
-    <div class="description-popup">
-        <div class="title">
-            <img onclick="closeProductDescription()" class="cross" src="{% static 'blocks/images/cross-gray.png' %}" />
-        </div>
-
-        <div class="text">
-            <a>{{ product.partner_description|safe }}</a>
-        </div>
-    </div>
-</div>

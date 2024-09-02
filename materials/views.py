@@ -1,3 +1,6 @@
-from django.shortcuts import render
+from template.views.views import BaseTemplateLoadView
 
-# Create your views here.
+
+class GetPopup(BaseTemplateLoadView):
+    def get_content(self, request):
+        return self.template_loader.load_document_popup(request)

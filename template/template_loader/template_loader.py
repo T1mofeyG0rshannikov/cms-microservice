@@ -54,7 +54,29 @@ class TemplateLoader(TemplateLoaderInterface):
         context = self.context_processor.get_create_user_product_form(request)
 
         return self.load_template(
-            app_name="account", template_name="forms/create-user-product-form", request=request, context=context
+            app_name="account",
+            template_name="forms/update-or-create-user-product-form",
+            request=request,
+            context=context,
+        )
+
+    def load_product_description_popup(self, request):
+        context = self.context_processor.get_product_description_popup(request)
+
+        return self.load_template(
+            app_name="account", template_name="popup-description", request=request, context=context
+        )
+
+    def load_delete_product_popup(self, request):
+        context = self.context_processor.get_delete_product_popup(request)
+
+        return self.load_template(app_name="account", template_name="delete-popup", request=request, context=context)
+
+    def load_document_popup(self, request):
+        context = self.context_processor.get_document_popup(request)
+
+        return self.load_template(
+            app_name="materials", template_name="document-popup", request=request, context=context
         )
 
 
