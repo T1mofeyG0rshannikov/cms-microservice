@@ -19,10 +19,10 @@ function renderUserProducts(products){
 
             <td>
                 <div class="icons">
-                    <img src="/static/account/images/settings.png" />
-                    <img src="/static/account/images/icoint_stat.png" />
-                    <img src="/static/account/images/icoint_doc.png" />
-                    <img src="/static/account/images/icoint_del.png" />
+                    <img title="Настройка" onclick="openUpdateProductForm(${ user_product.product.id })" src="/static/account/images/settings.png" />
+                    <img title="Статистика" src="/static/account/images/icoint_stat.png" />
+                    <img title="Описание" onclick="openProductDescription(${ user_product.product.id })" src="/static/account/images/icoint_doc.png" />
+                    <img title="Удаление" onclick="openDeleteProductPopup(${ user_product.id })" src="/static/account/images/icoint_del.png" />
                 </div>
             </td>
         </tr>
@@ -166,7 +166,8 @@ function initCreateProductForm(){
     const screen = createProductForm.querySelector(".photo")
     const screenLoader = screen.querySelector("#file");
 
-    screenLoader.addEventListener("change", () => displayPhotoOnload(screen))
+    screenLoader.addEventListener("change", () => displayPhotoOnload(screen));
+    createProductForm.querySelector(".cross img").addEventListener('click', closeCreateProductForm)
 }
 
 function changeProductLink(event){
@@ -271,10 +272,16 @@ function closeCreateProductForm(){
 }
 
 function openUpdateProductForm(productId){
-    choiceProduct(productId)
-    openForm(createProductForm);
-    createProductForm.querySelector(".cross img").removeEventListener('click', closeCreateProductForm);
-    createProductForm.querySelector(".cross img").addEventListener('click', () => closeForm(createProductForm));
+    createProductForm = document.querySelector(".create-product-form");
+
+    fetch(`/get-create-user-product-form?product=${productId}`).then(response => response.json()).then(response => {
+        createProductForm.outerHTML = response.content;
+        createProductForm = document.querySelector(".create-product-form");
+        openForm(createProductForm);
+        initCreateProductForm();
+        createProductForm.querySelector(".cross img").removeEventListener('click', closeCreateProductForm);
+        createProductForm.querySelector(".cross img").addEventListener('click', () => closeForm(createProductForm));
+    })
 }
 
 function openProductDescription(productId){
