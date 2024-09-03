@@ -48,10 +48,10 @@
         {% for user_product in products %}
             <tr>
                 <td class="product">
-                    <img src="{{ user_product.product.image }}" />
+                    <img title="{{ user_product.comment }}" src="{{ user_product.product.image }}" />
 
                     <div>
-                        <p>{{ user_product.product.name }}</p>
+                        <p title="{{ user_product.comment }}">{{ user_product.product.name }}</p>
                         <p>{{ user_product.product.organization }}</p>
                     </div>
                 </td>
@@ -68,13 +68,19 @@
 
                 <td>
                     <div class="icons">
-                        <img onclick="choiceProduct({{ user_product.product.id }})" src="{% static 'account/images/settings.png' %}" />
-                        <img src="{% static 'account/images/icoint_stat.png' %}" />
-                        <img onclick="openProductDescription({{ user_product.product.id }})" src="{% static 'account/images/icoint_doc.png' %}" />
-                        <img onclick="openDeleteProductPopup({{ user_product.id }})" src="{% static 'account/images/icoint_del.png' %}" />
+                        <img title="Настройка" onclick="openUpdateProductForm({{ user_product.product.id }})" src="{% static 'account/images/settings.png' %}" />
+                        <img title="Статистика" src="{% static 'account/images/icoint_stat.png' %}" />
+                        <img title="Описание" onclick="openProductDescription({{ user_product.product.id }})" src="{% static 'account/images/icoint_doc.png' %}" />
+                        <img title="Удаление" onclick="openDeleteProductPopup({{ user_product.id }})" src="{% static 'account/images/icoint_del.png' %}" />
                     </div>
                 </td>
             </tr>
+
+            {% if user_product.product.partner_annotation %}
+            <tr class="product-partner-annotation">
+                <td>{{ user_product.product.partner_annotation }}</td>
+            </tr>
+            {% endif %}
         {% endfor %}
     </tbody>
 </table>

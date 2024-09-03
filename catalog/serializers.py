@@ -84,31 +84,6 @@ class MainPageCatalogProductSerializer(serializers.ModelSerializer):
         fields = ("name", "description", "url")
 
 
-class MainPageCatalogBlockSerializer(serializers.ModelSerializer):
-    products = serializers.SerializerMethodField()
-    template = serializers.SerializerMethodField()
-
-    class Meta:
-        model = CatalogBlock
-        fields = (
-            "template",
-            "button_text",
-            "button_ref",
-            "products",
-        )
-
-    def get_template(self, catalog):
-        template = catalog.template
-        template.file = "blocks/" + template.file
-
-        return template
-
-    def get_products(self, catalog):
-        products = [catalog_product.product for catalog_product in catalog.products.all()]
-
-        return MainPageCatalogProductSerializer(products, many=True).data
-
-
 class ProductsSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
     organization = serializers.SerializerMethodField()
@@ -116,7 +91,7 @@ class ProductsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ["id", "name", "organization", "image"]
+        fields = ["id", "name", "organization", "image", "partner_annotation"]
 
     def get_image(self, product):
         return product.cover.url

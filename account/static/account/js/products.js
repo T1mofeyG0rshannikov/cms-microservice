@@ -1,7 +1,7 @@
 function renderUserProducts(products){
     let productsHTML = '';
     for (let user_product of products){
-        const productHTML = `
+        let productHTML = `
         <tr>
             <td class="product">
                 <img src="${ user_product.product.image }" />
@@ -27,6 +27,13 @@ function renderUserProducts(products){
             </td>
         </tr>
         `;
+
+        if (user_product.product.partner_annotation){
+            productHTML += `
+            <tr class="product-partner-annotation">
+                <td>${ user_product.product.partner_annotation }</td>
+            </tr>`;
+        }
 
         productsHTML += productHTML;
     }
@@ -261,6 +268,13 @@ initUserProducts();
 function closeCreateProductForm(){
     closeForm(createProductForm);
     openForm(choiceProductForm);
+}
+
+function openUpdateProductForm(productId){
+    choiceProduct(productId)
+    openForm(createProductForm);
+    createProductForm.querySelector(".cross img").removeEventListener('click', closeCreateProductForm);
+    createProductForm.querySelector(".cross img").addEventListener('click', () => closeForm(createProductForm));
 }
 
 function openProductDescription(productId){

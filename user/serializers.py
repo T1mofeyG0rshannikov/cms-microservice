@@ -26,7 +26,17 @@ class UserProductsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProduct
-        fields = ["id", "product", "connected", "gain", "end_promotion", "redirections", "fully_verified", "created"]
+        fields = [
+            "id",
+            "product",
+            "comment",
+            "connected",
+            "gain",
+            "end_promotion",
+            "redirections",
+            "fully_verified",
+            "created",
+        ]
 
     def get_end_promotion(self, user_product):
         return user_product.product.get_end_promotion.strftime("%d.%m.%Y")

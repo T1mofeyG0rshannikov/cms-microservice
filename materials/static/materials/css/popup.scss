@@ -1,0 +1,14 @@
+.document-popup{
+    .text *{
+        font-family: var(--main-text-font-family);
+        font-size: var(--service-font-size);
+
+        li{
+            margin: 8px 0px;
+        }
+    }
+
+    .description-popup{
+        height: auto!important;
+    }
+}
