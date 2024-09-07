@@ -103,3 +103,9 @@ class CustomAuthenticationAdminForm(AuthenticationForm):
             self.add_error("phone_or_email", UserErrors.incorrect_login.value)
 
         return phone_or_email
+
+
+class AddIdeaForm(forms.Form):
+    title = forms.CharField()
+    description = forms.CharField()
+    category = forms.CharField()

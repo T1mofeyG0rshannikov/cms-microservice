@@ -1,7 +1,7 @@
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 
-from domens.domain_service.domain_service import DomainService, get_domain_service
+from domens.domain_service.domain_service import get_domain_service
 from domens.domain_service.domain_service_interface import DomainServiceInterface
 from domens.views.views import PartnerIndexPage
 from settings.models import Domain, SiteSettings
@@ -28,7 +28,7 @@ class SubdomainMixin(SettingsMixin):
             return BaseNotFoundPage.as_view()(request)
 
         if Domain.objects.filter(is_partners=True).exists():
-            partner_domain = DomainService.get_partners_domain_string()
+            partner_domain = self.domain_service.get_partners_domain_string()
 
             if domain == partner_domain and subdomain == "":
                 if request.build_absolute_uri().endswith(partner_domain) or request.build_absolute_uri().endswith(

@@ -7,7 +7,8 @@ from catalog.models.products import Product
 from catalog.products_service.products_service import get_products_service
 from catalog.products_service.products_service_interface import ProductsServiceInterface
 from catalog.serializers import ProductSerializer
-from domens.domain_service.domain_service import DomainService
+from domens.domain_service.domain_service import get_domain_service
+from domens.domain_service.domain_service_interface import DomainServiceInterface
 from materials.models import Document
 from settings.models import Domain, SiteSettings, SocialNetwork, UserFont
 from template.template_loader.tempate_context_processor.base_context_processor import (
@@ -19,9 +20,15 @@ from .template_context_processor_interface import TemplateContextProcessorInterf
 
 
 class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInterface):
-    def __init__(self, referral_service: ReferralServiceInterface, products_service: ProductsServiceInterface):
+    def __init__(
+        self,
+        referral_service: ReferralServiceInterface,
+        products_service: ProductsServiceInterface,
+        domain_service: DomainServiceInterface,
+    ):
         self.referral_service = referral_service
         self.products_service = products_service
+        self.domain_service = domain_service
 
     def get_change_user_form_context(self, request):
         context = self.get_context(request)
@@ -64,7 +71,7 @@ class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInt
 
     def get_create_user_product_form(self, request):
         context = self.get_context(request)
-        context["site_name"] = DomainService.get_site_name()
+        context["site_name"] = self.domain_service.get_site_name()
 
         product_id = request.GET.get("product")
         try:
@@ -102,6 +109,9 @@ class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInt
 
         return {"document": Document.objects.values("name", "text").get(slug=document_slug)}
 
+    def get_create_idea_form(self, request):
+        return {}
+
 
 def get_template_context_processor() -> TemplateContextProcessor:
-    return TemplateContextProcessor(get_referral_service(), get_products_service())
+    return TemplateContextProcessor(get_referral_service(), get_products_service(), get_domain_service())

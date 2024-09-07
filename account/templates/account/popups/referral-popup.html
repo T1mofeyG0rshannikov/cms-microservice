@@ -37,26 +37,12 @@
 
         <div class="text-with-help">
             <a>{{ user.active }}</a>
-
-            <div class="context-help">
-                <div class="text">
-                    Суммарный показатель активности вашего реферала. Если показатель ниже 5-6, то стоит предложить ему помощь и поддержку.
-                </div>
-
-                <img src="{% static 'common/images/ico_localhelp.png' %}" />
-            </div>
+            {% include "common/context_help.html" with text="Суммарный показатель активности вашего реферала. Если показатель ниже 5-6, то стоит предложить ему помощь и поддержку." %}
         </div>
 
         <div class="text-with-help">
             <a>{{ user.links }}</a>
-
-            <div class="context-help">
-                <div class="text">
-                    Количество продуктов, оформленных по вашим партнерским ссылкам / Общее количество добавленных банковских ссылок
-                </div>
-
-                <img src="{% static 'common/images/ico_localhelp.png' %}" />
-            </div>
+            {% include "common/context_help.html" with text="Количество продуктов, оформленных по вашим партнерским ссылкам / Общее количество добавленных банковских ссылок" %}
         </div>
 
         <a>{{ user.last_login }}</a>

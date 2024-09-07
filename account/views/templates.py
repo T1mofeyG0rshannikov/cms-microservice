@@ -2,10 +2,10 @@ from django.contrib.auth import authenticate, login
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
-from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
 from account.forms import ChangePasswordForm
+from common.views import FormView
 from domens.views.mixins import SubdomainMixin
 from materials.models import Document
 from notifications.models import UserNotification
@@ -17,13 +17,14 @@ from template.profile_template_loader.context_processor.context_processor import
 from template.profile_template_loader.context_processor.context_processor_interface import (
     ProfileTemplateContextProcessorInterface,
 )
-from template.template_loader.template_loader import get_template_loader
-from template.template_loader.template_loader_interface import TemplateLoaderInterface
 from user.exceptions import InvalidReferalLevel, InvalidSortedByField
+from user.idea_service.idea_service import get_idea_service
 from user.views.base_user_view import BaseUserView, MyLoginRequiredMixin
 
 
 class BaseProfileView(MyLoginRequiredMixin, SubdomainMixin):
+    template_context_processor = get_profile_template_context_processor()
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -39,6 +40,9 @@ class BaseProfileView(MyLoginRequiredMixin, SubdomainMixin):
 class SiteView(BaseProfileView):
     template_name = "account/site.html"
 
+    def get_context_data(self, **kwargs):
+        return self.template_context_processor.get_site_template_context(self.request)
+
 
 class RefsView(BaseProfileView):
     template_name = "account/refs.html"
@@ -49,7 +53,7 @@ class RefsView(BaseProfileView):
 
         try:
             page_context = self.template_context_processor.get_refs_template_context(self.request)
-            context = {**context, **page_context}
+            context |= page_context
 
         except (InvalidSortedByField, InvalidReferalLevel):
             pass
@@ -62,44 +66,37 @@ class ManualsView(BaseProfileView):
     template_context_processor: ProfileTemplateContextProcessorInterface = get_profile_template_context_processor()
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        page_context = self.template_context_processor.get_manuals_template_context(self.request)
-        context = {**context, **page_context}
-
-        return context
+        return self.template_context_processor.get_manuals_template_context(self.request)
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class ChangePasswordView(BaseUserView):
-    def post(self, request):
-        form = ChangePasswordForm(request.POST)
-        if form.is_valid():
-            user = request.user_from_header
+class ChangePasswordView(BaseUserView, FormView):
+    form_class = ChangePasswordForm
 
-            if not user.check_password(form.cleaned_data.get("current_password")):
-                form.add_error("current_password", "Неверный пароль")
-                return JsonResponse({"errors": form.errors}, status=400)
+    def form_valid(self, request, form):
+        user = request.user_from_header
 
-            password = form.cleaned_data.get("password")
-            repeat_password = form.cleaned_data.get("repeat_password")
+        if not user.check_password(form.cleaned_data.get("current_password")):
+            form.add_error("current_password", "Неверный пароль")
+            return JsonResponse({"errors": form.errors}, status=400)
 
-            if password != repeat_password:
-                form.add_error("password", "Пароли не совпадают")
-                return JsonResponse({"errors": form.errors}, status=400)
+        password = form.cleaned_data.get("password")
+        repeat_password = form.cleaned_data.get("repeat_password")
 
-            user.set_password(password)
-            user.save()
+        if password != repeat_password:
+            form.add_error("password", "Пароли не совпадают")
+            return JsonResponse({"errors": form.errors}, status=400)
 
-            request.user = user
-            user = authenticate(request)
-            login(request, user)
+        user.set_password(password)
+        user.save()
 
-            access_token = self.jwt_processor.create_access_token(user.username, user.id)
+        request.user = user
+        user = authenticate(request)
+        login(request, user)
 
-            return JsonResponse({"access_token": access_token}, status=200)
+        access_token = self.jwt_processor.create_access_token(user.username, user.id)
 
-        return JsonResponse({"errors": form.errors}, status=400)
+        return JsonResponse({"access_token": access_token}, status=200)
 
 
 class Profile(BaseProfileView):
@@ -111,14 +108,6 @@ class PageNotFound(SubdomainMixin):
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, self.get_context_data(), status=404)
-
-
-class GetReferralPopupTemplate(View):
-    template_loader: TemplateLoaderInterface = get_template_loader()
-
-    def get(self, request):
-        template = self.template_loader.load_referral_popup(request)
-        return JsonResponse({"content": template})
 
 
 class DocumentPage(SettingsMixin):
@@ -146,5 +135,25 @@ class UserProductsView(BaseProfileView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context |= self.template_context_processor.get_products_template_context(self.request)
+
+        return context
+
+
+class IdeasView(BaseProfileView):
+    template_name = "account/ideas.html"
+    template_context_processor: ProfileTemplateContextProcessorInterface = get_profile_template_context_processor()
+
+    idea_service = get_idea_service()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        filter = self.request.GET.get("filter")
+        sorted_by = self.request.GET.get("sorted_by")
+        status = self.request.GET.get("status")
+
+        context["ideas"] = self.idea_service.get_ideas(
+            filter=filter, sorted_by=sorted_by, status=status, user=self.request.user
+        )
 
         return context

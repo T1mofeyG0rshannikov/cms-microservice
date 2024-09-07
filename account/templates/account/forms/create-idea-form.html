@@ -1,0 +1,61 @@
+{% load static %}
+
+<form>
+    <div class="title">
+        <h3>Замечание или предложение</h3>
+
+        <div class="cross">
+            <img onclick="closeForm(createIdeaForm)" src="{% static 'common/images/cross.png' %}" />
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="content">
+        <div class="field-container" style="margin-bottom: 15px;">
+            <div class="field" style="width: 100%; margin-right: 10px;" id="category">
+                <p>Категория</p>
+                <select name="category" style="width: 100%">
+                    <option value="errors">Ошибка в работе</option>
+                    <option value="correction">Исправление</option>
+                    <option value="modernization">Улучшение</option>
+                    <option value="new_feature">Новая возможность</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="field-container" style="margin-bottom: 15px;">
+            <div class="field" id="title">
+                <p>Тема</p>
+                <input type="text" name="title" placeholder="Кратко сформулируйте суть проблемы или идеи" />
+            </div>
+        </div>
+
+        <div class="field-container" style="margin-bottom: 15px;">
+            <div class="field" id="description">
+                <p>Описание</p>
+                <textarea name="description" placeholder="Опишите подробно в чем заключается проблема и при каких обстоятельствах возникла, или изложите свое предложение по улучшению сайта"></textarea>
+            </div>
+        </div>
+
+        <div class="screens field-container">
+            <div class="screens-container custom-scroll-bar scroll-bar-horizontal">
+                <div class="screen">
+                    <div id="screen" class="screen-image">
+                        <img src="{% static 'account/images/noscreen.jpg' %}" alt="скриншот">
+                        <input name="file" type="file" accept="image/*" id="file1" multiple/>
+                    </div>
+                </div>
+
+                <button onclick="addScreen()" class="br50">+</button>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="bottom">
+        <button class="bc-mc"><a>Сохранить</a></button>
+        <button class="delete"><a>Удалить</a></button>
+    </div>
+</form>

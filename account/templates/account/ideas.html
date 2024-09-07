@@ -1,0 +1,17 @@
+{% extends "account/base.html" %}
+
+{% block title %}
+Обратная связь | {{ site_name }}
+{% endblock %}
+
+{% block account_content %}
+
+{% include "account/contents/ideas.html" %}
+
+{% endblock %}
+
+{% block initial_script %}
+<script>
+    initIdeas()
+</script>
+{% endblock %}

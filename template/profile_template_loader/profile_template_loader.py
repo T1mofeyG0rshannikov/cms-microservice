@@ -1,4 +1,3 @@
-from domens.domain_service.domain_service import DomainService
 from template.profile_template_loader.context_processor.context_processor import (
     ProfileTemplateContextProcessor,
     get_profile_template_context_processor,
@@ -11,15 +10,16 @@ from template.template_loader.base_template_loader import BaseTemplateLoader
 
 class ProfileTemplateLoader(BaseTemplateLoader, ProfileTemplateLoaderInterface):
     app_name = "account"
+    template_folder = "contents"
 
     def __init__(self, context_processor: ProfileTemplateContextProcessor):
         self.context_processor = context_processor
 
     def load_template(self, template_name: str, request=None, context=None) -> str | None:
-        return super().load_template(self.app_name, template_name, request, context)
+        return super().load_template(self.app_name, self.template_folder + "/" + template_name, request, context)
 
     def get_title(self, page_title):
-        return f"{page_title} | {DomainService.get_site_name()}"
+        return f"{page_title} | {self.context_processor.domain_service.get_site_name()}"
 
     def load_profile_template(self, request):
         context = self.context_processor.get_profile_template_context(request)

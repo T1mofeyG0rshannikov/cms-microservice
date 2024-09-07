@@ -1,4 +1,6 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
 from common.security import LinkEncryptor
@@ -16,3 +18,13 @@ class RedirectToLink(View):
                 return HttpResponseRedirect(link)
 
         return HttpResponse(status=400)
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class FormView(View):
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST, request.FILES)
+        if form.is_valid():
+            return self.form_valid(request, form, *args, **kwargs)
+
+        return JsonResponse({"errors": form.errors}, status=400)

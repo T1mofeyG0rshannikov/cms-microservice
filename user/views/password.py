@@ -1,8 +1,8 @@
 from django.http import HttpResponseRedirect, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import View
 
+from common.views import FormView
 from emails.email_service.email_service import get_email_service
 from user.forms import ResetPasswordForm, SetPasswordForm
 from user.models.user import User
@@ -12,8 +12,9 @@ from utils.success_messages import Messages
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class ResetPassword(BaseUserView):
+class ResetPassword(BaseUserView, FormView):
     template_name = "user/set-password.html"
+    form_class = SetPasswordForm
 
     def get(self, request, token):
         payload = self.jwt_processor.validate_token(token)
@@ -36,37 +37,33 @@ class ResetPassword(BaseUserView):
 
         return context
 
-    def post(self, request, token):
-        form = SetPasswordForm(request.POST)
+    def form_valid(self, request, form, token):
+        payload = self.jwt_processor.validate_token(token)
 
-        if form.is_valid():
-            payload = self.jwt_processor.validate_token(token)
+        if not payload:
+            return JsonResponse({"message": Errors.expired_set_password_token.value}, status=404)
 
-            if not payload:
-                return JsonResponse({"message": Errors.expired_set_password_token.value}, status=404)
+        password = form.cleaned_data.get("password")
 
-            password = form.cleaned_data.get("password")
+        user = User.objects.get_user_by_id(payload["id"])
+        user.set_password(password)
+        user.save()
 
-            user = User.objects.get_user_by_id(payload["id"])
-            user.set_password(password)
-            user.save()
+        self.login(user)
 
-            self.login(user)
+        access_token = self.jwt_processor.create_access_token(user.username, user.id)
 
-            access_token = self.jwt_processor.create_access_token(user.username, user.id)
-
-            return JsonResponse(
-                {
-                    "access_token": access_token,
-                },
-            )
-
-        return JsonResponse({"errors": form.errors}, status=400)
+        return JsonResponse(
+            {
+                "access_token": access_token,
+            },
+        )
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class SetPassword(BaseUserView):
+class SetPassword(BaseUserView, FormView):
     template_name = "user/set-password.html"
+    form_class = SetPasswordForm
 
     def get(self, request):
         if request.user is None:
@@ -83,33 +80,29 @@ class SetPassword(BaseUserView):
 
         return context
 
-    def post(self, request):
-        form = SetPasswordForm(request.POST)
+    def form_valid(self, request, form):
+        password = form.cleaned_data.get("password")
 
-        if form.is_valid():
-            password = form.cleaned_data.get("password")
+        user = request.user
+        user.set_password(password)
+        user.save()
 
-            user = request.user
-            user.set_password(password)
-            user.save()
+        self.login(user)
 
-            self.login(user)
+        access_token = self.jwt_processor.create_access_token(user.username, user.id)
 
-            access_token = self.jwt_processor.create_access_token(user.username, user.id)
-
-            return JsonResponse(
-                {
-                    "access_token": access_token,
-                },
-            )
-
-        return JsonResponse({"errors": form.errors}, status=400)
+        return JsonResponse(
+            {
+                "access_token": access_token,
+            },
+        )
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class SendMailToResetPassword(View):
+class SendMailToResetPassword(FormView):
     template_name = "user/reset-password.html"
     email_service = get_email_service()
+    form_class = ResetPasswordForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -117,19 +110,15 @@ class SendMailToResetPassword(View):
 
         return context
 
-    def post(self, request):
-        form = ResetPasswordForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data.get("email")
+    def form_valid(self, request, form):
+        email = form.cleaned_data.get("email")
 
-            user = User.objects.get_user_by_email(email)
+        user = User.objects.get_user_by_email(email)
 
-            if user is None:
-                form.add_error("email", UserErrors.user_by_email_not_found.value)
-                return JsonResponse({"errors": form.errors}, status=400)
+        if user is None:
+            form.add_error("email", UserErrors.user_by_email_not_found.value)
+            return JsonResponse({"errors": form.errors}, status=400)
 
-            self.email_service.send_mail_to_reset_password(user)
+        self.email_service.send_mail_to_reset_password(user)
 
-            return JsonResponse({"message": Messages.sent_message_to_reset_password.value})
-
-        return JsonResponse({"errors": form.errors}, status=400)
+        return JsonResponse({"message": Messages.sent_message_to_reset_password.value})

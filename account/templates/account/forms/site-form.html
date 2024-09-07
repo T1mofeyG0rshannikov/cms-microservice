@@ -35,13 +35,7 @@
             </div>
         </div>
 
-        <div class="context-help">
-            <div class="text">
-                Ваш сайт будет доступен по выбранному адресу, например <a href="mysite.idri.ru">mysite.idri.ru</a>
-            </div>
-
-            <img src="{% static 'common/images/ico_localhelp.png' %}" />
-        </div>
+        {% include "common/context_help.html" with text='Ваш сайт будет доступен по выбранному адресу, например <a href="mysite.idri.ru">mysite.idri.ru</a>' %}
     </div>
 
     <div class="field-container">
@@ -94,13 +88,7 @@
             </select>
         </div>
 
-        <div class="context-help">
-            <div class="text">
-                Если логотип сайта не загружен, то название используется вместо него, оформленное выбранным шрифтом
-            </div>
-
-            <img src="{% static 'common/images/ico_localhelp.png' %}" />
-        </div>
+        {% include "common/context_help.html" with text='Если логотип сайта не загружен, то название используется вместо него, оформленное выбранным шрифтом' %}
     </div>
 
     <div class="field-container" style="align-items: start; position: relative;">
@@ -128,13 +116,7 @@
         </div>
 
         <div style="position: absolute; right: 20px; bottom: 41px;">
-            <div class="context-help">
-                <div class="text">
-                    PNG или GIF файл на прозрачном фоне
-                </div>
-
-                <img src="{% static 'common/images/ico_localhelp.png' %}" />
-            </div>
+            {% include "common/context_help.html" with text='PNG или GIF файл на прозрачном фоне' %}
         </div>
     </div>
     <a href="/" style="font-size: 13px; text-decoration: none; margin-left: 20px;">Как сделать логотип</a>
@@ -147,13 +129,7 @@
             <input placeholder="ФИО или название организации" name="owner" default="{% if user.site.owner %}{{ user.site.owner }}{% endif %}" value="{% if user.site.owner %}{{ user.site.owner }}{% endif %}" style="width: 100%"/>
         </div>
 
-        <div class="context-help">
-            <div class="text">
-                Согласно ФЗ №347 ваше имя или название организации должно быть размещено в контактах сайта
-            </div>
-
-            <img src="{% static 'common/images/ico_localhelp.png' %}" />
-        </div>
+        {% include "common/context_help.html" with text='Согласно ФЗ №347 ваше имя или название организации должно быть размещено в контактах сайта' %}
     </div>
 
     <div class="field-container" style="margin-bottom: 15px;">
@@ -162,13 +138,7 @@
             <input name="contact_info" style="width: 100%" default="{% if user.site.contact_info %}{{ user.site.contact_info }}{% endif %}" value="{% if user.site.contact_info %}{{ user.site.contact_info }}{% endif %}" placeholder="Контактные данные на сайт" />
         </div>
 
-        <div class="context-help">
-            <div class="text">
-                Ваш емейл, телефон или другой способ связи, который видят посетители сайта
-            </div>
-
-            <img src="{% static 'common/images/ico_localhelp.png' %}" />
-        </div>
+        {% include "common/context_help.html" with text='Ваш емейл, телефон или другой способ связи, который видят посетители сайта' %}
     </div>
 
     <hr />

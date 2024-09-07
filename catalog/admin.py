@@ -1,10 +1,10 @@
 from adminsortable2.admin import SortableAdminBase, SortableStackedInline
-from django import forms
 from django.contrib import admin
 from django.contrib.admin.widgets import AdminFileWidget
 from django.db import models
 from django.utils.html import format_html, mark_safe
 
+from catalog.forms import ProductAdminForm
 from catalog.models.blocks import Block, CatalogPageTemplate
 from catalog.models.product_type import (
     ProductCategory,
@@ -74,10 +74,7 @@ class CustomOrganizationLogo(CustomAdminFileWidget):
 
 
 def get_product_types():
-    product_types = [("", "---------")]
-    product_types.extend(list(ProductType.objects.all().values_list("id", "name")))
-
-    return product_types
+    return [("", "---------"), *ProductType.objects.all().values_list("id", "name")]
 
 
 def get_initial_product_type(product_id, index):
@@ -91,38 +88,6 @@ def get_initial_product_type(product_id, index):
         return product_types[index]
     except IndexError:
         return 0
-
-
-class ProductAdminForm(forms.ModelForm):
-    product_types_choices = [("", "---------")] + [
-        (product_type.id, product_type.name) for product_type in ProductType.objects.all()
-    ]
-    type1 = forms.ChoiceField(label="Тип", choices=product_types_choices, required=False)
-    type2 = forms.ChoiceField(label="", choices=product_types_choices, required=False)
-    type3 = forms.ChoiceField(label="", choices=product_types_choices, required=False)
-    type4 = forms.ChoiceField(label="", choices=product_types_choices, required=False)
-
-    class Meta:
-        model = Product
-        fields = "__all__"
-
-    def __init__(self, *args, **kwargs):
-        instance = kwargs.get("instance")
-        super().__init__(*args, **kwargs)
-
-        if instance:
-            # Здесь вы можете использовать ваш объект для изменения полей формы
-            self.fields["type1"].choices = get_product_types()
-            self.fields["type1"].initial = get_initial_product_type(instance, 0)
-
-            self.fields["type2"].choices = get_product_types()
-            self.fields["type2"].initial = get_initial_product_type(instance, 1)
-
-            self.fields["type3"].choices = get_product_types()
-            self.fields["type3"].initial = get_initial_product_type(instance, 2)
-
-            self.fields["type4"].choices = get_product_types()
-            self.fields["type4"].initial = get_initial_product_type(instance, 3)
 
 
 class ProductAdmin(admin.ModelAdmin):
@@ -202,9 +167,15 @@ class ProductAdmin(admin.ModelAdmin):
     class Media:
         css = {"all": ("catalog/css/product_admin.css",)}
 
+    TYPES_COUNT = 4
+
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
         form.base_fields["annotation"].widget.attrs["style"] = "width: 45em;"
+
+        for i in range(self.TYPES_COUNT):
+            form.base_fields[f"type{i + 1}"].choices = get_product_types()
+            form.base_fields[f"type{i + 1}"].initial = get_initial_product_type(obj, i)
 
         return form
 
@@ -240,34 +211,17 @@ class ProductAdmin(admin.ModelAdmin):
         return fieldsets
 
     def save_model(self, request, obj, form, change):
-        type1 = form.cleaned_data["type1"]
-        type2 = form.cleaned_data["type2"]
-        type3 = form.cleaned_data["type3"]
-        type4 = form.cleaned_data["type4"]
-
+        super().save_model(request, obj, form, change)
         ProductTypeRelation.objects.filter(product=obj).delete()
 
-        if type1:
-            product_type1, _ = ProductTypeRelation.objects.update_or_create(
-                product=obj, type=ProductType.objects.get(id=type1)
-            )
+        for i in range(self.TYPES_COUNT):
+            type = form.cleaned_data[f"type{i + 1}"]
 
-        if type2:
-            product_type2, _ = ProductTypeRelation.objects.update_or_create(
-                product=obj, type=ProductType.objects.get(id=type2)
-            )
+            if type:
+                product_type, _ = ProductTypeRelation.objects.update_or_create(
+                    product=obj, type=ProductType.objects.get(id=type)
+                )
 
-        if type3:
-            product_type3, _ = ProductTypeRelation.objects.update_or_create(
-                product=obj, type=ProductType.objects.get(id=type3)
-            )
-
-        if type4:
-            product_type4, _ = ProductTypeRelation.objects.update_or_create(
-                product=obj, type=ProductType.objects.get(id=type4)
-            )
-
-        # Вызовем метод сохранения объекта
         super().save_model(request, obj, form, change)
 
 

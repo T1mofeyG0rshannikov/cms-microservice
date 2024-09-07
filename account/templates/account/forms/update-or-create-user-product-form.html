@@ -22,13 +22,7 @@
                     <p>Акция: {{ product.promotion }}</p>
                     <div class="field-title" style="margin-top: 0px;">
                         <p>Ваш бонус: {{ product.partner_bonus }}</p>
-                        <div class="context-help">
-                            <div class="text">
-                                {{ product.partner_annotation }}
-                            </div>
-
-                            <img src="{% static 'common/images/ico_localhelp.png' %}" />
-                        </div>
+                        {% include "common/context_help.html" with text=product.partner_annotation %}
                     </div>
                 </div>
             </div>
@@ -40,13 +34,7 @@
             <div class="field" id="link">
                 <div class="field-title">
                     <p>Ваша ссылка</p>
-                    <div class="context-help">
-                        <div class="text">
-                            Откройте банковское приложение, найдите раздел "Пригласи друга" и скопируйте в нем свою реферальную ссылку.
-                        </div>
-
-                        <img src="{% static 'common/images/ico_localhelp.png' %}" />
-                    </div>
+                    {% include "common/context_help.html" with text='Откройте банковское приложение, найдите раздел "Пригласи друга" и скопируйте в нем свою реферальную ссылку.' %}
                 </div>
                 <div style="display: flex; align-items: center;">
                     <div style="width: 100%;">
@@ -63,13 +51,7 @@
             <div class="field" id="comment">
                 <div class="field-title">
                     <p>Комментарий</p>
-                    <div class="context-help">
-                        <div class="text">
-                            Вы можете добавить для себя краткое пояснение к продукту
-                        </div>
-
-                        <img src="{% static 'common/images/ico_localhelp.png' %}" />
-                    </div>
+                    {% include "common/context_help.html" with text='Вы можете добавить для себя краткое пояснение к продукту' %}
                 </div>
                 <div style="display: flex; align-items: center;">
                     <div style="width: 100%;">
@@ -83,13 +65,7 @@
             <input onchange="showAdditionalFields(event)" name="connected_with_link" type="checkbox">
             <p>Оформлен по ссылке на {{ site_name }} или {{ user.site.name }}</p>
 
-            <div class="context-help">
-                <div class="text">
-                    Вы получите бонусы и более выгодные условия, если оформили продукт по ссылке на сайте Банкомаг или партнерском сайте
-                </div>
-
-                <img src="{% static 'common/images/ico_localhelp.png' %}" />
-            </div>
+            {% include "common/context_help.html" with text='Вы получите бонусы и более выгодные условия, если оформили продукт по ссылке на сайте Банкомаг или партнерском сайте' %}
         </div>
 
         <div class="additional-fields" style="display: none;">
@@ -99,13 +75,7 @@
                         <div class="field" id="connected">
                             <div class="field-title">
                                 <p>Оформлен</p>
-                                <div class="context-help">
-                                    <div class="text">
-                                        Дата оформления заявки на продукт на сайте банка
-                                    </div>
-
-                                    <img src="{% static 'common/images/ico_localhelp.png' %}" />
-                                </div>
+                                {% include "common/context_help.html" with text='Дата оформления заявки на продукт на сайте банка' %}
                             </div>
                             <div style="display: flex; align-items: center;">
                                 <div style="width: 100%;">
@@ -119,13 +89,7 @@
                         <div class="field" id="got">
                             <div class="field-title">
                                 <p>Получен</p>
-                                <div class="context-help">
-                                    <div class="text">
-                                        Дата, когда вы фактически получили продукт
-                                    </div>
-
-                                    <img src="{% static 'common/images/ico_localhelp.png' %}" />
-                                </div>
+                                {% include "common/context_help.html" with text='Дата, когда вы фактически получили продукт' %}
                             </div>
 
                             <div style="display: flex; align-items: center;">
@@ -140,13 +104,7 @@
                         <div class="field" id="profit">
                             <div class="field-title">
                                 <p>Бонус</p>
-                                <div class="context-help">
-                                    <div class="text">
-                                        Дата зачисления бонуса от банка (если предусмотрено партнерской программой банка)
-                                    </div>
-
-                                    <img src="{% static 'common/images/ico_localhelp.png' %}" />
-                                </div>
+                                {% include "common/context_help.html" with text='Дата зачисления бонуса от банка (если предусмотрено партнерской программой банка)' %}
                             </div>
 
                             <div style="display: flex; align-items: center;">
@@ -163,13 +121,7 @@
                         <div class="screen-text">
                             <p>Скриншот</p>
 
-                            <div class="context-help">
-                                <div class="text">
-                                    Сделайте и загрузите скриншот уведомления о зачислении бонуса в банковском приложении. Проверка может занять до 5 рабочих дней. Подтвержденная ссылка автоматически получит премиальный статус.
-                                </div>
-
-                                <img src="{% static 'common/images/ico_localhelp.png' %}" />
-                            </div>
+                            {% include "common/context_help.html" with text='Сделайте и загрузите скриншот уведомления о зачислении бонуса в банковском приложении. Проверка может занять до 5 рабочих дней. Подтвержденная ссылка автоматически получит премиальный статус.' %}
                         </div>
                         <div class="field" id="screen" style="position: relative; height: 100;">
                             <div class="photo">

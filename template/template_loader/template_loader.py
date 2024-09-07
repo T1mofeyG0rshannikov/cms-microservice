@@ -79,6 +79,13 @@ class TemplateLoader(TemplateLoaderInterface):
             app_name="materials", template_name="document-popup", request=request, context=context
         )
 
+    def load_create_idea_form(self, request):
+        context = self.context_processor.get_create_idea_form(request)
+
+        return self.load_template(
+            app_name="account", template_name="forms/create-idea-form", request=request, context=context
+        )
+
 
 def get_template_loader() -> TemplateLoader:
     return TemplateLoader(get_template_context_processor())

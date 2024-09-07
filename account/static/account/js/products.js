@@ -184,8 +184,10 @@ function changeProductLink(event){
 
 
 function initUserProducts(){
-    document.querySelector("select[name=category").addEventListener("change", () => loadUserProducts());
-    document.querySelector("select[name=page_size]").addEventListener("change", () => loadUserProducts());
+    if (document.querySelector("select[name=category") != null){
+        document.querySelector("select[name=category").addEventListener("change", () => loadUserProducts());
+        document.querySelector("select[name=page_size]").addEventListener("change", () => loadUserProducts());
+    }
 }
 
 
@@ -263,8 +265,6 @@ function addPageToSearch(page){
 
     window.history.replaceState(null, '', window.location.pathname + url.search);
 }
-
-initUserProducts();
 
 function closeCreateProductForm(){
     closeForm(createProductForm);

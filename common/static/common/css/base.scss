@@ -221,7 +221,7 @@ form{
 
         }
 
-        input{
+        input, textarea{
             height: 35px;
 
             &::-webkit-input-placeholder{
@@ -232,7 +232,7 @@ form{
             }
         }
 
-        input, select{
+        input, select, textarea{
             padding: 8px;
             border-radius: 4px;
             border: 1px solid var(--dark-color);
@@ -471,4 +471,30 @@ form{
 
 .bc-mc{
     background-color: var(--main-color);
+}
+
+.custom-scroll-bar{
+    &::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: var(--second-background-color);
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: rgb(220, 220, 220);
+        border-radius: 5px;
+        transition: .2s;
+
+        &:hover {
+            background: rgb(170, 170, 170);
+        }
+    }
+}
+
+.scroll-bar-horizontal{
+    &::-webkit-scrollbar {
+        height: 6px!important;
+    }
 }

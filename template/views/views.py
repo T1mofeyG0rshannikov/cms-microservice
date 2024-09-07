@@ -117,3 +117,13 @@ class GetProductDescriptionPopup(BaseTemplateLoadView):
 class GetDeleteProductPopup(BaseTemplateLoadView):
     def get_content(self, request):
         return self.template_loader.load_delete_product_popup(request)
+
+
+class GetReferralPopupTemplate(BaseTemplateLoadView):
+    def get_content(self, request):
+        return self.template_loader.load_referral_popup(request)
+
+
+class GetCreateIdeaForm(BaseTemplateLoadView):
+    def get_content(self, request):
+        return self.template_loader.load_create_idea_form(request)

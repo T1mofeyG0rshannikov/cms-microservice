@@ -1,8 +1,10 @@
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
+from django.views.generic import View
 
-from domens.domain_service.domain_service import DomainService
+from domens.domain_service.domain_service import get_domain_service
+from domens.domain_service.domain_service_interface import DomainServiceInterface
 from domens.views.mixins import SubdomainMixin
 from user.auth.jwt_processor import get_jwt_processor
 from user.auth.jwt_processor_interface import JwtProcessorInterface
@@ -23,6 +25,7 @@ class BaseUserView(SubdomainMixin):
 class MyLoginRequiredMixin(LoginRequiredMixin):
     login_url = "/user/login"
     set_password_url = "/user/password"
+    domain_service: DomainServiceInterface = get_domain_service()
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
@@ -33,8 +36,8 @@ class MyLoginRequiredMixin(LoginRequiredMixin):
 
         path = request.build_absolute_uri()
 
-        partner_domain_string = DomainService.get_partners_domain_string()
-        domain_string = DomainService.get_domain_string()
+        partner_domain_string = self.domain_service.get_partners_domain_string()
+        domain_string = self.domain_service.get_domain_string()
 
         if partner_domain_string in path:
             path = path.replace(request.get_host(), domain_string)
@@ -55,3 +58,11 @@ class UserFormsView:
         context["register_form"] = RegistrationForm()
         context["reset_password_form"] = ResetPasswordForm()
         return context
+
+
+class APIUserRequired(View):
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponse(status=401)
+
+        return super().dispatch(request, *args, **kwargs)

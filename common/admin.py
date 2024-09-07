@@ -4,6 +4,7 @@ from django.contrib.admin import AdminSite
 from domens.admin import SiteAdmin
 from user.admin import UserAdmin
 from user.forms import CustomAuthenticationAdminForm
+from user.models.idea import Idea, IdeaScreen, Like
 from user.models.product import UserProduct
 from user.models.site import Site
 from user.models.user import User
@@ -43,7 +44,18 @@ class MyAdminSite(AdminSite):
         return app_list
 
 
+class IdeaScreenInline(BaseInline):
+    model = IdeaScreen
+
+
+class IdeaAdmin(admin.ModelAdmin):
+    model = Idea
+    inlines = [IdeaScreenInline]
+
+
 admin.site = MyAdminSite()
 admin.site.register(User, UserAdmin)
 admin.site.register(Site, SiteAdmin)
 admin.site.register(UserProduct)
+admin.site.register(Idea, IdeaAdmin)
+admin.site.register(Like)

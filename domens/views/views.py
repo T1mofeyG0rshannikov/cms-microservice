@@ -1,10 +1,8 @@
 from django.http import HttpResponse
 from django.views.generic import View
 
-from domens.domain_service.domain_service import DomainService
-from settings.get_settings import get_settings
-from user.forms import LoginForm, ResetPasswordForm
 from settings.views import SettingsMixin
+from user.forms import LoginForm, ResetPasswordForm
 
 
 class StopSite(View):

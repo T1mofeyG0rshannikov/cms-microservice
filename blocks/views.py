@@ -10,7 +10,6 @@ from blocks.models.common import Page
 from blocks.pages_service.page_service_interface import PageServiceInterface
 from blocks.pages_service.pages_service import get_page_service
 from blocks.serializers import PageSerializer
-from domens.domain_service.domain_service import DomainService
 from domens.views.mixins import SubdomainMixin
 from settings.models import SiteSettings
 from user.views.base_user_view import UserFormsView
@@ -21,7 +20,7 @@ class IndexPage(SubdomainMixin):
     template_name = "blocks/page.html"
 
     def get(self, *args, **kwargs):
-        partner_domain = DomainService.get_partners_domain_string()
+        partner_domain = self.domain_service.get_partners_domain_string()
 
         if self.request.domain == partner_domain and SiteSettings.objects.first().disable_partners_sites:
             return HttpResponse("<h1>Привет :)</h1>")

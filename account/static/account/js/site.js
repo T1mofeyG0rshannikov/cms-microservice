@@ -52,4 +52,6 @@ function openSiteForm(){
 }
 
 const openSiteFormButton = document.querySelector("#open-site-form");
-openSiteFormButton.addEventListener("click", () => openSiteForm());
+if (openSiteFormButton != null){
+    openSiteFormButton.addEventListener("click", () => openSiteForm());
+}

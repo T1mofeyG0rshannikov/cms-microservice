@@ -9,6 +9,8 @@ from catalog.models.product_type import ProductCategory
 from catalog.products_service.products_service import get_products_service
 from catalog.products_service.products_service_interface import ProductsServiceInterface
 from common.pagination import Pagination
+from domens.domain_service.domain_service import get_domain_service
+from domens.domain_service.domain_service_interface import DomainServiceInterface
 from materials.models import Document
 from template.profile_template_loader.context_processor.context_processor_interface import (
     ProfileTemplateContextProcessorInterface,
@@ -20,9 +22,21 @@ from user.serializers import UserProductsSerializer
 
 
 class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateContextProcessorInterface):
-    def __init__(self, referral_service: ReferralServiceInterface, products_service: ProductsServiceInterface):
+    def __init__(
+        self,
+        referral_service: ReferralServiceInterface,
+        products_service: ProductsServiceInterface,
+        domain_service: DomainServiceInterface,
+    ):
         self.referral_service = referral_service
         self.products_service = products_service
+        self.domain_service = domain_service
+
+    def get_context(self, request):
+        context = super().get_context(request)
+        context["site_name"] = self.domain_service.get_site_name()
+
+        return context
 
     def get_profile_template_context(self, request):
         context = self.get_context(request)
@@ -76,4 +90,4 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
 
 
 def get_profile_template_context_processor() -> ProfileTemplateContextProcessor:
-    return ProfileTemplateContextProcessor(get_referral_service(), get_products_service())
+    return ProfileTemplateContextProcessor(get_referral_service(), get_products_service(), get_domain_service())

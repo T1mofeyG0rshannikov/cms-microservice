@@ -2,7 +2,7 @@ from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 
-from domens.domain_service.domain_service import DomainService
+from domens.domain_service.domain_service import get_domain_service
 from user.models.site import Site
 from user.user_manager.user_manager import UserManager
 from user.user_manager.user_manager_interface import UserManagerInterface
@@ -61,7 +61,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def full_site_name(self) -> str | None:
         if Site.objects.filter(user_id=self.id).exists():
-            return f"{self.site}.{DomainService.get_partners_domain_string()}"
+            return f"{self.site}.{get_domain_service().get_partners_domain_string()}"
 
         return None
 

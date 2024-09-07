@@ -1,14 +1,16 @@
 import re
 
-from django.db.utils import OperationalError, ProgrammingError
-
+from domens.domain_repository.repository import get_domain_repository
+from domens.domain_repository.repository_interface import DomainRepositoryInterface
 from domens.domain_service.domain_service_interface import DomainServiceInterface
-from settings.models import Domain
+from domens.interfaces import SiteInterface
 from user.interfaces import UserInterface
-from user.models.site import Site
 
 
 class DomainService(DomainServiceInterface):
+    def __init__(self, repository: DomainRepositoryInterface):
+        self.repository = repository
+
     @staticmethod
     def get_subdomain_from_host(host: str) -> str:
         host = host.replace("127.0.0.1", "localhost")
@@ -24,12 +26,12 @@ class DomainService(DomainServiceInterface):
 
         return host.split(".")[0]
 
-    @staticmethod
-    def valid_subdomain(subdomain: str) -> bool:
+    def valid_subdomain(self, subdomain: str) -> bool:
         if not subdomain:
             return True
 
-        if Site.objects.filter(subdomain=subdomain).exists() and Site.objects.get(subdomain=subdomain).is_active:
+        site = self.repository.get_site(subdomain)
+        if site and site.is_active:
             return True
 
         if subdomain == "www":
@@ -37,33 +39,22 @@ class DomainService(DomainServiceInterface):
 
         return False
 
-    @classmethod
     def get_domain_string(self) -> str | None:
-        try:
-            domain = Domain.objects.values_list("domain").filter(is_partners=False).first()
-            if domain is None:
-                return None
-
-            return domain[0]
-
-        except (OperationalError, ProgrammingError):
+        domain = self.repository.get_domain_string()
+        if domain is None:
             return None
 
-    @classmethod
+        return domain[0]
+
     def get_site_name(self) -> str | None:
-        try:
-            domain = Domain.objects.values_list("name").filter(is_partners=False).first()
-            if domain is None:
-                return None
-
-            return domain[0]
-
-        except (OperationalError, ProgrammingError):
+        domain = self.repository.get_site_name()
+        if domain is None:
             return None
 
-    @classmethod
+        return domain[0]
+
     def get_partners_domain_string(self) -> str:
-        return Domain.objects.values_list("domain").filter(is_partners=True).first()[0]
+        return self.repository.get_partners_domain_string()
 
     def get_domain_from_host(self, host: str) -> str:
         host = host.replace("127.0.0.1", "localhost")
@@ -81,7 +72,7 @@ class DomainService(DomainServiceInterface):
         return domain
 
     def get_partner_domain_model(self):
-        return Domain.objects.filter(is_partners=True).first()
+        return self.repository.get_partner_domain_model()
 
     def get_domain_model_from_request(self, request):
         path = request.META.get("HTTP_ORIGIN")
@@ -89,8 +80,7 @@ class DomainService(DomainServiceInterface):
         host = host.replace("https://", "")
 
         domain = self.get_domain_from_host(host)
-        if Domain.objects.filter(domain=domain).exists():
-            return Domain.objects.get(domain=domain)
+        return self.repository.get_domain(domain)
 
     def get_site_model(self, request):
         path = request.META.get("HTTP_ORIGIN")
@@ -98,30 +88,17 @@ class DomainService(DomainServiceInterface):
         host = host.replace("https://", "")
 
         subdomain = self.get_subdomain_from_host(host)
-        if Site.objects.filter(subdomain=subdomain).exists():
-            return Site.objects.get(subdomain=subdomain)
 
-    @staticmethod
-    def get_domain_model_by_id(id: int):
-        if Domain.objects.filter(id=id).exists():
-            return Domain.objects.get(id=id)
+        return self.repository.get_site(subdomain)
 
-        return None
+    def get_domain_model_by_id(self, id: int):
+        return self.repository.get_domain_model_by_id(id)
 
-    @staticmethod
-    def get_domain_model():
-        try:
-            domain = Domain.objects.filter(is_partners=False).first()
-            if domain is None:
-                return None
-
-            return domain
-
-        except (OperationalError, ProgrammingError):
-            return None
+    def get_domain_model(self):
+        return self.repository.get_domain_model()
 
     def get_register_on_site(self, user: UserInterface) -> str:
-        if user.register_on_domain == self.get_domain_model():
+        if user.register_on_domain == self.repository.get_domain_model():
             return str(user.register_on_domain)
 
         if user.register_on_site:
@@ -129,9 +106,9 @@ class DomainService(DomainServiceInterface):
 
         return ""
 
-    def get_random_site(self) -> Site:
-        return Site.objects.order_by("?").first()
+    def get_random_site(self) -> SiteInterface:
+        return self.repository.get_random_site()
 
 
 def get_domain_service() -> DomainService:
-    return DomainService()
+    return DomainService(get_domain_repository())

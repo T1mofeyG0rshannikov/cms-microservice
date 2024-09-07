@@ -6,6 +6,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
+from common.views import FormView
 from domens.domain_service.domain_service import get_domain_service
 from domens.domain_service.domain_service_interface import DomainServiceInterface
 from user.forms import LoginForm, RegistrationForm, ResetPasswordForm
@@ -18,10 +19,11 @@ from utils.errors import UserErrors
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class RegisterUser(BaseUserView):
+class RegisterUser(BaseUserView, FormView):
     template_name = "user/register.html"
     domain_service: DomainServiceInterface = get_domain_service()
     user_service = get_user_service()
+    form_class = RegistrationForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -29,53 +31,50 @@ class RegisterUser(BaseUserView):
 
         return context
 
-    def post(self, request):
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            phone = form.cleaned_data.get("phone")
-            email = form.cleaned_data.get("email")
+    def form_valid(self, request, form):
+        phone = form.cleaned_data.get("phone")
+        email = form.cleaned_data.get("email")
 
-            user_with_phone = User.objects.get_user_by_phone(phone)
-            user_with_email = User.objects.get_user_by_email(email)
+        user_with_phone = User.objects.get_user_by_phone(phone)
+        user_with_email = User.objects.get_user_by_email(email)
 
-            if user_with_email is not None and user_with_email.email_is_confirmed:
-                form.add_error("email", UserErrors.username_with_email_alredy_exists.value)
+        if user_with_email is not None and user_with_email.email_is_confirmed:
+            form.add_error("email", UserErrors.username_with_email_alredy_exists.value)
 
-                return JsonResponse({"errors": form.errors}, status=400)
+            return JsonResponse({"errors": form.errors}, status=400)
 
-            elif user_with_phone is not None and user_with_phone.phone_is_confirmed:
-                form.add_error("phone", UserErrors.username_with_phone_alredy_exists.value)
+        elif user_with_phone is not None and user_with_phone.phone_is_confirmed:
+            form.add_error("phone", UserErrors.username_with_phone_alredy_exists.value)
 
-                return JsonResponse({"errors": form.errors}, status=400)
+            return JsonResponse({"errors": form.errors}, status=400)
 
-            try:
-                with transaction.atomic():
-                    User.objects.filter(email=email).update(email=None)
-                    User.objects.filter(phone=phone).update(phone=None)
+        try:
+            with transaction.atomic():
+                User.objects.filter(email=email).update(email=None)
+                User.objects.filter(phone=phone).update(phone=None)
 
-                    domain = self.domain_service.get_domain_model_from_request(request)
-                    site = self.domain_service.get_site_model(request)
-                    sponsor = self.user_service.get_user_from_site(site, domain)
+                domain = self.domain_service.get_domain_model_from_request(request)
+                site = self.domain_service.get_site_model(request)
+                sponsor = self.user_service.get_user_from_site(site, domain)
 
-                    user = User.objects.create_user(
-                        **form.cleaned_data, register_on_site=site, register_on_domain=domain, sponsor=sponsor
-                    )
-            except Exception as e:
-                print(e)
-                form.add_error("email", UserErrors.something_went_wrong.value)
-                return JsonResponse({"errors": form.errors}, status=400)
+                user = User.objects.create_user(
+                    **form.cleaned_data, register_on_site=site, register_on_domain=domain, sponsor=sponsor
+                )
+        except Exception as e:
+            print(e)
+            form.add_error("email", UserErrors.something_went_wrong.value)
+            return JsonResponse({"errors": form.errors}, status=400)
 
-            token_to_set_password = self.jwt_processor.create_set_password_token(user.id)
+        token_to_set_password = self.jwt_processor.create_set_password_token(user.id)
 
-            return JsonResponse({"token_to_set_password": token_to_set_password})
-
-        return JsonResponse({"errors": form.errors}, status=400)
+        return JsonResponse({"token_to_set_password": token_to_set_password})
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class Login(BaseUserView):
+class Login(BaseUserView, FormView):
     template_name = "user/login.html"
     validator: UserValidatorInterface = get_user_validator()
+    form_class = LoginForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -85,42 +84,38 @@ class Login(BaseUserView):
 
         return context
 
-    def post(self, request):
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            phone_or_email = form.cleaned_data.get("phone_or_email")
-            password = form.cleaned_data.get("password")
+    def form_valid(self, request, form):
+        phone_or_email = form.cleaned_data.get("phone_or_email")
+        password = form.cleaned_data.get("password")
 
-            if self.validator.is_valid_phone(phone_or_email):
-                user = User.objects.get_user_by_phone(phone_or_email)
-                if user is None:
-                    form.add_error("phone_or_email", UserErrors.user_by_phone_not_found.value)
-
-                    return JsonResponse({"errors": form.errors}, status=400)
-
-            elif self.validator.is_valid_email(phone_or_email):
-                user = User.objects.get_user_by_email(phone_or_email)
-                if user is None:
-                    form.add_error("phone_or_email", UserErrors.user_by_email_not_found.value)
-
-                    return JsonResponse({"errors": form.errors}, status=400)
-
-            else:
-                form.add_error("phone_or_email", UserErrors.incorrect_login.value)
+        if self.validator.is_valid_phone(phone_or_email):
+            user = User.objects.get_user_by_phone(phone_or_email)
+            if user is None:
+                form.add_error("phone_or_email", UserErrors.user_by_phone_not_found.value)
 
                 return JsonResponse({"errors": form.errors}, status=400)
 
-            if not user.verify_password(password):
-                form.add_error("password", UserErrors.incorrect_password.value)
+        elif self.validator.is_valid_email(phone_or_email):
+            user = User.objects.get_user_by_email(phone_or_email)
+            if user is None:
+                form.add_error("phone_or_email", UserErrors.user_by_email_not_found.value)
 
                 return JsonResponse({"errors": form.errors}, status=400)
 
-            access_token = self.jwt_processor.create_access_token(user.username, user.id)
-            self.login(user)
+        else:
+            form.add_error("phone_or_email", UserErrors.incorrect_login.value)
 
-            return JsonResponse({"acess_token": access_token})
+            return JsonResponse({"errors": form.errors}, status=400)
 
-        return JsonResponse({"errors": form.errors}, status=400)
+        if not user.verify_password(password):
+            form.add_error("password", UserErrors.incorrect_password.value)
+
+            return JsonResponse({"errors": form.errors}, status=400)
+
+        access_token = self.jwt_processor.create_access_token(user.username, user.id)
+        self.login(user)
+
+        return JsonResponse({"acess_token": access_token})
 
 
 @method_decorator(csrf_exempt, name="dispatch")

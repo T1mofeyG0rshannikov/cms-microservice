@@ -14,11 +14,9 @@ class DomainServiceInterface(Protocol):
     def valid_subdomain(subdomain: str) -> bool:
         raise NotImplementedError()
 
-    @classmethod
     def get_domain_string(self) -> str | None:
         raise NotImplementedError()
 
-    @classmethod
     def get_partners_domain_string(self) -> str | None:
         raise NotImplementedError()
 

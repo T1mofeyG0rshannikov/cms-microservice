@@ -26,57 +26,6 @@ function renderRefs(refs){
     document.querySelector("tbody").innerHTML = refsHTML;
 }
 
-function renderRefsPagination(pageNum, totalPages){
-    let pagination = `<a ${ pageNum == 1 ? 'class="active"' : "" } onclick="loadPagination(1)">1</a>`;
-
-    if (pageNum > 4){
-        pagination += `...`;
-    }
-
-    if (pageNum == 1){
-        for (let num = 1; num <= totalPages; num++){
-            if (pageNum < num && num < pageNum + 3){
-                if (num != 1 && num != totalPages){
-                    pagination += `<a ${ num == pageNum ? 'class="active"' : "" } onclick="loadPagination(${ num })">${ num }</a>`;
-                }
-            }
-        }
-    }
-
-    else if (pageNum == totalPages){
-        for (let num = 1; num <= totalPages; num++){
-            if (pageNum-3 < num && num < pageNum){
-                if (num != totalPages && num != 1){
-                    pagination += `<a ${ num == pageNum ? 'class="active"' : "" } onclick="loadPagination(${ num }, ${totalPages})">${ num }</a>`;
-                }
-            }
-        }
-    }
-    else{
-        for (let num =1; num <= totalPages; num++){
-            if (pageNum-2 < num && num < pageNum + 2){
-                if (num != totalPages && num != 1){
-                    pagination += `<a ${ num == pageNum ? 'class="active"' : "" } onclick="loadPagination(${ num }, ${totalPages})">${ num }</a>`;
-                }
-            }
-        }
-    }
-
-    if (pageNum < totalPages - 3){
-        pagination += `...`;
-    }
-
-    if (totalPages > 1){
-        pagination += `<a ${ pageNum == totalPages ? 'class="active"' : "" } onclick="loadPagination(${ totalPages }, ${totalPages})">${ totalPages }</a>`;
-    }
-
-    if (totalPages > 1){
-        document.querySelector(".pages").innerHTML = pagination;
-    }
-    else{
-        document.querySelector(".pages").innerHTML = '';
-    }
-}
 
 function rememberFilters(){
     const url = new URL(window.location.href);
@@ -111,7 +60,7 @@ function loadPagination(pageNum){
             response.json().then(response => {
                 console.log(response);
                 renderRefs(response.referrals);
-                renderRefsPagination(pageNum, response.total_pages);
+                renderPagination(pageNum, response.total_pages, 'loadPagination');
 
                 rememberFilters();
                 addPageToSearch(pageNum);
@@ -133,7 +82,7 @@ function initRefsContent(){
                     console.log(response);
                     renderRefs(response.referrals);
                     console.log(response.total_pages);
-                    renderRefsPagination(1, response.total_pages);
+                    renderPagination(1, response.total_pages, 'loadPagination');
                     rememberFilters();
                     changePaginationCount(response.count);
                 })
@@ -151,7 +100,7 @@ function initRefsContent(){
                     console.log(response);
                     renderRefs(response.referrals);
                     console.log(response.total_pages);
-                    renderRefsPagination(1, response.total_pages);
+                    renderPagination(1, response.total_pages, 'loadPagination');
                     rememberFilters();
                     changePaginationCount(response.count);
                 })
@@ -170,7 +119,7 @@ function initRefsContent(){
                     console.log(response);
                     renderRefs(response.referrals);
                     console.log(response.total_pages);
-                    renderRefsPagination(1, response.total_pages);
+                    renderPagination(1, response.total_pages, 'loadPagination');
                     rememberFilters();
                     changePaginationCount(response.count);
                 })

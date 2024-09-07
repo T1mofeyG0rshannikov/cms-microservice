@@ -3,7 +3,7 @@ function openLink(url){
 }
 
 function displayPhotoOnload(element) {
-    const imageLoader = element.querySelector("#file");
+    const imageLoader = element.querySelector("input[type=file]");
     const file = imageLoader.files[0];
     const reader  = new FileReader();
 

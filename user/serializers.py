@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from catalog.serializers import ProductsSerializer
+from user.models.idea import Idea, Like
 from user.models.product import UserProduct
 from user.models.user import User
 
@@ -43,3 +44,52 @@ class UserProductsSerializer(serializers.ModelSerializer):
 
     def get_created(self, user_product):
         return user_product.created_at.strftime("%d.%m.%Y")
+
+
+class IdeasSerializer(serializers.ModelSerializer):
+    finishe_date = serializers.SerializerMethodField()
+    likes = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
+    user = serializers.SerializerMethodField()
+    liked = serializers.SerializerMethodField()
+    created_at = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Idea
+        fields = [
+            "id",
+            "category",
+            "title",
+            "description",
+            "created_at",
+            "status",
+            "finishe_date",
+            "user",
+            "likes",
+            "liked",
+        ]
+
+    def get_created_at(self, idea):
+        return idea.created_at.strftime("%d.%m.%Y")
+
+    def get_liked(self, idea):
+        user = self.context["user"]
+        if not user:
+            return False
+
+        return Like.objects.filter(idea=idea, user=user).exists()
+
+    def get_user(self, idea):
+        return idea.user.full_name
+
+    def get_status(self, idea):
+        return dict(idea.STATUSES).get(idea.status)
+
+    def get_finishe_date(self, idea):
+        if idea.finishe_date:
+            return idea.finishe_date.strftime("%d.%m.%Y")
+
+        return "---"
+
+    def get_likes(self, idea):
+        return idea.likes.count()
