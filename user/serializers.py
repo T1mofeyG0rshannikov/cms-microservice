@@ -51,6 +51,7 @@ class IdeasSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
     liked = serializers.SerializerMethodField()
     created_at = DateFieldDot()
+    user_icon = serializers.SerializerMethodField()
 
     class Meta:
         model = Idea
@@ -63,9 +64,18 @@ class IdeasSerializer(serializers.ModelSerializer):
             "status",
             "finishe_date",
             "user",
+            "user_id",
             "likes_count",
+            "admin_answer",
             "liked",
+            "user_icon",
         ]
+
+    def get_user_icon(self, idea):
+        if idea.user.profile_picture:
+            return idea.user.profile_picture.url
+
+        return None
 
     def get_liked(self, idea):
         user = self.context["user"]
@@ -75,7 +85,7 @@ class IdeasSerializer(serializers.ModelSerializer):
         return Like.objects.filter(idea=idea, user=user).exists()
 
     def get_user(self, idea):
-        return idea.user
+        return idea.user.full_name
 
     def get_status(self, idea):
         return dict(idea.STATUSES).get(idea.status)

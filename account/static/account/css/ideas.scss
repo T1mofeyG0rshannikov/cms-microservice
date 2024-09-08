@@ -96,6 +96,10 @@ table.ideas{
         td{
             padding: 10px 0px;
         }
+
+        td:first-child{
+            padding-top: 7px;
+        }
     }
 
     tr:last-child{
@@ -130,6 +134,10 @@ table.ideas{
         }
 
         .description{
+            p{
+                margin-top: 0px;
+            }
+
             display: -webkit-box;
             cursor: pointer;
             -webkit-box-orient: vertical;
@@ -143,6 +151,7 @@ table.ideas{
 
         .status img{
             height: 27px;
+            border-radius: 50%;
         }
 
         .like{
@@ -166,6 +175,10 @@ table.ideas{
             width: 12px;
             height: 12px;
             cursor: pointer;
+        }
+
+        span{
+            font-size: var(--service-font-size);
         }
     }
 }

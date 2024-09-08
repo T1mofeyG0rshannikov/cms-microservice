@@ -2,19 +2,21 @@
 
 <header>
     <div class="inner">
-        {% if settings.logo %}
-            <img onclick="location.href='/'" class="logo"/>
-        {% else %}
-            <div onclick="location.href='/'" class="logo">
-                <a style="font-family: {{settings.site_font}}; font-size: {{settings.site_font_size}}; color: var(--main-text-inverted-color);">{{ settings.site_name }}</a>
-            </div>
-        {% endif %}
+        <div style="display: flex; gap: 65px;">
+            {% if settings.logo %}
+                <img onclick="location.href='/'" class="logo"/>
+            {% else %}
+                <div onclick="location.href='/'" class="logo">
+                    <a style="font-family: {{settings.site_font}}; font-size: {{settings.site_font_size}}; color: var(--main-text-inverted-color);">{{ settings.site_name }}</a>
+                </div>
+            {% endif %}
+
+            <a style="color: white; text-decoration: none; margin: 0px;" href="/my/ideas">
+                Есть идеи?
+            </a>
+        </div>
 
         <div class="icons">
-            <a href="/my/ideas">
-                Поддержка
-            </a>
-
             <div class="alert-container">
                 <img class="icon" src="{% static 'common/images/menu_alert.png' %}"/>
 

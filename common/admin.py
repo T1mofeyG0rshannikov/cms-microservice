@@ -63,7 +63,10 @@ class IdeaScreenInline(BaseInline):
 
 class IdeaAdmin(admin.ModelAdmin):
     model = Idea
-    list_display = ["status_img", "created_at_tag", "title", "user", "status", "finishe_date_tag", "rating"]
+    list_display = ["status_img", "created_at_tag", "title_tag", "user", "status", "finishe_date_tag", "rating"]
+
+    def title_tag(self, idea):
+        return mark_safe(f'<a href="/admin/user/idea/{idea.pk}/change/" >{idea.title}</a>')
 
     def finishe_date_tag(self, idea):
         if idea.finishe_date:
@@ -86,6 +89,7 @@ class IdeaAdmin(admin.ModelAdmin):
 
         return mark_safe(f'<img width="15" src="{src}" />')
 
+    title_tag.short_description = "Тема"
     status_img.short_description = ""
     created_at_tag.short_description = "Дата"
     finishe_date_tag.short_description = "Срок"
@@ -100,6 +104,17 @@ class IdeaAdmin(admin.ModelAdmin):
     rating.short_description = "Рейтинг"
 
     inlines = [IdeaScreenInline]
+
+    def get_fieldsets(self, request, obj):
+        fieldsets = (
+            (
+                None,
+                {
+                    "fields": ("user", "title", "category", "rating", "status", "finishe_date", "description", ""),
+                },
+            ),
+        )
+        return fieldsets
 
 
 admin.site = MyAdminSite()

@@ -86,61 +86,7 @@
 
 <hr />
 
-<div class="pagination">
-    <div style="display: flex; gap: 50px;">
-        <p class="pagination-count">Всего продуктов: <a>{{ count }}</a></p>
-        <div class="pages">
-        {% if total_pages > 1 %}
-            <a {% if current_page == 1 %}class="active"{% endif %} onclick="loadUserProducts(1)">1</a>
-            {% if current_page > 4 %}
-                ...
-            {% endif %}
-
-            {% if current_page == 1 %}
-                {% for num in total_pages|create_range %}
-                    {% if current_page < num and num < current_page|add:"3" %}
-                        {% if num > 1 and num != total_pages %}
-                            <a {% if num == total_pages %}class="active"{% endif %} onclick="loadUserProducts({{ num }})">{{ num }}</a>
-                        {% endif %}
-                    {% endif %}
-                    {% endfor %}
-
-                    {% elif current_page == total_pages %}
-                    {% for num in total_pages|create_range %}
-                    {% if current_page|add:"-3" < num and num < current_page %}
-                    {% if num != total_pages and num > 1 %}
-                    <a {% if num == total_pages %}class="active"{% endif %} onclick="loadUserProducts({{ num }})">{{ num }}</a>
-                    {% endif %}
-                    {% endif %}
-                {% endfor %}
-
-            {% else %}
-                {% for num in total_pages|create_range %}
-                    {% if current_page|add:"-2" < num and num < current_page|add:"2" %}
-                        {% if num > 1 and num != total_pages %}
-                            <a {% if num == current_page %}class="active"{% endif %} onclick="loadUserProducts({{ num }}, {{ total_pages }})">{{ num }}</a>
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
-
-            {% endif %}
-
-            {% if current_page < total_pages|add:"-3" %}
-            ...
-            {% endif %}
-
-            <a {% if current_page == total_pages %}class="active"{% endif %} onclick="loadUserProducts({{ total_pages }}, {{ total_pages }})">{{ total_pages }}</a>
-            {% endif %}
-        </div>
-    </div>
-
-    <select name="page_size" id="page_size" class="no-border">
-        <option value="10" selected>10 на странице</option>
-        <option value="25">25 на странице</option>
-        <option value="50">50 на странице</option>
-        <option value="100">100 на странице</option>
-    </select>
-</div>
+{% include "common/pagination.html" with title="Всего продуктов" pagiateFunc="loadUserProducts(" %}
 
 {% else %}
 <h3 class="no-products">Вы еще не добавили ни одного продукта</h3>

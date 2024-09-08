@@ -5,7 +5,7 @@ from user.models.idea import Idea
 
 class IdeaRepositoryInterface(Protocol):
     @staticmethod
-    def get_ideas(category=None, sorted_by=None, user=None) -> list[Idea]:
+    def get_ideas(category=None, sorted_by=None, status=None, user=None) -> list[Idea]:
         raise NotImplementedError()
 
     @staticmethod

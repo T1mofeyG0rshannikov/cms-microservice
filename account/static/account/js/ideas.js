@@ -1,48 +1,73 @@
-function getIdeaImage(category){
-    if (category === "errors"){
+function getIdeaImage(idea, user_id){
+    if (user_id === idea.user_id){
+        if (idea.user_icon){
+            return `<img src="${ idea.user_icon }" />`;
+        }
+
+        return `<img src="/static/account/images/nophoto.jpg" />`;
+    }
+
+    if (idea.category === "errors"){
         return `<img src="/static/account/images/bugs/icobug_error.png" />`;
     }
-    else if (category === "correction"){
+    else if (idea.category === "correction"){
         return `<img src="/static/account/images/bugs/icobug_fix.png" />`;
     }
 
-    else if (category === "modernization"){
+    else if (idea.category === "modernization"){
         return `<img src="/static/account/images/bugs/icobug_addon.png" />`;
     }
-    else if (category === "new_feature"){
+    else if (idea.category === "new_feature"){
         return `<img src="/static/account/images/bugs/icobug_idea.png" />`;
     }
 }
 
-function renderIdeas(ideas){
+function renderIdeas(ideas, user_id){
     let ideasHTML = '';
     for (let idea of ideas){
         let ideaHTML = `
-        <tr>
-            <td style="width: 50px;" class="status">
-                ${getIdeaImage(idea.category)}
+        <tr style="border-bottom: 1px solid var(--dark-color);">
+            <td style="width: 40px;" class="status">
+                ${getIdeaImage(idea, user_id)}
             </td>
 
-            <td style="width: 120px;">${ idea.created_at }</td>
+            <td style="width: 90px;">${ idea.created_at }</td>
             <td>
-                <p>
-                    ${ idea.title }
+                <p class="change-idea">
+                    <span class="fw600">
+                        ${ idea.title }
+                    </span>
+
+                    ${ idea.status == "Новое" ? (
+                        idea.user_id == user_id ? (
+                            `<img title="Настройка" onclick="openUpdateIdeaForm(${ idea.id })" src="/static/account/images/icoint_edit.png" />`
+                        ): ''
+                        ): ''
+                    }
                 </p>
 
                 <div>
-                    <p onclick="openIdeaDescription(this)" class="description hidden">
+                    <span onclick="openIdeaDescription(this)" class="description hidden">
                         ${ idea.description }
-                    </p>
+
+                        ${ idea.admin_answer ? (
+                            `<br />
+                            <br />
+                            <span style="font-style: italic;">Ответ администрации:</span>
+                            ${ idea.admin_answer }`
+                        ): ''
+                    }
+                    </span>
                 </div>
             </td>
 
-            <td style="width: 120px;">${ idea.user }</td>
+            <td style="width: 140px; padding-left: 30px;">${ idea.user }</td>
             <td style="width: 120px;">${ idea.status }</td>
             <td style="width: 120px;">${ idea.finishe_date }</td>
 
             <td style="width: 120px;">
                 <div class="like">
-                    <img onclick="addLike(this, {{idea.id}})" src="${idea.liked ? "/static/account/images/bugs/icobug_yes.png" : "/static/account/images/bugs/icobug_vote.png"}" />
+                    <img onclick="addLike(this, ${idea.id})" src="${idea.liked ? "/static/account/images/bugs/icobug_yes.png" : "/static/account/images/bugs/icobug_vote.png"}" />
                     <span>${ idea.likes_count }</span>
                 </div>
             </td>
@@ -68,7 +93,7 @@ function loadIdeas(page=1){
         if (response.status === 200){
             response.json().then(response => {
                 console.log(response);
-                renderIdeas(response.ideas);
+                renderIdeas(response.ideas, response.user_id);
                 console.log(response.total_pages);
                 renderPagination(page, response.total_pages, 'loadIdeas');
                 rememberIdeasFilters();
@@ -236,6 +261,12 @@ function addScreensLoadEvent(){
 }
 
 function openIdeaDescription(element){
+    const isTextClamped =  element.scrollHeight > element.clientHeight;
+
+    if (!isTextClamped){
+        return;
+    }
+
     element.classList.remove("hidden")
 
     element.style.cursor = 'auto';
@@ -251,6 +282,7 @@ function hideIdeaDescription(element){
     element.querySelector(".description").classList.toggle("hidden");
 
     element.querySelector(".description").style.cursor = "pointer";
+    element.querySelector(".description").style.pointerEvents = "auto";
 
     const a = element.querySelector("a")
     element.removeChild(a);

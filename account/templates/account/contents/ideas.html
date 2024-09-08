@@ -35,7 +35,7 @@
     </div>
 
     <select name="sort_by" id="sort_by" class="no-border">
-        <option value="-created_at" {% if request.GET.sorted_by == "-created_at" %}selected{% endif %}>По дате публикации</option>
+        <option value="-id" {% if request.GET.sorted_by == "-id" %}selected{% endif %}>По дате публикации</option>
         <option value="finishe_date" {% if request.GET.sorted_by == "finishe_date" %}selected{% endif %}>По дате реализации</option>
         <option value="-likes_count" {% if request.GET.sorted_by == "-likes_count" %}selected{% endif %}>По числу голосов</option>
     </select>
@@ -47,7 +47,7 @@
             <th><div style="color: transparent;">.</div></th>
             <th><div>Дата</div></th>
             <th><div>Тема</div></th>
-            <th><div>Автор</div></th>
+            <th><div style="padding-left: 30px;">Автор</div></th>
             <th>
                 <div>
                     <div class="fields-title">
@@ -81,40 +81,55 @@
     <tbody>
         {% for idea in ideas %}
             <tr style="border-bottom: 1px solid var(--dark-color);">
-                <td style="width: 50px;" class="status">
-                    {% if idea.category == "errors" %}
-                        <img src="{% static 'account/images/bugs/icobug_error.png' %}" />
-                    {% elif idea.category == "correction" %}
-                        <img src="{% static 'account/images/bugs/icobug_fix.png' %}" />
-                    {% elif idea.category == "modernization" %}
-                        <img src="{% static 'account/images/bugs/icobug_addon.png' %}" />
-                    {% elif idea.category == "new_feature" %}
-                        <img src="{% static 'account/images/bugs/icobug_idea.png' %}" />
+                <td style="width: 40px;" class="status">
+                    {% if idea.user_id == request.user.id %}
+                        {% if idea.user_icon %}
+                            <img src="{{ idea.user_icon }}" />
+                        {% else %}
+                            <img src="{% static 'account/images/nophoto.jpg' %}" />
+                        {% endif %}
+                    {% else %}
+                        {% if idea.category == "errors" %}
+                            <img src="{% static 'account/images/bugs/icobug_error.png' %}" />
+                        {% elif idea.category == "correction" %}
+                            <img src="{% static 'account/images/bugs/icobug_fix.png' %}" />
+                        {% elif idea.category == "modernization" %}
+                            <img src="{% static 'account/images/bugs/icobug_addon.png' %}" />
+                        {% elif idea.category == "new_feature" %}
+                            <img src="{% static 'account/images/bugs/icobug_idea.png' %}" />
+                        {% endif %}
                     {% endif %}
                 </td>
 
-                <td style="width: 80px;">{{ idea.created_at }}</td>
+                <td style="width: 90px;">{{ idea.created_at }}</td>
                 <td>
                     <p class="change-idea">
-                        <span>
+                        <span class="fw600">
                             {{ idea.title }}
                         </span>
 
                         {% if idea.status == "Новое" %}
-                            {% if idea.user == user %}
+                            {% if idea.user_id == user.id %}
                                 <img title="Настройка" onclick="openUpdateIdeaForm({{ idea.id }})" src="{% static 'account/images/icoint_edit.png' %}" />
                             {% endif %}
                         {% endif %}
                     </p>
 
                     <div>
-                        <p onclick="openIdeaDescription(this)" class="description hidden">
+                        <span onclick="openIdeaDescription(this)" class="description hidden">
                             {{ idea.description }}
-                        </p>
+
+                            {% if idea.admin_answer %}
+                                <br />
+                                <br />
+                                <span style="font-style: italic;">Ответ администрации:</span>
+                                {{ idea.admin_answer|safe }}
+                            {% endif %}
+                        </span>
                     </div>
                 </td>
 
-                <td style="width: 140px;">{{ idea.user }}</td>
+                <td style="width: 140px; padding-left: 30px;">{{ idea.user }}</td>
                 <td style="width: 120px;">{{ idea.status }}</td>
                 <td style="width: 120px;">{{ idea.finishe_date }}</td>
 
@@ -135,7 +150,7 @@
 
 <hr />
 
-{% include "common/pagination.html" with title="Всего предложений" paginateFunc="loadUserProducts" %}
+{% include "common/pagination.html" with title="Всего предложений" paginateFunc="loadIdeas" %}
 
 {% else %}
 <h3 class="no-products">Предложений пока нет</h3>

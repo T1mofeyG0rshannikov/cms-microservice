@@ -28,6 +28,9 @@ class LikeView(APIUserRequired):
         if not idea:
             return HttpResponse(status=404)
 
+        if idea.user == user:
+            return JsonResponse({"message": "You cant like your own ideas"}, status=400)
+
         if Like.objects.filter(user=user, idea=idea).exists():
             return JsonResponse({"message": "You already had liked this idea"}, status=400)
 
