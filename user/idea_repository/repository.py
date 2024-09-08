@@ -1,10 +1,17 @@
-from django.db.models import Q
+from django.db.models import Count, Q
 
 from user.idea_repository.repository_interface import IdeaRepositoryInterface
 from user.models.idea import Idea
 
 
 class IdeaRepository(IdeaRepositoryInterface):
+    @staticmethod
+    def get_idea(id: int):
+        try:
+            return Idea.objects.get(id=id)
+        except Idea.DoesNotExist:
+            return None
+
     @staticmethod
     def get_ideas(category=None, sorted_by=None, status=None, user=None):
         filters = Q()
@@ -21,9 +28,13 @@ class IdeaRepository(IdeaRepositoryInterface):
         if not sorted_by:
             sorted_by = "-id"
 
-        ideas = Idea.objects.prefetch_related("likes").select_related("user").filter(filters).order_by(sorted_by)
-
-        return ideas
+        return (
+            Idea.objects.annotate(likes_count=Count("likes"))
+            .prefetch_related("likes")
+            .select_related("user")
+            .filter(filters)
+            .order_by(sorted_by)
+        )
 
 
 def get_idea_repository() -> IdeaRepository:

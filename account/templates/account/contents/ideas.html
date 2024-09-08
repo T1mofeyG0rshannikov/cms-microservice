@@ -1,7 +1,6 @@
 {% load static %}
 {% load qr_code %}
 {% load sass_tags %}
-{% load range %}
 
 
 <div class="site-container" style="margin-bottom: 15px; align-items: end; margin-top: 10px;">
@@ -25,7 +24,7 @@
         </select>
 
         <select name="status" id="status">
-            <option value=""{% if request.GET.status == "" %}selected{% endif %}>Все предложения</option>
+            <option value=""{% if request.GET.status == "" %}selected{% endif %}>Все статусы</option>
             <option value="new"{% if request.GET.status == "new" %}selected{% endif %}>Новые</option>
             <option value="in_progress"{% if request.GET.status == "in_progress" %}selected{% endif %}>В работе</option>
             <option value="planned"{% if request.GET.status == "planned" %}selected{% endif %}>Запланированы</option>
@@ -34,24 +33,54 @@
             <option value="repeat"{% if request.GET.status == "repeat" %}selected{% endif %}>Повторы</option>
         </select>
     </div>
+
+    <select name="sort_by" id="sort_by" class="no-border">
+        <option value="-created_at" {% if request.GET.sorted_by == "-created_at" %}selected{% endif %}>По дате публикации</option>
+        <option value="finishe_date" {% if request.GET.sorted_by == "finishe_date" %}selected{% endif %}>По дате реализации</option>
+        <option value="-likes_count" {% if request.GET.sorted_by == "-likes_count" %}selected{% endif %}>По числу голосов</option>
+    </select>
 </div>
 
-<table>
+<table class="ideas">
     <thead>
         <tr>
-            <th><div style="color: transparent;">111</div></th>
+            <th><div style="color: transparent;">.</div></th>
             <th><div>Дата</div></th>
             <th><div>Тема</div></th>
             <th><div>Автор</div></th>
-            <th><div>Статус</div></th>
-            <th><div>Ожидается</div></th>
-            <th><div style="text-align: right;">Поддержали</div></th>
+            <th>
+                <div>
+                    <div class="fields-title">
+                        Статус
+
+                        {% include "common/context_help.html" with text="Новое: Еще не рассмотрено администрацией<br /> В работе: Идет реализация<br />Запланировано: Поставлено в очередь, но работа еще не начата<br />Реализовано: Успешно внедрено<br />Отклонено: Не принято, причина в комментарии к предложению<br />Повтор: Такое предложение уже было<br />" %}
+                    </div>
+                </div>
+            </th>
+            <th>
+                <div>
+                    <div class="fields-title">
+                        Срок
+
+                        {% include "common/context_help.html" with text="Дата выполненной или ожидаемой реализации предложения" %}
+                    </div>
+                </div>
+            </th>
+            <th>
+                <div>
+                    <div class="fields-title" style="justify-content: flex-end;">
+                        Рейтинг
+
+                        {% include "common/context_help.html" with text="Число пользователей, поддержавших предложение" %}
+                    </div>
+                </div>
+            </th>
         </tr>
     </thead>
 
     <tbody>
         {% for idea in ideas %}
-            <tr>
+            <tr style="border-bottom: 1px solid var(--dark-color);">
                 <td style="width: 50px;" class="status">
                     {% if idea.category == "errors" %}
                         <img src="{% static 'account/images/bugs/icobug_error.png' %}" />
@@ -64,10 +93,18 @@
                     {% endif %}
                 </td>
 
-                <td style="width: 120px;">{{ idea.created_at }}</td>
+                <td style="width: 80px;">{{ idea.created_at }}</td>
                 <td>
-                    <p>
-                        {{ idea.title }}
+                    <p class="change-idea">
+                        <span>
+                            {{ idea.title }}
+                        </span>
+
+                        {% if idea.status == "Новое" %}
+                            {% if idea.user == user %}
+                                <img title="Настройка" onclick="openUpdateIdeaForm({{ idea.id }})" src="{% static 'account/images/icoint_edit.png' %}" />
+                            {% endif %}
+                        {% endif %}
                     </p>
 
                     <div>
@@ -77,7 +114,7 @@
                     </div>
                 </td>
 
-                <td style="width: 120px;">{{ idea.user }}</td>
+                <td style="width: 140px;">{{ idea.user }}</td>
                 <td style="width: 120px;">{{ idea.status }}</td>
                 <td style="width: 120px;">{{ idea.finishe_date }}</td>
 
@@ -88,7 +125,7 @@
                         {% else %}
                             <img onclick="addLike(this, {{idea.id}})" src="{% static 'account/images/bugs/icobug_vote.png' %}" />
                         {% endif %}
-                        <span>{{ idea.likes }}</span>
+                        <span>{{ idea.likes_count }}</span>
                     </div>
                 </td>
             </tr>
@@ -98,61 +135,7 @@
 
 <hr />
 
-<div class="pagination">
-    <div style="display: flex; gap: 50px;">
-        <p class="pagination-count">Всего продуктов: <a>{{ count }}</a></p>
-        <div class="pages">
-        {% if total_pages > 1 %}
-            <a {% if current_page == 1 %}class="active"{% endif %} onclick="loadUserProducts(1)">1</a>
-            {% if current_page > 4 %}
-                ...
-            {% endif %}
-
-            {% if current_page == 1 %}
-                {% for num in total_pages|create_range %}
-                    {% if current_page < num and num < current_page|add:"3" %}
-                        {% if num > 1 and num != total_pages %}
-                            <a {% if num == total_pages %}class="active"{% endif %} onclick="loadUserProducts({{ num }})">{{ num }}</a>
-                        {% endif %}
-                    {% endif %}
-                    {% endfor %}
-
-                    {% elif current_page == total_pages %}
-                    {% for num in total_pages|create_range %}
-                    {% if current_page|add:"-3" < num and num < current_page %}
-                    {% if num != total_pages and num > 1 %}
-                    <a {% if num == total_pages %}class="active"{% endif %} onclick="loadUserProducts({{ num }})">{{ num }}</a>
-                    {% endif %}
-                    {% endif %}
-                {% endfor %}
-
-            {% else %}
-                {% for num in total_pages|create_range %}
-                    {% if current_page|add:"-2" < num and num < current_page|add:"2" %}
-                        {% if num > 1 and num != total_pages %}
-                            <a {% if num == current_page %}class="active"{% endif %} onclick="loadUserProducts({{ num }}, {{ total_pages }})">{{ num }}</a>
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
-
-            {% endif %}
-
-            {% if current_page < total_pages|add:"-3" %}
-            ...
-            {% endif %}
-
-            <a {% if current_page == total_pages %}class="active"{% endif %} onclick="loadUserProducts({{ total_pages }}, {{ total_pages }})">{{ total_pages }}</a>
-            {% endif %}
-        </div>
-    </div>
-
-    <select name="page_size" id="page_size" class="no-border">
-        <option value="10" selected>10 на странице</option>
-        <option value="25">25 на странице</option>
-        <option value="50">50 на странице</option>
-        <option value="100">100 на странице</option>
-    </select>
-</div>
+{% include "common/pagination.html" with title="Всего предложений" paginateFunc="loadUserProducts" %}
 
 {% else %}
 <h3 class="no-products">Предложений пока нет</h3>

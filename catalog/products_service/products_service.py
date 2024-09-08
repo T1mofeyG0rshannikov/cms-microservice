@@ -11,8 +11,10 @@ class ProductsService(ProductsServiceInterface):
     def __init__(self, repository: ProductRepositoryInterface):
         self.repository = repository
 
-    def get_enabled_products_to_create(self, user_id: int) -> list[dict[str, Any]]:
-        return ProductsSerializer(self.repository.get_enabled_products_to_create(user_id), many=True).data
+    def get_enabled_products_to_create(self, user_id: int, organization_id: int) -> list[dict[str, Any]]:
+        return ProductsSerializer(
+            self.repository.get_enabled_products_to_create(user_id, organization_id), many=True
+        ).data
 
     def filter_enabled_products(self, organization_id: int, user: UserInterface) -> list[dict[str, Any]]:
         products = self.repository.get_enabled_products_to_create(user.id, organization_id)

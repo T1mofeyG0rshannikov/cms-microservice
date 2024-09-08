@@ -42,19 +42,8 @@ function openForm(form){
     }
 
     closeUserNav();
-    resetForm(form);
     removeFormErrors(form);
     form.style.right = "0px";
-}
-
-function resetForm(element){
-    const inputs = element.querySelectorAll("input");
-
-    for (let input of inputs){
-        if ($(input).attr("default") !== undefined){
-            input.value = $(input).attr("default");
-        }
-    }
 }
 
 function closeFormPopup(popup){

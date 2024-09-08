@@ -2,8 +2,10 @@ from django.http import HttpResponse, JsonResponse, QueryDict
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
+from common.pagination import Pagination
 from common.views import FormView
 from user.forms import AddIdeaForm
+from user.idea_repository.repository import get_idea_repository
 from user.idea_service.idea_service import get_idea_service
 from user.models.idea import Idea, IdeaScreen, Like
 from user.usecases.get_ideas import GetIdeas
@@ -12,13 +14,12 @@ from user.views.base_user_view import APIUserRequired
 
 @method_decorator(csrf_exempt, name="dispatch")
 class LikeView(APIUserRequired):
+    repository = get_idea_repository()
+
     def get_idea(self):
         idea = self.request.GET.get("idea")
 
-        try:
-            return Idea.objects.get(id=idea)
-        except Idea.DoesNotExist:
-            return None
+        return self.repository.get_idea(idea)
 
     def post(self, request):
         user = request.user
@@ -60,7 +61,16 @@ class AddIdea(APIUserRequired, FormView):
     form_class = AddIdeaForm
 
     def form_valid(self, request, form):
-        print(request.POST, request.FILES)
+        screens = request.FILES.getlist("screens")
+
+        errors = {}
+        for i, screen in enumerate(screens):
+            if screen.size > 1_048_576:
+                errors[f"file{i + 1}"] = ["Изображение должно быть не более 1Mb"]
+
+        if errors:
+            return JsonResponse({"errors": errors}, status=400)
+
         idea = Idea.objects.create(
             title=form.cleaned_data.get("title"),
             description=form.cleaned_data.get("description"),
@@ -68,12 +78,66 @@ class AddIdea(APIUserRequired, FormView):
             user=request.user,
         )
 
-        screens = request.FILES.getlist("screens")
-
         for screen in screens:
             IdeaScreen.objects.create(screen=screen, idea=idea)
 
         return HttpResponse(status=201)
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class UpdateIdea(APIUserRequired, FormView):
+    form_class = AddIdeaForm
+
+    def form_valid(self, request, form):
+        idea_id = request.GET.get("idea")
+
+        idea = Idea.objects.get(id=idea_id)
+
+        screens = request.FILES.getlist("screens")
+        screensSrc = request.POST.get("screensSrc").split(",")
+        currentScreensSrc = [screen.screen.name.split("/")[-1] for screen in idea.screens.all()]
+
+        print(screens)
+        print(screensSrc)
+        print(currentScreensSrc)
+
+        errors = {}
+        for i, screen in enumerate(screens):
+            if screen.size > 1_048_576:
+                errors[f"file{i + 1}"] = ["Изображение должно быть не более 1Mb"]
+
+        if errors:
+            return JsonResponse({"errors": errors}, status=400)
+
+        idea.title = form.cleaned_data.get("title")
+        idea.description = form.cleaned_data.get("description")
+        idea.category = form.cleaned_data.get("category")
+
+        idea.save()
+
+        for screen in idea.screens.all():
+            print(screen.screen.name.split("/")[-1], "name2")
+            if screen.screen.name.split("/")[-1] not in screensSrc:
+                screen.delete()
+
+        for screen in screens:
+            print(screen.name, "name1")
+            if screen.name not in currentScreensSrc:
+                IdeaScreen.objects.create(screen=screen, idea=idea)
+
+        return HttpResponse(status=201)
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class DeleteIdeaView(APIUserRequired):
+    def delete(self, request):
+        idea = request.GET.get("idea")
+
+        print(idea, type(idea))
+        print(Idea.objects.filter(user=request.user, id=idea))
+
+        Idea.objects.filter(user=request.user, id=idea).delete()
+        return HttpResponse(status=204)
 
 
 class GetIdeasView(APIUserRequired):
@@ -85,5 +149,6 @@ class GetIdeasView(APIUserRequired):
         status = self.request.GET.get("status")
 
         user = request.user
+        paginator = Pagination(request)
 
-        return JsonResponse({"ideas": self.get_ideas_interactor(filter, sorted_by, status, user)})
+        return JsonResponse(self.get_ideas_interactor(filter, sorted_by, status, user, paginator))

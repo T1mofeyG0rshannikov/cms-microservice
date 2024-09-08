@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from catalog.serializers import ProductsSerializer
+from common.serializers import DateFieldDot
 from user.models.idea import Idea, Like
 from user.models.product import UserProduct
 from user.models.user import User
@@ -23,7 +24,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserProductsSerializer(serializers.ModelSerializer):
     product = ProductsSerializer()
     end_promotion = serializers.SerializerMethodField()
-    created = serializers.SerializerMethodField()
+    created_at = DateFieldDot()
 
     class Meta:
         model = UserProduct
@@ -36,23 +37,20 @@ class UserProductsSerializer(serializers.ModelSerializer):
             "end_promotion",
             "redirections",
             "fully_verified",
-            "created",
+            "created_at",
         ]
 
     def get_end_promotion(self, user_product):
         return user_product.product.get_end_promotion.strftime("%d.%m.%Y")
 
-    def get_created(self, user_product):
-        return user_product.created_at.strftime("%d.%m.%Y")
-
 
 class IdeasSerializer(serializers.ModelSerializer):
     finishe_date = serializers.SerializerMethodField()
-    likes = serializers.SerializerMethodField()
+    likes_count = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
     user = serializers.SerializerMethodField()
     liked = serializers.SerializerMethodField()
-    created_at = serializers.SerializerMethodField()
+    created_at = DateFieldDot()
 
     class Meta:
         model = Idea
@@ -65,12 +63,9 @@ class IdeasSerializer(serializers.ModelSerializer):
             "status",
             "finishe_date",
             "user",
-            "likes",
+            "likes_count",
             "liked",
         ]
-
-    def get_created_at(self, idea):
-        return idea.created_at.strftime("%d.%m.%Y")
 
     def get_liked(self, idea):
         user = self.context["user"]
@@ -80,7 +75,7 @@ class IdeasSerializer(serializers.ModelSerializer):
         return Like.objects.filter(idea=idea, user=user).exists()
 
     def get_user(self, idea):
-        return idea.user.full_name
+        return idea.user
 
     def get_status(self, idea):
         return dict(idea.STATUSES).get(idea.status)
@@ -91,5 +86,5 @@ class IdeasSerializer(serializers.ModelSerializer):
 
         return "---"
 
-    def get_likes(self, idea):
-        return idea.likes.count()
+    def get_likes_count(self, idea):
+        return idea.likes_count

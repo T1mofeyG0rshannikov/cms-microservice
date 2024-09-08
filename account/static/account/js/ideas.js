@@ -43,7 +43,7 @@ function renderIdeas(ideas){
             <td style="width: 120px;">
                 <div class="like">
                     <img onclick="addLike(this, {{idea.id}})" src="${idea.liked ? "/static/account/images/bugs/icobug_yes.png" : "/static/account/images/bugs/icobug_vote.png"}" />
-                    <span>${ idea.likes }</span>
+                    <span>${ idea.likes_count }</span>
                 </div>
             </td>
         </tr>
@@ -61,9 +61,10 @@ function renderIdeas(ideas){
 function loadIdeas(page=1){
     const category = $("select[name=category]").val();
     const status = $("select[name=status]").val();
+    const sorted_by = $("select[name=sort_by]").val();
     const page_size = $("select[name=page_size]").val();
 
-    fetch(`/user/ideas?category=${category}&page_size=${page_size}&status=${status}&page=${page}`).then(response => {
+    fetch(`/user/ideas?category=${category}&page_size=${page_size}&status=${status}&page=${page}&sorted_by=${sorted_by}`).then(response => {
         if (response.status === 200){
             response.json().then(response => {
                 console.log(response);
@@ -90,46 +91,87 @@ function openIdeaForm(){
 
 let createIdeaForm = document.querySelector(".create-idea-form");
 
-function onSubmitCreateIdeaForm(element, event){
+function onSubmitCreateIdeaForm(element, event, ideaId){
     event.preventDefault();
 
     const data = new FormData(element);
-    let screens = [];
+    let screensSrc = [];
 
     for (let screen of element.querySelectorAll("input[type=file]")){
         console.log(screen)
         console.log(screen.files)
         if (screen.files[0] !== undefined){
             data.append('screens', screen.files[0])
+            screensSrc.push(screen.files[0].name);
         }
     }
 
-    console.log(screens)
+    for (let screen of element.querySelectorAll(".screens-container .field img")){
+        if (!screen.src.includes('data:image')){
+            const screenSrc = screen.src.split("/")[screen.src.split("/").length - 1];
+            console.log(screenSrc);
+            if (screenSrc !== 'noscreen.jpg'){
+                screensSrc.push(screenSrc)
+            }
+        }
+    }
 
-    fetch(`/user/idea`, {
-        method: "POST",
-        headers: {
-            'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-        },
-        body: data
-    }).then(response => {
-        if (response.status === 201){
+    data.append('screensSrc', screensSrc);
+    console.log(ideaId);
+
+    if (ideaId === undefined){
+        fetch(`/user/idea`, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: data
+        }).then(response => {
+            if (response.status === 201){
+                setErrors({}, element)
+                console.log("success");
+                window.history.replaceState(null, '', window.location.pathname);
+                location.reload();
+            }
+            if (response.status === 401){
+                window.location.href="/user/login";
+            }
+            return response.json();
+        }).then(response => {
+            console.log(response.errors);
+            console.log(element);
             setErrors({}, element)
-            console.log("success");
-            window.history.replaceState(null, '', window.location.pathname);
-            location.reload();
-        }
-        if (response.status === 401){
-            window.location.href="/user/login";
-        }
-        return response.json();
-    }).then(response => {
-        console.log(response.errors);
-        console.log(element);
-        setErrors({}, element)
-        setErrors(response.errors, element)
-    })
+            setErrors(response.errors, element)
+        })
+    }
+
+    else{
+        fetch(`/user/update-idea?idea=${ideaId}`, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: data
+        }).then(response => {
+            if (response.status === 201){
+                setErrors({}, element)
+                console.log("success");
+                window.history.replaceState(null, '', window.location.pathname);
+                location.reload();
+            }
+            if (response.status === 401){
+                window.location.href="/user/login";
+            }
+            return response.json();
+        }).then(response => {
+            console.log(response.errors);
+            console.log(element);
+            setErrors({}, element)
+            setErrors(response.errors, element)
+        })
+    }
 }
 
 function initCreateIdeaForm(){
@@ -150,8 +192,8 @@ function rememberIdeasFilters(){
     const page_size = $("select[name=page_size]").val();
     url.searchParams.set('page_size', page_size);
 
-    const date = $("select[name=date]").val();
-    url.searchParams.set('date', date);
+    const status = $("select[name=status]").val();
+    url.searchParams.set('status', status);
 
     window.history.replaceState(null, '', window.location.pathname + url.search);
 }
@@ -161,15 +203,16 @@ function addScreen(){
 
     let screen =
     `
-    <div class="screen">
+    <div id="file${screensCount + 1}" class="screen field">
         <div class="screen-image">
             <img src="/static/account/images/noscreen.jpg" alt="скриншот">
-            <input name="file" type="file" accept="image/*" id="file${screensCount + 1}" multiple/>
+            <input name="file" type="file" accept="image/*" />
         </div>
-    </div>
+    </div>`;
 
-    <button onclick="addScreen()" class="br50">+</button>
-    `;
+    if (screensCount < 2){
+        screen += `<button onclick="addScreen()" class="br50">+</button>`;
+    }
 
     const screenContainer = createIdeaForm.querySelector(".screens-container");
     const button = screenContainer.querySelector("button");
@@ -201,7 +244,7 @@ function openIdeaDescription(element){
     element.parentElement.appendChild(a);
     a.outerHTML = `<a style="color: var(--light-ref-color); cursor: pointer;">скрыть</a>`
     element.parentElement.querySelector("a").addEventListener('click', () => hideIdeaDescription(element.parentElement))
-    element.removeEventListener('click', openIdeaDescription);
+    element.style.pointerEvents = "none";
 }
 
 function hideIdeaDescription(element){
@@ -237,6 +280,82 @@ function initIdeas(){
     if (document.querySelector("select[name=category") != null){
         document.querySelector("select[name=category").addEventListener("change", () => loadIdeas());
         document.querySelector("select[name=status").addEventListener("change", () => loadIdeas());
-        document.querySelector("select[name=page_size]").addEventListener("change", () => loadUser());
+        document.querySelector("select[name=sort_by").addEventListener("change", () => loadIdeas());
+        document.querySelector("select[name=page_size]").addEventListener("change", () => loadIdeas());
     }
+}
+
+function createIdeaFormremoveEventListeners(){
+    createIdeaForm.removeEventListener('submit', onSubmitCreateIdeaForm)
+    createIdeaForm.removeEventListener('submit', onSubmitUpdateIdeaForm)
+}
+
+function openUpdateIdeaForm(ideaId){
+    createIdeaForm = document.querySelector(".create-idea-form");
+
+    fetch(`/get-create-idea-form?idea=${ideaId}`).then(response => response.json()).then(response => {
+        createIdeaForm.outerHTML = response.content;
+        createIdeaForm = document.querySelector(".create-idea-form");
+        openForm(createIdeaForm);
+        initUpdateIdeaForm(ideaId);
+        addScreensLoadEvent();
+    })
+}
+
+function onSubmitUpdateIdeaForm(element, event, ideaId){
+    event.preventDefault();
+
+    const data = new FormData(element);
+    let screens = [];
+
+    for (let screen of element.querySelectorAll("input[type=file]")){
+        console.log(screen)
+        console.log(screen.files)
+        if (screen.files[0] !== undefined){
+            data.append('screens', screen.files[0])
+        }
+    }
+
+    console.log(screens)
+
+    fetch(`/user/update-idea?idea=${ideaId}`, {
+        method: "POST",
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: data
+    }).then(response => {
+        if (response.status === 201){
+            setErrors({}, element)
+            console.log("success");
+            window.history.replaceState(null, '', window.location.pathname);
+            location.reload();
+        }
+        if (response.status === 401){
+            window.location.href="/user/login";
+        }
+        return response.json();
+    }).then(response => {
+        console.log(response.errors);
+        console.log(element);
+        setErrors({}, element)
+        setErrors(response.errors, element)
+    })
+}
+
+function initUpdateIdeaForm(ideaId){
+    createIdeaForm = document.querySelector(".create-idea-form");
+
+    createIdeaForm.querySelector(".cross img").addEventListener('click', closeCreateProductForm);
+}
+
+
+function deleteIdea(ideaId){
+    fetch(`/user/delete-idea?idea=${ideaId}`, {method: "DELETE"}).then(response => {
+        if (response.status === 204){
+            console.log("success")
+            window.location.reload()
+        }
+    })
 }

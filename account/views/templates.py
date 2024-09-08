@@ -5,6 +5,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
 from account.forms import ChangePasswordForm
+from common.pagination import Pagination
 from common.views import FormView
 from domens.views.mixins import SubdomainMixin
 from materials.models import Document
@@ -152,8 +153,10 @@ class IdeasView(BaseProfileView):
         sorted_by = self.request.GET.get("sorted_by")
         status = self.request.GET.get("status")
 
-        context["ideas"] = self.idea_service.get_ideas(
-            filter=filter, sorted_by=sorted_by, status=status, user=self.request.user
-        )
+        ideas = self.idea_service.get_ideas(filter=filter, sorted_by=sorted_by, status=status, user=self.request.user)
+
+        pagination = Pagination(self.request)
+
+        context |= pagination.paginate(ideas, "ideas")
 
         return context

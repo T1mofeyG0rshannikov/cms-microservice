@@ -1,7 +1,6 @@
 {% load static %}
 {% load qr_code %}
 {% load sass_tags %}
-{% load range %}
 
 
 <div class="site-container" style="margin-bottom: 15px; align-items: end; margin-top: 10px;">
@@ -59,7 +58,7 @@
                 <td>{{ user_product.end_promotion }}</td>
                 <td>
                     <span>
-                        {{ user_product.created }}
+                        {{ user_product.created_at }}
                         {% if user_product.fully_verified %}<img class="verified" src="{% static 'account/images/icoint_premium.png' %}"/>{% endif %}
                     </span>
                 </td>

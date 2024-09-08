@@ -106,6 +106,18 @@ class CustomAuthenticationAdminForm(AuthenticationForm):
 
 
 class AddIdeaForm(forms.Form):
-    title = forms.CharField()
-    description = forms.CharField()
+    title = forms.CharField(max_length=60)
+    description = forms.CharField(max_length=1000)
     category = forms.CharField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["category"].error_messages = {"required": "Выберите категорию замечания или предложения"}
+        self.fields["title"].error_messages = {
+            "required": "Сформулируйте тему предложения",
+            "max_length": f"Не более {self.fields['title'].max_length} символов с пробелами",
+        }
+        self.fields["description"].error_messages = {
+            "required": "Опишите суть проблемы или идеи",
+            "max_length": f"Не более {self.fields['description'].max_length} символов с пробелами",
+        }

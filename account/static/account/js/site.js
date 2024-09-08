@@ -40,9 +40,6 @@ let socialsForm = document.querySelector(".socials-form");
 
 function openSiteForm(){
     siteForm = document.querySelector(".site-form");
-    const logo = siteForm.querySelector("#logo img");
-    logo.src = $(logo).attr("default");
-    siteForm.querySelector("#file").value = "";
 
     fetch(`/get-change-site-form`).then(response => response.json()).then(response => {
         siteForm.innerHTML = response.content;

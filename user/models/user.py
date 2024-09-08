@@ -48,7 +48,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     supersponsor = models.BooleanField(verbose_name="Главный спонсор", default=False)
 
-    sponsor = models.ForeignKey("self", verbose_name="Спонсор", null=True, blank=True, on_delete=models.SET_NULL)
+    sponsor = models.ForeignKey(
+        "self", verbose_name="Спонсор", null=True, blank=True, on_delete=models.SET_NULL, related_name="sponsors"
+    )
 
     test = models.BooleanField(default=False, verbose_name="тестовый пользователь")
 
@@ -74,7 +76,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return full_name
 
     def __str__(self) -> str:
-        return self.username
+        return self.full_name
 
     def verify_password(self, raw_password: str) -> bool:
         return check_password(raw_password, self.password)

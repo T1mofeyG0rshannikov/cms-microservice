@@ -23,8 +23,11 @@ class RedirectToLink(View):
 @method_decorator(csrf_exempt, name="dispatch")
 class FormView(View):
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST, request.FILES)
+        form = self.get_form()
         if form.is_valid():
             return self.form_valid(request, form, *args, **kwargs)
 
         return JsonResponse({"errors": form.errors}, status=400)
+
+    def get_form(self):
+        return self.form_class(self.request.POST, self.request.FILES)

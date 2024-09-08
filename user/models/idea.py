@@ -1,4 +1,9 @@
+import os
+
+from ckeditor.fields import RichTextField
 from django.db import models
+
+from user.file_storage import OverwriteStorage
 
 
 class Idea(models.Model):
@@ -24,14 +29,16 @@ class Idea(models.Model):
         ("repeat", "Повтор"),
     ]
 
-    status = models.CharField(max_length=100, verbose_name="статус", choices=CATEGORIES, default="new")
+    status = models.CharField(max_length=100, verbose_name="статус", choices=STATUSES, default="new")
 
-    finishe_date = models.DateField(null=True)
+    finishe_date = models.DateField(null=True, verbose_name="Срок")
 
     created_at = models.DateField(auto_now_add=True)
 
-    title = models.CharField(max_length=500, verbose_name="Тема")
-    description = models.CharField(max_length=5000, verbose_name="Описание")
+    title = models.CharField(max_length=60, verbose_name="Тема")
+    description = models.TextField(max_length=1000, verbose_name="Описание")
+
+    admin_answer = RichTextField(max_length=1000, verbose_name="Ответ", null=True, blank=True)
 
     class Meta:
         verbose_name = "Предложение"
@@ -47,9 +54,10 @@ class Like(models.Model):
 
 
 def get_upload_to_idea_screen(instance, filename):
-    return f"images/{instance.idea_id}/{filename}"
+    print(filename)
+    return os.path.join("images", str(instance.idea_id), filename)
 
 
 class IdeaScreen(models.Model):
-    screen = models.ImageField(upload_to=get_upload_to_idea_screen)
-    idea = models.ForeignKey(Idea, on_delete=models.CASCADE)
+    screen = models.ImageField(upload_to=get_upload_to_idea_screen, storage=OverwriteStorage())
+    idea = models.ForeignKey(Idea, on_delete=models.CASCADE, related_name="screens")

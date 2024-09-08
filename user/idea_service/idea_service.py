@@ -9,6 +9,9 @@ class IdeaService(IdeaServiceInterface):
     def __init__(self, repository: IdeaRepositoryInterface):
         self.repository = repository
 
+    def get_idea(self, id: int):
+        return self.repository.get_idea(id)
+
     def get_ideas(self, filter: str, sorted_by: str, status: str, user: UserInterface):
         idea_user = None
         category = None

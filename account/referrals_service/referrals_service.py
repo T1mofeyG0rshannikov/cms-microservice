@@ -40,7 +40,6 @@ class ReferralService(ReferralServiceInterface):
 
     def set_referrals_count(self, referrals):
         for referral in referrals:
-            referral.first_level_referrals = self.repository.get_referrals_count(1, referral.id)
             referral.referrals = referral.first_level_referrals + sum(
                 [self.repository.get_referrals_count(i, referral.id) for i in range(self.total_referal_level)]
             )

@@ -95,10 +95,6 @@ function sendConfirmEmail(elem){
 }
 
 function openUserForm(form){
-    const userLogo = form.querySelector(".user-logo img");
-    userLogo.src = $(userLogo).attr("default");
-    form.querySelector("#file").value = "";
-
     fetch(`/get-change-user-form`).then(response => response.json()).then(response => {
         form.innerHTML = response.content;
         initChangeUserForm();

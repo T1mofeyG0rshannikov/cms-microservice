@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import Count, Q
 
 from user.models.user import User
 from user.user_repository.repository_interface import UserRepositoryInterface
@@ -25,7 +25,7 @@ class UserRepository(UserRepositoryInterface):
     @staticmethod
     def get_referrals_by_level(sponsor: User, level: int):
         query = "sponsor__" * (level - 1) + "sponsor_id"
-        return User.objects.filter(Q(**{query: sponsor.id}))
+        return User.objects.annotate(first_level_referrals=Count("sponsors")).filter(Q(**{query: sponsor.id}))
 
 
 def get_user_repository() -> UserRepository:

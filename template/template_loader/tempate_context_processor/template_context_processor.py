@@ -14,6 +14,8 @@ from settings.models import Domain, SiteSettings, SocialNetwork, UserFont
 from template.template_loader.tempate_context_processor.base_context_processor import (
     BaseContextProcessor,
 )
+from user.idea_service.idea_service import get_idea_service
+from user.idea_service.idea_service_interface import IdeaServiceInterface
 from user.models.product import UserProduct
 
 from .template_context_processor_interface import TemplateContextProcessorInterface
@@ -25,10 +27,12 @@ class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInt
         referral_service: ReferralServiceInterface,
         products_service: ProductsServiceInterface,
         domain_service: DomainServiceInterface,
+        idea_service: IdeaServiceInterface,
     ):
         self.referral_service = referral_service
         self.products_service = products_service
         self.domain_service = domain_service
+        self.idea_service = idea_service
 
     def get_change_user_form_context(self, request):
         context = self.get_context(request)
@@ -64,8 +68,10 @@ class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInt
 
     def get_choice_product_form(self, request):
         context = self.get_context(request)
+        organization = request.GET.get("organization")
+
         context["organizations"] = self.products_service.get_enabled_organizations(request.user.id)
-        context["products"] = self.products_service.get_enabled_products_to_create(request.user.id)
+        context["products"] = self.products_service.get_enabled_products_to_create(request.user.id, organization)
 
         return context
 
@@ -110,8 +116,17 @@ class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInt
         return {"document": Document.objects.values("name", "text").get(slug=document_slug)}
 
     def get_create_idea_form(self, request):
-        return {}
+        context = {}
+
+        idea_id = request.GET.get("idea")
+
+        idea = self.idea_service.get_idea(idea_id)
+
+        context["idea"] = idea
+        return context
 
 
 def get_template_context_processor() -> TemplateContextProcessor:
-    return TemplateContextProcessor(get_referral_service(), get_products_service(), get_domain_service())
+    return TemplateContextProcessor(
+        get_referral_service(), get_products_service(), get_domain_service(), get_idea_service()
+    )

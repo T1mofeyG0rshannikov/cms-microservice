@@ -60,7 +60,7 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
 
         referrals = pagination.paginate(referrals, "referrals", ReferralsSerializer)
 
-        context = {**context, **referrals}
+        context |= referrals
 
         return context
 

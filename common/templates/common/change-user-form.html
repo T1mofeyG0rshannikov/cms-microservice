@@ -13,19 +13,19 @@
 
     <div class="main-user-content field-container">
         <div class="user-logo">
-            <img default="{% static 'common/images/logo.png' %}" src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'common/images/logo.png' %}{% endif %}" />
+            <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'common/images/logo.png' %}{% endif %}" />
             <input name="profile_picture" type="file" accept="image/*" id="file" />
         </div>
 
         <div class="fields">
             <div class="field" id="username">
                 <p style="margin-top: 0px;">Имя</p>
-                <input placeholder="Ваше имя" name="username" default="{% if user.username %}{{ user.username }}{% endif %}" value="{% if user.username %}{{ user.username }}{% endif %}" />
+                <input placeholder="Ваше имя" name="username" value="{% if user.username %}{{ user.username }}{% endif %}" />
             </div>
 
             <div class="field" id="second_name">
                 <p>Фамилия</p>
-                <input placeholder="Ваша фамилия" name="second_name" default="{% if user.second_name %}{{ user.second_name }}{% endif %}" value="{% if user.second_name %}{{ user.second_name }}{% endif %}" />
+                <input placeholder="Ваша фамилия" name="second_name" value="{% if user.second_name %}{{ user.second_name }}{% endif %}" />
             </div>
         </div>
     </div>
@@ -50,7 +50,7 @@
                 {% if user.email_is_confirmed %}{% else %}<a style="cursor: pointer;" onclick="sendConfirmEmail(this)" >Подтвердите email</a>{% endif %}
             </div>
             <div class="checkmark-container">
-                <input placeholder="Ваш емейл" name="email" default="{% if user.email %}{{ user.email }}{% endif %}" value="{% if user.email %}{{ user.email }}{% endif %}" />
+                <input placeholder="Ваш емейл" name="email" value="{% if user.email %}{{ user.email }}{% endif %}" />
 
                 {% if user.email_is_confirmed %}<img src="{% static 'common/images/checkmark.png' %}" />{% endif %}
             </div>
@@ -60,7 +60,7 @@
     <div class="field-container messager">
         <div class="field" style="width: 235;">
             <p>Месенджер</p>
-            <input placeholder="Ваш мессенджер" style="width: 100%;" name="adress" default="{{ user.messanger.adress }}" value="{{ user.messanger.adress }}" />
+            <input placeholder="Ваш мессенджер" style="width: 100%;" name="adress" value="{{ user.messanger.adress }}" />
         </div>
 
         <div class="field social">

@@ -5,5 +5,5 @@ class GetIdeas:
     def __init__(self, service: IdeaServiceInterface):
         self.service = service
 
-    def __call__(self, category, sorted_by, status, user):
-        return self.service.get_ideas(category, sorted_by, status, user)
+    def __call__(self, category, sorted_by, status, user, paginator):
+        return paginator.paginate(self.service.get_ideas(category, sorted_by, status, user), "ideas")

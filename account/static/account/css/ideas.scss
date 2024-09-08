@@ -10,7 +10,7 @@ form.create-idea-form{
     .field{
         width: 100%;
 
-        div, input{
+        div:not(.error), input, select{
             width: 100%;
         }
     }
@@ -26,6 +26,25 @@ form.create-idea-form{
 
         .delete{
             background-color: rgb(200, 50, 50);
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 0px;
+            margin-top: 5px!important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 9px 17px;
+            border: none;
+            width: 110px;
+
+            font-weight: var(--main-text-font-weight);
+            font-family: var(--main-text-font-family);
+            color: var(--main-text-inverted-color) !important;
+            text-decoration: none;
+            margin: 0;
+            cursor: pointer;
+            width: 100px;
+            font-size: var(--service-font-size);
         }
     }
 
@@ -48,7 +67,6 @@ form.create-idea-form{
                     width: 100%;
                 }
             }
-            overflow-x: auto;
         }
 
         button{
@@ -69,7 +87,39 @@ form.create-idea-form{
     }
 }
 
-table{
+table.ideas{
+    tr::after{
+        height: 10px;
+    }
+
+    tr{
+        td{
+            padding: 10px 0px;
+        }
+    }
+
+    tr:last-child{
+        td{
+            padding: 0px;
+            padding-top: 10px;
+        }
+
+        border-bottom: 0px!important;
+    }
+
+    thead{
+        .fields-title{
+            display: flex;
+            gap: 10px;
+            align-items: center;
+
+            .context-help{
+                font-weight: var(--main-text-font-weight);
+                margin: 0;
+            }
+        }
+    }
+
     tbody{
         td{
             vertical-align: top;
@@ -92,7 +142,7 @@ table{
         }
 
         .status img{
-            height: 15px;
+            height: 27px;
         }
 
         .like{
@@ -104,6 +154,18 @@ table{
                 height: 20px;
                 cursor: pointer;
             }
+        }
+    }
+
+    .change-idea{
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        img{
+            width: 12px;
+            height: 12px;
+            cursor: pointer;
         }
     }
 }

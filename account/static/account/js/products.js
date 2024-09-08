@@ -13,7 +13,7 @@ function renderUserProducts(products){
             </td>
 
             <td>${ user_product.end_promotion }</td>
-            <td>${ user_product.created }</td>
+            <td>${ user_product.created_at }</td>
             <td>${ user_product.gain }</td>
             <td>${ user_product.redirections }</td>
 

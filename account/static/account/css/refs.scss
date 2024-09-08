@@ -2,26 +2,23 @@ table{
     width: 100%;
     border-collapse: collapse;
 
-    th{
-        font-weight: 700;
-    }
-
     thead{
         height: 40px;
 
-        div{
+        th > div{
             padding-bottom: 10px;
             margin-bottom: 10px;
             position: relative;
+            font-weight: 700;
 
             &::after {
                 content: '';
                 position: absolute;
-                left: -2px; /* Задайте отрицательное значение для смещения влево */
-                right: -2px; /* Задайте отрицательное значение для смещения вправо */
-                bottom: 0; /* Позиционируем относительно нижней части элемента */
-                height: 1px; /* Высота линии */
-                background: var(--dark-color); /* Цвет линии */
+                left: -2px;
+                right: -2px;
+                bottom: 0;
+                height: 1px;
+                background: var(--dark-color);
             }
         }
     }
