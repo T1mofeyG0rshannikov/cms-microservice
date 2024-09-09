@@ -1,6 +1,7 @@
 function getIdeaImage(idea, user_id){
+    console.log(idea, user_id, idea.user_id, idea.user_icon)
     if (user_id === idea.user_id){
-        if (idea.user_icon){
+        if (idea.user_icon !== null){
             return `<img src="${ idea.user_icon }" />`;
         }
 
@@ -65,7 +66,7 @@ function renderIdeas(ideas, user_id){
             <td style="width: 120px;">${ idea.status }</td>
             <td style="width: 120px;">${ idea.finishe_date }</td>
 
-            <td style="width: 120px;">
+            <td style="width: 100px;">
                 <div class="like">
                     <img onclick="addLike(this, ${idea.id})" src="${idea.liked ? "/static/account/images/bugs/icobug_yes.png" : "/static/account/images/bugs/icobug_vote.png"}" />
                     <span>${ idea.likes_count }</span>
@@ -76,8 +77,6 @@ function renderIdeas(ideas, user_id){
 
         ideasHTML += ideaHTML;
     }
-
-    console.log(ideasHTML);
 
     document.querySelector("tbody").innerHTML = ideasHTML;
 }
@@ -92,9 +91,7 @@ function loadIdeas(page=1){
     fetch(`/user/ideas?category=${category}&page_size=${page_size}&status=${status}&page=${page}&sorted_by=${sorted_by}`).then(response => {
         if (response.status === 200){
             response.json().then(response => {
-                console.log(response);
                 renderIdeas(response.ideas, response.user_id);
-                console.log(response.total_pages);
                 renderPagination(page, response.total_pages, 'loadIdeas');
                 rememberIdeasFilters();
                 changePaginationCount(response.count);
@@ -123,8 +120,6 @@ function onSubmitCreateIdeaForm(element, event, ideaId){
     let screensSrc = [];
 
     for (let screen of element.querySelectorAll("input[type=file]")){
-        console.log(screen)
-        console.log(screen.files)
         if (screen.files[0] !== undefined){
             data.append('screens', screen.files[0])
             screensSrc.push(screen.files[0].name);
@@ -134,7 +129,6 @@ function onSubmitCreateIdeaForm(element, event, ideaId){
     for (let screen of element.querySelectorAll(".screens-container .field img")){
         if (!screen.src.includes('data:image')){
             const screenSrc = screen.src.split("/")[screen.src.split("/").length - 1];
-            console.log(screenSrc);
             if (screenSrc !== 'noscreen.jpg'){
                 screensSrc.push(screenSrc)
             }
@@ -142,7 +136,6 @@ function onSubmitCreateIdeaForm(element, event, ideaId){
     }
 
     data.append('screensSrc', screensSrc);
-    console.log(ideaId);
 
     if (ideaId === undefined){
         fetch(`/user/idea`, {
@@ -164,8 +157,6 @@ function onSubmitCreateIdeaForm(element, event, ideaId){
             }
             return response.json();
         }).then(response => {
-            console.log(response.errors);
-            console.log(element);
             setErrors({}, element)
             setErrors(response.errors, element)
         })
@@ -191,8 +182,6 @@ function onSubmitCreateIdeaForm(element, event, ideaId){
             }
             return response.json();
         }).then(response => {
-            console.log(response.errors);
-            console.log(element);
             setErrors({}, element)
             setErrors(response.errors, element)
         })
@@ -289,7 +278,6 @@ function hideIdeaDescription(element){
 }
 
 function addLike(element, ideaId){
-    console.log(element.src.split("/")[element.src.split("/").length - 1]);
     if (element.src.split("/")[element.src.split("/").length - 1] === "icobug_vote.png"){
         fetch(`/user/like?idea=${ideaId}`, {method: "POST"}).then(response => {
             if (response.status === 201){
@@ -341,14 +329,10 @@ function onSubmitUpdateIdeaForm(element, event, ideaId){
     let screens = [];
 
     for (let screen of element.querySelectorAll("input[type=file]")){
-        console.log(screen)
-        console.log(screen.files)
         if (screen.files[0] !== undefined){
             data.append('screens', screen.files[0])
         }
     }
-
-    console.log(screens)
 
     fetch(`/user/update-idea?idea=${ideaId}`, {
         method: "POST",
@@ -369,8 +353,6 @@ function onSubmitUpdateIdeaForm(element, event, ideaId){
         }
         return response.json();
     }).then(response => {
-        console.log(response.errors);
-        console.log(element);
         setErrors({}, element)
         setErrors(response.errors, element)
     })

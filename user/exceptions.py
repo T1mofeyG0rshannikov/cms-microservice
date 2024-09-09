@@ -1,4 +1,4 @@
-class UserWithEmailAlredyExists(Exception):
+class UserWithEmailAlreadyExists(Exception):
     pass
 
 
@@ -27,4 +27,16 @@ class UserDoesNotExist(Exception):
 
 
 class UserProductAlreadyExists(Exception):
+    pass
+
+
+class CantAddLike(Exception):
+    pass
+
+
+class LikeAlreadyExists(Exception):
+    pass
+
+
+class IdeaNotFound(Exception):
     pass

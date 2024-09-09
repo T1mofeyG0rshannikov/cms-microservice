@@ -15,7 +15,7 @@ class UserInterface:
 
     email: str
     new_email: str
-    email_is_confirmed: str
+    email_is_confirmed: bool
 
     site: SiteInterface | None
 

@@ -8,14 +8,16 @@ from settings.models import Domain, SiteSettings
 from settings.views import SettingsMixin
 from template.views.base_page_not_found import BaseNotFoundPage
 from user.models.site import Site
+from user.url_parser import get_url_parser
 
 
 class SubdomainMixin(SettingsMixin):
     domain_service: DomainServiceInterface = get_domain_service()
+    url_parser = get_url_parser()
 
     def dispatch(self, request, *args, **kwargs):
-        subdomain = self.domain_service.get_subdomain_from_host(request.get_host())
-        domain = self.domain_service.get_domain_from_host(request.get_host())
+        subdomain = self.url_parser.get_subdomain_from_host(request.get_host())
+        domain = self.url_parser.get_domain_from_host(request.get_host())
 
         if not self.domain_service.valid_subdomain(subdomain):
             return BaseNotFoundPage.as_view()(request)

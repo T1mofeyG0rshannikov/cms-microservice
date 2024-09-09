@@ -8,6 +8,7 @@ from account.forms import ChangePasswordForm
 from common.pagination import Pagination
 from common.views import FormView
 from domens.views.mixins import SubdomainMixin
+from infrastructure.persistence.repositories.idea_repository import get_idea_repository
 from materials.models import Document
 from notifications.models import UserNotification
 from notifications.serializers import UserNotificationSerializer
@@ -19,7 +20,8 @@ from template.profile_template_loader.context_processor.context_processor_interf
     ProfileTemplateContextProcessorInterface,
 )
 from user.exceptions import InvalidReferalLevel, InvalidSortedByField
-from user.idea_service.idea_service import get_idea_service
+from user.serializers import IdeasSerializer
+from user.usecases.ideas.get_ideas import GetIdeas
 from user.views.base_user_view import BaseUserView, MyLoginRequiredMixin
 
 
@@ -144,7 +146,7 @@ class IdeasView(BaseProfileView):
     template_name = "account/ideas.html"
     template_context_processor: ProfileTemplateContextProcessorInterface = get_profile_template_context_processor()
 
-    idea_service = get_idea_service()
+    get_ideas_interactor = GetIdeas(get_idea_repository())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -153,10 +155,10 @@ class IdeasView(BaseProfileView):
         sorted_by = self.request.GET.get("sorted_by")
         status = self.request.GET.get("status")
 
-        ideas = self.idea_service.get_ideas(filter=filter, sorted_by=sorted_by, status=status, user=self.request.user)
+        ideas = self.get_ideas_interactor(filter=filter, sorted_by=sorted_by, status=status, user=self.request.user)
 
         pagination = Pagination(self.request)
 
-        context |= pagination.paginate(ideas, "ideas")
+        context |= pagination.paginate(ideas, "ideas", IdeasSerializer, {"user": self.request.user})
 
         return context

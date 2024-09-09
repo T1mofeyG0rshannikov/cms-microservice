@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.db.models import Count, Q
 
 from user.models.user import User
@@ -5,6 +6,14 @@ from user.user_repository.repository_interface import UserRepositoryInterface
 
 
 class UserRepository(UserRepositoryInterface):
+    @staticmethod
+    def get_user_by_phone(phone: str):
+        return User.objects.get_user_by_phone(phone)
+
+    @staticmethod
+    def get_user_by_email(email: str):
+        return User.objects.get_user_by_email(email)
+
     @staticmethod
     def get_supersponsor():
         return User.objects.filter(supersponsor=True).first()
@@ -26,6 +35,23 @@ class UserRepository(UserRepositoryInterface):
     def get_referrals_by_level(sponsor: User, level: int):
         query = "sponsor__" * (level - 1) + "sponsor_id"
         return User.objects.annotate(first_level_referrals=Count("sponsors")).filter(Q(**{query: sponsor.id}))
+
+    @staticmethod
+    def create_user(**kwargs) -> User:
+        email = kwargs.get("email")
+        phone = kwargs.get("phone")
+
+        try:
+            with transaction.atomic():
+                User.objects.filter(email=email).update(email=None)
+                User.objects.filter(phone=phone).update(phone=None)
+
+                user = User.objects.create_user(**kwargs)
+
+                return user
+        except Exception as e:
+            print(e)
+            return None
 
 
 def get_user_repository() -> UserRepository:

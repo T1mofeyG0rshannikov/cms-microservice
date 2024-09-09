@@ -1,5 +1,4 @@
 from django.contrib.auth import logout
-from django.db import transaction
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
@@ -7,11 +6,14 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
 from common.views import FormView
-from domens.domain_service.domain_service import get_domain_service
-from domens.domain_service.domain_service_interface import DomainServiceInterface
+from domens.domain_repository.repository import get_domain_repository
+from infrastructure.persistence.repositories.user_repository import get_user_repository
+from user.auth.jwt_processor import get_jwt_processor
+from user.exceptions import UserWithEmailAlreadyExists, UserWithPhoneAlreadyExists
 from user.forms import LoginForm, RegistrationForm, ResetPasswordForm
 from user.models.user import User
-from user.user_service.user_service import get_user_service
+from user.url_parser import get_url_parser
+from user.usecases.auth.register import Register
 from user.validator.validator import get_user_validator
 from user.validator.validator_interface import UserValidatorInterface
 from user.views.base_user_view import BaseUserView
@@ -21,9 +23,11 @@ from utils.errors import UserErrors
 @method_decorator(csrf_exempt, name="dispatch")
 class RegisterUser(BaseUserView, FormView):
     template_name = "user/register.html"
-    domain_service: DomainServiceInterface = get_domain_service()
-    user_service = get_user_service()
     form_class = RegistrationForm
+
+    register_interactor = Register(
+        get_user_repository(), get_domain_repository(), get_url_parser(), get_jwt_processor()
+    )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -32,42 +36,22 @@ class RegisterUser(BaseUserView, FormView):
         return context
 
     def form_valid(self, request, form):
-        phone = form.cleaned_data.get("phone")
-        email = form.cleaned_data.get("email")
-
-        user_with_phone = User.objects.get_user_by_phone(phone)
-        user_with_email = User.objects.get_user_by_email(email)
-
-        if user_with_email is not None and user_with_email.email_is_confirmed:
-            form.add_error("email", UserErrors.username_with_email_alredy_exists.value)
-
-            return JsonResponse({"errors": form.errors}, status=400)
-
-        elif user_with_phone is not None and user_with_phone.phone_is_confirmed:
-            form.add_error("phone", UserErrors.username_with_phone_alredy_exists.value)
-
-            return JsonResponse({"errors": form.errors}, status=400)
-
         try:
-            with transaction.atomic():
-                User.objects.filter(email=email).update(email=None)
-                User.objects.filter(phone=phone).update(phone=None)
-
-                domain = self.domain_service.get_domain_model_from_request(request)
-                site = self.domain_service.get_site_model(request)
-                sponsor = self.user_service.get_user_from_site(site, domain)
-
-                user = User.objects.create_user(
-                    **form.cleaned_data, register_on_site=site, register_on_domain=domain, sponsor=sponsor
-                )
-        except Exception as e:
-            print(e)
-            form.add_error("email", UserErrors.something_went_wrong.value)
+            token_to_set_password = self.register_interactor(
+                fields=form.cleaned_data, host=request.META.get("HTTP_ORIGIN")
+            )
+        except UserWithPhoneAlreadyExists:
+            form.add_error("phone", UserErrors.username_with_phone_alredy_exists.value)
             return JsonResponse({"errors": form.errors}, status=400)
 
-        token_to_set_password = self.jwt_processor.create_set_password_token(user.id)
+        except UserWithEmailAlreadyExists:
+            form.add_error("email", UserErrors.username_with_email_alredy_exists.value)
+            return JsonResponse({"errors": form.errors}, status=400)
 
-        return JsonResponse({"token_to_set_password": token_to_set_password})
+        if token_to_set_password:
+            return JsonResponse({"token_to_set_password": token_to_set_password})
+
+        return JsonResponse({"errors": UserErrors.something_went_wrong.value}, status=400)
 
 
 @method_decorator(csrf_exempt, name="dispatch")

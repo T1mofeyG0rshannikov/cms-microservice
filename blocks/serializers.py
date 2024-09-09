@@ -1,12 +1,10 @@
+from django.db.models import Count, Q
 from rest_framework import serializers
 
-from blocks.models.blocks_components import (
-    AdditionalCatalogProductType,
-    CatalogProductType,
-)
 from blocks.models.catalog_block import AdditionalCatalogBlock, MainPageCatalogBlock
 from blocks.models.common import Page
 from blocks.pages_service.pages_service import PageService
+from catalog.models.product_type import ProductType
 from styles.serializers import CustomStylesSerializer
 
 
@@ -32,20 +30,20 @@ class BlockSerializer(serializers.Serializer):
         self.content = content
 
         if isinstance(content, MainPageCatalogBlock):
-            content.products = [
-                product.product
-                for product in CatalogProductType.objects.select_related("product").filter(
-                    block=content, product__status="Опубликовано"
-                )
-            ]
+            for i in range(1000):
+                content.products = ProductType.objects.annotate(
+                    count=Count(
+                        "catalog_product_types", filter=Q(catalog_product_types__product__status="Опубликовано")
+                    )
+                ).filter(status="Опубликовано", catalog_product_types__block=content, count__gte=1)
 
         if isinstance(content, AdditionalCatalogBlock):
-            content.products = [
-                product.product
-                for product in AdditionalCatalogProductType.objects.select_related("product").filter(
-                    block=content, product__status="Опубликовано"
+            content.products = ProductType.objects.annotate(
+                count=Count(
+                    "additional_catalog_product_types",
+                    filter=Q(additional_catalog_product_types__product__status="Опубликовано"),
                 )
-            ]
+            ).filter(status="Опубликовано", additional_catalog_product_types__block=content, count__gte=1)
 
         if content is not None:
             content.template.file = "blocks/" + content.template.file

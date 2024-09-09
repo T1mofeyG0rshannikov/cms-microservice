@@ -7,10 +7,6 @@ from domens.interfaces import DomainInterface, SiteInterface
 
 class DomainServiceInterface(Protocol):
     @staticmethod
-    def get_subdomain_from_host(host: str) -> str:
-        raise NotImplementedError()
-
-    @staticmethod
     def valid_subdomain(subdomain: str) -> bool:
         raise NotImplementedError()
 

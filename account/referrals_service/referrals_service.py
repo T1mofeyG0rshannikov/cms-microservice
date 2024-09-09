@@ -2,9 +2,9 @@ from account.referrals_service.referrals_service_interface import (
     ReferralServiceInterface,
 )
 from account.serializers import ReferralSerializer
+from infrastructure.persistence.repositories.user_repository import get_user_repository
 from user.exceptions import InvalidSortedByField, UserDoesNotExist, UserIsNotReferral
 from user.interfaces import ReferralInterface, UserInterface
-from user.user_repository.repository import get_user_repository
 from user.user_repository.repository_interface import UserRepositoryInterface
 from user.validator.validator import get_user_validator
 from user.validator.validator_interface import UserValidatorInterface

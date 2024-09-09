@@ -6,9 +6,10 @@ from user.models.site import Site
 
 
 class DomainRepository(DomainRepositoryInterface):
+    @staticmethod
     def get_site(subdomain: str):
         try:
-            return Site.objects.get(subdomain=subdomain)
+            return Site.objects.get(subdomain__iexact=subdomain)
         except Site.DoesNotExist:
             return None
 
@@ -31,6 +32,7 @@ class DomainRepository(DomainRepositoryInterface):
     def get_partner_domain_model(self):
         return Domain.objects.filter(is_partners=True).first()
 
+    @staticmethod
     def get_domain(domain: str):
         if Domain.objects.filter(domain=domain).exists():
             return Domain.objects.get(domain=domain)

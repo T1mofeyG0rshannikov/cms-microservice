@@ -9,8 +9,12 @@
 .field-start_promotion .inline{
     width: 80px;
 }
-
+/*
 label[for=id_type2], label[for=id_type3], label[for=id_type4]{
+    display: none;
+}
+*/
+label[for=id_profit1], label[for=id_profit2], label[for=id_profit3], label[for=id_profit4]{
     display: none;
 }
 

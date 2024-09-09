@@ -7,7 +7,7 @@ from notifications.error import CantSendNotification
 from notifications.send_message import send_message_to_user
 from user.exceptions import (
     SingleSuperSponsorExistError,
-    UserWithEmailAlredyExists,
+    UserWithEmailAlreadyExists,
     UserWithPhoneAlreadyExists,
 )
 from user.models.user import User
@@ -61,7 +61,7 @@ def check_existing_user(sender, instance, *args, **kwargs):
     user_by_email = User.objects.get_user_by_email(instance.email)
     if user_by_email:
         if instance.pk != user_by_email.pk:
-            raise UserWithEmailAlredyExists(f"user with email '{instance.email}' already exists")
+            raise UserWithEmailAlreadyExists(f"user with email '{instance.email}' already exists")
 
     user_by_phone = User.objects.get_user_by_phone(instance.phone)
     if user_by_phone:

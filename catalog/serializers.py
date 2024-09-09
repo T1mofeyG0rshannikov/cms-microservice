@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
 from blocks.models.catalog_block import CatalogBlock
-from catalog.models.product_type import ProductType
 from catalog.models.products import ExclusiveCard, Product
+from offers.models import Offer
 from utils.date_russian import get_date_in_russian
 
 
@@ -39,9 +39,9 @@ class CatalogBlockSerializer(serializers.ModelSerializer):
         user = self.context["user"]
 
         if user.is_authenticated:
-            products = Product.objects.filter(status="Опубликовано", catalog_product__block=catalog)
+            products = Offer.objects.filter(status="Опубликовано", catalog_product__block=catalog)
         else:
-            products = Product.objects.filter(status="Опубликовано", catalog_product__block=catalog, private=False)
+            products = Offer.objects.filter(status="Опубликовано", catalog_product__block=catalog, private=False)
 
         return CatalogProductSerializer(products, many=True).data
 
@@ -49,7 +49,13 @@ class CatalogBlockSerializer(serializers.ModelSerializer):
 class CatalogProductSerializer(serializers.ModelSerializer):
     cover = serializers.SerializerMethodField()
     end_promotion = serializers.SerializerMethodField()
+    links = serializers.SerializerMethodField()
+    link = serializers.SerializerMethodField()
+    promotion = serializers.SerializerMethodField()
+    profit = serializers.SerializerMethodField()
     organization = serializers.SerializerMethodField()
+    private = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -58,30 +64,40 @@ class CatalogProductSerializer(serializers.ModelSerializer):
             "links",
             "link",
             "cover",
-            "name",
-            "annotation",
             "description",
-            "banner",
+            "name",
             "private",
             "promotion",
             "profit",
             "end_promotion",
         )
 
-    def get_organization(self, product):
-        return product.organization
+    def get_description(self, offer):
+        return offer.description
+
+    def get_profit(self, offer):
+        return offer.profit
+
+    def get_promotion(self, offer):
+        return offer.promotion
+
+    def get_private(self, offer):
+        return offer.product.private
+
+    def get_organization(self, offer):
+        return offer.product.organization
+
+    def get_link(self, offer):
+        return offer.link
+
+    def get_links(self, offer):
+        return offer.links.all()
 
     def get_end_promotion(self, product):
         return get_date_in_russian(product.get_end_promotion)
 
-    def get_cover(self, product):
-        return product.cover.url
-
-
-class MainPageCatalogProductSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductType
-        fields = ("name", "description", "url")
+    def get_cover(self, offer):
+        return offer.product.cover.url
 
 
 class ProductsSerializer(serializers.ModelSerializer):

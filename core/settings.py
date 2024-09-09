@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "site_tests",
     "materials",
+    "offers",
 ]
 
 ASGI_APPLICATION = "core.asgi.application"

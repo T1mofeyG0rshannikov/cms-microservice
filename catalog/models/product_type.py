@@ -2,7 +2,7 @@ from ckeditor.fields import RichTextField
 from django.db import models
 
 from blocks.models.blocks import Cover
-from catalog.models.products import Product
+from offers.models import Offer
 
 
 class ProductCategory(models.Model):
@@ -29,7 +29,7 @@ class ProductType(models.Model):
     cover = models.ForeignKey(Cover, on_delete=models.SET_NULL, null=True, verbose_name="блок обложки")
     description = RichTextField(max_length=1000, verbose_name="Аннотация")
 
-    profit = models.CharField(max_length=500, verbose_name="Выгода")
+    profit = models.CharField(max_length=500, verbose_name="Выгода", null=True)
 
     class Meta:
         verbose_name = "Тип продукта/акции"
@@ -39,13 +39,15 @@ class ProductType(models.Model):
         return self.name
 
 
-class ProductTypeRelation(models.Model):
-    product = models.ForeignKey(
-        Product, on_delete=models.SET_NULL, null=True, verbose_name="Тип продукта", related_name="types"
+class OfferTypeRelation(models.Model):
+    offer = models.ForeignKey(
+        Offer, on_delete=models.SET_NULL, null=True, verbose_name="Тип продукта", related_name="types"
     )
     type = models.ForeignKey(
         ProductType, on_delete=models.SET_NULL, null=True, verbose_name="продукт", related_name="products"
     )
+
+    profit = models.CharField(max_length=500, verbose_name="Выгода")
 
     def __str__(self):
         return str(self.type)

@@ -9,14 +9,14 @@ from catalog.products_service.products_service_interface import ProductsServiceI
 from catalog.serializers import ProductSerializer
 from domens.domain_service.domain_service import get_domain_service
 from domens.domain_service.domain_service_interface import DomainServiceInterface
+from infrastructure.persistence.repositories.idea_repository import get_idea_repository
 from materials.models import Document
 from settings.models import Domain, SiteSettings, SocialNetwork, UserFont
 from template.template_loader.tempate_context_processor.base_context_processor import (
     BaseContextProcessor,
 )
-from user.idea_service.idea_service import get_idea_service
-from user.idea_service.idea_service_interface import IdeaServiceInterface
 from user.models.product import UserProduct
+from user.usecases.ideas.get_ideas import GetIdeas
 
 from .template_context_processor_interface import TemplateContextProcessorInterface
 
@@ -27,12 +27,12 @@ class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInt
         referral_service: ReferralServiceInterface,
         products_service: ProductsServiceInterface,
         domain_service: DomainServiceInterface,
-        idea_service: IdeaServiceInterface,
+        get_ideas_interactor: GetIdeas,
     ):
         self.referral_service = referral_service
         self.products_service = products_service
         self.domain_service = domain_service
-        self.idea_service = idea_service
+        self.get_ideas_interactor = get_ideas_interactor
 
     def get_change_user_form_context(self, request):
         context = self.get_context(request)
@@ -120,13 +120,11 @@ class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInt
 
         idea_id = request.GET.get("idea")
 
-        idea = self.idea_service.get_idea(idea_id)
-
-        context["idea"] = idea
+        context["idea"] = self.get_ideas_interactor.repository.get_idea(idea_id)
         return context
 
 
 def get_template_context_processor() -> TemplateContextProcessor:
     return TemplateContextProcessor(
-        get_referral_service(), get_products_service(), get_domain_service(), get_idea_service()
+        get_referral_service(), get_products_service(), get_domain_service(), GetIdeas(get_idea_repository())
     )

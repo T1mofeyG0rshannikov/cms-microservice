@@ -9,7 +9,6 @@ from blocks.models.blocks import (
     StagesBlock,
 )
 from blocks.models.mixins import ButtonMixin, TitleMixin
-from catalog.models.products import Product
 from common.models import Sortable
 from settings.models import SocialNetwork
 
@@ -81,17 +80,23 @@ class Stage(TitleMixin):
 
 class CatalogProduct(Sortable):
     block = models.ForeignKey("blocks.CatalogBlock", on_delete=models.CASCADE, related_name="products")
-    product = models.ForeignKey(
-        Product, related_name="catalog_product", on_delete=models.CASCADE, verbose_name="Продукт", null=True
+    offer = models.ForeignKey(
+        "offers.Offer", related_name="catalog_product", on_delete=models.CASCADE, verbose_name="Оффер", null=True
     )
 
     def __str__(self):
-        return str(self.product)
+        return str(self.offer)
 
 
 class CatalogProductType(Sortable):
     block = models.ForeignKey("blocks.MainPageCatalogBlock", on_delete=models.CASCADE)
-    product = models.ForeignKey("catalog.ProductType", on_delete=models.CASCADE, verbose_name="Продукт", null=True)
+    product = models.ForeignKey(
+        "catalog.ProductType",
+        related_name="catalog_product_types",
+        on_delete=models.CASCADE,
+        verbose_name="Продукт",
+        null=True,
+    )
 
     def __str__(self):
         return str(self.product)
@@ -99,7 +104,13 @@ class CatalogProductType(Sortable):
 
 class AdditionalCatalogProductType(Sortable):
     block = models.ForeignKey("blocks.AdditionalCatalogBlock", on_delete=models.CASCADE)
-    product = models.ForeignKey("catalog.ProductType", on_delete=models.CASCADE, verbose_name="Продукт", null=True)
+    product = models.ForeignKey(
+        "catalog.ProductType",
+        related_name="additional_catalog_product_types",
+        on_delete=models.CASCADE,
+        verbose_name="Продукт",
+        null=True,
+    )
 
     def __str__(self):
         return str(self.product)

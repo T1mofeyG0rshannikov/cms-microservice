@@ -5,7 +5,7 @@ class Pagination:
     def __init__(self, request):
         self.request = request
 
-    def paginate(self, objects, objects_context_name: str, serializer_class=None):
+    def paginate(self, objects, objects_context_name: str, serializer_class=None, serializer_context=None):
         page_number = int(self.request.GET.get("page", 1))
         page_size = int(self.request.GET.get("page_size", 10))
 
@@ -18,7 +18,9 @@ class Pagination:
         context["total_pages"] = objects.paginator.num_pages
 
         if serializer_class:
-            context[objects_context_name] = serializer_class(objects.object_list, many=True).data
+            context[objects_context_name] = serializer_class(
+                objects.object_list, context=serializer_context, many=True
+            ).data
         else:
             context[objects_context_name] = objects.object_list
 
