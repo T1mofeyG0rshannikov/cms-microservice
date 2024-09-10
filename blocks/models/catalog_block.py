@@ -21,6 +21,8 @@ class CatalogBlock(BaseCatalogBlock, ButtonMixin, TitleMixin):
         verbose_name="Эксклюзив", help_text="нужно ли добавлять карточку приватного продукта", null=True
     )
 
+    add_category = models.BooleanField(verbose_name="Показывать категорию", null=True)
+
     class Meta:
         verbose_name = "каталог"
         verbose_name_plural = "каталог"

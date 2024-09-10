@@ -2,11 +2,12 @@ from ckeditor.fields import RichTextField
 from django.db import models
 
 from blocks.models.blocks import Cover
-from offers.models import Offer
+from catalog.models.products import Offer
 
 
 class ProductCategory(models.Model):
     name = models.CharField(max_length=100, verbose_name="Категория")
+    short = models.CharField(max_length=100, verbose_name="Сокращение", null=True)
 
     class Meta:
         verbose_name = "Категория продуктов"

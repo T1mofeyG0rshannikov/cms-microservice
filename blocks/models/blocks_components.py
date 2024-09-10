@@ -81,7 +81,7 @@ class Stage(TitleMixin):
 class CatalogProduct(Sortable):
     block = models.ForeignKey("blocks.CatalogBlock", on_delete=models.CASCADE, related_name="products")
     offer = models.ForeignKey(
-        "offers.Offer", related_name="catalog_product", on_delete=models.CASCADE, verbose_name="Оффер", null=True
+        "catalog.Offer", related_name="catalog_product", on_delete=models.CASCADE, verbose_name="Оффер", null=True
     )
 
     def __str__(self):

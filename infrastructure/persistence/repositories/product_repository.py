@@ -2,6 +2,7 @@ from typing import Any
 
 from django.db.models import Count, Q
 
+from catalog.models.product_type import ProductType
 from catalog.models.products import Organization, Product
 from catalog.product_repository.repository_interface import ProductRepositoryInterface
 from user.models.product import UserProduct
@@ -42,6 +43,24 @@ class ProductRepository(ProductRepositoryInterface):
             filters &= Q(product__category_id=category_id)
 
         return UserProduct.objects.filter(filters)
+
+    @staticmethod
+    def get_product_types_for_catalog(block_id: int):
+        return ProductType.objects.annotate(
+            count=Count(
+                "products",
+                filter=Q(products__offer__product__status="Опубликовано", products__offer__status="Опубликовано"),
+            )
+        ).filter(status="Опубликовано", catalog_product_types__block=block_id, count__gte=1)
+
+    @staticmethod
+    def get_proudct_types_for_additional_catalog(block_id: int):
+        return ProductType.objects.annotate(
+            count=Count(
+                "products",
+                filter=Q(products__offer__product__status="Опубликовано", products__offer__status="Опубликовано"),
+            )
+        ).filter(status="Опубликовано", additional_catalog_product_types__block_id=block_id, count__gte=1)
 
 
 def get_product_repository() -> ProductRepository:

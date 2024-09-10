@@ -1,9 +1,11 @@
 from typing import Any
 
-from catalog.product_repository.repository import get_product_repository
 from catalog.product_repository.repository_interface import ProductRepositoryInterface
 from catalog.products_service.products_service_interface import ProductsServiceInterface
 from catalog.serializers import ProductsSerializer
+from infrastructure.persistence.repositories.product_repository import (
+    get_product_repository,
+)
 from user.interfaces import UserInterface
 
 

@@ -29,6 +29,7 @@ from blocks.models.catalog_block import (
     PromoCatalog,
 )
 from blocks.models.common import Block, BlockRelationship, Page, Template
+from catalog.models.products import Offer
 from common.admin import BaseInline
 from styles.admin import (
     AdditionalCatalogCustomStylesInline,
@@ -72,6 +73,12 @@ class PageBlockInline(SortableStackedInline, BaseInline):
 
 class CatalogProductInline(SortableStackedInline, BaseInline):
     model = CatalogProduct
+
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super().get_formset(request, obj, **kwargs)
+        if obj:
+            formset.form.base_fields["offer"].queryset = Offer.objects.filter(types__type=obj.product_type)
+        return formset
 
 
 class MainPageCatalogProductInline(SortableStackedInline, BaseInline):

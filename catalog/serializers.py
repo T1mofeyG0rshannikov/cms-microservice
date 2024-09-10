@@ -1,8 +1,7 @@
 from rest_framework import serializers
 
 from blocks.models.catalog_block import CatalogBlock
-from catalog.models.products import ExclusiveCard, Product
-from offers.models import Offer
+from catalog.models.products import ExclusiveCard, Offer, Product
 from utils.date_russian import get_date_in_russian
 
 
@@ -23,6 +22,7 @@ class CatalogBlockSerializer(serializers.ModelSerializer):
             "add_exclusive",
             "products",
             "exclusive_card",
+            "add_category",
         )
 
     def get_exclusive_card(self, catalog):
@@ -43,7 +43,9 @@ class CatalogBlockSerializer(serializers.ModelSerializer):
         else:
             products = Offer.objects.filter(status="Опубликовано", catalog_product__block=catalog, private=False)
 
-        return CatalogProductSerializer(products, many=True).data
+        product_type = catalog.product_type
+
+        return CatalogProductSerializer(products, context={"type": product_type}, many=True).data
 
 
 class CatalogProductSerializer(serializers.ModelSerializer):
@@ -56,6 +58,8 @@ class CatalogProductSerializer(serializers.ModelSerializer):
     organization = serializers.SerializerMethodField()
     private = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField()
+    name = serializers.SerializerMethodField()
+    category = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -70,13 +74,21 @@ class CatalogProductSerializer(serializers.ModelSerializer):
             "promotion",
             "profit",
             "end_promotion",
+            "category",
         )
+
+    def get_category(self, offer):
+        return offer.product.category.short
+
+    def get_name(self, offer):
+        return offer.product.name
 
     def get_description(self, offer):
         return offer.description
 
     def get_profit(self, offer):
-        return offer.profit
+        type = self.context["type"]
+        return type.profit
 
     def get_promotion(self, offer):
         return offer.promotion

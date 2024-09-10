@@ -138,6 +138,17 @@
             width: 100%;
         }
     }
+
+    span.category{
+        top: 30;
+        padding: 0 8px!important;
+        right: 30;
+        color: white;
+        background: var(--main-color);
+        position: absolute;
+        font-size: 13px;
+        padding: 2px 5px;
+    }
 }
 
 .catalog .product button, .catalog .product-main-page button{
