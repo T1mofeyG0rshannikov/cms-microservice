@@ -73,7 +73,7 @@ class Product(models.Model):
         verbose_name_plural = "продукты/акции"
 
     def __str__(self):
-        return self.name
+        return f"{self.organization}: {self.name} ({self.category})"
 
 
 class ExclusiveCard(OneInstanceModel, ButtonMixin):

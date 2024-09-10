@@ -3,12 +3,12 @@ from django.http import HttpResponseRedirect
 
 from domens.domain_service.domain_service import get_domain_service
 from domens.domain_service.domain_service_interface import DomainServiceInterface
+from domens.url_parser import get_url_parser
 from domens.views.views import PartnerIndexPage
 from settings.models import Domain, SiteSettings
 from settings.views import SettingsMixin
 from template.views.base_page_not_found import BaseNotFoundPage
 from user.models.site import Site
-from user.url_parser import get_url_parser
 
 
 class SubdomainMixin(SettingsMixin):

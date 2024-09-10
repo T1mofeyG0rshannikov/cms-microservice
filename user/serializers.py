@@ -3,7 +3,7 @@ from rest_framework import serializers
 from catalog.serializers import ProductsSerializer
 from common.serializers import DateFieldDot
 from user.models.idea import Idea, Like
-from user.models.product import UserProduct
+from user.models.product import UserOffer, UserProduct
 from user.models.user import User
 
 
@@ -25,6 +25,7 @@ class UserProductsSerializer(serializers.ModelSerializer):
     product = ProductsSerializer()
     end_promotion = serializers.SerializerMethodField()
     created_at = DateFieldDot()
+    link = serializers.SerializerMethodField()
 
     class Meta:
         model = UserProduct
@@ -33,6 +34,7 @@ class UserProductsSerializer(serializers.ModelSerializer):
             "product",
             "comment",
             "connected",
+            "link",
             "gain",
             "end_promotion",
             "redirections",
@@ -40,8 +42,20 @@ class UserProductsSerializer(serializers.ModelSerializer):
             "created_at",
         ]
 
+    def get_link(self, user_product):
+        return UserOffer.objects.filter(offer__product=user_product.product, user=user_product.user).first().link
+
     def get_end_promotion(self, user_product):
-        return user_product.product.get_end_promotion.strftime("%d.%m.%Y")
+        offer = user_product.product.offers.filter(partner_program="Пригласи друга").first()
+
+        if offer:
+            return offer.get_end_promotion.strftime("%d.%m.%Y")
+
+        for offer in user_product.product.offers.all():
+            if offer.end_promotion:
+                return offer.get_end_promotion.strftime("%d.%m.%Y")
+
+        return "Бессрочно"
 
 
 class IdeasSerializer(serializers.ModelSerializer):

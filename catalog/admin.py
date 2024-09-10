@@ -66,7 +66,7 @@ class CustomOrganizationLogo(CustomAdminFileWidget):
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ["image_tag", "status_tag", "name_tag", "category", "organization", "created_at_tag", "offers"]
+    list_display = ["image_tag", "name_tag", "status_tag", "category", "organization", "created_at_tag", "offers"]
 
     def offers(self, obj):
         return obj.offers.count()
@@ -240,9 +240,7 @@ def get_initial_product_type(product_id, index):
 
 
 def get_initial_product_type_profit(product_id, index):
-    product_types = list(
-        OfferTypeRelation.objects.select_related("type").filter(offer_id=product_id).values_list("profit", flat=True)
-    )
+    product_types = list(OfferTypeRelation.objects.filter(offer_id=product_id).values_list("profit", flat=True))
 
     try:
         return product_types[index]
@@ -320,8 +318,15 @@ class OfferAdmin(admin.ModelAdmin):
     def created_at_tag(self, obj):
         return obj.created_at.strftime("%Y-%m-%d")
 
-    def end_promotion_tag(self, obj):
-        return obj.get_end_promotion.strftime("%Y-%m-%d")
+    def end_promotion_tag(self, product):
+        if product.promotion:
+            start_promotion = product.start_promotion.strftime("%d.%m.%Y")
+            end_promotion = product.get_end_promotion
+            end_promotion = end_promotion.strftime("%d.%m.%Y")
+
+            return f"{start_promotion}-{end_promotion}"
+
+        return "Бессрочная акция"
 
     created_at_tag.short_description = "дата создания"
     created_at_tag.allow_tags = True

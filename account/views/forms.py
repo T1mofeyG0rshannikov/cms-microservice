@@ -9,15 +9,18 @@ from account.forms import (
     ChangeUserForm,
 )
 from account.models import Messanger, UserMessanger, UserSocialNetwork
-from catalog.models.products import Product
+from account.usecases.user_products.add_user_product import AddUserProduct
 from common.views import FormView
 from domens.domain_service.domain_service import get_domain_service
 from domens.domain_service.domain_service_interface import DomainServiceInterface
+from infrastructure.persistence.repositories.product_repository import (
+    get_product_repository,
+)
 from settings.models import SocialNetwork, UserFont
 from user.exceptions import UserProductAlreadyExists
-from user.models.product import UserProduct
 from user.models.site import Site
 from user.models.user import User
+from user.views.base_user_view import APIUserRequired
 from utils.errors import UserErrors
 
 
@@ -170,18 +173,22 @@ class ChangeUserView(FormView):
         return HttpResponse(status=200)
 
 
-class AddUserProduct(FormView):
+class AddUserProductView(FormView, APIUserRequired):
     form_class = AddUserProductForm
+    add_user_product_interactor = AddUserProduct(get_product_repository())
 
     def form_valid(self, request, form):
         print(request.POST, request.FILES)
 
+        user = request.user
         print(request.user)
 
-        if not request.user.is_authenticated:
-            return HttpResponse(status=401)
+        try:
+            self.add_user_product_interactor(form.cleaned_data, user)
+        except UserProductAlreadyExists as e:
+            return JsonResponse({"errors": str(e)})
 
-        product = form.cleaned_data.get("product")
+        """product = form.cleaned_data.get("product")
         product = Product.objects.get(id=product)
 
         try:
@@ -200,6 +207,6 @@ class AddUserProduct(FormView):
                 },
             )
         except UserProductAlreadyExists:
-            return JsonResponse({"errors": f'Вы уже добавили себе продукт "{product}"'})
+            return JsonResponse({"errors": f'Вы уже добавили себе продукт "{product}"'})"""
 
         return HttpResponse(status=200)

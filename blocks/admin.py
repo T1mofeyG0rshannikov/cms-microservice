@@ -29,8 +29,10 @@ from blocks.models.catalog_block import (
     PromoCatalog,
 )
 from blocks.models.common import Block, BlockRelationship, Page, Template
-from catalog.models.products import Offer
 from common.admin import BaseInline
+from infrastructure.persistence.repositories.product_repository import (
+    get_product_repository,
+)
 from styles.admin import (
     AdditionalCatalogCustomStylesInline,
     CatalogCustomStylesInline,
@@ -73,11 +75,12 @@ class PageBlockInline(SortableStackedInline, BaseInline):
 
 class CatalogProductInline(SortableStackedInline, BaseInline):
     model = CatalogProduct
+    repository = get_product_repository()
 
     def get_formset(self, request, obj=None, **kwargs):
         formset = super().get_formset(request, obj, **kwargs)
         if obj:
-            formset.form.base_fields["offer"].queryset = Offer.objects.filter(types__type=obj.product_type)
+            formset.form.base_fields["offer"].queryset = self.repository.get_published_offers(obj.product_type_id)
         return formset
 
 

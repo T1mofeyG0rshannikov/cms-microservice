@@ -2,7 +2,7 @@ from django.urls import path, re_path
 
 from .views.api import GetReferals, GetReferral
 from .views.forms import (
-    AddUserProduct,
+    AddUserProductView,
     ChangeSiteView,
     ChangeSocialsView,
     ChangeUserView,
@@ -33,6 +33,6 @@ urlpatterns = [
     path("my/change-password", ChangePasswordView.as_view()),
     path("my/get-referrals", GetReferals.as_view()),
     path("my/get-referral/<int:user_id>", GetReferral.as_view()),
-    path("my/add-user-product", AddUserProduct.as_view()),
+    path("my/add-user-product", AddUserProductView.as_view()),
     re_path(r"^my/.*", PageNotFound.as_view()),
 ]

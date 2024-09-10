@@ -22,7 +22,6 @@ class UserProduct(models.Model):
     screen = models.ImageField(upload_to=user_directory_path, null=True, verbose_name="скриншот")
     comment = models.CharField(null=True, max_length=1000, verbose_name="Комментарий")
 
-    link = models.CharField(null=True, max_length=1000, verbose_name="Ссылка")
     gain = models.PositiveIntegerField(default=0, verbose_name="Доход")
 
     fully_verified = models.BooleanField(default=False, verbose_name="Полностью подтверждён")
@@ -38,10 +37,16 @@ class UserProduct(models.Model):
         return f"{self.user.full_name} - {self.product}"
 
 
+class UserOffer(models.Model):
+    user = models.ForeignKey("user.User", on_delete=models.CASCADE, related_name="offers", verbose_name="Пользователь")
+    offer = models.ForeignKey("catalog.Offer", on_delete=models.CASCADE, verbose_name="оффер")
+    link = models.CharField(max_length=1000, verbose_name="Ссылка")
+
+
 def create_user_product_handler(sender, instance, *args, **kwargs):
     if not instance.id:
         if UserProduct.objects.filter(user=instance.user, product=instance.product).exists():
-            raise UserProductAlreadyExists()
+            raise UserProductAlreadyExists(f'Вы уже добавили себе продукт "{instance.product}"')
 
 
 pre_save.connect(create_user_product_handler, sender=UserProduct)

@@ -6,7 +6,7 @@ from domens.admin import SiteAdmin
 from user.admin import UserAdmin
 from user.forms import CustomAuthenticationAdminForm
 from user.models.idea import Idea, IdeaScreen
-from user.models.product import UserProduct
+from user.models.product import UserOffer, UserProduct
 from user.models.site import Site
 from user.models.user import User
 
@@ -131,3 +131,4 @@ admin.site.register(User, UserAdmin)
 admin.site.register(Site, SiteAdmin)
 admin.site.register(UserProduct)
 admin.site.register(Idea, IdeaAdmin)
+admin.site.register(UserOffer)

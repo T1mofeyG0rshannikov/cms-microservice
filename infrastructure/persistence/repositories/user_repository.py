@@ -53,6 +53,9 @@ class UserRepository(UserRepositoryInterface):
             print(e)
             return None
 
+    def verify_password(self, user_id: int, password: str) -> bool:
+        return self.get_user_by_id(user_id).verify_password(password)
+
 
 def get_user_repository() -> UserRepository:
     return UserRepository()

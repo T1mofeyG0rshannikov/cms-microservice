@@ -7,15 +7,18 @@ from django.views.generic import View
 
 from common.views import FormView
 from domens.domain_repository.repository import get_domain_repository
+from domens.url_parser import get_url_parser
 from infrastructure.persistence.repositories.user_repository import get_user_repository
 from user.auth.jwt_processor import get_jwt_processor
-from user.exceptions import UserWithEmailAlreadyExists, UserWithPhoneAlreadyExists
+from user.exceptions import (
+    UserDoesNotExist,
+    UserWithEmailAlreadyExists,
+    UserWithPhoneAlreadyExists,
+)
 from user.forms import LoginForm, RegistrationForm, ResetPasswordForm
-from user.models.user import User
-from user.url_parser import get_url_parser
+from user.usecases.auth.login import Login
 from user.usecases.auth.register import Register
 from user.validator.validator import get_user_validator
-from user.validator.validator_interface import UserValidatorInterface
 from user.views.base_user_view import BaseUserView
 from utils.errors import UserErrors
 
@@ -55,10 +58,10 @@ class RegisterUser(BaseUserView, FormView):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class Login(BaseUserView, FormView):
+class LoginView(BaseUserView, FormView):
     template_name = "user/login.html"
-    validator: UserValidatorInterface = get_user_validator()
     form_class = LoginForm
+    login_interactor = Login(get_user_repository(), get_user_validator(), get_jwt_processor())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -69,47 +72,27 @@ class Login(BaseUserView, FormView):
         return context
 
     def form_valid(self, request, form):
-        phone_or_email = form.cleaned_data.get("phone_or_email")
-        password = form.cleaned_data.get("password")
+        try:
+            access_token, user = self.login_interactor(form.cleaned_data)
+            self.login(user)
 
-        if self.validator.is_valid_phone(phone_or_email):
-            user = User.objects.get_user_by_phone(phone_or_email)
-            if user is None:
-                form.add_error("phone_or_email", UserErrors.user_by_phone_not_found.value)
-
-                return JsonResponse({"errors": form.errors}, status=400)
-
-        elif self.validator.is_valid_email(phone_or_email):
-            user = User.objects.get_user_by_email(phone_or_email)
-            if user is None:
-                form.add_error("phone_or_email", UserErrors.user_by_email_not_found.value)
-
-                return JsonResponse({"errors": form.errors}, status=400)
-
-        else:
-            form.add_error("phone_or_email", UserErrors.incorrect_login.value)
-
+            return JsonResponse({"acess_token": access_token})
+        except UserDoesNotExist as e:
+            form.add_error("phone_or_email", str(e))
             return JsonResponse({"errors": form.errors}, status=400)
 
-        if not user.verify_password(password):
-            form.add_error("password", UserErrors.incorrect_password.value)
-
-            return JsonResponse({"errors": form.errors}, status=400)
-
-        access_token = self.jwt_processor.create_access_token(user.username, user.id)
-        self.login(user)
-
-        return JsonResponse({"acess_token": access_token})
+        return JsonResponse({"errors": form.errors}, status=400)
 
 
 @method_decorator(csrf_exempt, name="dispatch")
 class SetToken(BaseUserView):
     template_name = "user/set-token.html"
+    repository = get_user_repository()
 
     def get(self, request, token):
         payload = self.jwt_processor.validate_token(token)
         if payload:
-            user = User.objects.get_user_by_id(payload["id"])
+            user = self.repository.get_user_by_id(payload["id"])
             self.login(user)
 
             return render(request, "user/set-token.html", {"token": token})

@@ -16,6 +16,7 @@ from template.template_loader.tempate_context_processor.base_context_processor i
     BaseContextProcessor,
 )
 from user.models.product import UserProduct
+from user.serializers import UserProductsSerializer
 from user.usecases.ideas.get_ideas import GetIdeas
 
 from .template_context_processor_interface import TemplateContextProcessorInterface
@@ -85,7 +86,9 @@ class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInt
             context["product"] = ProductSerializer(product).data
 
             if UserProduct.objects.filter(user=request.user, product=product, deleted=False).exists():
-                context["user_product"] = UserProduct.objects.filter(user=request.user, product=product).first()
+                context["user_product"] = UserProductsSerializer(
+                    UserProduct.objects.filter(user=request.user, product=product).first()
+                ).data
 
         except Product.DoesNotExist:
             pass

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from blocks.models.catalog_block import CatalogBlock
+from catalog.models.product_type import OfferTypeRelation
 from catalog.models.products import ExclusiveCard, Offer, Product
 from utils.date_russian import get_date_in_russian
 
@@ -60,6 +61,7 @@ class CatalogProductSerializer(serializers.ModelSerializer):
     description = serializers.SerializerMethodField()
     name = serializers.SerializerMethodField()
     category = serializers.SerializerMethodField()
+    annotation = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -69,6 +71,7 @@ class CatalogProductSerializer(serializers.ModelSerializer):
             "link",
             "cover",
             "description",
+            "annotation",
             "name",
             "private",
             "promotion",
@@ -76,6 +79,9 @@ class CatalogProductSerializer(serializers.ModelSerializer):
             "end_promotion",
             "category",
         )
+
+    def get_annotation(self, offer):
+        return offer.annotation
 
     def get_category(self, offer):
         return offer.product.category.short
@@ -88,7 +94,7 @@ class CatalogProductSerializer(serializers.ModelSerializer):
 
     def get_profit(self, offer):
         type = self.context["type"]
-        return type.profit
+        return OfferTypeRelation.objects.get(type=type, offer=offer).profit
 
     def get_promotion(self, offer):
         return offer.promotion
@@ -144,7 +150,6 @@ class ProductSerializer(serializers.ModelSerializer):
             "name",
             "organization",
             "image",
-            "profit",
             "promotion",
             "partner_description",
             "partner_annotation",
@@ -152,13 +157,6 @@ class ProductSerializer(serializers.ModelSerializer):
         ]
 
     def get_promotion(self, product):
-        if product.promotion:
-            start_promotion = product.start_promotion.strftime("%d.%m.%Y")
-            end_promotion = product.get_end_promotion
-            end_promotion = end_promotion.strftime("%d.%m.%Y")
-
-            return f"{start_promotion}-{end_promotion}"
-
         return "Бессрочно"
 
     def get_image(self, product):

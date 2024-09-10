@@ -70,7 +70,9 @@ class TemplateLoader(TemplateLoaderInterface):
     def load_delete_product_popup(self, request):
         context = self.context_processor.get_delete_product_popup(request)
 
-        return self.load_template(app_name="account", template_name="delete-popup", request=request, context=context)
+        return self.load_template(
+            app_name="account", template_name="popups/delete-popup", request=request, context=context
+        )
 
     def load_document_popup(self, request):
         context = self.context_processor.get_document_popup(request)
