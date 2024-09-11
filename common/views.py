@@ -11,9 +11,10 @@ class RedirectToLink(View):
 
     def get(self, request):
         tracker = self.request.GET.get("product")
+        print(tracker)
         if tracker:
             link = self.link_encryptor.decrypt(tracker)
-
+            print(link)
             if link:
                 return HttpResponseRedirect(link)
 

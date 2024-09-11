@@ -1,7 +1,9 @@
-from domens.domain_repository.repository import get_domain_repository
 from domens.domain_repository.repository_interface import DomainRepositoryInterface
 from domens.domain_service.domain_service_interface import DomainServiceInterface
 from domens.interfaces import SiteInterface
+from infrastructure.persistence.repositories.domain_repository import (
+    get_domain_repository,
+)
 from user.interfaces import UserInterface
 
 

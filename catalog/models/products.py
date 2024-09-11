@@ -68,6 +68,8 @@ class Product(models.Model):
     partner_bonus = models.CharField(max_length=1000, null=True, blank=True, verbose_name="Партнерский бонус")
     partner_description = RichTextField(max_length=5000, null=True, blank=True, verbose_name="Партнерское описание")
 
+    banner = models.ImageField(upload_to="products/banners/", verbose_name="Баннер", null=True, blank=True)
+
     class Meta:
         verbose_name = "продукт/акция"
         verbose_name_plural = "продукты/акции"

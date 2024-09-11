@@ -43,7 +43,11 @@ class UserProductsSerializer(serializers.ModelSerializer):
         ]
 
     def get_link(self, user_product):
-        return UserOffer.objects.filter(offer__product=user_product.product, user=user_product.user).first().link
+        user_offer = UserOffer.objects.filter(offer__product=user_product.product, user=user_product.user).first()
+        if user_offer:
+            return user_offer.link
+
+        return ""
 
     def get_end_promotion(self, user_product):
         offer = user_product.product.offers.filter(partner_program="Пригласи друга").first()

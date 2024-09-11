@@ -5,7 +5,7 @@
         <div class="products">
             {% for product in block.products %}
                 {% with forloop.counter as product_id %}
-                    <div onclick="openLink('{{ request.scheme }}://{{ request.META.HTTP_HOST }}/{{ product.slug }}')" id="product{{product_id}}" class="additional-product" style="text-align: center;">
+                    <div onclick="location.href='{{ request.scheme }}://{{ request.META.HTTP_HOST }}/{{ product.slug }}'" id="product{{product_id}}" class="additional-product" style="text-align: center;">
                         <h1 style="margin-bottom: 3px;">{{ product.title }}</h1>
 
                         {% if block.add_annotation %}
@@ -13,7 +13,7 @@
                         {% endif %}
 
                         {% if block.add_button %}
-                            <button onclick="openLink('{{ request.scheme }}://{{ request.META.HTTP_HOST }}/{{ product.slug }}')" ><a>{{ block.button_text }}</a></button>
+                            <button onclick="location.href='{{ request.scheme }}://{{ request.META.HTTP_HOST }}/{{ product.slug }}'"><a>{{ block.button_text }}</a></button>
                         {% endif %}
                     </div>
                     <style>

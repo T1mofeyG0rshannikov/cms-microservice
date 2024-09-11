@@ -15,6 +15,7 @@ class ChangeSiteForm(forms.Form):
     logo_size = forms.IntegerField(required=False)
     owner = forms.CharField(max_length=200)
     contact_info = forms.CharField(max_length=200)
+    domain = forms.IntegerField()
     delete_logo = forms.CharField(max_length=10)
 
     def __init__(self, *args, **kwargs):
@@ -58,7 +59,7 @@ class ChangeSiteForm(forms.Form):
                 width, height = img.size
                 if height > 200 or width > 500:
                     self.add_error("logo", Errors.to_large_image_size.value)
-            except Exception as e:
+            except Exception:
                 pass
 
         return logo

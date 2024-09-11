@@ -18,10 +18,12 @@
 
     <div class="inner">
         {% if settings.logo %}
-            <img class="logo"/>
+            <a href="/" style="margin: 0">
+                <img class="logo"/>
+            </a>
         {% else %}
             <div class="logo">
-                <a style="font-family: {{settings.site_font}}; font-size: {{settings.site_font_size}};">{{ settings.site_name }}</a>
+                <a href="/" style="font-family: {{settings.site_font}}; font-size: {{settings.site_font_size}};">{{ settings.site_name }}</a>
             </div>
         {% endif %}
 

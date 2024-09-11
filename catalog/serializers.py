@@ -2,7 +2,10 @@ from rest_framework import serializers
 
 from blocks.models.catalog_block import CatalogBlock
 from catalog.models.product_type import OfferTypeRelation
-from catalog.models.products import ExclusiveCard, Offer, Product
+from catalog.models.products import ExclusiveCard, Product
+from infrastructure.persistence.repositories.product_repository import (
+    get_product_repository,
+)
 from utils.date_russian import get_date_in_russian
 
 
@@ -11,9 +14,12 @@ class CatalogBlockSerializer(serializers.ModelSerializer):
     template = serializers.SerializerMethodField()
     exclusive_card = serializers.SerializerMethodField()
 
+    repository = get_product_repository()
+
     class Meta:
         model = CatalogBlock
         fields = (
+            "ancor",
             "title",
             "template",
             "button_text",
@@ -40,9 +46,9 @@ class CatalogBlockSerializer(serializers.ModelSerializer):
         user = self.context["user"]
 
         if user.is_authenticated:
-            products = Offer.objects.filter(status="Опубликовано", catalog_product__block=catalog)
+            products = self.repository.get_catalog_offers(catalog.id)
         else:
-            products = Offer.objects.filter(status="Опубликовано", catalog_product__block=catalog, private=False)
+            products = self.repository.get_unprivate_catalog_offers(catalog.id)
 
         product_type = catalog.product_type
 
@@ -157,6 +163,15 @@ class ProductSerializer(serializers.ModelSerializer):
         ]
 
     def get_promotion(self, product):
+        offer = product.offers.filter(partner_program="Пригласи друга").first()
+
+        if offer:
+            return offer.get_end_promotion.strftime("%d.%m.%Y")
+
+        for offer in product.offers.all():
+            if offer.end_promotion:
+                return offer.get_end_promotion.strftime("%d.%m.%Y")
+
         return "Бессрочно"
 
     def get_image(self, product):

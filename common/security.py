@@ -1,11 +1,16 @@
+from functools import lru_cache
+
 from cryptography.fernet import Fernet
 
-key = Fernet.generate_key()
+
+@lru_cache
+def get_fernet_key():
+    return Fernet.generate_key()
 
 
 class LinkEncryptor:
     def __init__(self):
-        self.fernet = Fernet(key)
+        self.fernet = Fernet(get_fernet_key())
 
     def encrypt(self, string: str) -> str:
         enc_string = self.fernet.encrypt(string.encode())

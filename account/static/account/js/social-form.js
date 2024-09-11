@@ -1,4 +1,4 @@
-function onSubmitSocialsForm(domain, element, event){
+function onSubmitSocialsForm(element, event){
     event.preventDefault();
 
     const data = new FormData(element);
@@ -19,7 +19,7 @@ function onSubmitSocialsForm(domain, element, event){
 
    const token = getToken();
 
-    fetch(`http://${domain}/my/change-socials`, {
+    fetch(`/my/change-socials`, {
         method: "POST",
         headers: {
             'Accept': 'application/json',

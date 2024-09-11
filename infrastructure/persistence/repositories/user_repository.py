@@ -1,6 +1,7 @@
 from django.db import transaction
 from django.db.models import Count, Q
 
+from account.models import UserMessanger
 from user.models.user import User
 from user.user_repository.repository_interface import UserRepositoryInterface
 
@@ -55,6 +56,27 @@ class UserRepository(UserRepositoryInterface):
 
     def verify_password(self, user_id: int, password: str) -> bool:
         return self.get_user_by_id(user_id).verify_password(password)
+
+    @staticmethod
+    def update_or_create_user_messanger(**kwargs) -> None:
+        UserMessanger.objects.update_or_create(user_id=kwargs.get("user_id"), defaults=kwargs)
+
+    def update_user(self, **kwargs) -> None:
+        user = self.get_user_by_id(kwargs.get("id"))
+
+        user.username = kwargs.get("username")
+        user.second_name = kwargs.get("second_name")
+        user.phone = kwargs.get("phone")
+
+        if profile_picture := kwargs.get("profile_picture"):
+            user.profile_picture = profile_picture
+
+        user.save()
+
+    def change_user_email(self, user_id: int, email: str) -> None:
+        user = self.get_user_by_id(user_id)
+        user.change_email(email)
+        user.save()
 
 
 def get_user_repository() -> UserRepository:

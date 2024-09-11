@@ -8,21 +8,23 @@
         <div class="products">
             {% for product in block.products %}
                 {% with forloop.counter as product_id %}
-                    <div class="product">
-                        {% if block.add_category %}
+                    <div class="product" style="display: flex; justify-content: space-between; flex-direction: column;">
+                        <div>
+                            {% if block.add_category %}
                             <span class="category">{{ product.category }}</span>
-                        {% endif %}
+                            {% endif %}
 
-                        <img src="{{ product.cover }}" />
-                        <h3>{{ product.name }}</h3>
-                        <h3 style="margin-top: 0px;"><span style="font-weight: 700;">{{ product.organization }}</span></h3>
+                            <img src="{{ product.cover }}" />
+                            <h3>{{ product.name }}</h3>
+                            <h3 style="margin-top: 0px;"><span style="font-weight: 700;">{{ product.organization }}</span></h3>
 
-                        <span style="margin-top: 3px; margin-bottom: 15px;">Акция до {{ product.end_promotion }}</span>
+                            <span style="margin-top: 3px; margin-bottom: 15px;">Акция до {{ product.end_promotion }}</span>
 
-                        <span style="margin-bottom: 0px;">{{ product.annotation }}</span>
-                        <span onclick="openPopup({{ product_id }})" style="margin-top: 3px;" class='how'>Как воспользоваться</span>
+                            <span style="margin-bottom: 0px;">{{ product.annotation }}</span>
+                            <span onclick="openPopup({{ product_id }})" style="margin-top: 3px;" class='how'>Как воспользоваться</span>
 
-                        <a class="bonus">{{ product.profit }}</a>
+                            <a class="bonus">{{ product.profit }}</a>
+                        </div>
 
                         <button onclick="openLink('{{ request.scheme }}://{{ request.META.HTTP_HOST }}/product?product={{ product.link }}')"><a>{{ block.button_text }}</a></button>
 

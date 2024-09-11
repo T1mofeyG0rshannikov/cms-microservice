@@ -1,0 +1,2 @@
+class SiteAdressExists(Exception):
+    pass

@@ -1,9 +1,12 @@
-from django.http import HttpResponse, JsonResponse, QueryDict
+from django.http import HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
-from user.models.product import UserProduct
+from application.usecases.user_products.delete_user_product import DeleteUserProduct
+from infrastructure.persistence.repositories.product_repository import (
+    get_product_repository,
+)
 from user.serializers import UserSerializer
 
 
@@ -26,15 +29,10 @@ class GetUserInfo(View):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class DeleteUserProduct(View):
+class DeleteUserProductView(View):
+    delete_user_product_intercator = DeleteUserProduct(get_product_repository())
+
     def delete(self, request):
-        delete = QueryDict(request.body)
-        product = delete.get("product")
-        print(delete)
-        print(product)
-
-        product = UserProduct.objects.get(id=product)
-        product.deleted = True
-        product.save()
-
+        product = request.GET.get("product")
+        self.delete_user_product_intercator(product)
         return HttpResponse(status=204)

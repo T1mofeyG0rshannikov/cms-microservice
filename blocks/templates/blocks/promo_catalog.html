@@ -9,7 +9,7 @@
                     {% with forloop.counter as product_id %}
                         <div class="swiper-slide">
                             <div onclick="openLink('{{ request.scheme }}://{{ request.META.HTTP_HOST }}/product?product={{ product.link }}')" class="promo-product" id="product{{product_id}}">
-                                <img src="{% if product.banner %}{{product.banner.url}}{% endif %}" />
+                                <img src="{% if product.banner %}{{ product.banner.url }}{% endif %}" />
                             </div>
                         </div>
                     {% endwith %}

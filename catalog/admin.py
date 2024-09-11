@@ -124,6 +124,7 @@ class ProductAdmin(admin.ModelAdmin):
                         "partner_bonus",
                         "partner_description",
                         "private",
+                        "banner",
                     ),
                 },
             ),
@@ -132,7 +133,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 
 class OrganizationTypeAdmin(admin.ModelAdmin):
-    pass
+    ordering = ["name"]
 
 
 class ProductInline(BaseInline):
@@ -221,7 +222,21 @@ class ExclusiveCardAdmin(admin.ModelAdmin):
 
 
 class ProductTypeAdmin(admin.ModelAdmin):
+    list_display = ["name", "status_tag", "slug"]
     prepopulated_fields = {"slug": ("name",)}
+    ordering = ["name"]
+
+    def status_tag(self, obj):
+        if obj.status == "Опубликовано":
+            return True
+
+        if obj.status == "Архив":
+            return False
+
+        return None
+
+    status_tag.boolean = True
+    status_tag.short_description = ""
 
 
 def get_product_types():
@@ -397,10 +412,14 @@ class OfferAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 
+class ProductCategoryAdmin(admin.ModelAdmin):
+    ordering = ["name"]
+
+
 admin.site.register(Offer, OfferAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Organization, OrganizationAdmin)
-admin.site.register(ProductCategory)
+admin.site.register(ProductCategory, ProductCategoryAdmin)
 admin.site.register(ProductType, ProductTypeAdmin)
 admin.site.register(OrganizationType, OrganizationTypeAdmin)
 admin.site.register(CatalogPageTemplate, CatalogPageTemplateAdmin)

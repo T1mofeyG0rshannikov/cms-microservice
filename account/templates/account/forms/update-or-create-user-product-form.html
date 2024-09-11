@@ -19,7 +19,11 @@
                 <div>
                     <p class="fw600">{{ product.name }}</p>
                     <p>{{ product.organization }}</p>
-                    <p>Акция: {{ product.promotion }}</p>
+                    {% if user_product %}
+                    <p>Акция: {{ user_product.end_promotion }}</p>
+                    {% else %}
+                    <p>Акция: {{ product.end_promotion }}</p>
+                    {% endif %}
                     <div class="field-title" style="margin-top: 0px;">
                         <p>Ваш бонус: {{ product.partner_bonus }}</p>
                         {% include "common/context_help.html" with text=product.partner_annotation %}

@@ -40,3 +40,7 @@ class LikeAlreadyExists(Exception):
 
 class IdeaNotFound(Exception):
     pass
+
+
+class SocialChannelAlreadyExists(Exception):
+    pass

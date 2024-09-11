@@ -13,11 +13,11 @@ urlpatterns = [
     path("domain/", include("domens.urls")),
     path("notifications/", include("notifications.urls")),
     path("materials/", include("materials.urls")),
+    path("", include("common.urls")),
     path("", include("account.urls")),
     path("", include("catalog.urls")),
     path("", include("blocks.urls")),
     path("", include("template.urls")),
-    path("", include("common.urls")),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

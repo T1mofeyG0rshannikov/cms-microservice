@@ -2,18 +2,18 @@ from django.http import HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
+from application.usecases.ideas.add_idea import AddIdea
+from application.usecases.ideas.add_like import AddLike
+from application.usecases.ideas.delete_idea import DeleteIdea
+from application.usecases.ideas.get_ideas import GetIdeas
+from application.usecases.ideas.remove_like import RemoveLike
+from application.usecases.ideas.update_idea import UpdateIdea
 from common.pagination import Pagination
 from common.views import FormView
 from infrastructure.persistence.repositories.idea_repository import get_idea_repository
 from user.exceptions import CantAddLike, IdeaNotFound, LikeAlreadyExists
 from user.forms import AddIdeaForm
 from user.serializers import IdeasSerializer
-from user.usecases.ideas.add_idea import AddIdea
-from user.usecases.ideas.add_like import AddLike
-from user.usecases.ideas.delete_idea import DeleteIdea
-from user.usecases.ideas.get_ideas import GetIdeas
-from user.usecases.ideas.remove_like import RemoveLike
-from user.usecases.ideas.update_idea import UpdateIdea
 from user.views.base_user_view import APIUserRequired
 from utils.valid_images import valid_screens_size
 
@@ -67,7 +67,7 @@ class AddIdeaView(APIUserRequired, FormView):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class UpdateIdea(APIUserRequired, FormView):
+class UpdateIdeaView(APIUserRequired, FormView):
     form_class = AddIdeaForm
     update_idea_intercator = UpdateIdea(get_idea_repository())
 

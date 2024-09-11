@@ -5,9 +5,13 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
+from application.usecases.auth.login import Login
+from application.usecases.auth.register import Register
 from common.views import FormView
-from domens.domain_repository.repository import get_domain_repository
 from domens.url_parser import get_url_parser
+from infrastructure.persistence.repositories.domain_repository import (
+    get_domain_repository,
+)
 from infrastructure.persistence.repositories.user_repository import get_user_repository
 from user.auth.jwt_processor import get_jwt_processor
 from user.exceptions import (
@@ -16,8 +20,6 @@ from user.exceptions import (
     UserWithPhoneAlreadyExists,
 )
 from user.forms import LoginForm, RegistrationForm, ResetPasswordForm
-from user.usecases.auth.login import Login
-from user.usecases.auth.register import Register
 from user.validator.validator import get_user_validator
 from user.views.base_user_view import BaseUserView
 from utils.errors import UserErrors

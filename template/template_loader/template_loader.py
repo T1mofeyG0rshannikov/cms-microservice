@@ -36,7 +36,9 @@ class TemplateLoader(TemplateLoaderInterface):
     def load_change_socials_form(self, request):
         context = self.context_processor.get_change_socials_form_context(request)
 
-        return self.load_template(app_name="account", template_name="socials-form", request=request, context=context)
+        return self.load_template(
+            app_name="account", template_name="forms/socials-form", request=request, context=context
+        )
 
     def load_referral_popup(self, request):
         context = self.context_processor.get_referral_popup_context(request)

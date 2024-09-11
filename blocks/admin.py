@@ -152,6 +152,7 @@ class StagesBlockAdmin(BaseBlockAdmin):
 class CatalogAdmin(SortableAdminBase, BaseBlockAdmin):
     inlines = [CatalogProductInline, CatalogCustomStylesInline]
     exclude = BaseBlockAdmin.exclude
+    ordering = ["name"]
 
 
 class MainPageCatalogBlogAdmin(SortableAdminBase, BaseBlockAdmin):

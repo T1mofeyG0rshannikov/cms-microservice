@@ -96,6 +96,23 @@ class ProductRepository(ProductRepositoryInterface):
             user_id=kwargs.get("user_id"), offer_id=kwargs.get("offer_id"), defaults=kwargs
         )
 
+    @staticmethod
+    def delete_user_product(product_id: int) -> None:
+        product = UserProduct.objects.get(id=product_id)
+        product.deleted = True
+        product.save()
+
+    def get_unprivate_catalog_offers(self, catalog_id: int):
+        return self.get_catalog_offers(catalog_id).filter(product__private=False)
+
+    @staticmethod
+    def get_catalog_offers(catalog_id: int):
+        return (
+            Offer.objects.prefetch_related("catalog_product")
+            .filter(status="Опубликовано", catalog_product__block=catalog_id)
+            .order_by("catalog_product__my_order")
+        )
+
 
 def get_product_repository() -> ProductRepository:
     return ProductRepository()

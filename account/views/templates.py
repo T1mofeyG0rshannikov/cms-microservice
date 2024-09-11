@@ -5,6 +5,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
 from account.forms import ChangePasswordForm
+from application.usecases.ideas.get_ideas import GetIdeas
 from common.pagination import Pagination
 from common.views import FormView
 from domens.views.mixins import SubdomainMixin
@@ -21,7 +22,6 @@ from template.profile_template_loader.context_processor.context_processor_interf
 )
 from user.exceptions import InvalidReferalLevel, InvalidSortedByField
 from user.serializers import IdeasSerializer
-from user.usecases.ideas.get_ideas import GetIdeas
 from user.views.base_user_view import BaseUserView, MyLoginRequiredMixin
 
 

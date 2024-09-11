@@ -7,10 +7,10 @@ from user.views.ideas import (
     DeleteIdeaView,
     GetIdeasView,
     LikeView,
-    UpdateIdea,
+    UpdateIdeaView,
 )
 from user.views.password import ResetPassword, SendMailToResetPassword, SetPassword
-from user.views.views import DeleteUserProduct, GetUserInfo
+from user.views.views import DeleteUserProductView, GetUserInfo
 
 urlpatterns = [
     path("register", RegisterUser.as_view()),
@@ -22,10 +22,10 @@ urlpatterns = [
     path("confirm-new-email/<str:token>", ConfirmNewEmail.as_view()),
     path("reset-password", SendMailToResetPassword.as_view()),
     path("set-token/<str:token>", SetToken.as_view()),
-    path("delete-user-product", DeleteUserProduct.as_view()),
+    path("delete-user-product", DeleteUserProductView.as_view()),
     path("logout", Logout.as_view()),
     path("idea", AddIdeaView.as_view()),
-    path("update-idea", UpdateIdea.as_view()),
+    path("update-idea", UpdateIdeaView.as_view()),
     path("delete-idea", DeleteIdeaView.as_view()),
     path("ideas", GetIdeasView.as_view()),
     path("like", LikeView.as_view()),

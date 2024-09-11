@@ -1,6 +1,7 @@
-from django.db.utils import OperationalError, ProgrammingError
+from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
 from domens.domain_repository.repository_interface import DomainRepositoryInterface
+from domens.exceptions import SiteAdressExists
 from settings.models import Domain
 from user.models.site import Site
 
@@ -51,6 +52,43 @@ class DomainRepository(DomainRepositoryInterface):
 
         except (OperationalError, ProgrammingError):
             return None
+
+    def update_or_create_user_site(self, **kwargs):
+        fields = kwargs
+        user_id = fields.get("user_id")
+
+        try:
+            site, _ = Site.objects.update_or_create(
+                user_id=user_id,
+                defaults={
+                    "subdomain": fields["subdomain"],
+                    "name": fields["name"],
+                    "owner": fields["owner"],
+                    "contact_info": fields["contact_info"],
+                    "font_id": fields["font_id"],
+                    "font_size": fields["font_size"],
+                    "domain_id": fields["domain_id"],
+                    "logo_width": fields["logo_width"],
+                    "user_id": user_id,
+                },
+            )
+
+            logo = fields.get("logo", None)
+            if logo:
+                site.logo = logo
+
+            if fields.get("delete_logo") == "true":
+                site.logo = None
+
+            site.save()
+
+            return site
+        except IntegrityError:
+            raise SiteAdressExists("Такой адрес уже существует")
+
+    @staticmethod
+    def site_adress_exists(site_id: int, site_url: str):
+        return Site.objects.get(id=site_id).subdomain != site_url and Site.objects.filter(subdomain=site_url).exists()
 
 
 def get_domain_repository() -> DomainRepository:

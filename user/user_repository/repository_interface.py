@@ -1,17 +1,25 @@
 from typing import Protocol
 
-from user.models.user import User
+from user.interfaces import UserInterface
 
 
 class UserRepositoryInterface(Protocol):
     @staticmethod
-    def get_user_by_id(id: int) -> User | None:
+    def get_user_by_id(id: int) -> UserInterface | None:
         raise NotImplementedError()
 
     @staticmethod
-    def get_supersponsor() -> User:
+    def get_supersponsor() -> UserInterface:
         raise NotImplementedError()
 
     @staticmethod
-    def get_referrals_by_level(sponsor: User, level: int) -> list[User]:
+    def get_referrals_by_level(sponsor: UserInterface, level: int) -> list[UserInterface]:
+        raise NotImplementedError()
+
+    @staticmethod
+    def get_user_by_phone(phone: str) -> UserInterface | None:
+        raise NotImplementedError()
+
+    @staticmethod
+    def get_user_by_email(email: str) -> UserInterface | None:
         raise NotImplementedError()

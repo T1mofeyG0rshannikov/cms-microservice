@@ -3,6 +3,7 @@ from account.referrals_service.referrals_service import get_referral_service
 from account.referrals_service.referrals_service_interface import (
     ReferralServiceInterface,
 )
+from application.usecases.ideas.get_ideas import GetIdeas
 from catalog.models.products import Product
 from catalog.products_service.products_service import get_products_service
 from catalog.products_service.products_service_interface import ProductsServiceInterface
@@ -17,7 +18,6 @@ from template.template_loader.tempate_context_processor.base_context_processor i
 )
 from user.models.product import UserProduct
 from user.serializers import UserProductsSerializer
-from user.usecases.ideas.get_ideas import GetIdeas
 
 from .template_context_processor_interface import TemplateContextProcessorInterface
 
