@@ -61,10 +61,10 @@ class ReferralService(ReferralServiceInterface):
         if not level:
             referrals = []
             for i in range(self.total_referal_level):
-                referrals.extend(self.set_referral_level(self.repository.get_referrals_by_level(user, i + 1), i + 1))
+                referrals.extend(self.set_referral_level(self.repository.get_referrals_by_level(user.id, i + 1), i + 1))
 
         else:
-            referrals = self.repository.get_referrals_by_level(user, level)
+            referrals = self.repository.get_referrals_by_level(user.id, level)
             self.set_referral_level(referrals, level)
 
         referrals = self.set_referrals_count(referrals)

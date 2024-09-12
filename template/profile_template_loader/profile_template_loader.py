@@ -61,6 +61,14 @@ class ProfileTemplateLoader(BaseTemplateLoader, ProfileTemplateLoaderInterface):
             "title": self.get_title("Продукты"),
         }
 
+    def load_ideas_template(self, request):
+        context = self.context_processor.get_ideas_template_context(request)
+
+        return {
+            "content": self.load_template(template_name="ideas", request=request, context=context),
+            "title": self.get_title("Обратная связь"),
+        }
+
 
 def get_profile_template_loader() -> ProfileTemplateLoader:
     return ProfileTemplateLoader(get_profile_template_context_processor())

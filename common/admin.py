@@ -1,12 +1,15 @@
+from django import forms
 from django.contrib import admin
 from django.contrib.admin import AdminSite
 from django.utils.html import mark_safe
 
 from domens.admin import SiteAdmin
+from infrastructure.persistence.repositories.user_repository import get_user_repository
 from user.admin import UserAdmin
 from user.forms import CustomAuthenticationAdminForm
 from user.models.idea import Idea, IdeaScreen
-from user.models.product import UserOffer, UserProduct
+from user.models.product import UserProduct
+from user.models.roles import Roles, SuperUserRole
 from user.models.site import Site
 from user.models.user import User
 
@@ -126,9 +129,74 @@ class IdeaAdmin(admin.ModelAdmin):
         return fieldsets
 
 
+class UserRoleInlineForm(forms.ModelForm):
+    email = forms.CharField(label="Почта", required=False)
+
+    class Meta:
+        model = SuperUserRole
+        fields = ["email"]
+
+    repository = get_user_repository()
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        if "email" not in cleaned_data:
+            cleaned_data["email"] = cleaned_data["id"].user.email
+
+        return cleaned_data
+
+
+class SuperUserRoleInline(BaseInline):
+    model = SuperUserRole
+    form = UserRoleInlineForm
+
+    readonly_fields = ["user"]
+    fields = ["user"]
+
+    def has_add_permission(self, request, *args, **kwargs):
+        return False
+
+
+class AddSuperUserRoleInline(BaseInline):
+    model = SuperUserRole
+    form = UserRoleInlineForm
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_view_permission(self, request, obj=None):
+        return False
+
+
+class RolesAdmin(admin.ModelAdmin):
+    inlines = [SuperUserRoleInline, AddSuperUserRoleInline]
+
+    repository = get_user_repository()
+
+    def save_related(self, request, form, formsets, change):
+        try:
+            # Ваша кастомная логика сохранения
+            for formset in formsets:
+                for obj_ind, obj in enumerate(formset.save(commit=False)):
+                    email = formset.cleaned_data[0].get("email")
+                    user = self.repository.get_user_by_email(email)
+
+                    print(obj, formset.cleaned_data[obj_ind], user)
+
+                    if user:
+                        obj.user = user
+                        obj.save()
+                    else:
+                        obj.delete()
+        except Exception as e:
+            print(e)
+
+        # super().save_related(request, form, formsets, change)
+
+
 admin.site = MyAdminSite()
 admin.site.register(User, UserAdmin)
 admin.site.register(Site, SiteAdmin)
 admin.site.register(UserProduct)
 admin.site.register(Idea, IdeaAdmin)
-admin.site.register(UserOffer)
+admin.site.register(Roles, RolesAdmin)

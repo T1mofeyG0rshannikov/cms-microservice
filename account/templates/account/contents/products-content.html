@@ -31,21 +31,53 @@
     </div>
 </div>
 
-<table>
+<table class="products-table" style="border-collapse: collapse;">
     <thead>
         <tr>
             <th style="width: 400px;"><div>Продукт/банк</div></th>
-            <th><div>Акция</div></th>
-            <th><div>Подключен</div></th>
-            <th><div>Доход</div></th>
-            <th><div>Переходы</div></th>
+            <th>
+                <div>
+                    <div class="fields-title">
+                        Акция
+
+                        {% include "common/context_help.html" with text="Сроки проведения маркетинговой акции" %}
+                    </div>
+                </div>
+            </th>
+            <th>
+                <div>
+                    <div class="fields-title">
+                        Подключен
+
+                        {% include "common/context_help.html" with text="Дата добавления вашей реферальной ссылки на ваш сайт" %}
+                    </div>
+                </div>
+            </th>
+            <th>
+                <div>
+                    <div class="fields-title">
+                        Доход
+
+                        {% include "common/context_help.html" with text="Сумма зафиксированных вами выплат за выбранный период" %}
+                    </div>
+                </div>
+            </th>
+            <th>
+                <div>
+                    <div class="fields-title">
+                        Переходы
+
+                        {% include "common/context_help.html" with text="Число посетителей, перешедших на сайт банка по вашей реферальной ссылке" %}
+                    </div>
+                </div>
+            </th>
             <th><div style="color: transparent;">111</div></th>
         </tr>
     </thead>
 
     <tbody>
         {% for user_product in products %}
-            <tr>
+            <tr style="border-bottom: 1px solid var(--dark-color);">
                 <td class="product">
                     <img title="{{ user_product.comment }}" src="{{ user_product.product.image }}" />
 

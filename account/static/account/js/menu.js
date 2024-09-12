@@ -13,7 +13,7 @@ const menuUrls = [
     "/my/materials",
     "/my/stat",
     "/my/manuals",
-    "/my/si"
+    "/my/si",
 ]
 
 function activeMenuItem(url){
@@ -21,7 +21,9 @@ function activeMenuItem(url){
         li.classList.remove("active")
     })
 
-    document.querySelectorAll(".menu li")[menuUrls.indexOf(url)].classList.add("active")
+    if (menuUrls.indexOf(url) > -1){
+        document.querySelectorAll(".menu li")[menuUrls.indexOf(url)].classList.add("active");
+    }
 }
 
 function loadProfileContent(templateName, url){
@@ -40,6 +42,10 @@ function loadProfileContent(templateName, url){
 
         else if (templateName === "products"){
             initUserProducts();
+        }
+
+        else if (templateName === "ideas"){
+            initIdeas();
         }
     })
 }

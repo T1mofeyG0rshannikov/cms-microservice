@@ -14,7 +14,7 @@
         <li {% if request.path == "/my/si" %} class="active"{% endif %}><a><img src="{% static 'account/images/menu/menu_site.png' %}" />Бонусы</a></li>
     </ul>
 
-    <a class="ideas-banner" href="/my/ideas">
+    <a class="ideas-banner" onclick="loadProfileContent('ideas', '/my/ideas')">
         <img src="{% static 'account/images/banner_yourideas.jpg' %}">
     </a>
 </aside>

@@ -5,7 +5,7 @@ from domens.domain_service.domain_service import get_domain_service
 
 class UserAdmin(admin.ModelAdmin):
     list_display = ["username", "phone", "email", "register_on", "email_is_confirmed"]
-    exclude = ["password", "staff"]
+    exclude = ["password", "staff", "is_superuser"]
 
     def register_on(self, obj):
         domain_service = get_domain_service()

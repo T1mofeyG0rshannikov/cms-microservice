@@ -13,7 +13,7 @@ class UserRepositoryInterface(Protocol):
         raise NotImplementedError()
 
     @staticmethod
-    def get_referrals_by_level(sponsor: UserInterface, level: int) -> list[UserInterface]:
+    def get_referrals_by_level(sponsor_id: int, level: int) -> list[UserInterface]:
         raise NotImplementedError()
 
     @staticmethod

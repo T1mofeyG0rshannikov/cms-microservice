@@ -111,19 +111,6 @@ table.ideas{
         border-bottom: 0px!important;
     }
 
-    thead{
-        .fields-title{
-            display: flex;
-            gap: 10px;
-            align-items: center;
-
-            .context-help{
-                font-weight: var(--main-text-font-weight);
-                margin: 0;
-            }
-        }
-    }
-
     tbody{
         td{
             vertical-align: top;

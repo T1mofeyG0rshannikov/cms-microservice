@@ -5,12 +5,14 @@ from account.referrals_service.referrals_service_interface import (
     ReferralServiceInterface,
 )
 from account.serializers import ReferralsSerializer
+from application.usecases.ideas.get_ideas import GetIdeas
 from catalog.models.product_type import ProductCategory
 from catalog.products_service.products_service import get_products_service
 from catalog.products_service.products_service_interface import ProductsServiceInterface
 from common.pagination import Pagination
 from domens.domain_service.domain_service import get_domain_service
 from domens.domain_service.domain_service_interface import DomainServiceInterface
+from infrastructure.persistence.repositories.idea_repository import get_idea_repository
 from materials.models import Document
 from template.profile_template_loader.context_processor.context_processor_interface import (
     ProfileTemplateContextProcessorInterface,
@@ -18,7 +20,7 @@ from template.profile_template_loader.context_processor.context_processor_interf
 from template.template_loader.tempate_context_processor.base_context_processor import (
     BaseContextProcessor,
 )
-from user.serializers import UserProductsSerializer
+from user.serializers import IdeasSerializer, UserProductsSerializer
 
 
 class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateContextProcessorInterface):
@@ -27,10 +29,12 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
         referral_service: ReferralServiceInterface,
         products_service: ProductsServiceInterface,
         domain_service: DomainServiceInterface,
+        get_ideas_interactor,
     ):
         self.referral_service = referral_service
         self.products_service = products_service
         self.domain_service = domain_service
+        self.get_ideas_interactor = get_ideas_interactor
 
     def get_context(self, request):
         context = super().get_context(request)
@@ -70,6 +74,20 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
 
         return context
 
+    def get_ideas_template_context(self, request):
+        context = self.get_context(request)
+        filter = request.GET.get("filter")
+        sorted_by = request.GET.get("sorted_by")
+        status = request.GET.get("status")
+
+        ideas = self.get_ideas_interactor(filter=filter, sorted_by=sorted_by, status=status, user=request.user)
+
+        pagination = Pagination(request)
+
+        context |= pagination.paginate(ideas, "ideas", IdeasSerializer, {"user": request.user})
+
+        return context
+
     def get_products_template_context(self, request):
         context = self.get_context(request)
 
@@ -90,4 +108,6 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
 
 
 def get_profile_template_context_processor() -> ProfileTemplateContextProcessor:
-    return ProfileTemplateContextProcessor(get_referral_service(), get_products_service(), get_domain_service())
+    return ProfileTemplateContextProcessor(
+        get_referral_service(), get_products_service(), get_domain_service(), GetIdeas(get_idea_repository())
+    )

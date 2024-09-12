@@ -111,3 +111,30 @@ h1{
         font-size: 13px;
     }
 }
+
+table{
+    thead{
+        .fields-title{
+            display: flex;
+            gap: 10px;
+            align-items: center;
+
+            .context-help{
+                font-weight: var(--main-text-font-weight);
+                margin: 0;
+            }
+        }
+    }
+
+    tr{
+        td{
+            span{
+                font-size: var(--service-font-size);
+            }
+        }
+    }
+}
+
+table tr:last-child {
+    border-bottom: 0px !important;
+}

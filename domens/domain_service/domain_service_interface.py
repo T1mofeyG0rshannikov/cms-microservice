@@ -6,8 +6,7 @@ from domens.interfaces import DomainInterface, SiteInterface
 
 
 class DomainServiceInterface(Protocol):
-    @staticmethod
-    def valid_subdomain(subdomain: str) -> bool:
+    def valid_subdomain(self, subdomain: str) -> bool:
         raise NotImplementedError()
 
     def get_domain_string(self) -> str | None:
@@ -34,4 +33,7 @@ class DomainServiceInterface(Protocol):
 
     @staticmethod
     def get_domain_model() -> DomainInterface | None:
+        raise NotImplementedError()
+
+    def get_site_name(self) -> str | None:
         raise NotImplementedError()

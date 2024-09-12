@@ -33,9 +33,9 @@ class UserRepository(UserRepositoryInterface):
         return count
 
     @staticmethod
-    def get_referrals_by_level(sponsor: User, level: int):
+    def get_referrals_by_level(sponsor_id: int, level: int):
         query = "sponsor__" * (level - 1) + "sponsor_id"
-        return User.objects.annotate(first_level_referrals=Count("sponsors")).filter(Q(**{query: sponsor.id}))
+        return User.objects.annotate(first_level_referrals=Count("sponsors")).filter(Q(**{query: sponsor_id}))
 
     @staticmethod
     def create_user(**kwargs) -> User:

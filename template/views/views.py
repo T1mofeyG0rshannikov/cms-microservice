@@ -78,6 +78,16 @@ class RefsTemplate(View):
             return JsonResponse({"error": str(e)}, status=400)
 
 
+class IdeasTemplate(View):
+    template_loader: ProfileTemplateLoaderInterface = get_profile_template_loader()
+
+    def get(self, request):
+        try:
+            return JsonResponse(self.template_loader.load_ideas_template(request))
+        except (InvalidSortedByField, InvalidReferalLevel) as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
+
 class ManualsTemplate(View):
     template_loader: ProfileTemplateLoaderInterface = get_profile_template_loader()
 
