@@ -3,7 +3,8 @@ from typing import Any
 from user.exceptions import UserWithEmailAlreadyExists, UserWithPhoneAlreadyExists
 from user.interfaces import UserInterface
 from user.user_repository.repository_interface import UserRepositoryInterface
-from utils.errors import UserErrors
+
+from application.texts.errors import UserErrors
 
 
 class ChangeUser:

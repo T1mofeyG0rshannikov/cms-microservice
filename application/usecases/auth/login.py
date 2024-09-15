@@ -1,10 +1,11 @@
 from typing import Any
 
-from user.auth.jwt_processor_interface import JwtProcessorInterface
 from user.exceptions import UserDoesNotExist
 from user.user_repository.repository_interface import UserRepositoryInterface
 from user.validator.validator_interface import UserValidatorInterface
-from utils.errors import UserErrors
+
+from application.texts.errors import UserErrors
+from infrastructure.auth.jwt_processor_interface import JwtProcessorInterface
 
 
 class Login:

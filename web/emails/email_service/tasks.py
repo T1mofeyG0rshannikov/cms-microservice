@@ -1,0 +1,14 @@
+from core.celery import app
+from django.core.mail import send_mail
+
+
+@app.task()
+def send_email(subj: str, sender: str, emails: list[str], html_message: str):
+    send_mail(
+        subj,
+        "",
+        sender,
+        emails,
+        html_message=html_message,
+        fail_silently=False,
+    )

@@ -1,0 +1,92 @@
+{% load static %}
+
+<div id="{{ block.ancor }}" class="catalog">
+    <div class="inner">
+        <h1>{{ block.title }}</h1>
+        <a style="margin-top: 0px;">{{ block.introductory_text|safe }}</a>
+
+        <div class="products">
+            {% for product in block.products %}
+                {% with forloop.counter as product_id %}
+                    <div class="product" style="display: flex; justify-content: space-between; flex-direction: column;">
+                        <div>
+                            {% if block.add_category %}
+                            <span class="category">{{ product.category }}</span>
+                            {% endif %}
+
+                            <img src="{{ product.cover }}" />
+                            <h3>{{ product.name }}</h3>
+                            <h3 style="margin-top: 0px;"><span style="font-weight: 700;">{{ product.organization }}</span></h3>
+
+                            <span style="margin-top: 3px; margin-bottom: 15px;">Акция до {{ product.end_promotion }}</span>
+
+                            <span style="margin-bottom: 0px;">{{ product.annotation }}</span>
+                            <span onclick="openPopup({{ product_id }})" style="margin-top: 3px;" class='how'>Как воспользоваться</span>
+                        </div>
+
+                        <div>
+                            <a class="bonus">{{ product.profit }}</a>
+                            <button onclick="openLink('{{ request.scheme }}://{{ request.META.HTTP_HOST }}/product?product={{ product.link }}')"><a>{{ block.button_text }}</a></button>
+                        </div>
+
+                        <div class="popup-background">
+                            <div class="description-popup popup">
+                                <div class="title">
+                                    <img onclick="closePopup({{ product_id }})" class="cross" src="{% static 'blocks/images/cross-gray.png' %}" />
+                                </div>
+                                <div class="text">
+                                    <a>{{ product.description|safe }}</a>
+                                </div>
+
+                                <button onclick="openLink('{{ request.scheme }}://{{ request.META.HTTP_HOST }}/product?product={{ product.link }}')" style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);"><a onclick="closePopup({{ product_id }})">{{ block.button_text }}</a></button>
+                            </div>
+                        </div>
+                    </div>
+                {% endwith %}
+            {% endfor %}
+
+            {% if block.add_exclusive %}
+                <div class="product exclusive">
+                    <div>
+                        <img src="{{ block.exclusive_card.image.url }}" />
+                        <h3 style="color: rgb(250, 50, 50);">Наш эксклюзив</h3>
+                    </div>
+
+                    <span style="margin: 15px 0px;">{{ block.exclusive_card.annotation }}</span>
+
+                    <div>
+                        <a class="bonus">Бонус: {{ block.exclusive_card.bonus }}</a>
+                        <button><a href="{{ block.exclusive_card.button_ref }}">{{ block.exclusive_card.button_text }}</a></button>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="{% static "blocks/js/catalog.js" %}"></script>
+
+    <style>
+        #block{{id}} .catalog{
+            padding-top: {{styles.margin_top}};
+            padding-bottom: {{styles.margin_bottom}};
+            background-color: {{styles.background_color}};
+        }
+
+        #block{{id}} .products{
+            display: flex;
+            flex-wrap: wrap;
+            grid-column-gap: 25px;
+            grid-row-gap: 35px;
+        }
+
+        #block{{id}} .product{
+            flex-basis: calc({{styles.column_width}}% - 65px);
+        }
+
+        @media screen and (max-width: 760px) {
+            #block{{id}} .product{
+                flex-basis: 100%;
+            }
+        }
+    </style>
+</div>

@@ -1,26 +1,26 @@
+from account.models import UserMessanger
 from django.db import transaction
 from django.db.models import Count, Q
-
-from account.models import UserMessanger
+from user.interfaces import UserInterface
 from user.models.user import User
 from user.user_repository.repository_interface import UserRepositoryInterface
 
 
 class UserRepository(UserRepositoryInterface):
     @staticmethod
-    def get_user_by_phone(phone: str):
+    def get_user_by_phone(phone: str) -> UserInterface:
         return User.objects.get_user_by_phone(phone)
 
     @staticmethod
-    def get_user_by_email(email: str):
+    def get_user_by_email(email: str) -> UserInterface:
         return User.objects.get_user_by_email(email)
 
     @staticmethod
-    def get_supersponsor():
+    def get_supersponsor() -> UserInterface:
         return User.objects.filter(supersponsor=True).first()
 
     @staticmethod
-    def get_user_by_id(id: int) -> User | None:
+    def get_user_by_id(id: int) -> UserInterface | None:
         return User.objects.get_user_by_id(id)
 
     @staticmethod
@@ -38,7 +38,7 @@ class UserRepository(UserRepositoryInterface):
         return User.objects.annotate(first_level_referrals=Count("sponsors")).filter(Q(**{query: sponsor_id}))
 
     @staticmethod
-    def create_user(**kwargs) -> User:
+    def create_user(**kwargs) -> UserInterface:
         email = kwargs.get("email")
         phone = kwargs.get("phone")
 
@@ -77,6 +77,13 @@ class UserRepository(UserRepositoryInterface):
         user = self.get_user_by_id(user_id)
         user.change_email(email)
         user.save()
+
+    def set_password(self, user_id: int, new_password: str) -> UserInterface:
+        user = self.get_user_by_id(user_id)
+        user.set_password(new_password)
+        user.save()
+
+        return user
 
 
 def get_user_repository() -> UserRepository:

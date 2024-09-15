@@ -25,6 +25,6 @@ class AddUserProduct:
 
         link = fields.get("link")
         if link:
-            offers = self.repository.get_offers(product)
+            offers = self.repository.get_product_offers(product)
             for offer in offers:
                 self.repository.update_or_create_user_offer(offer_id=offer.id, user_id=user.id, link=link)

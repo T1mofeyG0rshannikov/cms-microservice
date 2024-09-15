@@ -1,0 +1,106 @@
+{% load static %}
+
+<header>
+    <div class="inner">
+        <div style="display: flex; gap: 65px;">
+            {% if settings.logo %}
+                <img onclick="location.href='/'" class="logo"/>
+            {% else %}
+                <div onclick="location.href='/'" class="logo">
+                    <a style="font-family: {{settings.site_font}}; font-size: {{settings.site_font_size}}; color: var(--main-text-inverted-color);">{{ settings.site_name }}</a>
+                </div>
+            {% endif %}
+
+            <a class="ideas" onclick="loadProfileContent('ideas', '/my/ideas')">
+                Есть идеи?
+            </a>
+        </div>
+
+        <div class="icons">
+            <div class="alert-container">
+                <img class="icon" src="{% static 'common/images/menu_alert.png' %}"/>
+
+                <span class="indicator" style="width: 0px; height: 0px;"></span>
+
+                <div class="alerts">
+                    <div class="title">
+                        <h3>Уведомления</h3>
+
+                        <img src="{% static 'common/images/profile/menu_settings.png' %}" />
+                    </div>
+
+                    <hr />
+
+                    <div class="content">
+                        {% for alert in notifications %}
+                            <div class="alert-elem">
+                                <div class="main">
+                                    <img class="status" src="{% if alert.notification.status == 'info' %}{% static 'common/images/tick.png' %}{% elif alert.notification.status == 'warning' %}{% static 'common/images/i.png' %}{% endif %}" />
+
+                                    <div class="alert-content">
+                                        <a class="date">{{ alert.date_created }}</a>
+                                        <a>{{ alert.notification.message }}</a>
+                                    </div>
+                                </div>
+
+                                <img class="trash" onclick="deleteAlert({{ alert.id }})" data-id="{{ alert.id }}" src="{% static 'account/images/trash.png' %}" />
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <hr />
+
+                    <div class="bottom">
+                        <a>Показать все</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="user-container">
+                <img class="icon" src="{% static 'common/images/menu_user.png' %}"/>
+
+                <div class="user-nav">
+                    <div class="title">
+                        <a>{{ user.full_name }}</a>
+                    </div>
+
+                    <hr />
+
+                    <div class="content">
+                        <a onclick="openUserForm(changeUserForm)" ><img src="{% static 'common/images/profile/menu_profile.png' %}" />Профиль</a>
+                        <a onclick="openForm(changePasswordForm)"><img src="{% static 'common/images/profile/menu_password.png' %}" />Пароль</a>
+                        <a><img src="{% static 'common/images/profile/menu_settings.png' %}" />Настройки</a>
+                    </div>
+
+                    <hr />
+
+                    <div class="bottom">
+                        <a onclick="logout()" ><img src="{% static 'common/images/profile/menu_logout.png' %}" />Выйти</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+{% include "common/change-user-form.html" %}
+{% include "common/change-password-form.html" %}
+
+<style>
+    {% if settings.logo %}
+        header .logo{
+            content: url("{{settings.logo.image}}");
+            height: {{settings.logo.height}};
+            width: {{settings.logo.width}};
+        }
+    {% endif %}
+
+    @media (pointer:none), (pointer:coarse) {
+        {% if settings.logo %}
+            header .logo{
+                height: {{settings.logo.height_mobile}};
+                width: {{settings.logo.width_mobile}};
+            }
+        {% endif %}
+    }
+</style>

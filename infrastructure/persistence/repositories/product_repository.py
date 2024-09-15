@@ -1,10 +1,9 @@
 from typing import Any
 
-from django.db.models import Count, Q
-
 from catalog.models.product_type import ProductType
 from catalog.models.products import Offer, Organization, Product
 from catalog.product_repository.repository_interface import ProductRepositoryInterface
+from django.db.models import Count, Q
 from user.models.product import UserOffer, UserProduct
 
 
@@ -13,9 +12,9 @@ class ProductRepository(ProductRepositoryInterface):
     def get_enabled_products_to_create(user_id: int, organization_id: int) -> list[Product]:
         products = (
             Product.objects.select_related("category", "organization")
-            .annotate(count=Count("offers"), filter=Q(offers__status="Опубликовано"))
+            .prefetch_related("user_products", "offers")
             .exclude(Q(user_products__user_id=user_id) & Q(user_products__deleted=False))
-            .filter(status="Опубликовано", count__gte=1)
+            .filter(status="Опубликовано", offers__status="Опубликовано")
         )
 
         if organization_id:
@@ -45,11 +44,11 @@ class ProductRepository(ProductRepositoryInterface):
 
         return UserProduct.objects.filter(filters)
 
-    @staticmethod
-    def get_published_offers(type_id: int):
+    def get_published_offers(self, type_id: int):
         return (
-            Offer.objects.select_related("product")
-            .filter(types__type_id=type_id, status="Опубликовано")
+            self.get_offers()
+            .select_related("product")
+            .filter(types__type_id=type_id)
             .order_by("product__organization__name")
         )
 
@@ -87,7 +86,7 @@ class ProductRepository(ProductRepositoryInterface):
         )
 
     @staticmethod
-    def get_offers(product_id: int):
+    def get_product_offers(product_id: int):
         return Offer.objects.filter(product_id=product_id)
 
     @staticmethod
@@ -105,12 +104,18 @@ class ProductRepository(ProductRepositoryInterface):
     def get_unprivate_catalog_offers(self, catalog_id: int):
         return self.get_catalog_offers(catalog_id).filter(product__private=False)
 
-    @staticmethod
-    def get_catalog_offers(catalog_id: int):
+    def get_catalog_offers(self, catalog_id: int):
         return (
-            Offer.objects.prefetch_related("catalog_product")
-            .filter(status="Опубликовано", catalog_product__block=catalog_id)
+            self.get_offers()
+            .prefetch_related("catalog_product")
+            .filter(catalog_product__block=catalog_id)
             .order_by("catalog_product__my_order")
+        )
+
+    @staticmethod
+    def get_offers():
+        return Offer.objects.filter(
+            status="Опубликовано", product__status="Опубликовано", types__type__status="Опубликовано"
         )
 
 
