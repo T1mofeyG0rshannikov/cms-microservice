@@ -1,8 +1,9 @@
 from django.http import HttpResponse, JsonResponse
 from django.views.generic import View
-from emails.email_service.email_service import get_email_service
-from emails.email_service.email_service_interface import EmailServiceInterface
-from emails.exceptions import CantSendMailError
+
+from web.emails.email_service.email_service import get_email_service
+from web.emails.email_service.email_service_interface import EmailServiceInterface
+from web.emails.exceptions import CantSendMailError
 
 
 class SendConfirmEmail(View):

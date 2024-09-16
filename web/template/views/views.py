@@ -1,20 +1,21 @@
-from account.views.templates import Profile
-from blocks.models.catalog_block import CatalogBlock
-from blocks.models.common import Page
-from blocks.views import ShowPage
-from catalog.views import ShowCatalogPage
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views import View
-from domens.views.mixins import SubdomainMixin
 from template.profile_template_loader.profile_template_loader import (
     get_profile_template_loader,
 )
-from template.profile_template_loader.profile_template_loader_interface import (
+
+from web.account.views.templates import Profile
+from web.blocks.models.catalog_block import CatalogBlock
+from web.blocks.models.common import Page
+from web.blocks.views import ShowPage
+from web.catalog.views import ShowCatalogPage
+from web.domens.views.mixins import SubdomainMixin
+from web.template.profile_template_loader.profile_template_loader_interface import (
     ProfileTemplateLoaderInterface,
 )
-from template.template_loader.template_loader import get_template_loader
-from user.exceptions import InvalidReferalLevel, InvalidSortedByField
+from web.template.template_loader.template_loader import get_template_loader
+from web.user.exceptions import InvalidReferalLevel, InvalidSortedByField
 
 
 def slug_router(request, slug):

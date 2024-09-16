@@ -1,12 +1,13 @@
 from typing import Any
 
-from emails.email_service.link_generator.link_generator_interface import (
+from emails.serializers import EmailLogoSerializer
+
+from web.emails.email_service.link_generator.link_generator_interface import (
     LinkGeneratorInterface,
 )
-from emails.serializers import EmailLogoSerializer
-from settings.models import FormLogo
-from styles.models.colors.colors import ColorStyles
-from user.interfaces import UserInterface
+from web.settings.models import FormLogo
+from web.styles.models.colors.colors import ColorStyles
+from web.user.interfaces import UserInterface
 
 from .context_processor_interface import EmailContextProcessorInterface
 

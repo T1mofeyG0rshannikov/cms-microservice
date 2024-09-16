@@ -2,18 +2,20 @@ import random
 
 import unidecode
 from russian_names import RussianNames
-from user.models.site import Site
-from user.models.user import User
 
 from application.services.domains.service import get_domain_service
 from domain.domains.interfaces.domain_service_interface import DomainServiceInterface
+from infrastructure.persistence.repositories.user_repository import get_user_repository
+from web.user.models.site import Site
+from web.user.user_repository.repository_interface import UserRepositoryInterface
 
 
 class UserGenerator:
-    def __init__(self, domain_service: DomainServiceInterface, test_user_set):
+    def __init__(self, domain_service: DomainServiceInterface, test_user_set, repository: UserRepositoryInterface):
         self.domain_service = domain_service
         self.test_user_set = test_user_set
         self.partner_domain = self.domain_service.get_partner_domain_model()
+        self.repository = repository
 
     def ger_user_english_slug(self, name, second_name):
         return unidecode.unidecode(name) + unidecode.unidecode(second_name)
@@ -57,7 +59,7 @@ class UserGenerator:
         site = self.domain_service.get_random_site()
 
         try:
-            user = User.objects.create(
+            user = self.repository.create_user(
                 username=name,
                 second_name=second_name,
                 email=email,
@@ -77,4 +79,4 @@ class UserGenerator:
 
 
 def get_user_generator(test_user_set) -> UserGenerator:
-    return UserGenerator(get_domain_service(), test_user_set)
+    return UserGenerator(get_domain_service(), test_user_set, get_user_repository())

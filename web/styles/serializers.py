@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from settings.models import Font
+
+from web.settings.models import Font
 
 from .models.colors.colors import ColorStyles
 from .models.other import IconSize, MarginBlock

@@ -2,8 +2,8 @@ from typing import Any
 
 from django.db.models import Count, Q
 
-from user.idea_repository.repository_interface import IdeaRepositoryInterface
-from user.models.idea import Idea, IdeaScreen, Like
+from web.user.idea_repository.repository_interface import IdeaRepositoryInterface
+from web.user.models.idea import Idea, IdeaScreen, Like
 
 
 class IdeaRepository(IdeaRepositoryInterface):

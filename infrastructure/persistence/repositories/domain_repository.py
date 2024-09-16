@@ -1,9 +1,9 @@
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
-from domens.domain_repository.repository_interface import DomainRepositoryInterface
-from domens.exceptions import SiteAdressExists
-from settings.models import Domain
-from user.models.site import Site
+from web.domens.domain_repository.repository_interface import DomainRepositoryInterface
+from web.domens.exceptions import SiteAdressExists
+from web.settings.models import Domain
+from web.user.models.site import Site
 
 
 class DomainRepository(DomainRepositoryInterface):

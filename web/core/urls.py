@@ -2,7 +2,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path, re_path
-from template.views.views import PageNotFound
+
+from web.template.views.views import PageNotFound
 
 urlpatterns = [
     path("styles/", include("styles.urls")),

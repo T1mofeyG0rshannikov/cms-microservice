@@ -1,5 +1,5 @@
-from blocks.models.common import BaseBlock, BlockRelationship, Page
-from blocks.pages_service.page_service_interface import PageServiceInterface
+from web.blocks.models.common import BaseBlock, BlockRelationship, Page
+from web.blocks.pages_service.page_service_interface import PageServiceInterface
 
 
 class PageService(PageServiceInterface):

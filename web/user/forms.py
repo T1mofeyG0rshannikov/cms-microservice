@@ -6,6 +6,10 @@ from user.validator.validator import get_user_validator
 from user.validator.validator_interface import UserValidatorInterface
 
 from application.texts.errors import UserErrors
+from infrastructure.persistence.repositories.admin_log_repository import (
+    get_admin_log_repository,
+)
+from infrastructure.persistence.repositories.user_repository import get_user_repository
 
 
 class RegistrationForm(forms.Form):
@@ -68,7 +72,7 @@ class CustomAuthenticationAdminForm(AuthenticationForm):
 
     def __init__(self, request=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
+        self.request = request
         self.username_field = "логин"
         self.fields["username"].label = "Email или телефон"
         self.fields["password"].label = "Пароль"
@@ -95,14 +99,39 @@ class CustomAuthenticationAdminForm(AuthenticationForm):
         max_length=18, widget=forms.PasswordInput(attrs={"placeholder": "Пароль", "autocomplete": "off"})
     )
 
-    def clean_phone_or_email(self):
-        phone_or_email = self.cleaned_data["phone_or_email"]
+    def clean_username(self):
+        repository = get_user_repository()
+
+        phone_or_email = self.cleaned_data["username"]
         phone_or_email = self.validator.validate_phone_or_email(phone_or_email)
 
         if phone_or_email is None:
-            self.add_error("phone_or_email", UserErrors.incorrect_login.value)
+            self.add_error("username", UserErrors.incorrect_login.value)
+            return phone_or_email
+
+        user1 = repository.get_user_by_email(phone_or_email)
+        user2 = repository.get_user_by_phone(phone_or_email)
+
+        if not user1 and not user2:
+            self.add_error("username", UserErrors.incorrect_login.value)
 
         return phone_or_email
+
+    def clean(self):
+        repository = get_admin_log_repository()
+        ip_address = get_client_ip(self.request)
+        print(ip_address)
+        repository.create_logg(ip_address, self.cleaned_data.get("username"))
+        return super().clean()
+
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get("HTTP_X_REAL_IP")
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(",")[0]
+    else:
+        ip = request.META.get("REMOTE_ADDR")
+    return ip
 
 
 class AddIdeaForm(forms.Form):

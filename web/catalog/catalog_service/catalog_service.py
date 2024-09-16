@@ -1,18 +1,20 @@
 from typing import Any
 
-from blocks.models.blocks import Cover
-from blocks.models.catalog_block import CatalogBlock
-from blocks.pages_service.page_service_interface import PageServiceInterface
-from blocks.pages_service.pages_service import get_page_service
-from blocks.serializers import PageSerializer
-from catalog.catalog_service.catalog_service_interface import CatalogServiceInterface
-from catalog.models.blocks import CatalogPageTemplate
-from catalog.models.product_type import ProductType
-from catalog.serializers import CatalogBlockSerializer
-from common.models import BlockRelationship
-from styles.models.styles.styles import CatalogCustomStyles
-from styles.serializers import CustomStylesSerializer
-from user.interfaces import UserInterface
+from web.blocks.models.blocks import Cover
+from web.blocks.models.catalog_block import CatalogBlock
+from web.blocks.pages_service.page_service_interface import PageServiceInterface
+from web.blocks.pages_service.pages_service import get_page_service
+from web.blocks.serializers import PageSerializer
+from web.catalog.catalog_service.catalog_service_interface import (
+    CatalogServiceInterface,
+)
+from web.catalog.models.blocks import CatalogPageTemplate
+from web.catalog.models.product_type import ProductType
+from web.catalog.serializers import CatalogBlockSerializer
+from web.common.models import BlockRelationship
+from web.styles.models.styles.styles import CatalogCustomStyles
+from web.styles.serializers import CustomStylesSerializer
+from web.user.interfaces import UserInterface
 
 
 class CatalogService(CatalogServiceInterface):

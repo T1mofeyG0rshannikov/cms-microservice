@@ -1,6 +1,6 @@
 from typing import Any
 
-from domens.domain_repository.repository_interface import DomainRepositoryInterface
+from web.domens.domain_repository.repository_interface import DomainRepositoryInterface
 
 
 class ChangeSite:

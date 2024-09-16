@@ -1,7 +1,8 @@
-from catalog.models.product_type import ProductType
-from catalog.models.products import Offer
 from django import forms
 from django.db.utils import OperationalError
+
+from web.catalog.models.product_type import ProductType
+from web.catalog.models.products import Offer
 
 
 def get_offer_types():

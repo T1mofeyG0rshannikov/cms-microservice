@@ -1,8 +1,9 @@
 from django.http import HttpResponse
 from django.views.generic import View
-from notifications.models import UserNotification
-from notifications.serializers import UserNotificationSerializer
 from rest_framework import generics
+
+from web.notifications.models import UserNotification
+from web.notifications.serializers import UserNotificationSerializer
 
 
 class DeleteUserNotificationView(View):

@@ -1,6 +1,7 @@
-from common.models import OneInstanceModel
 from django.db import models
-from settings.models import GlobalStyles
+
+from web.common.models import OneInstanceModel
+from web.settings.models import GlobalStyles
 
 
 class BaseStyles(OneInstanceModel):

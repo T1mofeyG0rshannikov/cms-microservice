@@ -1,9 +1,9 @@
 from typing import Any
 
-from domens.domain_repository.repository_interface import DomainRepositoryInterface
-from domens.interfaces import DomainInterface, SiteInterface
-from user.exceptions import UserWithEmailAlreadyExists, UserWithPhoneAlreadyExists
-from user.user_repository.repository_interface import UserRepositoryInterface
+from web.domens.domain_repository.repository_interface import DomainRepositoryInterface
+from web.domens.interfaces import DomainInterface, SiteInterface
+from web.user.exceptions import UserWithEmailAlreadyExists, UserWithPhoneAlreadyExists
+from web.user.user_repository.repository_interface import UserRepositoryInterface
 
 
 class Register:

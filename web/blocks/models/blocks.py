@@ -1,7 +1,8 @@
-from blocks.models.common import BaseBlock
-from blocks.models.mixins import ButtonMixin, MainTextMixin, TitleMixin
 from ckeditor.fields import RichTextField
 from django.db import models
+
+from web.blocks.models.common import BaseBlock
+from web.blocks.models.mixins import ButtonMixin, MainTextMixin, TitleMixin
 
 
 class ContentBlock(BaseBlock, ButtonMixin, TitleMixin, MainTextMixin):

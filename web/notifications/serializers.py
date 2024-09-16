@@ -1,6 +1,7 @@
-from common.serializers import DateFieldDot
-from notifications.models import Notification, UserNotification
 from rest_framework import serializers
+
+from web.common.serializers import DateFieldDot
+from web.notifications.models import Notification, UserNotification
 
 
 class NotificationSerializer(serializers.ModelSerializer):

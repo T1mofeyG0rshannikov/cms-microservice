@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from blocks.models.common import BaseBlock, BlockRelationship
+from web.blocks.models.common import BaseBlock, BlockRelationship
 
 
 class PageServiceInterface(Protocol):

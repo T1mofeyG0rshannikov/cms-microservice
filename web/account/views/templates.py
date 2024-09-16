@@ -6,18 +6,19 @@ from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from domens.views.mixins import SubdomainMixin
-from materials.models import Document
-from notifications.models import UserNotification
-from notifications.serializers import UserNotificationSerializer
 from settings.views import SettingsMixin
-from template.profile_template_loader.context_processor.context_processor import (
+
+from web.materials.models import Document
+from web.notifications.models import UserNotification
+from web.notifications.serializers import UserNotificationSerializer
+from web.template.profile_template_loader.context_processor.context_processor import (
     get_profile_template_context_processor,
 )
-from template.profile_template_loader.context_processor.context_processor_interface import (
+from web.template.profile_template_loader.context_processor.context_processor_interface import (
     ProfileTemplateContextProcessorInterface,
 )
-from user.exceptions import InvalidReferalLevel, InvalidSortedByField
-from user.views.base_user_view import BaseUserView, MyLoginRequiredMixin
+from web.user.exceptions import InvalidReferalLevel, InvalidSortedByField
+from web.user.views.base_user_view import BaseUserView, MyLoginRequiredMixin
 
 
 class BaseProfileView(MyLoginRequiredMixin, SubdomainMixin):

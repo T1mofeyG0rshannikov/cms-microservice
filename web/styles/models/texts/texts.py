@@ -1,5 +1,5 @@
-from styles.models.mixins.font_mixins import FontMixin
-from styles.models.mixins.text_mixins import (
+from web.styles.models.mixins.font_mixins import FontMixin
+from web.styles.models.mixins.text_mixins import (
     InvertedTextColorMixin,
     SizeOfTextMixin,
     SizeOfTextMobileMixin,
@@ -7,7 +7,7 @@ from styles.models.mixins.text_mixins import (
     ThicknessOfTextMixin,
     ThicknessOfTextMobileMixin,
 )
-from styles.models.styles.base_styles import BaseStyles
+from web.styles.models.styles.base_styles import BaseStyles
 
 
 class HeaderText(

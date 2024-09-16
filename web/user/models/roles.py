@@ -1,6 +1,8 @@
-from common.models import OneInstanceModel
 from django.db import models
 from django.db.models.signals import post_save
+
+from web.common.models import OneInstanceModel
+from web.user.models.user import User
 
 
 class Roles(OneInstanceModel):
@@ -17,7 +19,7 @@ class BaseUserRole(models.Model):
 
 
 class SuperUserRole(BaseUserRole):
-    user = models.ForeignKey("user.User", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def delete(self, *args, **kwargs):
         self.user.is_superuser = False

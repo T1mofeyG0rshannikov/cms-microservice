@@ -1,15 +1,23 @@
-from blocks.models.blocks import (
+from ckeditor.fields import RichTextField
+from django.db import models
+
+from web.blocks.models.blocks import (
     FeaturesBlock,
     Navbar,
     QuestionsBlock,
     SocialMediaBlock,
     StagesBlock,
 )
-from blocks.models.mixins import ButtonMixin, TitleMixin
-from ckeditor.fields import RichTextField
-from common.models import Sortable
-from django.db import models
-from settings.models import SocialNetwork
+from web.blocks.models.catalog_block import (
+    AdditionalCatalogBlock,
+    CatalogBlock,
+    MainPageCatalogBlock,
+)
+from web.blocks.models.mixins import ButtonMixin, TitleMixin
+from web.catalog.models.product_type import ProductType
+from web.catalog.models.products import Offer
+from web.common.models import Sortable
+from web.settings.models import SocialNetwork
 
 
 class NavMenuItem(ButtonMixin):
@@ -78,9 +86,9 @@ class Stage(TitleMixin):
 
 
 class CatalogProduct(Sortable):
-    block = models.ForeignKey("blocks.CatalogBlock", on_delete=models.CASCADE, related_name="products")
+    block = models.ForeignKey(CatalogBlock, on_delete=models.CASCADE, related_name="products")
     offer = models.ForeignKey(
-        "catalog.Offer", related_name="catalog_product", on_delete=models.CASCADE, verbose_name="Оффер", null=True
+        Offer, related_name="catalog_product", on_delete=models.CASCADE, verbose_name="Оффер", null=True
     )
 
     def __str__(self):
@@ -88,9 +96,9 @@ class CatalogProduct(Sortable):
 
 
 class CatalogProductType(Sortable):
-    block = models.ForeignKey("blocks.MainPageCatalogBlock", on_delete=models.CASCADE)
+    block = models.ForeignKey(MainPageCatalogBlock, on_delete=models.CASCADE)
     product = models.ForeignKey(
-        "catalog.ProductType",
+        ProductType,
         related_name="catalog_product_types",
         on_delete=models.CASCADE,
         verbose_name="Продукт",
@@ -102,9 +110,9 @@ class CatalogProductType(Sortable):
 
 
 class AdditionalCatalogProductType(Sortable):
-    block = models.ForeignKey("blocks.AdditionalCatalogBlock", on_delete=models.CASCADE)
+    block = models.ForeignKey(AdditionalCatalogBlock, on_delete=models.CASCADE)
     product = models.ForeignKey(
-        "catalog.ProductType",
+        ProductType,
         related_name="additional_catalog_product_types",
         on_delete=models.CASCADE,
         verbose_name="Продукт",

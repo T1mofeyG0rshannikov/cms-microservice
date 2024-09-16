@@ -1,15 +1,20 @@
 from django.urls import path
-from user.views.auth import LoginView, Logout, RegisterUser, SetToken
-from user.views.email import ConfirmEmail, ConfirmNewEmail
-from user.views.ideas import (
+
+from web.user.views.auth import LoginView, Logout, RegisterUser, SetToken
+from web.user.views.email import ConfirmEmail, ConfirmNewEmail
+from web.user.views.ideas import (
     AddIdeaView,
     DeleteIdeaView,
     GetIdeasView,
     LikeView,
     UpdateIdeaView,
 )
-from user.views.password import ResetPasswordView, SendMailToResetPassword, SetPassword
-from user.views.views import DeleteUserProductView, GetUserInfo
+from web.user.views.password import (
+    ResetPasswordView,
+    SendMailToResetPassword,
+    SetPassword,
+)
+from web.user.views.views import DeleteUserProductView, GetUserInfo
 
 urlpatterns = [
     path("register", RegisterUser.as_view()),

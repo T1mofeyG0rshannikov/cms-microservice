@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import (
+from web.styles.views import (
     GetColorStyles,
     GetExplanationTextStyles,
     GetFonts,

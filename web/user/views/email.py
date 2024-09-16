@@ -1,8 +1,8 @@
 from django.http import HttpResponseRedirect
-from user.models.user import User
-from user.views.base_user_view import BaseUserView
 
 from application.texts.errors import Errors
+from web.user.models.user import User
+from web.user.views.base_user_view import BaseUserView
 
 
 class ConfirmEmail(BaseUserView):

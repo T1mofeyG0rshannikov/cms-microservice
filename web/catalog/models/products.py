@@ -1,19 +1,23 @@
 import datetime
 import random
 
-from blocks.models.mixins import ButtonMixin
 from ckeditor.fields import RichTextField
-from common.models import OneInstanceModel
-from common.security import LinkEncryptor
 from dateutil.relativedelta import relativedelta
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+
+from web.blocks.models.mixins import ButtonMixin
+from web.catalog.models.product_type import ProductCategory, ProductType
+from web.common.models import OneInstanceModel
+from web.common.security import LinkEncryptor
 
 
 class OrganizationType(models.Model):
     name = models.CharField(max_length=100, verbose_name="Название")
 
     class Meta:
+        app_label = "catalog"
+        db_table = "catalog_organizationtype"
         verbose_name = "Тип организации"
         verbose_name_plural = "Типы организаций"
 
@@ -48,7 +52,7 @@ class Product(models.Model):
     name = models.CharField(max_length=100, verbose_name="Название")
 
     category = models.ForeignKey(
-        "catalog.ProductCategory",
+        ProductCategory,
         on_delete=models.SET_NULL,
         null=True,
         related_name="products",
@@ -177,3 +181,17 @@ class Link(models.Model):
 
     def __str__(self):
         return self.text
+
+
+class OfferTypeRelation(models.Model):
+    offer = models.ForeignKey(
+        Offer, on_delete=models.SET_NULL, null=True, verbose_name="Тип продукта", related_name="types"
+    )
+    type = models.ForeignKey(
+        ProductType, on_delete=models.SET_NULL, null=True, verbose_name="продукт", related_name="products"
+    )
+
+    profit = models.CharField(max_length=500, verbose_name="Выгода")
+
+    def __str__(self):
+        return str(self.type)

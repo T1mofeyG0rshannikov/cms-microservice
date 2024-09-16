@@ -1,22 +1,22 @@
 from django.conf import settings
-from emails.email_service.context_processor.context_processor import (
-    get_email_context_processor,
-)
-from emails.email_service.email_service_interface import EmailServiceInterface
-from emails.email_service.link_generator.link_generator import get_link_generator
-from emails.email_service.tasks import send_email
-from emails.email_service.template_generator.template_generator import (
-    get_email_template_generator,
-)
-from emails.email_service.template_generator.template_generator_interface import (
-    EmailTemplateGeneratorInterface,
-)
-from emails.exceptions import CantSendMailError
 from kombu.exceptions import OperationalError
 from user.interfaces import UserInterface
 
 from application.services.domains.service import get_domain_service
 from infrastructure.auth.jwt_processor import get_jwt_processor
+from web.emails.email_service.context_processor.context_processor import (
+    get_email_context_processor,
+)
+from web.emails.email_service.email_service_interface import EmailServiceInterface
+from web.emails.email_service.link_generator.link_generator import get_link_generator
+from web.emails.email_service.tasks import send_email
+from web.emails.email_service.template_generator.template_generator import (
+    get_email_template_generator,
+)
+from web.emails.email_service.template_generator.template_generator_interface import (
+    EmailTemplateGeneratorInterface,
+)
+from web.emails.exceptions import CantSendMailError
 
 
 class EmailService(EmailServiceInterface):

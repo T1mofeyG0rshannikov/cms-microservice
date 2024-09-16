@@ -1,8 +1,9 @@
 from ckeditor.fields import RichTextField
 from django.db import models
 
-from .common import BaseBlock
-from .mixins import ButtonMixin, TitleMixin
+from web.blocks.models.common import BaseBlock
+from web.blocks.models.mixins import ButtonMixin, TitleMixin
+from web.catalog.models.product_type import ProductType
 
 
 class BaseCatalogBlock(BaseBlock):
@@ -13,7 +14,7 @@ class BaseCatalogBlock(BaseBlock):
 class CatalogBlock(BaseCatalogBlock, ButtonMixin, TitleMixin):
     introductory_text = RichTextField(verbose_name="Введение", max_length=1000, null=True)
 
-    product_type = models.ForeignKey("catalog.ProductType", on_delete=models.CASCADE, null=True)
+    product_type = models.ForeignKey(ProductType, on_delete=models.CASCADE, null=True)
 
     add_exclusive = models.BooleanField(
         verbose_name="Эксклюзив", help_text="нужно ли добавлять карточку приватного продукта", null=True

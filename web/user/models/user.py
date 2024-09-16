@@ -1,11 +1,13 @@
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
-from user.models.site import Site
-from user.user_manager.user_manager import UserManager
-from user.user_manager.user_manager_interface import UserManagerInterface
 
 from application.services.domains.service import get_domain_service
+from web.settings.models import Domain
+from web.site_tests.models import TestUserSet
+from web.user.models.site import Site
+from web.user.user_manager.user_manager import UserManager
+from web.user.user_manager.user_manager_interface import UserManagerInterface
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -32,7 +34,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         blank=True,
     )
     register_on_domain = models.ForeignKey(
-        "settings.Domain",
+        Domain,
         verbose_name="зарегистрирован на домене",
         related_name="register_on_domain",
         on_delete=models.SET_NULL,
@@ -54,7 +56,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     test = models.BooleanField(default=False, verbose_name="тестовый пользователь")
 
-    test_set = models.ForeignKey("site_tests.TestUserSet", null=True, blank=True, on_delete=models.CASCADE)
+    test_set = models.ForeignKey(TestUserSet, null=True, blank=True, on_delete=models.CASCADE)
 
     @property
     def is_staff(self):

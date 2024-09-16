@@ -1,20 +1,22 @@
 from adminsortable2.admin import SortableAdminBase, SortableStackedInline
-from catalog.forms import OfferAdminForm
-from catalog.models.blocks import Block, CatalogPageTemplate
-from catalog.models.product_type import OfferTypeRelation, ProductCategory, ProductType
-from catalog.models.products import (
-    ExclusiveCard,
-    Link,
-    Offer,
-    Organization,
-    OrganizationType,
-    Product,
-)
-from common.admin import BaseInline
 from django.contrib import admin
 from django.contrib.admin.widgets import AdminFileWidget
 from django.db import models
 from django.utils.html import format_html, mark_safe
+
+from web.catalog.forms import OfferAdminForm
+from web.catalog.models.blocks import Block, CatalogPageTemplate
+from web.catalog.models.product_type import ProductCategory, ProductType
+from web.catalog.models.products import (
+    ExclusiveCard,
+    Link,
+    Offer,
+    OfferTypeRelation,
+    Organization,
+    OrganizationType,
+    Product,
+)
+from web.common.admin import BaseInline
 
 
 class BlockInline(SortableStackedInline, BaseInline):

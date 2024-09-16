@@ -1,7 +1,7 @@
-from blocks.models.blocks import Cover
-from catalog.models.products import Offer
 from ckeditor.fields import RichTextField
 from django.db import models
+
+from web.blocks.models.blocks import Cover
 
 
 class ProductCategory(models.Model):
@@ -37,17 +37,3 @@ class ProductType(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class OfferTypeRelation(models.Model):
-    offer = models.ForeignKey(
-        Offer, on_delete=models.SET_NULL, null=True, verbose_name="Тип продукта", related_name="types"
-    )
-    type = models.ForeignKey(
-        ProductType, on_delete=models.SET_NULL, null=True, verbose_name="продукт", related_name="products"
-    )
-
-    profit = models.CharField(max_length=500, verbose_name="Выгода")
-
-    def __str__(self):
-        return str(self.type)

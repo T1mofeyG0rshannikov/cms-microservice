@@ -1,4 +1,4 @@
-from user.idea_repository.repository_interface import IdeaRepositoryInterface
+from web.user.idea_repository.repository_interface import IdeaRepositoryInterface
 
 
 class GetIdeas:

@@ -1,4 +1,4 @@
-from template.views.views import BaseTemplateLoadView
+from web.template.views.views import BaseTemplateLoadView
 
 
 class GetPopup(BaseTemplateLoadView):

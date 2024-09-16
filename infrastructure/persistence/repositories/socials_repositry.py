@@ -1,6 +1,6 @@
 from typing import Any
 
-from account.models import UserSocialNetwork
+from web.account.models import UserSocialNetwork
 
 
 class SocialsRepository:

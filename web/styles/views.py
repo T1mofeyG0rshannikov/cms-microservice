@@ -2,7 +2,6 @@ import json
 
 from django.http import HttpResponse, JsonResponse
 from django.views.generic import View
-from settings.models import Font, UserFont
 
 from .models.colors.colors import ColorStyles
 from .models.other import IconSize, MarginBlock
@@ -60,5 +59,7 @@ class GetIconSize(View):
 
 class GetFonts(View):
     def get(self, request):
+        from web.settings.models import Font, UserFont
+
         fonts = [*Font.objects.all(), *UserFont.objects.all()]
         return HttpResponse(json.dumps(FontSerializer(fonts, many=True).data))

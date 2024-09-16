@@ -1,14 +1,15 @@
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils import timezone
-from notifications.create_user_notification import create_user_notification
-from notifications.error import CantSendNotification
-from notifications.send_message import send_message_to_user
-from settings.models import UserFont
+
+from web.notifications.create_user_notification import create_user_notification
+from web.notifications.error import CantSendNotification
+from web.notifications.send_message import send_message_to_user
+from web.settings.models import Domain, UserFont
 
 
 class Site(models.Model):
-    domain = models.ForeignKey("settings.Domain", verbose_name="домен", on_delete=models.CASCADE, null=True)
+    domain = models.ForeignKey(Domain, verbose_name="домен", on_delete=models.CASCADE, null=True)
     subdomain = models.CharField(max_length=50, verbose_name="поддомен", unique=True)
     logo = models.ImageField(verbose_name="Лого", upload_to="images/logo", null=True, blank=True)
     logo_width = models.CharField(verbose_name="ширина лого", max_length=20, null=True, blank=True)

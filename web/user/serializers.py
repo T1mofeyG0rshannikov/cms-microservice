@@ -1,9 +1,10 @@
-from catalog.serializers import ProductsSerializer
-from common.serializers import DateFieldDot
 from rest_framework import serializers
-from user.models.idea import Idea, Like
-from user.models.product import UserOffer, UserProduct
-from user.models.user import User
+
+from web.catalog.serializers import ProductsSerializer
+from web.common.serializers import DateFieldDot
+from web.user.models.idea import Idea, Like
+from web.user.models.product import UserOffer, UserProduct
+from web.user.models.user import User
 
 
 class UserSerializer(serializers.ModelSerializer):

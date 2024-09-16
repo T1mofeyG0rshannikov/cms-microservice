@@ -1,7 +1,8 @@
 from django.contrib import admin
-from styles.models.colors.colors import ColorStyles
-from styles.models.other import IconSize, MarginBlock
-from styles.models.styles.styles import (
+
+from web.styles.models.colors.colors import ColorStyles
+from web.styles.models.other import IconSize, MarginBlock
+from web.styles.models.styles.styles import (
     AdditionalCatalogCustomStyles,
     CatalogCustomStyles,
     ContentCustomStyles,
@@ -15,7 +16,7 @@ from styles.models.styles.styles import (
     SocialCustomStyles,
     StagesCustomStyles,
 )
-from styles.models.texts.texts import (
+from web.styles.models.texts.texts import (
     ExplanationText,
     HeaderText,
     MainText,

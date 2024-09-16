@@ -1,12 +1,6 @@
-from common.views import FormView
 from django.http import HttpResponseRedirect, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from emails.email_service.email_service import get_email_service
-from user.exceptions import InvalidJwtToken
-from user.forms import ResetPasswordForm, SetPasswordForm
-from user.models.user import User
-from user.views.base_user_view import BaseUserView
 
 from application.texts.errors import UserErrors
 from application.texts.success_messages import Messages
@@ -16,6 +10,12 @@ from application.usecases.user.reset_password import (
 )
 from infrastructure.auth.jwt_processor import get_jwt_processor
 from infrastructure.persistence.repositories.user_repository import get_user_repository
+from web.common.views import FormView
+from web.emails.email_service.email_service import get_email_service
+from web.user.exceptions import InvalidJwtToken
+from web.user.forms import ResetPasswordForm, SetPasswordForm
+from web.user.models.user import User
+from web.user.views.base_user_view import BaseUserView
 
 
 @method_decorator(csrf_exempt, name="dispatch")

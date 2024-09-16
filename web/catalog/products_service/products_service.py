@@ -1,13 +1,16 @@
 from typing import Any
 
-from catalog.product_repository.repository_interface import ProductRepositoryInterface
-from catalog.products_service.products_service_interface import ProductsServiceInterface
-from catalog.serializers import ProductsSerializer
-from user.interfaces import UserInterface
-
 from infrastructure.persistence.repositories.product_repository import (
     get_product_repository,
 )
+from web.catalog.product_repository.repository_interface import (
+    ProductRepositoryInterface,
+)
+from web.catalog.products_service.products_service_interface import (
+    ProductsServiceInterface,
+)
+from web.catalog.serializers import ProductsSerializer
+from web.user.interfaces import UserInterface
 
 
 class ProductsService(ProductsServiceInterface):

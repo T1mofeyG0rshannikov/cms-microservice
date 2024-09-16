@@ -1,26 +1,28 @@
-from account.referrals_service.referrals_service import get_referral_service
-from account.referrals_service.referrals_service_interface import (
-    ReferralServiceInterface,
-)
-from account.serializers import ReferralsSerializer
-from catalog.models.product_type import ProductCategory
-from catalog.products_service.products_service import get_products_service
-from catalog.products_service.products_service_interface import ProductsServiceInterface
-from common.pagination import Pagination
 from django.db.models import Count, Q
-from materials.models import Document
-from template.profile_template_loader.context_processor.context_processor_interface import (
-    ProfileTemplateContextProcessorInterface,
-)
-from template.template_loader.tempate_context_processor.base_context_processor import (
-    BaseContextProcessor,
-)
-from user.serializers import IdeasSerializer, UserProductsSerializer
 
 from application.services.domains.service import get_domain_service
 from application.usecases.ideas.get_ideas import GetIdeas
 from domain.domains.interfaces.domain_service_interface import DomainServiceInterface
 from infrastructure.persistence.repositories.idea_repository import get_idea_repository
+from web.account.referrals_service.referrals_service import get_referral_service
+from web.account.referrals_service.referrals_service_interface import (
+    ReferralServiceInterface,
+)
+from web.account.serializers import ReferralsSerializer
+from web.catalog.models.product_type import ProductCategory
+from web.catalog.products_service.products_service import get_products_service
+from web.catalog.products_service.products_service_interface import (
+    ProductsServiceInterface,
+)
+from web.common.pagination import Pagination
+from web.materials.models import Document
+from web.template.profile_template_loader.context_processor.context_processor_interface import (
+    ProfileTemplateContextProcessorInterface,
+)
+from web.template.template_loader.tempate_context_processor.base_context_processor import (
+    BaseContextProcessor,
+)
+from web.user.serializers import IdeasSerializer, UserProductsSerializer
 
 
 class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateContextProcessorInterface):

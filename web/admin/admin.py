@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin import AdminSite
-from user.forms import CustomAuthenticationAdminForm
+
+from web.user.forms import CustomAuthenticationAdminForm
 
 
 class MyAdminSite(AdminSite):
@@ -21,6 +22,7 @@ class MyAdminSite(AdminSite):
             "common",
             "styles",
             "site_tests",
+            "site_statistics",
         ]
         app_order_dict = dict(zip(app_order, range(len(app_order))))
         app_list = list(self._build_app_dict(request).values())

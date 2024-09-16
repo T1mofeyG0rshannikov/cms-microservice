@@ -1,10 +1,13 @@
 from typing import Any
 
-from catalog.models.product_type import ProductType
-from catalog.models.products import Offer, Organization, Product
-from catalog.product_repository.repository_interface import ProductRepositoryInterface
 from django.db.models import Count, Q
-from user.models.product import UserOffer, UserProduct
+
+from web.catalog.models.product_type import ProductType
+from web.catalog.models.products import Offer, Organization, Product
+from web.catalog.product_repository.repository_interface import (
+    ProductRepositoryInterface,
+)
+from web.user.models.product import UserOffer, UserProduct
 
 
 class ProductRepository(ProductRepositoryInterface):

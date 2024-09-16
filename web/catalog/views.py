@@ -1,14 +1,19 @@
-from catalog.catalog_service.catalog_service import get_catalog_service
-from catalog.catalog_service.catalog_service_interface import CatalogServiceInterface
-from catalog.models.products import Organization
-from catalog.products_service.products_service import get_products_service
-from catalog.products_service.products_service_interface import ProductsServiceInterface
-from common.pagination import Pagination
 from django.http import JsonResponse
 from django.views import View
-from domens.views.mixins import SubdomainMixin
-from user.serializers import UserProductsSerializer
-from user.views.base_user_view import UserFormsView
+
+from web.catalog.catalog_service.catalog_service import get_catalog_service
+from web.catalog.catalog_service.catalog_service_interface import (
+    CatalogServiceInterface,
+)
+from web.catalog.models.products import Organization
+from web.catalog.products_service.products_service import get_products_service
+from web.catalog.products_service.products_service_interface import (
+    ProductsServiceInterface,
+)
+from web.common.pagination import Pagination
+from web.domens.views.mixins import SubdomainMixin
+from web.user.serializers import UserProductsSerializer
+from web.user.views.base_user_view import UserFormsView
 
 
 class ShowCatalogPage(SubdomainMixin):

@@ -1,4 +1,8 @@
-from blocks.models.blocks import (
+from colorfield.fields import ColorField
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
+
+from web.blocks.models.blocks import (
     ContentBlock,
     Cover,
     FeaturesBlock,
@@ -8,20 +12,17 @@ from blocks.models.blocks import (
     SocialMediaBlock,
     StagesBlock,
 )
-from blocks.models.catalog_block import (
+from web.blocks.models.catalog_block import (
     AdditionalCatalogBlock,
     CatalogBlock,
     MainPageCatalogBlock,
     PromoCatalog,
 )
-from colorfield.fields import ColorField
-from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db import models
-from styles.models.mixins.text_mixins import (
+from web.styles.models.mixins.text_mixins import (
     ExplanationTextStylesMixin,
     SubheaderStylesMixin,
 )
-from styles.models.styles.base_custom_styles import BaseCustomStyles
+from web.styles.models.styles.base_custom_styles import BaseCustomStyles
 
 
 def related_block(block_class):

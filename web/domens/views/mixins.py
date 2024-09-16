@@ -1,14 +1,14 @@
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from domens.views.views import PartnerIndexPage
-from settings.models import Domain, SiteSettings
 from settings.views import SettingsMixin
 from template.views.base_page_not_found import BaseNotFoundPage
-from user.models.site import Site
 
 from application.services.domains.service import get_domain_service
 from application.services.domains.url_parser import get_url_parser
 from domain.domains.interfaces.domain_service_interface import DomainServiceInterface
+from web.settings.models import Domain, SiteSettings
+from web.user.models.site import Site
 
 
 class SubdomainMixin(SettingsMixin):

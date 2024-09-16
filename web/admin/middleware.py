@@ -33,14 +33,14 @@ class AdminMiddleware:
             else:
                 return HttpResponseNotFound("404 Page not found")"""
 
-            response = JoomlaAdminPage.as_view()(request)
+            """response = JoomlaAdminPage.as_view()(request)
             response.accepted_renderer = JSONRenderer()
             response.accepted_media_type = "application/json"
             response.renderer_context = {}
             try:
                 response.render()
             except:
-                pass
+                pass"""
 
             return response
 

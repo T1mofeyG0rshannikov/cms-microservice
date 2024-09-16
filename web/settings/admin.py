@@ -1,10 +1,9 @@
-from account.admin import MessangerAdmin, UserFontAdmin
 from common.admin import SocialNetworkAdmin
 from django.contrib import admin
-from domens.admin import DomainAdmin
-from styles.admin import FontAdmin, GlobalStylesAdmin
 
-from .models import (
+from web.account.admin import MessangerAdmin, UserFontAdmin
+from web.domens.admin import DomainAdmin
+from web.settings.models import (
     Domain,
     Font,
     FormLogo,
@@ -16,6 +15,7 @@ from .models import (
     SocialNetwork,
     UserFont,
 )
+from web.styles.admin import FontAdmin, GlobalStylesAdmin
 
 
 class LogoInline(admin.StackedInline):

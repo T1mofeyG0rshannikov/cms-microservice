@@ -1,17 +1,17 @@
 import json
 
-from account.referrals_service.referrals_service import get_referral_service
-from account.referrals_service.referrals_service_interface import (
-    ReferralServiceInterface,
-)
-from account.serializers import ReferralSerializer, ReferralsSerializer
-from common.pagination import Pagination
 from django.http import HttpResponse, JsonResponse
 from django.views.generic import View
-from user.exceptions import InvalidReferalLevel, InvalidSortedByField
-from user.models.user import User
 
 from application.texts.errors import UserErrors
+from web.account.referrals_service.referrals_service import get_referral_service
+from web.account.referrals_service.referrals_service_interface import (
+    ReferralServiceInterface,
+)
+from web.account.serializers import ReferralSerializer, ReferralsSerializer
+from web.common.pagination import Pagination
+from web.user.exceptions import InvalidReferalLevel, InvalidSortedByField
+from web.user.models.user import User
 
 
 class GetReferals(View):

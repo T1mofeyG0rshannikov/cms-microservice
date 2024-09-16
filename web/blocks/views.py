@@ -1,19 +1,19 @@
 import json
 
-from blocks.models.common import Page
-from blocks.pages_service.page_service_interface import PageServiceInterface
-from blocks.pages_service.pages_service import get_page_service
-from blocks.serializers import PageSerializer
 from django.db.utils import IntegrityError
 from django.http import HttpResponse, HttpResponseNotFound
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
-from domens.views.mixins import SubdomainMixin
-from settings.models import SiteSettings
-from user.views.base_user_view import UserFormsView
 
 from infrastructure.files.files import find_class_in_directory
+from web.blocks.models.common import Page
+from web.blocks.pages_service.page_service_interface import PageServiceInterface
+from web.blocks.pages_service.pages_service import get_page_service
+from web.blocks.serializers import PageSerializer
+from web.domens.views.mixins import SubdomainMixin
+from web.settings.models import SiteSettings
+from web.user.views.base_user_view import UserFormsView
 
 
 class IndexPage(SubdomainMixin):

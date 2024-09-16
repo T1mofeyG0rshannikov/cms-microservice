@@ -1,9 +1,9 @@
 from datetime import datetime
 
 from rest_framework import serializers
-from user.models.user import User
 
 from application.formats.date_russian import get_date_in_russian
+from web.user.models.user import User
 
 
 class ReferralsSerializer(serializers.ModelSerializer):

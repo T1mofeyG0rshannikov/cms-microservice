@@ -1,12 +1,11 @@
-from blocks.models.catalog_block import CatalogBlock
-from catalog.models.product_type import OfferTypeRelation
-from catalog.models.products import ExclusiveCard, Product
 from rest_framework import serializers
 
 from application.formats.date_russian import get_date_in_russian
 from infrastructure.persistence.repositories.product_repository import (
     get_product_repository,
 )
+from web.blocks.models.catalog_block import CatalogBlock
+from web.catalog.models.products import ExclusiveCard, OfferTypeRelation, Product
 
 
 class CatalogBlockSerializer(serializers.ModelSerializer):

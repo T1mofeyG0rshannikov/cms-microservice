@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from user.models.idea import Idea
+from web.user.models.idea import Idea
 
 
 class IdeaRepositoryInterface(Protocol):

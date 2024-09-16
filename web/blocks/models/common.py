@@ -1,10 +1,10 @@
-from blocks.template_exist import is_template_exists
-from blocks.validators import validate_html_filename
-from common.models import BasePageBlock, BlockRelationship
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
 
 from application.texts.errors import Errors
+from web.blocks.template_exist import is_template_exists
+from web.blocks.validators import validate_html_filename
+from web.common.models import BasePageBlock, BlockRelationship
 
 
 class Page(models.Model):

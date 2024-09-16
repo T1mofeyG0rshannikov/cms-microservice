@@ -8,14 +8,12 @@ from account.forms import (
 )
 from common.views import FormView
 from django.http import HttpResponse, JsonResponse
-from domens.exceptions import SiteAdressExists
 from user.exceptions import (
     SocialChannelAlreadyExists,
     UserProductAlreadyExists,
     UserWithEmailAlreadyExists,
     UserWithPhoneAlreadyExists,
 )
-from user.views.base_user_view import APIUserRequired
 
 from application.usecases.site.change_site import ChangeSite
 from application.usecases.site.change_socials import ChangeSocials
@@ -31,6 +29,8 @@ from infrastructure.persistence.repositories.socials_repositry import (
     get_socials_repository,
 )
 from infrastructure.persistence.repositories.user_repository import get_user_repository
+from web.domens.exceptions import SiteAdressExists
+from web.user.views.base_user_view import APIUserRequired
 
 
 class ChangeSiteView(FormView, APIUserRequired):

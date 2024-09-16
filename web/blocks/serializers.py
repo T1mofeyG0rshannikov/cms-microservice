@@ -1,16 +1,16 @@
-from blocks.models.catalog_block import (
-    AdditionalCatalogBlock,
-    MainPageCatalogBlock,
-    PromoCatalog,
-)
-from blocks.models.common import Page
-from blocks.pages_service.pages_service import PageService
 from rest_framework import serializers
-from styles.serializers import CustomStylesSerializer
 
 from infrastructure.persistence.repositories.product_repository import (
     get_product_repository,
 )
+from web.blocks.models.catalog_block import (
+    AdditionalCatalogBlock,
+    MainPageCatalogBlock,
+    PromoCatalog,
+)
+from web.blocks.models.common import Page
+from web.blocks.pages_service.pages_service import PageService
+from web.styles.serializers import CustomStylesSerializer
 
 
 class PageSerializer(serializers.ModelSerializer):

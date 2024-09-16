@@ -1,9 +1,10 @@
-from account.models import UserMessanger
 from django.db import transaction
 from django.db.models import Count, Q
-from user.interfaces import UserInterface
-from user.models.user import User
-from user.user_repository.repository_interface import UserRepositoryInterface
+
+from web.account.models import UserMessanger
+from web.user.interfaces import UserInterface
+from web.user.models.user import User
+from web.user.user_repository.repository_interface import UserRepositoryInterface
 
 
 class UserRepository(UserRepositoryInterface):
@@ -82,6 +83,12 @@ class UserRepository(UserRepositoryInterface):
         user = self.get_user_by_id(user_id)
         user.set_password(new_password)
         user.save()
+
+        return user
+
+    @staticmethod
+    def create_user(**kwargs) -> UserInterface:
+        user = User.objects.create(**kwargs)
 
         return user
 
