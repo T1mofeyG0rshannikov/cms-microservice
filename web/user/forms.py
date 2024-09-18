@@ -1,15 +1,9 @@
 from django import forms
-from django.contrib.admin.forms import AuthenticationForm
-from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from user.validator.validator import get_user_validator
-from user.validator.validator_interface import UserValidatorInterface
 
 from application.texts.errors import UserErrors
-from infrastructure.persistence.repositories.admin_log_repository import (
-    get_admin_log_repository,
-)
-from infrastructure.persistence.repositories.user_repository import get_user_repository
+from domain.user.validator_interface import UserValidatorInterface
 
 
 class RegistrationForm(forms.Form):
@@ -60,78 +54,6 @@ class ResetPasswordForm(forms.Form):
         widget=forms.TextInput(attrs={"placeholder": "Ваш email или телефон"}),
         error_messages={"invalid": "Введите корректный email"},
     )
-
-
-class CustomAuthenticationAdminForm(AuthenticationForm):
-    error_messages = {
-        "invalid_login": _("Пожалуйста введите корректные %(username)s и пароль. Оба поля чувствительны к регистру."),
-        "inactive": _("This account is inactive."),
-    }
-
-    validator: UserValidatorInterface = get_user_validator()
-
-    def __init__(self, request=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.request = request
-        self.username_field = "логин"
-        self.fields["username"].label = "Email или телефон"
-        self.fields["password"].label = "Пароль"
-
-    def confirm_login_allowed(self, user):
-        if not user.is_active:
-            raise ValidationError(
-                self.error_messages["inactive"],
-                code="inactive",
-            )
-
-    def get_user(self):
-        return self.user_cache
-
-    def get_invalid_login_error(self):
-        return ValidationError(
-            self.error_messages["invalid_login"],
-            code="invalid_login",
-            params={"username": self.username_field},
-        )
-
-    username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={"placeholder": "Email или телефон"}))
-    password = forms.CharField(
-        max_length=18, widget=forms.PasswordInput(attrs={"placeholder": "Пароль", "autocomplete": "off"})
-    )
-
-    def clean_username(self):
-        repository = get_user_repository()
-
-        phone_or_email = self.cleaned_data["username"]
-        phone_or_email = self.validator.validate_phone_or_email(phone_or_email)
-
-        if phone_or_email is None:
-            self.add_error("username", UserErrors.incorrect_login.value)
-            return phone_or_email
-
-        user1 = repository.get_user_by_email(phone_or_email)
-        user2 = repository.get_user_by_phone(phone_or_email)
-
-        if not user1 and not user2:
-            self.add_error("username", UserErrors.incorrect_login.value)
-
-        return phone_or_email
-
-    def clean(self):
-        repository = get_admin_log_repository()
-        ip_address = get_client_ip(self.request)
-        print(ip_address)
-        repository.create_logg(ip_address, self.cleaned_data.get("username"))
-        return super().clean()
-
-
-def get_client_ip(request):
-    x_forwarded_for = request.META.get("HTTP_X_REAL_IP")
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(",")[0]
-    else:
-        ip = request.META.get("REMOTE_ADDR")
-    return ip
 
 
 class AddIdeaForm(forms.Form):

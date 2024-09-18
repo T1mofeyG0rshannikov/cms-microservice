@@ -1,15 +1,15 @@
 from django.db.models.signals import post_save, pre_save
 
-from web.emails.email_service.email_service import get_email_service
-from web.emails.exceptions import CantSendMailError
-from web.notifications.create_user_notification import create_user_notification
-from web.notifications.error import CantSendNotification
-from web.notifications.send_message import send_message_to_user
-from web.user.exceptions import (
+from domain.email.exceptions import CantSendMailError
+from domain.user.exceptions import (
     SingleSuperSponsorExistError,
     UserWithEmailAlreadyExists,
     UserWithPhoneAlreadyExists,
 )
+from infrastructure.email_service.email_service import get_email_service
+from web.notifications.create_user_notification import create_user_notification
+from web.notifications.error import CantSendNotification
+from web.notifications.send_message import send_message_to_user
 from web.user.models.user import User
 
 

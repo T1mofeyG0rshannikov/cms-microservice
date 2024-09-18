@@ -3,7 +3,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
-from web.common.security import LinkEncryptor
+from infrastructure.security import LinkEncryptor
 
 
 class RedirectToLink(View):

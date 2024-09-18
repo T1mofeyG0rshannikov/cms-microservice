@@ -1,8 +1,11 @@
 from typing import Any
 
+from domain.domains.interfaces.interfaces import DomainInterface, SiteInterface
+from domain.user.exceptions import (
+    UserWithEmailAlreadyExists,
+    UserWithPhoneAlreadyExists,
+)
 from web.domens.domain_repository.repository_interface import DomainRepositoryInterface
-from web.domens.interfaces import DomainInterface, SiteInterface
-from web.user.exceptions import UserWithEmailAlreadyExists, UserWithPhoneAlreadyExists
 from web.user.user_repository.repository_interface import UserRepositoryInterface
 
 

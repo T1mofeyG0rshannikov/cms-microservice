@@ -1,3 +1,5 @@
 from django.contrib import admin
 
-# Register your models here.
+from web.site_statistics.models import TryLoginToAdminPanel
+
+admin.site.register(TryLoginToAdminPanel)

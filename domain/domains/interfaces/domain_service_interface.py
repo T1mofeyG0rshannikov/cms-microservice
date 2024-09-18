@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from domens.interfaces import DomainInterface
+from domain.domains.interfaces.interfaces import DomainInterface
 
 
 class DomainServiceInterface(Protocol):

@@ -1,7 +1,8 @@
 from django.contrib.auth.models import BaseUserManager
 from user.user_manager.user_manager_interface import UserManagerInterface
 from user.validator.validator import get_user_validator
-from user.validator.validator_interface import UserValidatorInterface
+
+from domain.user.validator_interface import UserValidatorInterface
 
 
 class UserManager(BaseUserManager, UserManagerInterface):

@@ -1,5 +1,6 @@
 from typing import Any
 
+from domain.user.interfaces import UserInterface
 from web.blocks.models.blocks import Cover
 from web.blocks.models.catalog_block import CatalogBlock
 from web.blocks.pages_service.page_service_interface import PageServiceInterface
@@ -14,7 +15,6 @@ from web.catalog.serializers import CatalogBlockSerializer
 from web.common.models import BlockRelationship
 from web.styles.models.styles.styles import CatalogCustomStyles
 from web.styles.serializers import CustomStylesSerializer
-from web.user.interfaces import UserInterface
 
 
 class CatalogService(CatalogServiceInterface):

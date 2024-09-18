@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from domens.views.mixins import SubdomainMixin
 from settings.views import SettingsMixin
 
+from domain.user.exceptions import InvalidReferalLevel, InvalidSortedByField
 from web.materials.models import Document
 from web.notifications.models import UserNotification
 from web.notifications.serializers import UserNotificationSerializer
@@ -17,7 +18,6 @@ from web.template.profile_template_loader.context_processor.context_processor im
 from web.template.profile_template_loader.context_processor.context_processor_interface import (
     ProfileTemplateContextProcessorInterface,
 )
-from web.user.exceptions import InvalidReferalLevel, InvalidSortedByField
 from web.user.views.base_user_view import BaseUserView, MyLoginRequiredMixin
 
 

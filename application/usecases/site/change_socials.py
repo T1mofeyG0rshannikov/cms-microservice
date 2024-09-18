@@ -1,4 +1,4 @@
-from user.exceptions import SocialChannelAlreadyExists
+from domain.user.exceptions import SocialChannelAlreadyExists
 
 
 class ChangeSocials:

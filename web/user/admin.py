@@ -1,8 +1,11 @@
+import os
+
 from common.admin import BaseInline
 from django import forms
 from django.contrib import admin
 from django.utils.html import mark_safe
 from domens.admin import SiteAdmin
+from dotenv import load_dotenv
 
 from application.services.domains.service import get_domain_service
 from infrastructure.persistence.repositories.user_repository import get_user_repository
@@ -115,12 +118,17 @@ class IdeaScreenInline(BaseInline):
     readonly_fields = ["image_tag"]
 
 
+load_dotenv()
+
+
 class IdeaAdmin(admin.ModelAdmin):
     model = Idea
     list_display = ["status_img", "created_at_tag", "title_tag", "user", "status", "finishe_date_tag", "rating"]
 
+    admin_site_url = os.getenv("ADMIN_URL")
+
     def title_tag(self, idea):
-        return mark_safe(f'<a href="/admin/user/idea/{idea.pk}/change/" >{idea.title}</a>')
+        return mark_safe(f'<a href="/{self.admin_site_url}/user/idea/{idea.pk}/change/" >{idea.title}</a>')
 
     def finishe_date_tag(self, idea):
         if idea.finishe_date:

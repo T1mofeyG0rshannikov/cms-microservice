@@ -8,17 +8,17 @@ from account.forms import (
 )
 from common.views import FormView
 from django.http import HttpResponse, JsonResponse
-from user.exceptions import (
-    SocialChannelAlreadyExists,
-    UserProductAlreadyExists,
-    UserWithEmailAlreadyExists,
-    UserWithPhoneAlreadyExists,
-)
 
 from application.usecases.site.change_site import ChangeSite
 from application.usecases.site.change_socials import ChangeSocials
 from application.usecases.user.change_user import ChangeUser
 from application.usecases.user_products.add_user_product import AddUserProduct
+from domain.user.exceptions import (
+    SocialChannelAlreadyExists,
+    UserProductAlreadyExists,
+    UserWithEmailAlreadyExists,
+    UserWithPhoneAlreadyExists,
+)
 from infrastructure.persistence.repositories.domain_repository import (
     get_domain_repository,
 )

@@ -1,7 +1,9 @@
 from typing import Any
 
-from catalog.product_repository.repository_interface import ProductRepositoryInterface
-from user.interfaces import UserInterface
+from domain.user.interfaces import UserInterface
+from web.catalog.product_repository.repository_interface import (
+    ProductRepositoryInterface,
+)
 
 
 class AddUserProduct:

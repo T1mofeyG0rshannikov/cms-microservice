@@ -34,9 +34,9 @@ INSTALLED_APPS = [
     "colorfield",
     "ckeditor",
     "web.offers",
-    "web.catalog",
-    "web.site_statistics",
     "web.admin",
+    "web.site_statistics",
+    "web.catalog",
     "web.common",
     "web.account",
     "web.settings",
@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "web.emails",
     "corsheaders",
     "web.materials",
+    "web.system",
 ]
 
 
@@ -82,8 +83,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_hosts.middleware.HostsRequestMiddleware",
     "django_hosts.middleware.HostsResponseMiddleware",
-    # "user.middleware.JwtAuthMiddleware",
-    # "admin.middleware.AdminMiddleware",
+    "user.middleware.JwtAuthMiddleware",
+    "admin.middleware.AdminMiddleware",
 ]
 
 ROOT_URLCONF = "core.urls"

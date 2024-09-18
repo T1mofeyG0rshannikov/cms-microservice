@@ -1,6 +1,6 @@
 from typing import Any, Protocol
 
-from user.interfaces import UserInterface
+from domain.user.interfaces import UserInterface
 
 
 class ProductsServiceInterface(Protocol):

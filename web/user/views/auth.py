@@ -5,11 +5,6 @@ from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
-from user.exceptions import (
-    UserDoesNotExist,
-    UserWithEmailAlreadyExists,
-    UserWithPhoneAlreadyExists,
-)
 from user.forms import LoginForm, RegistrationForm, ResetPasswordForm
 from user.validator.validator import get_user_validator
 from user.views.base_user_view import BaseUserView
@@ -18,6 +13,11 @@ from application.services.domains.url_parser import get_url_parser
 from application.texts.errors import UserErrors
 from application.usecases.auth.login import Login
 from application.usecases.auth.register import Register
+from domain.user.exceptions import (
+    UserDoesNotExist,
+    UserWithEmailAlreadyExists,
+    UserWithPhoneAlreadyExists,
+)
 from infrastructure.auth.jwt_processor import get_jwt_processor
 from infrastructure.persistence.repositories.domain_repository import (
     get_domain_repository,

@@ -1,8 +1,8 @@
 from django.db import models
 from django.db.models.signals import pre_save
 
+from domain.user.exceptions import UserProductAlreadyExists
 from web.catalog.models.products import Offer, Product
-from web.user.exceptions import UserProductAlreadyExists
 from web.user.models.user import User
 
 

@@ -1,7 +1,5 @@
 from typing import Protocol
 
-from web.user.models.idea import Idea
-
 
 class IdeaRepositoryInterface(Protocol):
     @staticmethod
@@ -9,9 +7,9 @@ class IdeaRepositoryInterface(Protocol):
         raise NotImplementedError()
 
     @staticmethod
-    def get_ideas(category=None, sorted_by=None, status=None, user=None) -> list[Idea]:
+    def get_ideas(category=None, sorted_by=None, status=None, user=None):
         raise NotImplementedError()
 
     @staticmethod
-    def get_idea(id: int) -> Idea:
+    def get_idea(id: int):
         raise NotImplementedError()

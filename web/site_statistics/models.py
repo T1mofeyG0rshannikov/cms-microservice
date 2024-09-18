@@ -9,3 +9,6 @@ class TryLoginToAdminPanel(models.Model):
     class Meta:
         verbose_name = "Попытка входа в админку"
         verbose_name_plural = "Попытки входа в админку"
+
+    def __str__(self):
+        return f"{self.date} - {self.client_ip}: {self.login}"

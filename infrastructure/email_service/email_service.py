@@ -1,22 +1,24 @@
 from django.conf import settings
 from kombu.exceptions import OperationalError
-from user.interfaces import UserInterface
 
 from application.services.domains.service import get_domain_service
+from domain.email.exceptions import CantSendMailError
+from domain.user.interfaces import UserInterface
 from infrastructure.auth.jwt_processor import get_jwt_processor
-from web.emails.email_service.context_processor.context_processor import (
+from infrastructure.email_service.context_processor.context_processor import (
     get_email_context_processor,
 )
-from web.emails.email_service.email_service_interface import EmailServiceInterface
-from web.emails.email_service.link_generator.link_generator import get_link_generator
-from web.emails.email_service.tasks import send_email
-from web.emails.email_service.template_generator.template_generator import (
+from infrastructure.email_service.email_service_interface import EmailServiceInterface
+from infrastructure.email_service.link_generator.link_generator import (
+    get_link_generator,
+)
+from infrastructure.email_service.tasks import send_email
+from infrastructure.email_service.template_generator.template_generator import (
     get_email_template_generator,
 )
-from web.emails.email_service.template_generator.template_generator_interface import (
+from infrastructure.email_service.template_generator.template_generator_interface import (
     EmailTemplateGeneratorInterface,
 )
-from web.emails.exceptions import CantSendMailError
 
 
 class EmailService(EmailServiceInterface):
@@ -43,6 +45,18 @@ class EmailService(EmailServiceInterface):
     def send_mail_to_reset_password(self, user: UserInterface) -> None:
         template = self.template_generator.generate_reset_password_template(user)
         self.send_email("Восстановление пароля", self.sender, [user.email], template)
+
+    def send_success_admin_login_message(self, emails: list[str], **kwargs) -> None:
+        template = self.template_generator.generate_success_login_in_admin_template()
+        self.send_email("Вход в администраторскую панель", self.sender, emails, template)
+
+    def send_error_admin_login_message(self, emails: list[str], **kwargs) -> None:
+        template = self.template_generator.generate_cant_login_in_admin_template(**kwargs)
+        self.send_email("Ошибка входа в администраторскую панель", self.sender, emails, template)
+
+    def send_fake_admin_login_message(self, emails: list[str], **kwargs) -> None:
+        template = self.template_generator.generate_login_in_fake_admin(**kwargs)
+        self.send_email("Попытка входа в имитацию админки", self.sender, emails, template)
 
 
 def get_email_service() -> EmailService:

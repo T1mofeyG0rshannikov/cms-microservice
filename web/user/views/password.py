@@ -8,11 +8,11 @@ from application.usecases.user.reset_password import (
     ResetPassword,
     ValidResetPasswordToken,
 )
+from domain.user.exceptions import InvalidJwtToken
 from infrastructure.auth.jwt_processor import get_jwt_processor
+from infrastructure.email_service.email_service import get_email_service
 from infrastructure.persistence.repositories.user_repository import get_user_repository
 from web.common.views import FormView
-from web.emails.email_service.email_service import get_email_service
-from web.user.exceptions import InvalidJwtToken
 from web.user.forms import ResetPasswordForm, SetPasswordForm
 from web.user.models.user import User
 from web.user.views.base_user_view import BaseUserView

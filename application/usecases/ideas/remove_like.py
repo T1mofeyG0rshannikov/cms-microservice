@@ -1,6 +1,6 @@
-from user.exceptions import IdeaNotFound
-from user.idea_repository.repository_interface import IdeaRepositoryInterface
-from user.interfaces import UserInterface
+from domain.user.exceptions import IdeaNotFound
+from domain.user.idea_repository_interface import IdeaRepositoryInterface
+from domain.user.interfaces import UserInterface
 
 
 class RemoveLike:

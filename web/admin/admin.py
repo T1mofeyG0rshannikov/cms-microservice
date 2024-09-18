@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin import AdminSite
 
-from web.user.forms import CustomAuthenticationAdminForm
+from web.admin.forms import CustomAuthenticationAdminForm
 
 
 class MyAdminSite(AdminSite):

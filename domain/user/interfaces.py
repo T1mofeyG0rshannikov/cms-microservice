@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from domens.interfaces import DomainInterface, SiteInterface
+from domain.domains.interfaces.interfaces import DomainInterface, SiteInterface
 
 
 @dataclass

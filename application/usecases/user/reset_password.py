@@ -1,9 +1,8 @@
-from user.exceptions import InvalidJwtToken
-from user.interfaces import UserInterface
-from user.user_repository.repository_interface import UserRepositoryInterface
-
 from application.texts.errors import Errors
+from domain.user.exceptions import InvalidJwtToken
+from domain.user.interfaces import UserInterface
 from infrastructure.auth.jwt_processor_interface import JwtProcessorInterface
+from web.user.user_repository.repository_interface import UserRepositoryInterface
 
 
 class ValidResetPasswordToken:

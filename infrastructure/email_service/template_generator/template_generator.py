@@ -1,10 +1,11 @@
 from typing import Any
 
 from django.template import loader
-from emails.email_service.context_processor.context_processor_interface import (
+
+from domain.user.interfaces import UserInterface
+from infrastructure.email_service.context_processor.context_processor_interface import (
     EmailContextProcessorInterface,
 )
-from user.interfaces import UserInterface
 
 from .template_generator_interface import EmailTemplateGeneratorInterface
 
@@ -31,6 +32,21 @@ class EmailTemplateGenerator(EmailTemplateGeneratorInterface):
         context = self.context_processor.reset_password(user)
 
         return self.generate_template("emails/reset_password.html", context)
+
+    def generate_success_login_in_admin_template(self, **kwargs) -> str:
+        context = self.context_processor.try_login_in_admin(**kwargs)
+
+        return self.generate_template("emails/success_login_in_admin.html", context)
+
+    def generate_cant_login_in_admin_template(self, **kwargs) -> str:
+        context = self.context_processor.try_login_in_admin(**kwargs)
+
+        return self.generate_template("emails/error_login_in_admin.html", context)
+
+    def generate_login_in_fake_admin(self, **kwargs) -> str:
+        context = self.context_processor.login_in_fake_admin(**kwargs)
+
+        return self.generate_template("emails/login_in_fake_admin.html", context)
 
 
 def get_email_template_generator(email_context_processor: EmailContextProcessorInterface) -> EmailTemplateGenerator:

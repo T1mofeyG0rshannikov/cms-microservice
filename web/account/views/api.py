@@ -4,13 +4,13 @@ from django.http import HttpResponse, JsonResponse
 from django.views.generic import View
 
 from application.texts.errors import UserErrors
+from domain.user.exceptions import InvalidReferalLevel, InvalidSortedByField
 from web.account.referrals_service.referrals_service import get_referral_service
 from web.account.referrals_service.referrals_service_interface import (
     ReferralServiceInterface,
 )
 from web.account.serializers import ReferralSerializer, ReferralsSerializer
 from web.common.pagination import Pagination
-from web.user.exceptions import InvalidReferalLevel, InvalidSortedByField
 from web.user.models.user import User
 
 

@@ -5,6 +5,7 @@ from template.profile_template_loader.profile_template_loader import (
     get_profile_template_loader,
 )
 
+from domain.user.exceptions import InvalidReferalLevel, InvalidSortedByField
 from web.account.views.templates import Profile
 from web.blocks.models.catalog_block import CatalogBlock
 from web.blocks.models.common import Page
@@ -15,7 +16,6 @@ from web.template.profile_template_loader.profile_template_loader_interface impo
     ProfileTemplateLoaderInterface,
 )
 from web.template.template_loader.template_loader import get_template_loader
-from web.user.exceptions import InvalidReferalLevel, InvalidSortedByField
 
 
 def slug_router(request, slug):

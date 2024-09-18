@@ -6,10 +6,10 @@ from dateutil.relativedelta import relativedelta
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
+from infrastructure.security import LinkEncryptor
 from web.blocks.models.mixins import ButtonMixin
 from web.catalog.models.product_type import ProductCategory, ProductType
 from web.common.models import OneInstanceModel
-from web.common.security import LinkEncryptor
 
 
 class OrganizationType(models.Model):

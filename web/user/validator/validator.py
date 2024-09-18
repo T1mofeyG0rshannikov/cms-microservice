@@ -3,9 +3,10 @@ from typing import Any
 
 from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator
-from user.exceptions import InvalidReferalLevel, InvalidSortedByField
-from user.interfaces import ReferralInterface
-from user.validator.validator_interface import UserValidatorInterface
+
+from domain.user.exceptions import InvalidReferalLevel, InvalidSortedByField
+from domain.user.interfaces import ReferralInterface
+from domain.user.validator_interface import UserValidatorInterface
 
 
 class UserValidator(UserValidatorInterface):

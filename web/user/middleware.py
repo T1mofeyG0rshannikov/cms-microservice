@@ -1,7 +1,6 @@
-from user.models.user import User
-
 from infrastructure.auth.jwt_processor import get_jwt_processor
 from infrastructure.auth.jwt_processor_interface import JwtProcessorInterface
+from web.user.models.user import User
 
 
 class JwtAuthMiddleware:

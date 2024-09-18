@@ -1,6 +1,6 @@
+from domain.user.interfaces import UserInterface
 from web.notifications.models import Notification, UserNotification
 from web.notifications.serializers import UserNotificationSerializer
-from web.user.interfaces import UserInterface
 
 
 def create_user_notification(user: UserInterface, trigger_name: str):

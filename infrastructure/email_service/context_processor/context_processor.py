@@ -1,13 +1,12 @@
 from typing import Any
 
-from emails.serializers import EmailLogoSerializer
-
-from web.emails.email_service.link_generator.link_generator_interface import (
+from domain.user.interfaces import UserInterface
+from infrastructure.email_service.link_generator.link_generator_interface import (
     LinkGeneratorInterface,
 )
+from web.emails.serializers import EmailLogoSerializer
 from web.settings.models import FormLogo
 from web.styles.models.colors.colors import ColorStyles
-from web.user.interfaces import UserInterface
 
 from .context_processor_interface import EmailContextProcessorInterface
 
@@ -43,6 +42,24 @@ class EmailContextProcessor(EmailContextProcessorInterface):
 
         return context
 
+    def try_login_in_admin(self, **kwargs) -> dict[str, Any]:
+        context = self.get_context()
+        context["ip"] = kwargs.get("ip")
+        context["time"] = kwargs.get("time")
+        context["login"] = kwargs.get("login")
+        context["error"] = kwargs.get("error")
 
-def get_email_context_processor(link_generator: LinkGeneratorInterface) -> EmailContextProcessor:
+        return context
+
+    def login_in_fake_admin(self, **kwargs) -> dict[str, Any]:
+        context = self.get_context()
+        context["ip"] = kwargs.get("ip")
+        context["time"] = kwargs.get("time")
+        context["login"] = kwargs.get("login")
+        context["user"] = kwargs.get("user")
+
+        return context
+
+
+def get_email_context_processor(link_generator: LinkGeneratorInterface) -> EmailContextProcessorInterface:
     return EmailContextProcessor(link_generator)
