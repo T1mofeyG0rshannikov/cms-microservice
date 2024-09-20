@@ -2,13 +2,13 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import View
-from domens.views.mixins import SubdomainMixin
-from user.forms import LoginForm, RegistrationForm, ResetPasswordForm
 
 from application.services.domains.service import get_domain_service
-from domain.domains.interfaces.domain_service_interface import DomainServiceInterface
+from domain.domains.service import DomainServiceInterface
 from infrastructure.auth.jwt_processor import get_jwt_processor
 from infrastructure.auth.jwt_processor_interface import JwtProcessorInterface
+from web.domens.views.mixins import SubdomainMixin
+from web.user.forms import LoginForm, RegistrationForm, ResetPasswordForm
 
 
 class BaseUserView(SubdomainMixin):

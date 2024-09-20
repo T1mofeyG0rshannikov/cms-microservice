@@ -2,9 +2,9 @@ from typing import Any
 
 from application.texts.errors import UserErrors
 from domain.user.exceptions import UserDoesNotExist
-from domain.user.validator_interface import UserValidatorInterface
+from domain.user.repository import UserRepositoryInterface
+from domain.user.validator import UserValidatorInterface
 from infrastructure.auth.jwt_processor_interface import JwtProcessorInterface
-from web.user.user_repository.repository_interface import UserRepositoryInterface
 
 
 class Login:

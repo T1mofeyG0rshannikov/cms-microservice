@@ -1,6 +1,5 @@
-from settings.serializers import SettingsSerializer
-
 from web.settings.models import SiteSettings
+from web.settings.serializers import SettingsSerializer
 from web.user.models.site import Site
 
 

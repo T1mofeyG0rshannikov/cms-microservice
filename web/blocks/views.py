@@ -20,6 +20,7 @@ class IndexPage(SubdomainMixin):
     template_name = "blocks/page.html"
 
     def get(self, *args, **kwargs):
+        2 / 0
         partner_domain = self.domain_service.get_partners_domain_string()
 
         if self.request.domain == partner_domain and SiteSettings.objects.first().disable_partners_sites:

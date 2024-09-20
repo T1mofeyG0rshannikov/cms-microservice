@@ -5,8 +5,8 @@ from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator
 
 from domain.user.exceptions import InvalidReferalLevel, InvalidSortedByField
-from domain.user.interfaces import ReferralInterface
-from domain.user.validator_interface import UserValidatorInterface
+from domain.user.referral import ReferralInterface
+from domain.user.validator import UserValidatorInterface
 
 
 class UserValidator(UserValidatorInterface):

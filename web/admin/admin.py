@@ -8,6 +8,7 @@ class MyAdminSite(AdminSite):
     site_header = "Bankomag"
     index_title = "bankomag"
     login_form = CustomAuthenticationAdminForm
+    login_template = "admin/login_form.html"
 
     def get_app_list(self, request, app_label=None):
         app_order = [

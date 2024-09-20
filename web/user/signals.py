@@ -6,7 +6,7 @@ from domain.user.exceptions import (
     UserWithEmailAlreadyExists,
     UserWithPhoneAlreadyExists,
 )
-from infrastructure.email_service.email_service import get_email_service
+from infrastructure.email_services.email_service.email_service import get_email_service
 from web.notifications.create_user_notification import create_user_notification
 from web.notifications.error import CantSendNotification
 from web.notifications.send_message import send_message_to_user

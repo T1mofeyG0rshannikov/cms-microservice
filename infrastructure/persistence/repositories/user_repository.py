@@ -1,10 +1,10 @@
 from django.db import transaction
 from django.db.models import Count, Q
 
-from domain.user.interfaces import UserInterface
+from domain.user.referral import UserInterface
+from domain.user.repository import UserRepositoryInterface
 from web.account.models import UserMessanger
 from web.user.models.user import User
-from web.user.user_repository.repository_interface import UserRepositoryInterface
 
 
 class UserRepository(UserRepositoryInterface):

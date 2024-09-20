@@ -1,6 +1,6 @@
 from typing import Any
 
-from domain.user.interfaces import UserInterface
+from domain.user.referral import UserInterface
 from web.blocks.models.blocks import Cover
 from web.blocks.models.catalog_block import CatalogBlock
 from web.blocks.pages_service.page_service_interface import PageServiceInterface

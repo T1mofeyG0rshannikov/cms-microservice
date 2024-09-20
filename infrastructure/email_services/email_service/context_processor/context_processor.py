@@ -1,7 +1,7 @@
 from typing import Any
 
-from domain.user.interfaces import UserInterface
-from infrastructure.email_service.link_generator.link_generator_interface import (
+from domain.user.referral import UserInterface
+from infrastructure.email_services.email_service.link_generator.link_generator_interface import (
     LinkGeneratorInterface,
 )
 from web.emails.serializers import EmailLogoSerializer
@@ -43,7 +43,7 @@ class EmailContextProcessor(EmailContextProcessorInterface):
         return context
 
     def try_login_in_admin(self, **kwargs) -> dict[str, Any]:
-        context = self.get_context()
+        context = {}
         context["ip"] = kwargs.get("ip")
         context["time"] = kwargs.get("time")
         context["login"] = kwargs.get("login")
@@ -56,7 +56,11 @@ class EmailContextProcessor(EmailContextProcessorInterface):
         context["ip"] = kwargs.get("ip")
         context["time"] = kwargs.get("time")
         context["login"] = kwargs.get("login")
-        context["user"] = kwargs.get("user")
+        user = kwargs.get("user")
+        if user and user.is_authenticated:
+            user = user.email
+
+        context["user"] = user
 
         return context
 

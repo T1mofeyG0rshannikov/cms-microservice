@@ -5,8 +5,8 @@ from domain.user.exceptions import (
     UserWithEmailAlreadyExists,
     UserWithPhoneAlreadyExists,
 )
-from domain.user.interfaces import UserInterface
-from web.user.user_repository.repository_interface import UserRepositoryInterface
+from domain.user.referral import UserInterface
+from domain.user.repository import UserRepositoryInterface
 
 
 class ChangeUser:

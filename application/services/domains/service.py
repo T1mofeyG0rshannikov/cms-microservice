@@ -1,12 +1,12 @@
 from application.common.url_parser import UrlParserInterface
 from application.services.domains.url_parser import get_url_parser
-from domain.domains.interfaces.domain_service_interface import DomainServiceInterface
-from domain.domains.interfaces.interfaces import SiteInterface
-from domain.user.interfaces import UserInterface
+from domain.domains.domain import SiteInterface
+from domain.domains.repository import DomainRepositoryInterface
+from domain.domains.service import DomainServiceInterface
+from domain.user.referral import UserInterface
 from infrastructure.persistence.repositories.domain_repository import (
     get_domain_repository,
 )
-from web.domens.domain_repository.repository_interface import DomainRepositoryInterface
 
 
 class DomainService(DomainServiceInterface):

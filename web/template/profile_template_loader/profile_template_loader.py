@@ -1,11 +1,11 @@
-from template.profile_template_loader.context_processor.context_processor import (
+from web.template.profile_template_loader.context_processor.context_processor import (
     ProfileTemplateContextProcessor,
     get_profile_template_context_processor,
 )
-from template.profile_template_loader.profile_template_loader_interface import (
+from web.template.profile_template_loader.profile_template_loader_interface import (
     ProfileTemplateLoaderInterface,
 )
-from template.template_loader.base_template_loader import BaseTemplateLoader
+from web.template.template_loader.base_template_loader import BaseTemplateLoader
 
 
 class ProfileTemplateLoader(BaseTemplateLoader, ProfileTemplateLoaderInterface):

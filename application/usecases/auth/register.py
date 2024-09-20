@@ -1,12 +1,13 @@
 from typing import Any
 
-from domain.domains.interfaces.interfaces import DomainInterface, SiteInterface
+from domain.domains.domain import DomainInterface, SiteInterface
+from domain.domains.repository import DomainRepositoryInterface
 from domain.user.exceptions import (
     UserWithEmailAlreadyExists,
     UserWithPhoneAlreadyExists,
 )
-from web.domens.domain_repository.repository_interface import DomainRepositoryInterface
-from web.user.user_repository.repository_interface import UserRepositoryInterface
+from domain.user.repository import UserRepositoryInterface
+from domain.user.user import UserInterface
 
 
 class Register:
@@ -31,7 +32,7 @@ class Register:
         print(subdomain, self.domain_repository.get_site(subdomain))
         return self.domain_repository.get_site(subdomain)
 
-    def get_user_from_site(self, site: SiteInterface, domain: DomainInterface):
+    def get_user_from_site(self, site: SiteInterface, domain: DomainInterface) -> UserInterface:
         if domain == self.domain_repository.get_domain_model():
             return self.user_repository.get_supersponsor()
 

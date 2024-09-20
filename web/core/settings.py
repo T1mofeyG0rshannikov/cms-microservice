@@ -59,7 +59,7 @@ INSTALLED_APPS = [
 ]
 
 
-ASGI_APPLICATION = "core.asgi.application"
+ASGI_APPLICATION = "web.core.asgi.application"
 
 CHANNEL_LAYERS = {
     "default": {
@@ -83,11 +83,12 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_hosts.middleware.HostsRequestMiddleware",
     "django_hosts.middleware.HostsResponseMiddleware",
-    "user.middleware.JwtAuthMiddleware",
-    "admin.middleware.AdminMiddleware",
+    "web.user.middleware.JwtAuthMiddleware",
+    "web.admin.middleware.AdminMiddleware",
+    "web.site_tests.middleware.ExceptionLoggingMiddleware",
 ]
 
-ROOT_URLCONF = "core.urls"
+ROOT_URLCONF = "web.core.urls"
 
 TEMPLATES = [
     {
@@ -105,7 +106,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "core.wsgi.application"
+WSGI_APPLICATION = "web.core.wsgi.application"
 
 
 # Database
@@ -143,11 +144,10 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # LANGUAGE_CODE = "en-us"
 
-# TIME_ZONE = "UTC"
+TIME_ZONE = "Europe/Moscow"
 
+USE_TZ = True
 USE_I18N = True
-
-USE_TZ = False
 
 
 # Default primary key field type
@@ -186,7 +186,7 @@ CELERY_BROKER_URL = str(os.getenv("CELERY_BROKER_URL"))
 
 # domains
 
-ROOT_HOSTCONF = "core.hosts"
+ROOT_HOSTCONF = "web.core.hosts"
 DEFAULT_HOST = "www"
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 20_971_520
@@ -237,4 +237,6 @@ CKEDITOR_CONFIGS = {
     },
 }
 
-USE_L10N = False
+APPEND_SLASH = True
+
+SYSTEM_EMAIL_HOST_USER = "system@bmdom.ru"

@@ -1,6 +1,7 @@
 from colorfield.fields import ColorField
 from django.db import models
-from styles.models.mixins.color_mixins import ColorMixin
+
+from web.styles.models.mixins.color_mixins import ColorMixin
 
 
 class ThicknessOfTextMixin(models.Model):

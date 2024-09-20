@@ -1,17 +1,17 @@
-from account.forms import ChangePasswordForm
-from common.views import FormView
 from django.contrib.auth import authenticate, login
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from domens.views.mixins import SubdomainMixin
-from settings.views import SettingsMixin
 
 from domain.user.exceptions import InvalidReferalLevel, InvalidSortedByField
+from web.account.forms import ChangePasswordForm
+from web.common.views import FormView
+from web.domens.views.mixins import SubdomainMixin
 from web.materials.models import Document
 from web.notifications.models import UserNotification
 from web.notifications.serializers import UserNotificationSerializer
+from web.settings.views import SettingsMixin
 from web.template.profile_template_loader.context_processor.context_processor import (
     get_profile_template_context_processor,
 )

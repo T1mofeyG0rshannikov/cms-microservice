@@ -1,24 +1,22 @@
 from django.conf import settings
 from django.conf.urls.static import static
-from django.contrib import admin
 from django.urls import include, path, re_path
 
 from web.template.views.views import PageNotFound
 
 urlpatterns = [
-    path("styles/", include("styles.urls")),
-    path("user/", include("user.urls")),
-    path("email/", include("emails.urls")),
-    path("admin/", include("admin.urls")),
-    path("komutan/", admin.site.urls),
-    path("domain/", include("domens.urls")),
-    path("notifications/", include("notifications.urls")),
-    path("materials/", include("materials.urls")),
-    path("", include("common.urls")),
-    path("", include("account.urls")),
-    path("", include("catalog.urls")),
-    path("", include("blocks.urls")),
-    path("", include("template.urls")),
+    path("styles/", include("web.styles.urls")),
+    path("user/", include("web.user.urls")),
+    path("email/", include("web.emails.urls")),
+    path("", include("web.admin.urls")),
+    path("domain/", include("web.domens.urls")),
+    path("notifications/", include("web.notifications.urls")),
+    path("materials/", include("web.materials.urls")),
+    path("", include("web.common.urls")),
+    path("", include("web.account.urls")),
+    path("", include("web.catalog.urls")),
+    path("", include("web.blocks.urls")),
+    path("", include("web.template.urls")),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -1,8 +1,8 @@
 from django.views.generic import TemplateView
-from settings.get_settings import get_settings
 
 from application.services.domains.service import get_domain_service
-from domain.domains.interfaces.domain_service_interface import DomainServiceInterface
+from domain.domains.service import DomainServiceInterface
+from web.settings.get_settings import get_settings
 
 
 class SettingsMixin(TemplateView):

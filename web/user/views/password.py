@@ -10,7 +10,7 @@ from application.usecases.user.reset_password import (
 )
 from domain.user.exceptions import InvalidJwtToken
 from infrastructure.auth.jwt_processor import get_jwt_processor
-from infrastructure.email_service.email_service import get_email_service
+from infrastructure.email_services.email_service.email_service import get_email_service
 from infrastructure.persistence.repositories.user_repository import get_user_repository
 from web.common.views import FormView
 from web.user.forms import ResetPasswordForm, SetPasswordForm

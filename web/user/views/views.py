@@ -2,12 +2,12 @@ from django.http import HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
-from user.serializers import UserSerializer
 
 from application.usecases.user_products.delete_user_product import DeleteUserProduct
 from infrastructure.persistence.repositories.product_repository import (
     get_product_repository,
 )
+from web.user.serializers import UserSerializer
 
 
 class GetUserInfo(View):

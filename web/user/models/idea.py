@@ -2,7 +2,8 @@ import os
 
 from ckeditor.fields import RichTextField
 from django.db import models
-from user.file_storage import OverwriteStorage
+
+from infrastructure.files.file_storage import OverwriteStorage
 
 
 class Idea(models.Model):

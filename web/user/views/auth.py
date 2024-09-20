@@ -1,13 +1,9 @@
-from common.views import FormView
 from django.contrib.auth import logout
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
-from user.forms import LoginForm, RegistrationForm, ResetPasswordForm
-from user.validator.validator import get_user_validator
-from user.views.base_user_view import BaseUserView
 
 from application.services.domains.url_parser import get_url_parser
 from application.texts.errors import UserErrors
@@ -23,6 +19,10 @@ from infrastructure.persistence.repositories.domain_repository import (
     get_domain_repository,
 )
 from infrastructure.persistence.repositories.user_repository import get_user_repository
+from infrastructure.user.validator import get_user_validator
+from web.common.views import FormView
+from web.user.forms import LoginForm, RegistrationForm, ResetPasswordForm
+from web.user.views.base_user_view import BaseUserView
 
 
 @method_decorator(csrf_exempt, name="dispatch")

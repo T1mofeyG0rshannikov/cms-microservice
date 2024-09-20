@@ -2,11 +2,9 @@ from typing import Any
 
 from django.db.models import Count, Q
 
+from domain.products.repository import ProductRepositoryInterface
 from web.catalog.models.product_type import ProductType
 from web.catalog.models.products import Offer, Organization, Product
-from web.catalog.product_repository.repository_interface import (
-    ProductRepositoryInterface,
-)
 from web.user.models.product import UserOffer, UserProduct
 
 

@@ -3,19 +3,20 @@ from django.contrib.admin.forms import AuthenticationForm
 from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-from user.validator.validator import get_user_validator
 
 from application.texts.errors import UserErrors
-from domain.user.validator_interface import UserValidatorInterface
-from infrastructure.email_service.email_service import get_email_service
+from application.usecases.user.get_admin import GetAdminUser
+from domain.user.exceptions import IncorrectPassword, UserDoesNotExist, UserNotAdmin
+from domain.user.validator import UserValidatorInterface
+from infrastructure.email_services.work_email_service.email_service import (
+    get_work_email_service,
+)
 from infrastructure.logging.admin import AdminLoginLogger
 from infrastructure.persistence.repositories.admin_log_repository import (
     get_admin_log_repository,
 )
-from infrastructure.persistence.repositories.system_repository import (
-    get_system_repository,
-)
 from infrastructure.persistence.repositories.user_repository import get_user_repository
+from infrastructure.user.validator import get_user_validator
 
 
 class CustomAuthenticationAdminForm(AuthenticationForm):
@@ -55,64 +56,27 @@ class CustomAuthenticationAdminForm(AuthenticationForm):
         max_length=18, widget=forms.PasswordInput(attrs={"placeholder": "Пароль", "autocomplete": "off"})
     )
 
-    logger = AdminLoginLogger(get_admin_log_repository(), get_email_service(), get_system_repository())
+    code = forms.IntegerField(max_value=999999)
 
-    def clean_username(self):
-        repository = get_user_repository()
-
-        phone_or_email = self.cleaned_data["username"]
-        phone_or_email = self.validator.validate_phone_or_email(phone_or_email)
-
-        if phone_or_email is None:
-            self.logger.error(self.request, self.cleaned_data, UserErrors.incorrect_login.value)
-            self.add_error("username", UserErrors.incorrect_login.value)
-            return phone_or_email
-
-        user1 = repository.get_user_by_email(phone_or_email)
-        user2 = repository.get_user_by_phone(phone_or_email)
-
-        print(user1)
-        print(user2)
-        if not user1 and not user2:
-            self.logger.error(self.request, self.cleaned_data, UserErrors.incorrect_login.value)
-
-            self.add_error("username", UserErrors.incorrect_login.value)
-            return phone_or_email
-
-        return phone_or_email
+    logger = AdminLoginLogger(get_admin_log_repository(), get_work_email_service())
+    get_admin_user_interactor = GetAdminUser(get_user_repository())
 
     def clean(self):
-        repository = get_user_repository()
-
         username = self.cleaned_data.get("username")
-
-        user1 = repository.get_user_by_email(username)
-        user2 = repository.get_user_by_phone(username)
-
-        print(user1)
-        print(user2)
-        if not user1 and not user2:
-            self.logger.error(self.request, self.cleaned_data, UserErrors.incorrect_login.value)
-            self.add_error("username", UserErrors.incorrect_login.value)
-            return self.cleaned_data
-
-        if user1:
-            user = user1
-        if user2:
-            user = user2
-
         password = self.cleaned_data.get("password")
-        if user.check_password(password):
-            print(user)
-            if not user.superuser:
-                self.logger.error(self.request, self.cleaned_data, "Недостаточно прав")
-                return self.cleaned_data
+
+        try:
+            user = self.get_admin_user_interactor(username, password)
+
             request = self.request
             request.user = user
             user = authenticate(request)
-            self.logger.success(self.request, self.cleaned_data)
-            return
+            self.logger.success(self.request, {"username": username})
+            return self.cleaned_data
 
-        self.logger.error(self.request, self.cleaned_data, "Неверный пароль")
+        except (UserDoesNotExist, UserNotAdmin, IncorrectPassword) as e:
+            self.logger.error(self.request, self.cleaned_data, str(e))
+            self.add_error("username", str(e))
+            return self.cleaned_data
 
         return super().clean()

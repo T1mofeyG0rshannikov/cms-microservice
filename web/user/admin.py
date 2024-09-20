@@ -1,14 +1,14 @@
 import os
 
-from common.admin import BaseInline
 from django import forms
 from django.contrib import admin
 from django.utils.html import mark_safe
-from domens.admin import SiteAdmin
 from dotenv import load_dotenv
 
 from application.services.domains.service import get_domain_service
 from infrastructure.persistence.repositories.user_repository import get_user_repository
+from web.common.admin import BaseInline
+from web.domens.admin import SiteAdmin
 from web.user.models.idea import Idea, IdeaScreen
 from web.user.models.product import UserProduct
 from web.user.models.roles import Roles, SuperUserRole

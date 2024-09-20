@@ -1,11 +1,9 @@
 from typing import Any
 
-from domain.user.interfaces import UserInterface
+from domain.products.repository import ProductRepositoryInterface
+from domain.user.referral import UserInterface
 from infrastructure.persistence.repositories.product_repository import (
     get_product_repository,
-)
-from web.catalog.product_repository.repository_interface import (
-    ProductRepositoryInterface,
 )
 from web.catalog.products_service.products_service_interface import (
     ProductsServiceInterface,

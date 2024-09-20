@@ -1,4 +1,4 @@
-from catalog.product_repository.repository_interface import ProductRepositoryInterface
+from domain.products.repository import ProductRepositoryInterface
 
 
 class DeleteUserProduct:

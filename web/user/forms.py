@@ -1,9 +1,9 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from user.validator.validator import get_user_validator
 
 from application.texts.errors import UserErrors
-from domain.user.validator_interface import UserValidatorInterface
+from domain.user.validator import UserValidatorInterface
+from infrastructure.user.validator import get_user_validator
 
 
 class RegistrationForm(forms.Form):

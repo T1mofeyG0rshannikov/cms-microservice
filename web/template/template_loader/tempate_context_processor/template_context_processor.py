@@ -1,6 +1,6 @@
 from application.services.domains.service import get_domain_service
 from application.usecases.ideas.get_ideas import GetIdeas
-from domain.domains.interfaces.domain_service_interface import DomainServiceInterface
+from domain.domains.service import DomainServiceInterface
 from infrastructure.persistence.repositories.idea_repository import get_idea_repository
 from web.account.models import Messanger
 from web.account.referrals_service.referrals_service import get_referral_service

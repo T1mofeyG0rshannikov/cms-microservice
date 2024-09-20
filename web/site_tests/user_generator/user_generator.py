@@ -4,10 +4,10 @@ import unidecode
 from russian_names import RussianNames
 
 from application.services.domains.service import get_domain_service
-from domain.domains.interfaces.domain_service_interface import DomainServiceInterface
+from domain.domains.service import DomainServiceInterface
+from domain.user.repository import UserRepositoryInterface
 from infrastructure.persistence.repositories.user_repository import get_user_repository
 from web.user.models.site import Site
-from web.user.user_repository.repository_interface import UserRepositoryInterface
 
 
 class UserGenerator:

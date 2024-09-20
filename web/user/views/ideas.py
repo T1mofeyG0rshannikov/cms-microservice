@@ -1,12 +1,6 @@
-from common.pagination import Pagination
-from common.views import FormView
 from django.http import HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from user.forms import AddIdeaForm
-from user.serializers import IdeasSerializer
-from user.views.base_user_view import APIUserRequired
-from utils.valid_images import valid_screens_size
 
 from application.usecases.ideas.add_idea import AddIdea
 from application.usecases.ideas.add_like import AddLike
@@ -16,6 +10,12 @@ from application.usecases.ideas.remove_like import RemoveLike
 from application.usecases.ideas.update_idea import UpdateIdea
 from domain.user.exceptions import CantAddLike, IdeaNotFound, LikeAlreadyExists
 from infrastructure.persistence.repositories.idea_repository import get_idea_repository
+from web.common.pagination import Pagination
+from web.common.views import FormView
+from web.user.forms import AddIdeaForm
+from web.user.serializers import IdeasSerializer
+from web.user.views.base_user_view import APIUserRequired
+from web.utils.valid_images import valid_screens_size
 
 
 @method_decorator(csrf_exempt, name="dispatch")

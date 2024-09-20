@@ -1,6 +1,6 @@
 from typing import Any, Protocol
 
-from domain.user.interfaces import UserInterface
+from domain.user.referral import UserInterface
 
 
 class CatalogServiceInterface(Protocol):

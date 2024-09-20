@@ -3,20 +3,19 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 
-from infrastructure.email_service.email_service import get_email_service
+from infrastructure.email_services.work_email_service.email_service import (
+    get_work_email_service,
+)
 from infrastructure.logging.admin import AdminLoginLogger
 from infrastructure.persistence.repositories.admin_log_repository import (
     get_admin_log_repository,
-)
-from infrastructure.persistence.repositories.system_repository import (
-    get_system_repository,
 )
 
 
 @method_decorator(csrf_exempt, name="dispatch")
 class JoomlaAdminPage(TemplateView):
     template_name = "admin/joomla.html"
-    logger = AdminLoginLogger(get_admin_log_repository(), get_email_service(), get_system_repository())
+    logger = AdminLoginLogger(get_admin_log_repository(), get_work_email_service())
 
     def post(self, request):
         print(request.POST)

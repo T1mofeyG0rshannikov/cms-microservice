@@ -1,5 +1,6 @@
 from django import template
-from styles.models.styles.base_custom_styles import BaseCustomStyles
+
+from web.styles.models.styles.base_custom_styles import BaseCustomStyles
 
 register = template.Library()
 

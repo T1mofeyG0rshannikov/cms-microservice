@@ -1,7 +1,7 @@
-from common.admin import SocialNetworkAdmin
 from django.contrib import admin
 
 from web.account.admin import MessangerAdmin, UserFontAdmin
+from web.common.admin import SocialNetworkAdmin
 from web.domens.admin import DomainAdmin
 from web.settings.models import (
     Domain,

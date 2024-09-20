@@ -1,9 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views import View
-from template.profile_template_loader.profile_template_loader import (
-    get_profile_template_loader,
-)
 
 from domain.user.exceptions import InvalidReferalLevel, InvalidSortedByField
 from web.account.views.templates import Profile
@@ -12,6 +9,9 @@ from web.blocks.models.common import Page
 from web.blocks.views import ShowPage
 from web.catalog.views import ShowCatalogPage
 from web.domens.views.mixins import SubdomainMixin
+from web.template.profile_template_loader.profile_template_loader import (
+    get_profile_template_loader,
+)
 from web.template.profile_template_loader.profile_template_loader_interface import (
     ProfileTemplateLoaderInterface,
 )

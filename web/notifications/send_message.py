@@ -1,7 +1,8 @@
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from notifications.error import CantSendNotification
 from redis.exceptions import ConnectionError
+
+from web.notifications.error import CantSendNotification
 
 
 def send_message_to_user(user_id: int, message) -> None:

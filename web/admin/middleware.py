@@ -1,12 +1,12 @@
 import os
 
-from admin.views import JoomlaAdminPage
 from django.http import HttpResponseNotFound
 from dotenv import load_dotenv
 from rest_framework.renderers import JSONRenderer
 
 from application.services.domains.service import get_domain_service
-from domain.domains.interfaces.domain_service_interface import DomainServiceInterface
+from domain.domains.service import DomainServiceInterface
+from web.admin.views import JoomlaAdminPage
 
 load_dotenv()
 
@@ -23,7 +23,11 @@ class AdminMiddleware:
         response = self.get_response(request)
 
         if request.path.startswith(self.admin_site_url):
-            if self.admin_site_domain in request.get_host():
+            if (
+                self.admin_site_domain in request.get_host()
+                or "127.0.0.1" in request.get_host()
+                or "localhost" in request.get_host()
+            ):
                 return response
             else:
                 return HttpResponseNotFound()

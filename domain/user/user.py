@@ -1,7 +1,6 @@
 from dataclasses import dataclass
-from datetime import datetime
 
-from domain.domains.interfaces.interfaces import DomainInterface, SiteInterface
+from domain.domains.domain import DomainInterface, SiteInterface
 
 
 @dataclass
@@ -22,10 +21,4 @@ class UserInterface:
     register_on_site: SiteInterface | None
     register_on_domain: DomainInterface | None
 
-
-@dataclass
-class ReferralInterface(UserInterface):
-    level: int
-    first_level_referrals: int
-    referrals: str
-    created_at: datetime
+    is_superuser: bool

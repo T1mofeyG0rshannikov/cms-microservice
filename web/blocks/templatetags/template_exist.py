@@ -1,5 +1,6 @@
-from blocks.template_exist import is_template_exists
 from django import template
+
+from web.blocks.template_exist import is_template_exists
 
 register = template.Library()
 

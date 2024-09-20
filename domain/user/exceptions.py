@@ -48,3 +48,11 @@ class SocialChannelAlreadyExists(Exception):
 
 class InvalidJwtToken(Exception):
     pass
+
+
+class UserNotAdmin(Exception):
+    pass
+
+
+class IncorrectPassword(Exception):
+    pass

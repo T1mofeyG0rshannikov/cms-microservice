@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from settings.views import SettingsMixin
+
+from web.settings.views import SettingsMixin
 
 
 class BaseNotFoundPage(SettingsMixin):

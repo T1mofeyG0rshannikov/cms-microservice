@@ -1,9 +1,9 @@
 from django import forms
 from PIL import Image
-from user.validator.validator import get_user_validator
 
 from application.texts.errors import Errors
-from domain.user.validator_interface import UserValidatorInterface
+from domain.user.validator import UserValidatorInterface
+from infrastructure.user.validator import get_user_validator
 
 
 class ChangeSiteForm(forms.Form):

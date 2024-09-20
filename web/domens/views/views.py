@@ -1,7 +1,8 @@
 from django.http import HttpResponse
 from django.views.generic import View
-from settings.views import SettingsMixin
-from user.forms import LoginForm, ResetPasswordForm
+
+from web.settings.views import SettingsMixin
+from web.user.forms import LoginForm, ResetPasswordForm
 
 
 class StopSite(View):
