@@ -1,6 +1,6 @@
 from typing import Any
 
-from domain.user.idea_repository_interface import IdeaRepositoryInterface
+from domain.user.idea_repository import IdeaRepositoryInterface
 
 
 class UpdateIdea:

@@ -1,22 +1,12 @@
 from django.conf import settings
 
-from application.services.domains.service import get_domain_service
 from domain.email.repository import SystemRepositoryInterface
 from infrastructure.email_services.base_email_service import BaseEmailService
-from infrastructure.email_services.work_email_service.context_processor.context_processor import (
-    get_work_email_context_processor,
-)
 from infrastructure.email_services.work_email_service.email_service_interface import (
     WorkEmailServiceInterface,
 )
-from infrastructure.email_services.work_email_service.template_generator.template_generator import (
-    get_work_email_template_generator,
-)
 from infrastructure.email_services.work_email_service.template_generator.template_generator_interface import (
     WorkEmailTemplateGeneratorInterface,
-)
-from infrastructure.persistence.repositories.system_repository import (
-    get_system_repository,
 )
 
 
@@ -29,8 +19,9 @@ class WorkEmailService(BaseEmailService, WorkEmailServiceInterface):
         self.template_generator = template_generator
         self.repository = repository
 
-    def send_email(self, subj: str, sender: str, html_message: str):
-        emails = self.repository.get_system_emails()
+    def send_email(self, subj: str, sender: str, html_message: str, emails=None):
+        if not emails:
+            emails = self.repository.get_system_emails()
 
         return super().send_email(subj, sender, emails, html_message)
 
@@ -50,10 +41,12 @@ class WorkEmailService(BaseEmailService, WorkEmailServiceInterface):
         template = self.template_generator.generate_errror_message(**kwargs)
         self.send_email("Ошибка на сервере", self.sender, template)
 
+    def send_code_to_login_in_admin(self, email: str, code: int, **kwargs) -> None:
+        template = self.template_generator.generate_login_code(code, **kwargs)
+        self.send_email("Код для логина в панель администратора", self.sender, template, emails=[email])
 
-def get_work_email_service() -> WorkEmailServiceInterface:
-    domain_service = get_domain_service()
 
-    return WorkEmailService(
-        get_work_email_template_generator(get_work_email_context_processor()), get_system_repository()
-    )
+def get_work_email_service(
+    template_generator: WorkEmailTemplateGeneratorInterface, repository: SystemRepositoryInterface
+) -> WorkEmailServiceInterface:
+    return WorkEmailService(template_generator, repository)

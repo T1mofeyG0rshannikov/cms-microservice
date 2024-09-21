@@ -1,8 +1,8 @@
 from typing import Any
 
 from domain.user.referral import UserInterface
-from web.blocks.models.blocks import Cover
-from web.blocks.models.catalog_block import CatalogBlock
+from infrastructure.persistence.models.blocks.blocks import Cover
+from infrastructure.persistence.models.blocks.catalog_block import CatalogBlock
 from web.blocks.pages_service.page_service_interface import PageServiceInterface
 from web.blocks.pages_service.pages_service import get_page_service
 from web.blocks.serializers import PageSerializer
@@ -81,5 +81,5 @@ class CatalogService(CatalogServiceInterface):
         return serialized_page
 
 
-def get_catalog_service() -> CatalogService:
+def get_catalog_service() -> CatalogServiceInterface:
     return CatalogService(get_page_service())

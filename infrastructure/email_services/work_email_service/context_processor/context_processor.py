@@ -1,3 +1,4 @@
+import random
 from typing import Any
 
 from .context_processor_interface import WorkEmailContextProcessorInterface
@@ -32,6 +33,15 @@ class WorkEmailContextProcessor(WorkEmailContextProcessorInterface):
         context["message"] = kwargs.get("message")
         context["path"] = kwargs.get("path")
         context["user"] = kwargs.get("user")
+
+        return context
+
+    def login_code(self, code: int, **kwargs) -> dict[str, Any]:
+        context = {"code": code}
+
+        code = random.randrange(100000, 1000000)
+
+        context["code"] = code
 
         return context
 

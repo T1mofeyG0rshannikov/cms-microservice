@@ -1,13 +1,14 @@
 from ckeditor.fields import RichTextField
 from django.db import models
 
-from web.blocks.models.common import BaseBlock
-from web.blocks.models.mixins import ButtonMixin, TitleMixin
+from infrastructure.persistence.models.blocks.common import BaseBlock
+from infrastructure.persistence.models.blocks.mixins import ButtonMixin, TitleMixin
 from web.catalog.models.product_type import ProductType
 
 
 class BaseCatalogBlock(BaseBlock):
     class Meta:
+        app_label = "blocks"
         abstract = True
 
 
@@ -23,6 +24,7 @@ class CatalogBlock(BaseCatalogBlock, ButtonMixin, TitleMixin):
     add_category = models.BooleanField(verbose_name="Показывать категорию", null=True)
 
     class Meta:
+        app_label = "blocks"
         verbose_name = "каталог"
         verbose_name_plural = "каталог"
 
@@ -33,6 +35,7 @@ class MainPageCatalogBlock(BaseCatalogBlock, TitleMixin):
     button_text = models.CharField(verbose_name="Текст кнопки", max_length=20, null=True, blank=True)
 
     class Meta:
+        app_label = "blocks"
         verbose_name = "Витрина"
         verbose_name_plural = "Витрина"
 
@@ -44,11 +47,13 @@ class AdditionalCatalogBlock(BaseCatalogBlock):
     add_button = models.BooleanField(verbose_name="добавлять кнопку к карточке", default=True)
 
     class Meta:
+        app_label = "blocks"
         verbose_name = "Мини витрина"
         verbose_name_plural = "Мини витрины"
 
 
 class PromoCatalog(BaseBlock, TitleMixin):
     class Meta:
+        app_label = "blocks"
         verbose_name = "Промо"
         verbose_name_plural = "Промо"

@@ -12,6 +12,7 @@ class Page(models.Model):
     url = models.CharField(max_length=50, null=True, blank=True)
 
     class Meta:
+        app_label = "blocks"
         verbose_name = "Страница"
         verbose_name_plural = "Страницы"
         ordering = ["url"]
@@ -26,12 +27,16 @@ class Block(BasePageBlock):
     )
     page = models.ForeignKey(Page, related_name="blocks", verbose_name="Страница", on_delete=models.CASCADE)
 
+    class Meta(BasePageBlock.Meta):
+        app_label = "blocks"
+
 
 class Template(models.Model):
     name = models.CharField(verbose_name="Название шаблона", max_length=50)
     file = models.CharField(verbose_name="Название файла (например base.html)", max_length=50)
 
     class Meta:
+        app_label = "blocks"
         verbose_name = "шаблон"
         verbose_name_plural = "шаблоны"
 
@@ -53,6 +58,7 @@ class BaseBlock(models.Model):
     block_relation = models.ForeignKey(BlockRelationship, on_delete=models.SET_NULL, null=True)
 
     class Meta:
+        app_label = "blocks"
         abstract = True
 
     def __str__(self):

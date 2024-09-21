@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from web.account.models import UserSocialNetwork
+from infrastructure.persistence.models.account import UserSocialNetwork
 
 
 class UserFontAdmin(admin.ModelAdmin):

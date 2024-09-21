@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from domain.user.referral import UserInterface
+from domain.user.user import UserInterface
 
 
 class UserRepositoryInterface(Protocol):

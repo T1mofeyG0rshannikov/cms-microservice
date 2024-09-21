@@ -1,14 +1,14 @@
 from rest_framework import serializers
 
-from infrastructure.persistence.repositories.product_repository import (
-    get_product_repository,
-)
-from web.blocks.models.catalog_block import (
+from infrastructure.persistence.models.blocks.catalog_block import (
     AdditionalCatalogBlock,
     MainPageCatalogBlock,
     PromoCatalog,
 )
-from web.blocks.models.common import Page
+from infrastructure.persistence.models.blocks.common import Page
+from infrastructure.persistence.repositories.product_repository import (
+    get_product_repository,
+)
 from web.blocks.pages_service.pages_service import PageService
 from web.styles.serializers import CustomStylesSerializer
 

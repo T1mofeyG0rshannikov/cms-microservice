@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
 from infrastructure.files.files import find_class_in_directory
-from web.blocks.models.common import Page
+from infrastructure.persistence.models.blocks.common import Page
 from web.blocks.pages_service.page_service_interface import PageServiceInterface
 from web.blocks.pages_service.pages_service import get_page_service
 from web.blocks.serializers import PageSerializer

@@ -5,10 +5,10 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
 from domain.user.exceptions import InvalidReferalLevel, InvalidSortedByField
+from infrastructure.persistence.models.materials import Document
 from web.account.forms import ChangePasswordForm
 from web.common.views import FormView
 from web.domens.views.mixins import SubdomainMixin
-from web.materials.models import Document
 from web.notifications.models import UserNotification
 from web.notifications.serializers import UserNotificationSerializer
 from web.settings.views import SettingsMixin

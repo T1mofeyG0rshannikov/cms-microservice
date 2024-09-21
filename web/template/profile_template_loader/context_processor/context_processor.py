@@ -3,6 +3,7 @@ from django.db.models import Count, Q
 from application.services.domains.service import get_domain_service
 from application.usecases.ideas.get_ideas import GetIdeas
 from domain.domains.service import DomainServiceInterface
+from infrastructure.persistence.models.materials import Document
 from infrastructure.persistence.repositories.idea_repository import get_idea_repository
 from web.account.referrals_service.referrals_service import get_referral_service
 from web.account.referrals_service.referrals_service_interface import (
@@ -15,7 +16,6 @@ from web.catalog.products_service.products_service_interface import (
     ProductsServiceInterface,
 )
 from web.common.pagination import Pagination
-from web.materials.models import Document
 from web.template.profile_template_loader.context_processor.context_processor_interface import (
     ProfileTemplateContextProcessorInterface,
 )

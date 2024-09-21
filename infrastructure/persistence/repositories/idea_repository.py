@@ -2,7 +2,7 @@ from typing import Any
 
 from django.db.models import Count, Q
 
-from domain.user.idea_repository_interface import IdeaRepositoryInterface
+from domain.user.idea_repository import IdeaRepositoryInterface
 from web.user.models.idea import Idea, IdeaScreen, Like
 
 

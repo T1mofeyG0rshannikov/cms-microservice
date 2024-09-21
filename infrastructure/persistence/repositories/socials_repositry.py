@@ -1,9 +1,10 @@
 from typing import Any
 
-from web.account.models import UserSocialNetwork
+from domain.account.socials_repository import SocialsRepositoryInterface
+from infrastructure.persistence.models.account import UserSocialNetwork
 
 
-class SocialsRepository:
+class SocialsRepository(SocialsRepositoryInterface):
     @staticmethod
     def delete_user_social(site_id: int) -> None:
         return UserSocialNetwork.objects.filter(site_id=site_id).delete()
@@ -21,5 +22,5 @@ class SocialsRepository:
         )
 
 
-def get_socials_repository() -> SocialsRepository:
+def get_socials_repository() -> SocialsRepositoryInterface:
     return SocialsRepository()

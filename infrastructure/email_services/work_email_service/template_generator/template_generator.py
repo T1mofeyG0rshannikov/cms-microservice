@@ -38,6 +38,11 @@ class WorkEmailTemplateGenerator(WorkEmailTemplateGeneratorInterface):
 
         return self.generate_template("emails/error_message.html", context)
 
+    def generate_login_code(self, code: int, **kwargs) -> str:
+        context = self.context_processor.login_code(code, **kwargs)
+
+        return self.generate_template("emails/login_code.html", context)
+
 
 def get_work_email_template_generator(
     email_context_processor: WorkEmailContextProcessorInterface,

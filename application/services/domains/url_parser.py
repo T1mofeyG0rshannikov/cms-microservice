@@ -40,5 +40,5 @@ class UrlParser(UrlParserInterface):
         return domain
 
 
-def get_url_parser() -> UrlParser:
+def get_url_parser() -> UrlParserInterface:
     return UrlParser()

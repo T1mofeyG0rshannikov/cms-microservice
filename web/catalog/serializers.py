@@ -1,10 +1,10 @@
 from rest_framework import serializers
 
 from application.formats.date_russian import get_date_in_russian
+from infrastructure.persistence.models.blocks.catalog_block import CatalogBlock
 from infrastructure.persistence.repositories.product_repository import (
     get_product_repository,
 )
-from web.blocks.models.catalog_block import CatalogBlock
 from web.catalog.models.products import ExclusiveCard, OfferTypeRelation, Product
 
 

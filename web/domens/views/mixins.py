@@ -1,4 +1,5 @@
 import os
+
 from django.db.models import Q
 from django.http import HttpResponseNotFound, HttpResponseRedirect
 from dotenv import load_dotenv

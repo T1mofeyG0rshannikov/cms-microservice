@@ -3,9 +3,9 @@ from django.shortcuts import render
 from django.views import View
 
 from domain.user.exceptions import InvalidReferalLevel, InvalidSortedByField
+from infrastructure.persistence.models.blocks.catalog_block import CatalogBlock
+from infrastructure.persistence.models.blocks.common import Page
 from web.account.views.templates import Profile
-from web.blocks.models.catalog_block import CatalogBlock
-from web.blocks.models.common import Page
 from web.blocks.views import ShowPage
 from web.catalog.views import ShowCatalogPage
 from web.domens.views.mixins import SubdomainMixin

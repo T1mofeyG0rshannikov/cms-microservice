@@ -2,10 +2,7 @@ from adminsortable2.admin import SortableAdminBase, SortableStackedInline
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-from infrastructure.persistence.repositories.product_repository import (
-    get_product_repository,
-)
-from web.blocks.models.blocks import (
+from infrastructure.persistence.models.blocks.blocks import (
     ContentBlock,
     Cover,
     FeaturesBlock,
@@ -15,7 +12,7 @@ from web.blocks.models.blocks import (
     SocialMediaBlock,
     StagesBlock,
 )
-from web.blocks.models.blocks_components import (
+from infrastructure.persistence.models.blocks.blocks_components import (
     AdditionalCatalogProductType,
     CatalogProduct,
     CatalogProductType,
@@ -25,13 +22,21 @@ from web.blocks.models.blocks_components import (
     SocialMediaButton,
     Stage,
 )
-from web.blocks.models.catalog_block import (
+from infrastructure.persistence.models.blocks.catalog_block import (
     AdditionalCatalogBlock,
     CatalogBlock,
     MainPageCatalogBlock,
     PromoCatalog,
 )
-from web.blocks.models.common import Block, BlockRelationship, Page, Template
+from infrastructure.persistence.models.blocks.common import (
+    Block,
+    BlockRelationship,
+    Page,
+    Template,
+)
+from infrastructure.persistence.repositories.product_repository import (
+    get_product_repository,
+)
 from web.common.admin import BaseInline
 from web.styles.admin import (
     AdditionalCatalogCustomStylesInline,

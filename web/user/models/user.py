@@ -103,6 +103,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.save()
 
     class Meta:
+        app_label = "user"
         ordering = ["-created_at"]
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"

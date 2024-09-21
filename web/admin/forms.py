@@ -4,19 +4,33 @@ from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-from application.texts.errors import UserErrors
 from application.usecases.user.get_admin import GetAdminUser
 from domain.user.exceptions import IncorrectPassword, UserDoesNotExist, UserNotAdmin
 from domain.user.validator import UserValidatorInterface
+from infrastructure.email_services.work_email_service.context_processor.context_processor import (
+    get_work_email_context_processor,
+)
 from infrastructure.email_services.work_email_service.email_service import (
     get_work_email_service,
+)
+from infrastructure.email_services.work_email_service.template_generator.template_generator import (
+    get_work_email_template_generator,
 )
 from infrastructure.logging.admin import AdminLoginLogger
 from infrastructure.persistence.repositories.admin_log_repository import (
     get_admin_log_repository,
 )
+from infrastructure.persistence.repositories.system_repository import (
+    get_system_repository,
+)
 from infrastructure.persistence.repositories.user_repository import get_user_repository
 from infrastructure.user.validator import get_user_validator
+
+
+def check_code(email: str, code: int) -> bool:
+    repository = get_system_repository()
+
+    return repository.code_exists(email, code)
 
 
 class CustomAuthenticationAdminForm(AuthenticationForm):
@@ -33,6 +47,7 @@ class CustomAuthenticationAdminForm(AuthenticationForm):
         self.username_field = "логин"
         self.fields["username"].label = "Email или телефон"
         self.fields["password"].label = "Пароль"
+        self.fields["code"].label = "Код"
 
     def confirm_login_allowed(self, user):
         if not user.is_active:
@@ -56,27 +71,41 @@ class CustomAuthenticationAdminForm(AuthenticationForm):
         max_length=18, widget=forms.PasswordInput(attrs={"placeholder": "Пароль", "autocomplete": "off"})
     )
 
-    code = forms.IntegerField(max_value=999999)
+    code = forms.IntegerField(max_value=999999, widget=forms.TextInput(attrs={"placeholder": "Код"}))
 
-    logger = AdminLoginLogger(get_admin_log_repository(), get_work_email_service())
+    logger = AdminLoginLogger(
+        get_admin_log_repository(),
+        get_work_email_service(
+            get_work_email_template_generator(get_work_email_context_processor()), get_system_repository()
+        ),
+    )
     get_admin_user_interactor = GetAdminUser(get_user_repository())
 
     def clean(self):
         username = self.cleaned_data.get("username")
         password = self.cleaned_data.get("password")
+        code = self.cleaned_data.get("code")
 
         try:
             user = self.get_admin_user_interactor(username, password)
 
-            request = self.request
-            request.user = user
-            user = authenticate(request)
-            self.logger.success(self.request, {"username": username})
-            return self.cleaned_data
-
         except (UserDoesNotExist, UserNotAdmin, IncorrectPassword) as e:
+            print(e, "error")
             self.logger.error(self.request, self.cleaned_data, str(e))
             self.add_error("username", str(e))
             return self.cleaned_data
+
+        print(user, 4)
+
+        if not check_code(user.email, code):
+            self.logger.error(self.request, self.cleaned_data, "неправильный код")
+            self.add_error("code", "неправильный код")
+            return self.cleaned_data
+
+        request = self.request
+        request.user = user
+        user = authenticate(request)
+        self.logger.success(self.request, {"username": username})
+        return
 
         return super().clean()

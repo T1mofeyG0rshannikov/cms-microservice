@@ -1,9 +1,11 @@
-from web.blocks.models.common import BaseBlock, BlockRelationship, Page
+from domain.page_blocks.base_block import BaseBlockInterface
+from infrastructure.persistence.models.blocks.common import BaseBlock, Page
 from web.blocks.pages_service.page_service_interface import PageServiceInterface
+from web.common.models import BlockRelationship
 
 
 class PageService(PageServiceInterface):
-    def get_page_block(self, blocks_name: BlockRelationship) -> BaseBlock:
+    def get_page_block(self, blocks_name: BlockRelationship) -> BaseBlockInterface:
         block = None
 
         for f in blocks_name._meta.related_objects:
@@ -29,5 +31,5 @@ class PageService(PageServiceInterface):
             block.save()
 
 
-def get_page_service() -> PageService:
+def get_page_service() -> PageServiceInterface:
     return PageService()

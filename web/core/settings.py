@@ -24,6 +24,8 @@ ALLOWED_HOSTS: list[str] = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    "web.user",
+    "web.admin",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -34,7 +36,6 @@ INSTALLED_APPS = [
     "colorfield",
     "ckeditor",
     "web.offers",
-    "web.admin",
     "web.site_statistics",
     "web.catalog",
     "web.common",
@@ -42,7 +43,6 @@ INSTALLED_APPS = [
     "web.settings",
     "web.styles",
     "web.blocks",
-    "web.user",
     "web.notifications",
     "web.site_tests",
     "django_hosts",
@@ -71,6 +71,7 @@ CHANNEL_LAYERS = {
     },
 }
 
+AUTH_USER_MODEL = "user.User"
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -177,8 +178,6 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
-
-AUTH_USER_MODEL = "user.User"
 
 # celery
 

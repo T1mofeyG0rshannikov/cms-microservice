@@ -1,7 +1,7 @@
 from ckeditor.fields import RichTextField
 from django.db import models
 
-from web.blocks.models.blocks import Cover
+from infrastructure.persistence.models.blocks.blocks import Cover
 
 
 class ProductCategory(models.Model):

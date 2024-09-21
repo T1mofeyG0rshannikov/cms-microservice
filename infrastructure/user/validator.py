@@ -88,5 +88,5 @@ class UserValidator(UserValidatorInterface):
             return self.get_raw_phone(phone_or_email)
 
 
-def get_user_validator() -> UserValidator:
+def get_user_validator() -> UserValidatorInterface:
     return UserValidator()

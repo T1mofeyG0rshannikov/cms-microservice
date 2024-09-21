@@ -2,7 +2,7 @@ from typing import Any
 
 from django.template import loader
 
-from domain.user.referral import UserInterface
+from domain.user.user import UserInterface
 from infrastructure.email_services.email_service.context_processor.context_processor_interface import (
     EmailContextProcessorInterface,
 )

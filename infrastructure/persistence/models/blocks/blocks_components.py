@@ -1,19 +1,19 @@
 from ckeditor.fields import RichTextField
 from django.db import models
 
-from web.blocks.models.blocks import (
+from infrastructure.persistence.models.blocks.blocks import (
     FeaturesBlock,
     Navbar,
     QuestionsBlock,
     SocialMediaBlock,
     StagesBlock,
 )
-from web.blocks.models.catalog_block import (
+from infrastructure.persistence.models.blocks.catalog_block import (
     AdditionalCatalogBlock,
     CatalogBlock,
     MainPageCatalogBlock,
 )
-from web.blocks.models.mixins import ButtonMixin, TitleMixin
+from infrastructure.persistence.models.blocks.mixins import ButtonMixin, TitleMixin
 from web.catalog.models.product_type import ProductType
 from web.catalog.models.products import Offer
 from web.common.models import Sortable
@@ -22,6 +22,9 @@ from web.settings.models import SocialNetwork
 
 class NavMenuItem(ButtonMixin):
     navbar = models.ForeignKey(Navbar, on_delete=models.SET_NULL, null=True, related_name="menu_items")
+
+    class Meta:
+        app_label = "blocks"
 
 
 class Feature(TitleMixin):
@@ -46,6 +49,9 @@ class Feature(TitleMixin):
             pass
         super().save(*args, **kwargs)
 
+    class Meta:
+        app_label = "blocks"
+
 
 class SocialMediaButton(models.Model):
     ref = models.CharField(verbose_name="Ссылка на соц. сети", max_length=500)
@@ -55,6 +61,7 @@ class SocialMediaButton(models.Model):
     block = models.ForeignKey(SocialMediaBlock, on_delete=models.CASCADE, related_name="buttons")
 
     class Meta:
+        app_label = "blocks"
         verbose_name = "Социальная сеть"
         verbose_name_plural = "Социальные сети"
 
@@ -65,6 +72,7 @@ class Question(TitleMixin):
     block = models.ForeignKey(QuestionsBlock, on_delete=models.CASCADE, related_name="questions")
 
     class Meta:
+        app_label = "blocks"
         verbose_name = "Вопрос"
         verbose_name_plural = "Вопросы"
 
@@ -78,6 +86,7 @@ class Stage(TitleMixin):
     block = models.ForeignKey(StagesBlock, on_delete=models.CASCADE, related_name="stages")
 
     class Meta:
+        app_label = "blocks"
         verbose_name = "Этап"
         verbose_name_plural = "Этапы"
 
@@ -94,6 +103,9 @@ class CatalogProduct(Sortable):
     def __str__(self):
         return str(self.offer)
 
+    class Meta(Sortable.Meta):
+        app_label = "blocks"
+
 
 class CatalogProductType(Sortable):
     block = models.ForeignKey(MainPageCatalogBlock, on_delete=models.CASCADE)
@@ -108,6 +120,9 @@ class CatalogProductType(Sortable):
     def __str__(self):
         return str(self.product)
 
+    class Meta(Sortable.Meta):
+        app_label = "blocks"
+
 
 class AdditionalCatalogProductType(Sortable):
     block = models.ForeignKey(AdditionalCatalogBlock, on_delete=models.CASCADE)
@@ -121,3 +136,6 @@ class AdditionalCatalogProductType(Sortable):
 
     def __str__(self):
         return str(self.product)
+
+    class Meta(Sortable.Meta):
+        app_label = "blocks"

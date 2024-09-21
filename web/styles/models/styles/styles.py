@@ -2,7 +2,7 @@ from colorfield.fields import ColorField
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-from web.blocks.models.blocks import (
+from infrastructure.persistence.models.blocks.blocks import (
     ContentBlock,
     Cover,
     FeaturesBlock,
@@ -12,7 +12,7 @@ from web.blocks.models.blocks import (
     SocialMediaBlock,
     StagesBlock,
 )
-from web.blocks.models.catalog_block import (
+from infrastructure.persistence.models.blocks.catalog_block import (
     AdditionalCatalogBlock,
     CatalogBlock,
     MainPageCatalogBlock,

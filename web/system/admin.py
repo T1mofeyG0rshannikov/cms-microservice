@@ -1,5 +1,5 @@
 from django.contrib import admin
 
-from web.system.models import Email
+from infrastructure.persistence.models.system.email import Email
 
 admin.site.register(Email)

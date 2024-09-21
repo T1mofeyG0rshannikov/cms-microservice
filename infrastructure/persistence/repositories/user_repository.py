@@ -3,7 +3,7 @@ from django.db.models import Count, Q
 
 from domain.user.referral import UserInterface
 from domain.user.repository import UserRepositoryInterface
-from web.account.models import UserMessanger
+from infrastructure.persistence.models.account import UserMessanger
 from web.user.models.user import User
 
 
@@ -87,5 +87,5 @@ class UserRepository(UserRepositoryInterface):
         return user
 
 
-def get_user_repository() -> UserRepository:
+def get_user_repository() -> UserRepositoryInterface:
     return UserRepository()

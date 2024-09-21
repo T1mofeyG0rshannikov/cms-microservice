@@ -1,5 +1,5 @@
 from domain.user.exceptions import CantAddLike, IdeaNotFound, LikeAlreadyExists
-from domain.user.idea_repository_interface import IdeaRepositoryInterface
+from domain.user.idea_repository import IdeaRepositoryInterface
 from domain.user.referral import UserInterface
 
 
