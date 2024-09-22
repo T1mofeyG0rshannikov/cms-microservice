@@ -1,20 +1,21 @@
 from django.db.models import Count, Q
 
 from application.services.domains.service import get_domain_service
+from application.services.products_service import get_products_service
+from application.services.user.referrals_service import get_referral_service
 from application.usecases.ideas.get_ideas import GetIdeas
 from domain.domains.service import DomainServiceInterface
+from domain.products.service import ProductsServiceInterface
+from domain.referrals.service import ReferralServiceInterface
 from infrastructure.persistence.models.materials import Document
 from infrastructure.persistence.repositories.idea_repository import get_idea_repository
-from web.account.referrals_service.referrals_service import get_referral_service
-from web.account.referrals_service.referrals_service_interface import (
-    ReferralServiceInterface,
+from infrastructure.persistence.repositories.product_repository import (
+    get_product_repository,
 )
+from infrastructure.persistence.repositories.user_repository import get_user_repository
+from infrastructure.user.validator import get_user_validator
 from web.account.serializers import ReferralsSerializer
 from web.catalog.models.product_type import ProductCategory
-from web.catalog.products_service.products_service import get_products_service
-from web.catalog.products_service.products_service_interface import (
-    ProductsServiceInterface,
-)
 from web.common.pagination import Pagination
 from web.template.profile_template_loader.context_processor.context_processor_interface import (
     ProfileTemplateContextProcessorInterface,
@@ -60,7 +61,7 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
         level = request.GET.get("level")
         sorted_by = request.GET.get("sorted_by")
 
-        referrals = self.referral_service.get_referrals(level=level, user=request.user, sorted_by=sorted_by)
+        referrals = self.referral_service.get_referrals(level=level, user_id=request.user.id, sorted_by=sorted_by)
 
         pagination = Pagination(request)
 
@@ -99,7 +100,7 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
 
         product_category = request.GET.get("product_category")
 
-        products = self.products_service.filter_user_products(category_id=product_category, user=request.user)
+        products = self.products_service.filter_user_products(category_id=product_category, user_id=request.user.id)
 
         pagination = Pagination(request)
 
@@ -109,7 +110,10 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
         return context
 
 
-def get_profile_template_context_processor() -> ProfileTemplateContextProcessor:
+def get_profile_template_context_processor() -> ProfileTemplateContextProcessorInterface:
     return ProfileTemplateContextProcessor(
-        get_referral_service(), get_products_service(), get_domain_service(), GetIdeas(get_idea_repository())
+        get_referral_service(get_user_validator(), get_user_repository()),
+        get_products_service(get_product_repository()),
+        get_domain_service(),
+        GetIdeas(get_idea_repository()),
     )

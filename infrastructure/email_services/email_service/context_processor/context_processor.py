@@ -1,6 +1,6 @@
 from typing import Any
 
-from domain.user.referral import UserInterface
+from domain.referrals.referral import UserInterface
 from infrastructure.email_services.email_service.link_generator.link_generator_interface import (
     LinkGeneratorInterface,
 )

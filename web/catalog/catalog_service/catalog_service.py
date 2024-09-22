@@ -1,14 +1,11 @@
 from typing import Any
 
-from domain.user.referral import UserInterface
+from domain.page_blocks.catalog_service import CatalogServiceInterface
+from domain.page_blocks.page_service_interface import PageServiceInterface
 from infrastructure.persistence.models.blocks.blocks import Cover
 from infrastructure.persistence.models.blocks.catalog_block import CatalogBlock
-from web.blocks.pages_service.page_service_interface import PageServiceInterface
 from web.blocks.pages_service.pages_service import get_page_service
 from web.blocks.serializers import PageSerializer
-from web.catalog.catalog_service.catalog_service_interface import (
-    CatalogServiceInterface,
-)
 from web.catalog.models.blocks import CatalogPageTemplate
 from web.catalog.models.product_type import ProductType
 from web.catalog.serializers import CatalogBlockSerializer
@@ -26,19 +23,18 @@ class CatalogService(CatalogServiceInterface):
 
         return serialized_page
 
-    def get_page(self, user: UserInterface, slug: str):
+    def get_page(self, user_is_authenticated: bool, slug: str):
         page = CatalogPageTemplate.objects.prefetch_related("blocks").first()
 
-        page = self.set_catalog_block(page, user, slug)
+        page = self.set_catalog_block(page, user_is_authenticated, slug)
         page = self.set_catalog_cover(page, slug)
         page = self.set_page_title(page, slug)
 
         return page
 
-    def get_catalog_block(self, user: UserInterface, slug: str) -> dict[str, Any]:
+    def get_catalog_block(self, user_is_authenticated: bool, slug: str) -> dict[str, Any]:
         catalog = CatalogBlock.objects.prefetch_related("styles").get(product_type__slug=slug)
-        catalog_relation = BlockRelationship.objects.get(block_name=catalog.name)
-        catalog = self.page_service.get_page_block(catalog_relation)
+        catalog = self.page_service.get_page_block(catalog.name)
         styles = catalog.get_styles()
 
         if styles is None:
@@ -46,7 +42,7 @@ class CatalogService(CatalogServiceInterface):
 
         catalog_styles = CustomStylesSerializer(styles).data
 
-        catalog = CatalogBlockSerializer(catalog, context={"user": user}).data
+        catalog = CatalogBlockSerializer(catalog, context={"user_is_authenticated": user_is_authenticated}).data
 
         return {"content": catalog, "styles": catalog_styles}
 
@@ -61,9 +57,9 @@ class CatalogService(CatalogServiceInterface):
 
         return {"content": cover, "styles": cover_styles}
 
-    def set_catalog_block(self, page, user: UserInterface, slug: str) -> dict[Any, Any]:
+    def set_catalog_block(self, page, user_is_authenticated: bool, slug: str) -> dict[Any, Any]:
         page = PageSerializer(page).data
-        catalog = self.get_catalog_block(user, slug)
+        catalog = self.get_catalog_block(user_is_authenticated, slug)
 
         for block in page["blocks"]:
             if isinstance(block["content"], CatalogBlock):

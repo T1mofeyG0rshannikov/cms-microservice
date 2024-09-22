@@ -1,6 +1,7 @@
 from typing import Protocol
 
-from domain.user.referral import UserInterface
+from domain.referrals.referral import ReferralInterface
+from domain.user.user import UserInterface
 
 
 class ReferralServiceInterface(Protocol):
@@ -18,5 +19,5 @@ class ReferralServiceInterface(Protocol):
     def set_referral_level(self, referrals: list[UserInterface], level: int) -> list[UserInterface]:
         raise NotImplementedError()
 
-    def get_referrals(self, user: UserInterface, level=None, sorted_by=None) -> list[UserInterface]:
+    def get_referrals(self, user_id: int, level=None, sorted_by=None) -> list[ReferralInterface]:
         raise NotImplementedError()

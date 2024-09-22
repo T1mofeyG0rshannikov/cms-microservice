@@ -10,6 +10,7 @@ from infrastructure.persistence.repositories.product_repository import (
     get_product_repository,
 )
 from web.blocks.pages_service.pages_service import PageService
+from web.common.models import BlockRelationship
 from web.styles.serializers import CustomStylesSerializer
 
 
@@ -21,7 +22,8 @@ class PageSerializer(serializers.ModelSerializer):
         fields = ("title", "blocks")
 
     def get_blocks(self, page):
-        return BlockSerializer(page.blocks.all(), many=True).data
+        blocks = [block.name for block in page.blocks.all()]
+        return BlockSerializer(blocks, many=True).data
 
 
 class BlockSerializer(serializers.Serializer):
@@ -31,8 +33,8 @@ class BlockSerializer(serializers.Serializer):
     page_service = PageService()
     repository = get_product_repository()
 
-    def get_content(self, block):
-        content = self.page_service.get_page_block(block.name)
+    def get_content(self, block: BlockRelationship):
+        content = self.page_service.get_page_block(block.block_name)
         self.content = content
 
         if isinstance(content, MainPageCatalogBlock):

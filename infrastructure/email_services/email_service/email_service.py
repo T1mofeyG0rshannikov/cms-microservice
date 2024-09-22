@@ -1,7 +1,7 @@
 from django.conf import settings
 
 from application.services.domains.service import get_domain_service
-from domain.user.referral import UserInterface
+from domain.referrals.referral import UserInterface
 from infrastructure.auth.jwt_processor import get_jwt_processor
 from infrastructure.email_services.base_email_service import BaseEmailService
 from infrastructure.email_services.email_service.context_processor.context_processor import (

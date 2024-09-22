@@ -1,5 +1,7 @@
 from django.db import models
 
+from web.common.models import OneInstanceModel
+
 
 class TestUserSet(models.Model):
     users_count = models.PositiveSmallIntegerField(verbose_name="Количество пользователей")
@@ -15,3 +17,10 @@ class Error(models.Model):
     status = models.SmallIntegerField(verbose_name="статус", null=True)
     message = models.TextField(max_length=10000, verbose_name="сообщение об ошибке")
     path = models.CharField(max_length=200, verbose_name="страница")
+
+
+class EnableErrorLogging(OneInstanceModel):
+    enable_error_logging = models.BooleanField(default=False, verbose_name="логировать ошибки")
+
+    class Meta:
+        app_label = "site_tests"

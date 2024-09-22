@@ -1,12 +1,13 @@
 from django.db import models
 from django.db.models.signals import post_save
 
+from infrastructure.persistence.models.user.user import User
 from web.common.models import OneInstanceModel
-from web.user.models.user import User
 
 
 class Roles(OneInstanceModel):
     class Meta:
+        app_label = "user"
         verbose_name = "Роли"
         verbose_name_plural = "Роли"
 
@@ -28,6 +29,9 @@ class SuperUserRole(BaseUserRole):
 
     def __str__(self):
         return ""
+
+    class Meta:
+        app_label = "user"
 
 
 def superuser_role_created_handler(sender, instance, created, *args, **kwargs):

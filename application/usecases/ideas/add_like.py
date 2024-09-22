@@ -1,6 +1,6 @@
+from domain.referrals.referral import UserInterface
 from domain.user.exceptions import CantAddLike, IdeaNotFound, LikeAlreadyExists
 from domain.user.idea_repository import IdeaRepositoryInterface
-from domain.user.referral import UserInterface
 
 
 class AddLike:

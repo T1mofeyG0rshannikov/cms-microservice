@@ -1,7 +1,7 @@
 from typing import Any
 
 from domain.products.repository import ProductRepositoryInterface
-from domain.user.referral import UserInterface
+from domain.referrals.referral import UserInterface
 
 
 class AddUserProduct:

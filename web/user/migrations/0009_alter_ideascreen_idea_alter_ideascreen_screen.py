@@ -4,7 +4,7 @@ import django.db.models.deletion
 from django.db import migrations, models
 
 import infrastructure.files.file_storage
-import web.user.models.idea
+import infrastructure.persistence.models.user.idea
 
 
 class Migration(migrations.Migration):
@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
             name="screen",
             field=models.ImageField(
                 storage=infrastructure.files.file_storage.OverwriteStorage(),
-                upload_to=web.user.models.idea.get_upload_to_idea_screen,
+                upload_to=infrastructure.persistence.models.user.idea.get_upload_to_idea_screen,
             ),
         ),
     ]

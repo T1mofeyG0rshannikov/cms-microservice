@@ -2,8 +2,8 @@ from django.db import models
 from django.db.models.signals import pre_save
 
 from domain.user.exceptions import UserProductAlreadyExists
+from infrastructure.persistence.models.user.user import User
 from web.catalog.models.products import Offer, Product
-from web.user.models.user import User
 
 
 def user_directory_path(instance, filename):
@@ -29,6 +29,7 @@ class UserProduct(models.Model):
     deleted = models.BooleanField(default=False, verbose_name="Удален")
 
     class Meta:
+        app_label = "user"
         verbose_name = "Пользовательские продукты"
         verbose_name_plural = "Пользовательские продукты"
 
@@ -40,6 +41,9 @@ class UserOffer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="offers", verbose_name="Пользователь")
     offer = models.ForeignKey(Offer, on_delete=models.CASCADE, verbose_name="оффер")
     link = models.CharField(max_length=1000, verbose_name="Ссылка")
+
+    class Meta:
+        app_label = "user"
 
 
 def create_user_product_handler(sender, instance, *args, **kwargs):

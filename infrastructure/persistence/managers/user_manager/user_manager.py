@@ -1,12 +1,15 @@
 from django.contrib.auth.models import BaseUserManager
 
 from domain.user.validator import UserValidatorInterface
-from infrastructure.user.validator import get_user_validator
-from web.user.user_manager.user_manager_interface import UserManagerInterface
+from infrastructure.persistence.managers.user_manager.user_manager_interface import (
+    UserManagerInterface,
+)
 
 
 class UserManager(BaseUserManager, UserManagerInterface):
-    validator: UserValidatorInterface = get_user_validator()
+    def __init__(self, validator: UserValidatorInterface):
+        super().__init__()
+        self.validator = validator
 
     def get_by_natural_key(self, username):
         if self.validator.is_valid_phone(username):

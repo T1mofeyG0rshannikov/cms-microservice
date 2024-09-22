@@ -3,11 +3,14 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 
 from application.services.domains.service import get_domain_service
+from infrastructure.persistence.managers.user_manager.user_manager import UserManager
+from infrastructure.persistence.managers.user_manager.user_manager_interface import (
+    UserManagerInterface,
+)
+from infrastructure.persistence.models.user.site import Site
+from infrastructure.user.validator import get_user_validator
 from web.settings.models import Domain
 from web.site_tests.models import TestUserSet
-from web.user.models.site import Site
-from web.user.user_manager.user_manager import UserManager
-from web.user.user_manager.user_manager_interface import UserManagerInterface
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -46,7 +49,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     staff = models.BooleanField(default=False)
 
-    objects: UserManagerInterface = UserManager()
+    objects: UserManagerInterface = UserManager(get_user_validator())
 
     supersponsor = models.BooleanField(verbose_name="Главный спонсор", default=False)
 

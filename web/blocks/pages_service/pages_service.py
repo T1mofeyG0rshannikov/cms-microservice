@@ -1,12 +1,14 @@
 from domain.page_blocks.base_block import BaseBlockInterface
+from domain.page_blocks.page_service_interface import PageServiceInterface
 from infrastructure.persistence.models.blocks.common import BaseBlock, Page
-from web.blocks.pages_service.page_service_interface import PageServiceInterface
 from web.common.models import BlockRelationship
 
 
 class PageService(PageServiceInterface):
-    def get_page_block(self, blocks_name: BlockRelationship) -> BaseBlockInterface:
+    def get_page_block(self, blocks_name: str) -> BaseBlockInterface:
         block = None
+
+        blocks_name = BlockRelationship.objects.get(block_name=blocks_name)
 
         for f in blocks_name._meta.related_objects:
             if isinstance(f.related_model.objects.first(), BaseBlock):

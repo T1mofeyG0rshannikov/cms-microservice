@@ -8,4 +8,4 @@ class UserConfig(AppConfig):
     verbose_name = "Пользователи"
 
     def ready(self):
-        import web.user.signals
+        import infrastructure.persistence.signals.user

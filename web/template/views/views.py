@@ -15,7 +15,13 @@ from web.template.profile_template_loader.profile_template_loader import (
 from web.template.profile_template_loader.profile_template_loader_interface import (
     ProfileTemplateLoaderInterface,
 )
+from web.template.template_loader.tempate_context_processor.template_context_processor import (
+    get_template_context_processor,
+)
 from web.template.template_loader.template_loader import get_template_loader
+from web.template.template_loader.template_loader_interface import (
+    TemplateLoaderInterface,
+)
 
 
 def slug_router(request, slug):
@@ -32,7 +38,7 @@ def slug_router(request, slug):
 
 
 class BaseTemplateLoadView(View):
-    template_loader = get_template_loader()
+    template_loader: TemplateLoaderInterface = get_template_loader(get_template_context_processor())
 
     def get(self, request):
         template = self.get_content(request)

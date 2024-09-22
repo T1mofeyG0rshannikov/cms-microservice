@@ -1,18 +1,14 @@
+from domain.common.sort import sort_list_by_attr
+from domain.referrals.referral import ReferralInterface, UserInterface
+from domain.referrals.service import ReferralServiceInterface
 from domain.user.exceptions import (
     InvalidSortedByField,
     UserDoesNotExist,
     UserIsNotReferral,
 )
-from domain.user.referral import ReferralInterface, UserInterface
 from domain.user.repository import UserRepositoryInterface
 from domain.user.validator import UserValidatorInterface
-from infrastructure.persistence.repositories.user_repository import get_user_repository
-from infrastructure.user.validator import get_user_validator
-from web.account.referrals_service.referrals_service_interface import (
-    ReferralServiceInterface,
-)
 from web.account.serializers import ReferralSerializer
-from web.utils.sort import sort_list_by_attr
 
 
 class ReferralService(ReferralServiceInterface):
@@ -56,7 +52,7 @@ class ReferralService(ReferralServiceInterface):
 
         return referrals
 
-    def get_referrals(self, user: UserInterface, level=None, sorted_by=None) -> list[UserInterface]:
+    def get_referrals(self, user_id: int, level=None, sorted_by=None) -> list[ReferralInterface]:
         if level:
             level = self.validator.validate_referral_level(level)
         if sorted_by:
@@ -65,10 +61,10 @@ class ReferralService(ReferralServiceInterface):
         if not level:
             referrals = []
             for i in range(self.total_referal_level):
-                referrals.extend(self.set_referral_level(self.repository.get_referrals_by_level(user.id, i + 1), i + 1))
+                referrals.extend(self.set_referral_level(self.repository.get_referrals_by_level(user_id, i + 1), i + 1))
 
         else:
-            referrals = self.repository.get_referrals_by_level(user.id, level)
+            referrals = self.repository.get_referrals_by_level(user_id, level)
             self.set_referral_level(referrals, level)
 
         referrals = self.set_referrals_count(referrals)
@@ -82,5 +78,7 @@ class ReferralService(ReferralServiceInterface):
         return referrals
 
 
-def get_referral_service() -> ReferralService:
-    return ReferralService(get_user_validator(), get_user_repository())
+def get_referral_service(
+    validator: UserValidatorInterface, repository: UserRepositoryInterface
+) -> ReferralServiceInterface:
+    return ReferralService(validator, repository)

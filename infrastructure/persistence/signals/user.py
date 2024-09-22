@@ -7,10 +7,10 @@ from domain.user.exceptions import (
     UserWithPhoneAlreadyExists,
 )
 from infrastructure.email_services.email_service.email_service import get_email_service
+from infrastructure.persistence.models.user.user import User
 from web.notifications.create_user_notification import create_user_notification
 from web.notifications.error import CantSendNotification
 from web.notifications.send_message import send_message_to_user
-from web.user.models.user import User
 
 
 def user_created_handler(sender, instance, created, *args, **kwargs):

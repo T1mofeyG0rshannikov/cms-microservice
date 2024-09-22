@@ -1,23 +1,24 @@
 from application.services.domains.service import get_domain_service
+from application.services.products_service import get_products_service
+from application.services.user.referrals_service import get_referral_service
 from application.usecases.ideas.get_ideas import GetIdeas
 from domain.domains.service import DomainServiceInterface
+from domain.products.service import ProductsServiceInterface
+from domain.referrals.service import ReferralServiceInterface
 from infrastructure.persistence.models.materials import Document
+from infrastructure.persistence.models.user.product import UserProduct
 from infrastructure.persistence.repositories.idea_repository import get_idea_repository
-from web.account.referrals_service.referrals_service import get_referral_service
-from web.account.referrals_service.referrals_service_interface import (
-    ReferralServiceInterface,
+from infrastructure.persistence.repositories.product_repository import (
+    get_product_repository,
 )
+from infrastructure.persistence.repositories.user_repository import get_user_repository
+from infrastructure.user.validator import get_user_validator
 from web.catalog.models.products import Product
-from web.catalog.products_service.products_service import get_products_service
-from web.catalog.products_service.products_service_interface import (
-    ProductsServiceInterface,
-)
 from web.catalog.serializers import ProductSerializer
 from web.settings.models import Domain, Messanger, SiteSettings, SocialNetwork, UserFont
 from web.template.template_loader.tempate_context_processor.base_context_processor import (
     BaseContextProcessor,
 )
-from web.user.models.product import UserProduct
 from web.user.serializers import UserProductsSerializer
 
 from .template_context_processor_interface import TemplateContextProcessorInterface
@@ -128,7 +129,10 @@ class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInt
         return context
 
 
-def get_template_context_processor() -> TemplateContextProcessor:
+def get_template_context_processor() -> TemplateContextProcessorInterface:
     return TemplateContextProcessor(
-        get_referral_service(), get_products_service(), get_domain_service(), GetIdeas(get_idea_repository())
+        get_referral_service(get_user_validator(), get_user_repository()),
+        get_products_service(get_product_repository()),
+        get_domain_service(),
+        GetIdeas(get_idea_repository()),
     )

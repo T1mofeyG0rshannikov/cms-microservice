@@ -8,6 +8,7 @@ from application.usecases.ideas.delete_idea import DeleteIdea
 from application.usecases.ideas.get_ideas import GetIdeas
 from application.usecases.ideas.remove_like import RemoveLike
 from application.usecases.ideas.update_idea import UpdateIdea
+from domain.common.valid_images import valid_screens_size
 from domain.user.exceptions import CantAddLike, IdeaNotFound, LikeAlreadyExists
 from infrastructure.persistence.repositories.idea_repository import get_idea_repository
 from web.common.pagination import Pagination
@@ -15,7 +16,6 @@ from web.common.views import FormView
 from web.user.forms import AddIdeaForm
 from web.user.serializers import IdeasSerializer
 from web.user.views.base_user_view import APIUserRequired
-from web.utils.valid_images import valid_screens_size
 
 
 @method_decorator(csrf_exempt, name="dispatch")

@@ -42,9 +42,9 @@ class CatalogBlockSerializer(serializers.ModelSerializer):
         return template
 
     def get_products(self, catalog):
-        user = self.context["user"]
+        user_is_authenticated = self.context["user_is_authenticated"]
 
-        if user.is_authenticated:
+        if user_is_authenticated:
             products = self.repository.get_catalog_offers(catalog.id)
         else:
             products = self.repository.get_unprivate_catalog_offers(catalog.id)

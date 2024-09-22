@@ -1,6 +1,6 @@
 from typing import Any, Protocol
 
-from domain.user.referral import UserInterface
+from domain.referrals.referral import UserInterface
 
 
 class EmailTemplateGeneratorInterface(Protocol):

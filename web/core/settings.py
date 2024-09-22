@@ -239,3 +239,4 @@ CKEDITOR_CONFIGS = {
 APPEND_SLASH = True
 
 SYSTEM_EMAIL_HOST_USER = "system@bmdom.ru"
+CSRF_TRUSTED_ORIGINS = ["https://bmdom.ru"]

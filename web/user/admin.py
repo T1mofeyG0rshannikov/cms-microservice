@@ -6,14 +6,14 @@ from django.utils.html import mark_safe
 from dotenv import load_dotenv
 
 from application.services.domains.service import get_domain_service
+from infrastructure.persistence.models.user.idea import Idea, IdeaScreen
+from infrastructure.persistence.models.user.product import UserProduct
+from infrastructure.persistence.models.user.roles import Roles, SuperUserRole
+from infrastructure.persistence.models.user.site import Site
+from infrastructure.persistence.models.user.user import User
 from infrastructure.persistence.repositories.user_repository import get_user_repository
 from web.common.admin import BaseInline
 from web.domens.admin import SiteAdmin
-from web.user.models.idea import Idea, IdeaScreen
-from web.user.models.product import UserProduct
-from web.user.models.roles import Roles, SuperUserRole
-from web.user.models.site import Site
-from web.user.models.user import User
 
 
 class UserAdmin(admin.ModelAdmin):

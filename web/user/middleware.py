@@ -1,10 +1,12 @@
+from domain.user.repository import UserRepositoryInterface
 from infrastructure.auth.jwt_processor import get_jwt_processor
 from infrastructure.auth.jwt_processor_interface import JwtProcessorInterface
-from web.user.models.user import User
+from infrastructure.persistence.repositories.user_repository import get_user_repository
 
 
 class JwtAuthMiddleware:
     jwt_processor: JwtProcessorInterface = get_jwt_processor()
+    repository: UserRepositoryInterface = get_user_repository()
 
     def __init__(self, get_response):
         self.get_response = get_response
@@ -15,7 +17,7 @@ class JwtAuthMiddleware:
         payload = self.jwt_processor.validate_token(token)
 
         if payload:
-            user = User.objects.get_user_by_id(payload["id"])
+            user = self.repository.get_user_by_id(payload["id"])
         else:
             user = None
 

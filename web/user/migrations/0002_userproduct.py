@@ -4,7 +4,7 @@ import django.db.models.deletion
 from django.conf import settings
 from django.db import migrations, models
 
-import web.user.models.product
+import infrastructure.persistence.models.user.product
 
 
 class Migration(migrations.Migration):
@@ -26,7 +26,9 @@ class Migration(migrations.Migration):
                 (
                     "screen",
                     models.ImageField(
-                        null=True, upload_to=web.user.models.product.user_directory_path, verbose_name="скриншот"
+                        null=True,
+                        upload_to=infrastructure.persistence.models.user.product.user_directory_path,
+                        verbose_name="скриншот",
                     ),
                 ),
                 ("comment", models.CharField(max_length=1000, null=True, verbose_name="Комментарий")),

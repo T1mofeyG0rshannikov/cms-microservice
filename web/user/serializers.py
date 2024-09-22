@@ -1,10 +1,10 @@
 from rest_framework import serializers
 
+from infrastructure.persistence.models.user.idea import Idea, Like
+from infrastructure.persistence.models.user.product import UserOffer, UserProduct
+from infrastructure.persistence.models.user.user import User
 from web.catalog.serializers import ProductsSerializer
 from web.common.serializers import DateFieldDot
-from web.user.models.idea import Idea, Like
-from web.user.models.product import UserOffer, UserProduct
-from web.user.models.user import User
 
 
 class UserSerializer(serializers.ModelSerializer):

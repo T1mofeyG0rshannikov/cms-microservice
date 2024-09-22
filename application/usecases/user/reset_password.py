@@ -1,6 +1,6 @@
 from application.texts.errors import Errors
+from domain.referrals.referral import UserInterface
 from domain.user.exceptions import InvalidJwtToken
-from domain.user.referral import UserInterface
 from domain.user.repository import UserRepositoryInterface
 from infrastructure.auth.jwt_processor_interface import JwtProcessorInterface
 

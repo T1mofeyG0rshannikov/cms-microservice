@@ -29,7 +29,7 @@ class WorkEmailContextProcessor(WorkEmailContextProcessorInterface):
 
     def error_message(self, **kwargs) -> dict[str, Any]:
         context = {}
-        context["ip"] = kwargs.get("ip")
+        context["client_ip"] = kwargs.get("client_ip")
         context["message"] = kwargs.get("message")
         context["path"] = kwargs.get("path")
         context["user"] = kwargs.get("user")

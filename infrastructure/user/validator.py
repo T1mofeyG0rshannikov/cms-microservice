@@ -4,8 +4,8 @@ from typing import Any
 from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator
 
+from domain.referrals.referral import ReferralInterface
 from domain.user.exceptions import InvalidReferalLevel, InvalidSortedByField
-from domain.user.referral import ReferralInterface
 from domain.user.validator import UserValidatorInterface
 
 

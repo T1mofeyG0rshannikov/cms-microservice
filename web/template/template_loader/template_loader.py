@@ -3,10 +3,6 @@ from typing import Any
 from django.template import loader
 
 from web.blocks.template_exist import is_template_exists
-
-from .tempate_context_processor.template_context_processor import (
-    get_template_context_processor,
-)
 from .tempate_context_processor.template_context_processor_interface import (
     TemplateContextProcessorInterface,
 )
@@ -43,7 +39,9 @@ class TemplateLoader(TemplateLoaderInterface):
     def load_referral_popup(self, request):
         context = self.context_processor.get_referral_popup_context(request)
 
-        return self.load_template(app_name="account", template_name="referral-popup", request=request, context=context)
+        return self.load_template(
+            app_name="account", template_name="popups/referral-popup", request=request, context=context
+        )
 
     def load_choice_product_form(self, request):
         context = self.context_processor.get_choice_product_form(request)
@@ -91,5 +89,5 @@ class TemplateLoader(TemplateLoaderInterface):
         )
 
 
-def get_template_loader() -> TemplateLoader:
-    return TemplateLoader(get_template_context_processor())
+def get_template_loader(context_processor: TemplateContextProcessorInterface) -> TemplateLoaderInterface:
+    return TemplateLoader(context_processor)

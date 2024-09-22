@@ -1,0 +1,14 @@
+<body>
+    <table style="text-align: center; border=0; cellpadding=0; cellspacing=0">
+        <tbody>
+            <tr>
+                <center>
+                    <p>IP: {{ client_ip }}</p>
+                    <p>Пользователь: {% if user %}{{ user }}{% else %}---{% endif %}</p>
+                    <p>Адресс страницы: {{ path }}</p>
+                    <p>Сообщение об ошибке: {{ message }}</p>
+                </center>
+            </tr>
+        </tbody>
+    </div>
+</body>

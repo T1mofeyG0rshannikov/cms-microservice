@@ -2,15 +2,17 @@ from typing import Any
 
 from django.db.models import Count, Q
 
+from domain.products.product import ProductInterface
 from domain.products.repository import ProductRepositoryInterface
+from domain.user.product import UserProductInterface
+from infrastructure.persistence.models.user.product import UserOffer, UserProduct
 from web.catalog.models.product_type import ProductType
 from web.catalog.models.products import Offer, Organization, Product
-from web.user.models.product import UserOffer, UserProduct
 
 
 class ProductRepository(ProductRepositoryInterface):
     @staticmethod
-    def get_enabled_products_to_create(user_id: int, organization_id: int) -> list[Product]:
+    def get_enabled_products_to_create(user_id: int, organization_id: int) -> list[ProductInterface]:
         products = (
             Product.objects.select_related("category", "organization")
             .prefetch_related("user_products", "offers")
@@ -37,7 +39,7 @@ class ProductRepository(ProductRepositoryInterface):
         )
 
     @staticmethod
-    def filter_user_products(category_id: int, user_id: int) -> list[UserProduct]:
+    def filter_user_products(category_id: int, user_id: int) -> list[UserProductInterface]:
         filters = Q(user_id=user_id, deleted=False)
 
         if category_id:
@@ -77,7 +79,7 @@ class ProductRepository(ProductRepositoryInterface):
         )
 
     @staticmethod
-    def get_product_by_id(id: int):
+    def get_product_by_id(id: int) -> ProductInterface:
         return Product.objects.get(id=id)
 
     @staticmethod
@@ -120,5 +122,5 @@ class ProductRepository(ProductRepositoryInterface):
         )
 
 
-def get_product_repository() -> ProductRepository:
+def get_product_repository() -> ProductRepositoryInterface:
     return ProductRepository()

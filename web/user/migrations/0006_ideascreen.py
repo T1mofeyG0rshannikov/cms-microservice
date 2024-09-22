@@ -3,7 +3,7 @@
 import django.db.models.deletion
 from django.db import migrations, models
 
-import web.user.models.idea
+import infrastructure.persistence.models.user.idea
 
 
 class Migration(migrations.Migration):
@@ -16,7 +16,10 @@ class Migration(migrations.Migration):
             name="IdeaScreen",
             fields=[
                 ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
-                ("screen", models.ImageField(upload_to=web.user.models.idea.get_upload_to_idea_screen)),
+                (
+                    "screen",
+                    models.ImageField(upload_to=infrastructure.persistence.models.user.idea.get_upload_to_idea_screen),
+                ),
                 ("idea", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="user.idea")),
             ],
         ),

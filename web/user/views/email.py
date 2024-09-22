@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect
 
 from application.texts.errors import Errors
-from web.user.models.user import User
+from infrastructure.persistence.models.user.user import User
 from web.user.views.base_user_view import BaseUserView
 
 

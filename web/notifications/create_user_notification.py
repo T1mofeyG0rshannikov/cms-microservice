@@ -1,4 +1,4 @@
-from domain.user.referral import UserInterface
+from domain.referrals.referral import UserInterface
 from web.notifications.models import Notification, UserNotification
 from web.notifications.serializers import UserNotificationSerializer
 

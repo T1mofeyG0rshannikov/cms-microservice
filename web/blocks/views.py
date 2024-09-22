@@ -6,9 +6,9 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
+from domain.page_blocks.page_service_interface import PageServiceInterface
 from infrastructure.files.files import find_class_in_directory
 from infrastructure.persistence.models.blocks.common import Page
-from web.blocks.pages_service.page_service_interface import PageServiceInterface
 from web.blocks.pages_service.pages_service import get_page_service
 from web.blocks.serializers import PageSerializer
 from web.domens.views.mixins import SubdomainMixin
@@ -20,7 +20,6 @@ class IndexPage(SubdomainMixin):
     template_name = "blocks/page.html"
 
     def get(self, *args, **kwargs):
-        2 / 0
         partner_domain = self.domain_service.get_partners_domain_string()
 
         if self.request.domain == partner_domain and SiteSettings.objects.first().disable_partners_sites:

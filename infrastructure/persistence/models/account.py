@@ -1,8 +1,8 @@
 from django.db import models
 
+from infrastructure.persistence.models.user.site import Site
+from infrastructure.persistence.models.user.user import User
 from web.settings.models import Messanger, SocialNetwork
-from web.user.models.site import Site
-from web.user.models.user import User
 
 
 class UserSocialNetwork(models.Model):

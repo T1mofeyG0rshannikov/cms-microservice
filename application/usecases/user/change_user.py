@@ -1,11 +1,11 @@
 from typing import Any
 
 from application.texts.errors import UserErrors
+from domain.referrals.referral import UserInterface
 from domain.user.exceptions import (
     UserWithEmailAlreadyExists,
     UserWithPhoneAlreadyExists,
 )
-from domain.user.referral import UserInterface
 from domain.user.repository import UserRepositoryInterface
 
 

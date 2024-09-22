@@ -41,6 +41,7 @@ class Idea(models.Model):
     admin_answer = RichTextField(max_length=1000, verbose_name="Ответ", null=True, blank=True)
 
     class Meta:
+        app_label = "user"
         verbose_name = "Предложение"
         verbose_name_plural = "Предложения"
 
@@ -52,6 +53,9 @@ class Like(models.Model):
     user = models.ForeignKey("user.User", on_delete=models.SET_NULL, null=True)
     idea = models.ForeignKey("user.Idea", related_name="likes", on_delete=models.CASCADE)
 
+    class Meta:
+        app_label = "user"
+
 
 def get_upload_to_idea_screen(instance, filename):
     print(filename)
@@ -61,3 +65,6 @@ def get_upload_to_idea_screen(instance, filename):
 class IdeaScreen(models.Model):
     screen = models.ImageField(upload_to=get_upload_to_idea_screen, storage=OverwriteStorage())
     idea = models.ForeignKey(Idea, on_delete=models.CASCADE, related_name="screens")
+
+    class Meta:
+        app_label = "user"

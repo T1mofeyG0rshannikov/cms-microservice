@@ -3,7 +3,7 @@ from application.services.domains.url_parser import get_url_parser
 from domain.domains.domain import SiteInterface
 from domain.domains.repository import DomainRepositoryInterface
 from domain.domains.service import DomainServiceInterface
-from domain.user.referral import UserInterface
+from domain.referrals.referral import UserInterface
 from infrastructure.persistence.repositories.domain_repository import (
     get_domain_repository,
 )

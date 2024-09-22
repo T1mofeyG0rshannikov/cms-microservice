@@ -1,7 +1,7 @@
 from django.contrib import admin
 
+from infrastructure.persistence.models.user.user import User
 from web.site_tests.models import Error, TestUserSet
-from web.user.models.user import User
 
 
 class TestUserInline(admin.StackedInline):

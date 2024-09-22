@@ -1,19 +1,17 @@
 from typing import Any, Protocol
 
-from domain.user.referral import UserInterface
-
 
 class CatalogServiceInterface(Protocol):
-    def get_page(self, user: UserInterface, slug: str):
+    def get_page(self, user_is_authenticated: bool, slug: str):
         raise NotImplementedError()
 
-    def get_catalog_block(self, user: UserInterface, slug: str) -> dict[str, Any]:
+    def get_catalog_block(self, user_is_authenticated: bool, slug: str) -> dict[str, Any]:
         raise NotImplementedError()
 
     def get_catalog_cover(self, slug: str):
         raise NotImplementedError()
 
-    def set_catalog_block(self, page, user: UserInterface, slug: str):
+    def set_catalog_block(self, page, user_is_authenticated: bool, slug: str):
         raise NotImplementedError()
 
     def set_catalog_cover(self, serialized_page: dict[Any, Any], slug: str):

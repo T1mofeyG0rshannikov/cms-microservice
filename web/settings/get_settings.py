@@ -1,6 +1,6 @@
+from infrastructure.persistence.models.user.site import Site
 from web.settings.models import SiteSettings
 from web.settings.serializers import SettingsSerializer
-from web.user.models.site import Site
 
 
 def get_settings(request) -> dict:

@@ -2,8 +2,9 @@ from typing import Any
 
 from django.db.models import Count, Q
 
+from domain.user.idea import IdeaInterface
 from domain.user.idea_repository import IdeaRepositoryInterface
-from web.user.models.idea import Idea, IdeaScreen, Like
+from infrastructure.persistence.models.user.idea import Idea, IdeaScreen, Like
 
 
 class IdeaRepository(IdeaRepositoryInterface):
@@ -12,7 +13,7 @@ class IdeaRepository(IdeaRepositoryInterface):
         Idea.objects.filter(id=id).update(**fields)
 
     @staticmethod
-    def create_idea(fields: dict[str, str], screens) -> Idea:
+    def create_idea(fields: dict[str, str], screens) -> IdeaInterface:
         idea = Idea.objects.create(**fields)
 
         for screen in screens:
@@ -25,14 +26,14 @@ class IdeaRepository(IdeaRepositoryInterface):
         Idea.objects.filter(id=id).delete()
 
     @staticmethod
-    def get_idea(id: int):
+    def get_idea(id: int) -> IdeaInterface:
         try:
             return Idea.objects.get(id=id)
         except Idea.DoesNotExist:
             return None
 
     @staticmethod
-    def get_ideas(category=None, sorted_by=None, status=None, user=None):
+    def get_ideas(category=None, sorted_by=None, status=None, user=None) -> list[IdeaInterface]:
         filters = Q()
 
         if user:
@@ -56,7 +57,7 @@ class IdeaRepository(IdeaRepositoryInterface):
         )
 
     @staticmethod
-    def get_screens(idea_id: int) -> list[Idea]:
+    def get_screens(idea_id: int) -> list[IdeaInterface]:
         return IdeaScreen.objects.filter(idea_id=idea_id)
 
     def get_screen_names(self, idea_id: int) -> list[str]:
@@ -85,5 +86,5 @@ class IdeaRepository(IdeaRepositoryInterface):
         Like.objects.filter(user_id=user_id, idea_id=idea_id).delete()
 
 
-def get_idea_repository() -> IdeaRepository:
+def get_idea_repository() -> IdeaRepositoryInterface:
     return IdeaRepository()

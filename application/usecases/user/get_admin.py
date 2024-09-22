@@ -1,6 +1,6 @@
 from application.texts.errors import UserErrors
+from domain.referrals.referral import UserInterface
 from domain.user.exceptions import IncorrectPassword, UserDoesNotExist, UserNotAdmin
-from domain.user.referral import UserInterface
 from domain.user.repository import UserRepositoryInterface
 
 

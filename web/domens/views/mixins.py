@@ -7,11 +7,11 @@ from dotenv import load_dotenv
 from application.services.domains.service import get_domain_service
 from application.services.domains.url_parser import get_url_parser
 from domain.domains.service import DomainServiceInterface
+from infrastructure.persistence.models.user.site import Site
 from web.domens.views.views import PartnerIndexPage
 from web.settings.models import Domain, SiteSettings
 from web.settings.views import SettingsMixin
 from web.template.views.base_page_not_found import BaseNotFoundPage
-from web.user.models.site import Site
 
 load_dotenv()
 
