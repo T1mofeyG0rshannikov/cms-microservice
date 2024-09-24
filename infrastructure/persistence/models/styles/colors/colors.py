@@ -1,7 +1,7 @@
 from colorfield.fields import ColorField
 
-from web.styles.models.colors.base_color import BaseColor
-from web.styles.models.styles.base_styles import BaseStyles
+from infrastructure.persistence.models.styles.colors.base_color import BaseColor
+from infrastructure.persistence.models.styles.styles.base_styles import BaseStyles
 
 
 class ColorStyles(BaseStyles):
@@ -11,6 +11,7 @@ class ColorStyles(BaseStyles):
     second_background_color = ColorField(verbose_name="Цвет фона 2", default="#FFFFFF")
 
     class Meta:
+        app_label = "styles"
         verbose_name = "Цвета"
         verbose_name_plural = "Цвета"
 

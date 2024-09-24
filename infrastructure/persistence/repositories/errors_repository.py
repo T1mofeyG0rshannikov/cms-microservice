@@ -1,5 +1,5 @@
 from domain.logging.error import ErrorLogRepositoryInterface
-from web.site_tests.models import Error
+from infrastructure.persistence.models.site_tests import Error
 
 
 class ErrorsRepository(ErrorLogRepositoryInterface):

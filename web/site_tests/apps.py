@@ -8,4 +8,4 @@ class SiteTestsConfig(AppConfig):
     verbose_name = "Отладка"
 
     def ready(self):
-        import web.site_tests.signals
+        import infrastructure.persistence.signals.site_tests

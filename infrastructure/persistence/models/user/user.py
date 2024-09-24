@@ -7,10 +7,10 @@ from infrastructure.persistence.managers.user_manager.user_manager import UserMa
 from infrastructure.persistence.managers.user_manager.user_manager_interface import (
     UserManagerInterface,
 )
+from infrastructure.persistence.models.site_tests import TestUserSet
 from infrastructure.persistence.models.user.site import Site
 from infrastructure.user.validator import get_user_validator
 from web.settings.models import Domain
-from web.site_tests.models import TestUserSet
 
 
 class User(AbstractBaseUser, PermissionsMixin):

@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save
 
-from web.site_tests.models import TestUserSet
+from infrastructure.persistence.models.site_tests import TestUserSet
 from web.site_tests.user_generator.user_generator import get_user_generator
 
 

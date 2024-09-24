@@ -1,5 +1,6 @@
 function openPopup(product_id){
     const popup = document.querySelectorAll(".product")[product_id - 1].querySelector(".popup-background");
+    fetch(`/site_statistics/opened-product-popup?product_id=${product_id}`);
     popup.style.display = "block";
 }
 

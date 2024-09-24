@@ -2,7 +2,7 @@ from colorfield.fields import ColorField
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-from web.styles.models.mixins.margin_mixin import MarginMixin
+from infrastructure.persistence.models.styles.mixins.color_mixins import MarginMixin
 
 
 class BaseCustomStyles(MarginMixin):

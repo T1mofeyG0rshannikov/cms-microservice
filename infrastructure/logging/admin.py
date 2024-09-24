@@ -34,7 +34,7 @@ class AdminLoginLogger:
         self.email_service.send_success_admin_login_message(ip=ip_address, **fields, time=log.date)
 
     def fake_admin_panel(self, request: HttpRequest, fields: dict[str, Any]) -> None:
-        ip_address = self.get_client_ip(request)
+        ip_address = get_client_ip(request)
 
         log = self.repository.create_logg_fake(ip_address, **fields)
 

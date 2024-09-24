@@ -1,5 +1,5 @@
-from web.styles.models.mixins.font_mixins import FontMixin
-from web.styles.models.mixins.text_mixins import (
+from infrastructure.persistence.models.styles.mixins.font_mixins import FontMixin
+from infrastructure.persistence.models.styles.mixins.text_mixins import (
     InvertedTextColorMixin,
     SizeOfTextMixin,
     SizeOfTextMobileMixin,
@@ -7,7 +7,7 @@ from web.styles.models.mixins.text_mixins import (
     ThicknessOfTextMixin,
     ThicknessOfTextMobileMixin,
 )
-from web.styles.models.styles.base_styles import BaseStyles
+from infrastructure.persistence.models.styles.styles.base_styles import BaseStyles
 
 
 class HeaderText(
@@ -21,6 +21,7 @@ class HeaderText(
     InvertedTextColorMixin,
 ):
     class Meta:
+        app_label = "styles"
         verbose_name = "Заголовок"
         verbose_name_plural = "Заголовок"
 
@@ -36,6 +37,7 @@ class SubheaderText(
     InvertedTextColorMixin,
 ):
     class Meta:
+        app_label = "styles"
         verbose_name = "Подзаголовок"
         verbose_name_plural = "Подзаголовок"
 
@@ -51,6 +53,7 @@ class MainText(
     InvertedTextColorMixin,
 ):
     class Meta:
+        app_label = "styles"
         verbose_name = "Основной текст"
         verbose_name_plural = "Основной текст"
 
@@ -66,5 +69,6 @@ class ExplanationText(
     InvertedTextColorMixin,
 ):
     class Meta:
+        app_label = "styles"
         verbose_name = "Текст пояснний"
         verbose_name_plural = "Текст пояснний"

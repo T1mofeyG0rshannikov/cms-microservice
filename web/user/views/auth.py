@@ -1,8 +1,6 @@
 from django.contrib.auth import logout
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
 from application.services.domains.url_parser import get_url_parser
@@ -21,11 +19,11 @@ from infrastructure.persistence.repositories.domain_repository import (
 from infrastructure.persistence.repositories.user_repository import get_user_repository
 from infrastructure.user.validator import get_user_validator
 from web.common.views import FormView
+from web.site_statistics.models import UserAction, UserActivity
 from web.user.forms import LoginForm, RegistrationForm, ResetPasswordForm
 from web.user.views.base_user_view import BaseUserView
 
 
-@method_decorator(csrf_exempt, name="dispatch")
 class RegisterUser(BaseUserView, FormView):
     template_name = "user/register.html"
     form_class = RegistrationForm
@@ -40,17 +38,42 @@ class RegisterUser(BaseUserView, FormView):
 
         return context
 
-    def form_valid(self, request, form):
+    def form_valid(self, request: HttpRequest, form):
+        adress = request.META.get("HTTP_REFERER")
+        adress = adress.replace("https://", "")
+        adress = adress.replace("http://", "")
+
         try:
             token_to_set_password = self.register_interactor(
                 fields=form.cleaned_data, host=request.META.get("HTTP_ORIGIN")
             )
+
+            UserAction.objects.create(
+                adress=adress,
+                text=f'''Регистрация в форме "{request.POST.get("ancor")}"''',
+                session=UserActivity.objects.get(unique_key=request.session["user_activity"]["unique_key"]),
+            )
+
         except UserWithPhoneAlreadyExists:
             form.add_error("phone", UserErrors.username_with_phone_alredy_exists.value)
+
+            UserAction.objects.create(
+                adress=adress,
+                text=f'''Ошибка регистрации в форме "{request.POST.get("ancor")}"''',
+                session=UserActivity.objects.get(unique_key=request.session["user_activity"]["unique_key"]),
+            )
+
             return JsonResponse({"errors": form.errors}, status=400)
 
         except UserWithEmailAlreadyExists:
             form.add_error("email", UserErrors.username_with_email_alredy_exists.value)
+
+            UserAction.objects.create(
+                adress=adress,
+                text=f'''Ошибка регистрации в форме "{request.POST.get("ancor")}"''',
+                session=UserActivity.objects.get(unique_key=request.session["user_activity"]["unique_key"]),
+            )
+
             return JsonResponse({"errors": form.errors}, status=400)
 
         if token_to_set_password:
@@ -59,7 +82,6 @@ class RegisterUser(BaseUserView, FormView):
         return JsonResponse({"errors": UserErrors.something_went_wrong.value}, status=400)
 
 
-@method_decorator(csrf_exempt, name="dispatch")
 class LoginView(BaseUserView, FormView):
     template_name = "user/login.html"
     form_class = LoginForm
@@ -86,7 +108,6 @@ class LoginView(BaseUserView, FormView):
         return JsonResponse({"errors": form.errors}, status=400)
 
 
-@method_decorator(csrf_exempt, name="dispatch")
 class SetToken(BaseUserView):
     template_name = "user/set-token.html"
     repository = get_user_repository()

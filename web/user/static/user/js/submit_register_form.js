@@ -1,20 +1,22 @@
-function submitRegisterForm(element, event, domain){
+function submitRegisterForm(element, event, domain, ancor=null){
     event.preventDefault();
 
     const data = new FormData(element);
+    data.append("ancor", ancor);
 
-    fetch(`http://${domain}/user/register`, {
+    fetch(`/user/register`, {
         method: "post",
+        withCredentials: true,
         headers: {
             'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': data.get("csrfmiddlewaretoken")
         },
         body: data
     }).then(response => {
         if (response.status === 200){
             response.json().then((response) => {
                 const token_to_set_password = response.token_to_set_password;
-                window.location.replace(`http://${domain}/user/password/${token_to_set_password}`)
+                window.location.replace(`https://${domain}/user/password/${token_to_set_password}`)
             })
         }
         return response.json();

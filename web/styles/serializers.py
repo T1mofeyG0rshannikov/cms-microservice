@@ -1,9 +1,8 @@
 from rest_framework import serializers
 
+from infrastructure.persistence.models.styles.colors.colors import ColorStyles
+from infrastructure.persistence.models.styles.other import IconSize, MarginBlock
 from web.settings.models import Font
-
-from .models.colors.colors import ColorStyles
-from .models.other import IconSize, MarginBlock
 
 
 class FontSerializer(serializers.ModelSerializer):

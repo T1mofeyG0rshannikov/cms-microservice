@@ -41,12 +41,12 @@ function submitLoginForm(element, event, domain){
     event.preventDefault();
     const data = new FormData(element);
 
-    fetch(`http://${domain}/user/login`, {
+    fetch(`/user/login`, {
         method: "POST",
+        withCredentials: true,
         headers: {
             'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-            //'X-CSRFToken': data.get("csrfmiddlewaretoken"),
+            'X-CSRFToken': data.get("csrfmiddlewaretoken"),
         },
         body: data
     }).then(response => {
@@ -60,7 +60,7 @@ function submitLoginForm(element, event, domain){
                     rememberUserInfo(data.get("phone_or_email"), data.get("password"));
                 }
 
-                window.location.replace(`http://${domain}/user/set-token/${token}`);
+                window.location.replace(`https://${domain}/user/set-token/${token}`);
             })
         }
         return response.json();

@@ -13,13 +13,13 @@ from infrastructure.email_services.work_email_service.template_generator.templat
 )
 from infrastructure.get_ip import get_client_ip
 from infrastructure.logging.errors import ErrorLogger
+from infrastructure.persistence.models.site_tests import EnableErrorLogging
 from infrastructure.persistence.repositories.errors_repository import (
     get_errors_repository,
 )
 from infrastructure.persistence.repositories.system_repository import (
     get_system_repository,
 )
-from web.site_tests.models import EnableErrorLogging
 
 
 class ExceptionLoggingMiddleware(MiddlewareMixin):

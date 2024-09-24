@@ -12,6 +12,7 @@ urlpatterns = [
     path("domain/", include("web.domens.urls")),
     path("notifications/", include("web.notifications.urls")),
     path("materials/", include("web.materials.urls")),
+    path("site_statistics/", include("web.site_statistics.urls")),
     path("", include("web.common.urls")),
     path("", include("web.account.urls")),
     path("", include("web.catalog.urls")),

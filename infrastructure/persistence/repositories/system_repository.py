@@ -16,6 +16,9 @@ class SystemRepository(SystemRepositoryInterface):
     def code_exists(self, email: str, code: int) -> bool:
         return AdminLoginCode.objects.filter(email=email, code=code).exists()
 
+    def delete_user_code(self, email: str) -> None:
+        AdminLoginCode.objects.filter(email=email).delete()
+
 
 def get_system_repository() -> SystemRepositoryInterface:
     return SystemRepository()

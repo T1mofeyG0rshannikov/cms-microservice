@@ -18,11 +18,13 @@ from infrastructure.persistence.models.blocks.catalog_block import (
     MainPageCatalogBlock,
     PromoCatalog,
 )
-from web.styles.models.mixins.text_mixins import (
+from infrastructure.persistence.models.styles.mixins.text_mixins import (
     ExplanationTextStylesMixin,
     SubheaderStylesMixin,
 )
-from web.styles.models.styles.base_custom_styles import BaseCustomStyles
+from infrastructure.persistence.models.styles.styles.base_custom_styles import (
+    BaseCustomStyles,
+)
 
 
 def related_block(block_class):
@@ -32,14 +34,23 @@ def related_block(block_class):
 class NavbarCustomStyles(BaseCustomStyles):
     block = related_block(Navbar)
 
+    class Meta:
+        app_label = "styles"
+
 
 class ContentCustomStyles(BaseCustomStyles):
     block = related_block(ContentBlock)
     border_radius = models.CharField(verbose_name="Радиус скругления картинки", null=True, blank=True, max_length=50)
 
+    class Meta:
+        app_label = "styles"
+
 
 class CoverCustomStyles(BaseCustomStyles):
     block = related_block(Cover)
+
+    class Meta:
+        app_label = "styles"
 
 
 class FeaturesCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin, SubheaderStylesMixin):
@@ -52,23 +63,38 @@ class FeaturesCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin, Subhead
     icon_width = models.CharField(verbose_name="Ширина иконок", max_length=20, null=True, blank=True)
     icon_height = models.CharField(verbose_name="Высота иконок", max_length=20, null=True, blank=True)
 
+    class Meta:
+        app_label = "styles"
+
 
 class RegisterCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
     block = related_block(RegisterBlock)
 
     button_color = ColorField(verbose_name="цвет кнопки", null=True, blank=True)
 
+    class Meta:
+        app_label = "styles"
+
 
 class SocialCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
     block = related_block(SocialMediaBlock)
+
+    class Meta:
+        app_label = "styles"
 
 
 class QuestionsCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
     block = related_block(QuestionsBlock)
 
+    class Meta:
+        app_label = "styles"
+
 
 class StagesCustomStyles(BaseCustomStyles, ExplanationTextStylesMixin):
     block = related_block(StagesBlock)
+
+    class Meta:
+        app_label = "styles"
 
 
 class CatalogCustomStyles(BaseCustomStyles, SubheaderStylesMixin):
@@ -76,17 +102,26 @@ class CatalogCustomStyles(BaseCustomStyles, SubheaderStylesMixin):
 
     columns = models.PositiveIntegerField(verbose_name="Количество колонок", default=4)
 
+    class Meta:
+        app_label = "styles"
+
 
 class MainPageCatalogCustomStyles(BaseCustomStyles, SubheaderStylesMixin):
     block = related_block(MainPageCatalogBlock)
 
     columns = models.PositiveIntegerField(verbose_name="Количество колонок", default=4)
 
+    class Meta:
+        app_label = "styles"
+
 
 class PromoCatalogCustomStyles(BaseCustomStyles):
     block = related_block(PromoCatalog)
 
     swiper_columns = models.PositiveIntegerField(verbose_name="Количество колонок в слайдере", default=3)
+
+    class Meta:
+        app_label = "styles"
 
 
 class AdditionalCatalogCustomStyles(BaseCustomStyles):
@@ -100,3 +135,6 @@ class AdditionalCatalogCustomStyles(BaseCustomStyles):
         null=True,
         blank=True,
     )
+
+    class Meta:
+        app_label = "styles"

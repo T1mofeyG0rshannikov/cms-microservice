@@ -6,6 +6,7 @@ from infrastructure.persistence.models.blocks.catalog_block import (
     PromoCatalog,
 )
 from infrastructure.persistence.models.blocks.common import Page
+from infrastructure.persistence.repositories.page_repository import get_page_repository
 from infrastructure.persistence.repositories.product_repository import (
     get_product_repository,
 )
@@ -30,7 +31,7 @@ class BlockSerializer(serializers.Serializer):
     content = serializers.SerializerMethodField()
     styles = serializers.SerializerMethodField()
 
-    page_service = PageService()
+    page_service = PageService(get_page_repository())
     repository = get_product_repository()
 
     def get_content(self, block: BlockRelationship):

@@ -1,10 +1,14 @@
 from domain.page_blocks.base_block import BaseBlockInterface
+from domain.page_blocks.page_repository import PageRepositoryInterface
 from domain.page_blocks.page_service_interface import PageServiceInterface
-from infrastructure.persistence.models.blocks.common import BaseBlock, Page
+from infrastructure.persistence.models.blocks.common import BaseBlock
 from web.common.models import BlockRelationship
 
 
 class PageService(PageServiceInterface):
+    def __init__(self, page_repository: PageRepositoryInterface) -> None:
+        self.page_repository = page_repository
+
     def get_page_block(self, blocks_name: str) -> BaseBlockInterface:
         block = None
 
@@ -19,7 +23,7 @@ class PageService(PageServiceInterface):
         return block
 
     def clone_page(self, page_id: int) -> None:
-        page = Page.objects.get(id=page_id)
+        page = self.page_repository.get_page_by_id(page_id)
         blocks = page.blocks.all()
         print(blocks)
 
@@ -33,5 +37,5 @@ class PageService(PageServiceInterface):
             block.save()
 
 
-def get_page_service() -> PageServiceInterface:
-    return PageService()
+def get_page_service(page_repository: PageRepositoryInterface) -> PageServiceInterface:
+    return PageService(page_repository)

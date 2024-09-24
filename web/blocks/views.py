@@ -6,9 +6,10 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
+from domain.page_blocks.page_repository import PageRepositoryInterface
 from domain.page_blocks.page_service_interface import PageServiceInterface
 from infrastructure.files.files import find_class_in_directory
-from infrastructure.persistence.models.blocks.common import Page
+from infrastructure.persistence.repositories.page_repository import get_page_repository
 from web.blocks.pages_service.pages_service import get_page_service
 from web.blocks.serializers import PageSerializer
 from web.domens.views.mixins import SubdomainMixin
@@ -18,6 +19,7 @@ from web.user.views.base_user_view import UserFormsView
 
 class IndexPage(SubdomainMixin):
     template_name = "blocks/page.html"
+    page_repository: PageRepositoryInterface = get_page_repository()
 
     def get(self, *args, **kwargs):
         partner_domain = self.domain_service.get_partners_domain_string()
@@ -25,7 +27,7 @@ class IndexPage(SubdomainMixin):
         if self.request.domain == partner_domain and SiteSettings.objects.first().disable_partners_sites:
             return HttpResponse("<h1>Привет :)</h1>")
 
-        if not Page.objects.filter(url=None).exists():
+        if not self.page_repository.get_page_by_url(None):
             return HttpResponseNotFound()
 
         return super().get(*args, **kwargs)
@@ -34,7 +36,7 @@ class IndexPage(SubdomainMixin):
         context = super().get_context_data(**kwargs)
         context |= UserFormsView.get_context_data()
 
-        page = Page.objects.prefetch_related("blocks").get(url=None)
+        page = self.page_repository.get_page_by_url(None)
 
         serialized_page = PageSerializer(page).data
 
@@ -45,12 +47,13 @@ class IndexPage(SubdomainMixin):
 
 class ShowPage(SubdomainMixin):
     template_name = "blocks/page.html"
+    page_repository: PageRepositoryInterface = get_page_repository()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context |= UserFormsView.get_context_data()
 
-        page = Page.objects.prefetch_related("blocks").get(url=kwargs["page_url"])
+        page = self.page_repository.get_page_by_url(url=kwargs["page_url"])
         serialized_page = PageSerializer(page).data
 
         context["page"] = serialized_page
@@ -60,7 +63,7 @@ class ShowPage(SubdomainMixin):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class ClonePage(View):
-    page_service: PageServiceInterface = get_page_service()
+    page_service: PageServiceInterface = get_page_service(get_page_repository())
 
     def post(self, request):
         data = json.loads(request.body)

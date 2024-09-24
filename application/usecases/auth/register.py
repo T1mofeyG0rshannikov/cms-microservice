@@ -1,5 +1,6 @@
 from typing import Any
 
+from application.common.url_parser import UrlParserInterface
 from domain.domains.domain import DomainInterface, SiteInterface
 from domain.domains.repository import DomainRepositoryInterface
 from domain.user.exceptions import (
@@ -8,6 +9,7 @@ from domain.user.exceptions import (
 )
 from domain.user.repository import UserRepositoryInterface
 from domain.user.user import UserInterface
+from infrastructure.auth.jwt_processor_interface import JwtProcessorInterface
 
 
 class Register:
@@ -15,8 +17,8 @@ class Register:
         self,
         user_repository: UserRepositoryInterface,
         domain_repository: DomainRepositoryInterface,
-        url_parser,
-        jwt_processor,
+        url_parser: UrlParserInterface,
+        jwt_processor: JwtProcessorInterface,
     ) -> None:
         self.user_repository = user_repository
         self.domain_repository = domain_repository

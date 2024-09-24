@@ -1,5 +1,6 @@
-function openLink(url){
-    window.open(url)
+function openLink(url, product_id, type="link"){
+    window.open(url);
+    fetch(`/site_statistics/opened-product-${type}?product_id=${product_id}`)
 }
 
 function displayPhotoOnload(element) {

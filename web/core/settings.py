@@ -87,6 +87,7 @@ MIDDLEWARE = [
     "web.user.middleware.JwtAuthMiddleware",
     "web.admin.middleware.AdminMiddleware",
     "web.site_tests.middleware.ExceptionLoggingMiddleware",
+    "web.site_statistics.middleware.UserActivityMiddleware",
 ]
 
 ROOT_URLCONF = "web.core.urls"
@@ -239,4 +240,17 @@ CKEDITOR_CONFIGS = {
 APPEND_SLASH = True
 
 SYSTEM_EMAIL_HOST_USER = "system@bmdom.ru"
-CSRF_TRUSTED_ORIGINS = ["https://bmdom.ru"]
+"""
+CSRF_TRUSTED_ORIGINS = ["https://bmdom.ru", "https://bankomag.ru", "https://idri.ru"]
+
+
+CORS_ALLOWED_ORIGINS = ["https://bmdom.ru", "https://bankomag.ru", "https://idri.ru"]
+
+CORS_ORIGIN_WHITELIST = ["https://bmdom.ru", "https://bankomag.ru", "https://idri.ru"]
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_HEADERS = '*'
+"""
+# SESSION_COOKIE_AGE = 60 * 3
+
+USE_TZ = False

@@ -5,6 +5,7 @@ from django.db.models import Count, Q
 from domain.products.product import ProductInterface
 from domain.products.repository import ProductRepositoryInterface
 from domain.user.product import UserProductInterface
+from infrastructure.persistence.models.blocks.catalog_block import CatalogBlock
 from infrastructure.persistence.models.user.product import UserOffer, UserProduct
 from web.catalog.models.product_type import ProductType
 from web.catalog.models.products import Offer, Organization, Product
@@ -120,6 +121,10 @@ class ProductRepository(ProductRepositoryInterface):
         return Offer.objects.filter(
             status="Опубликовано", product__status="Опубликовано", types__type__status="Опубликовано"
         )
+
+    def get_product_name_from_catalog(self, product_type_slug: str, product_index: int):
+        catalog_id = CatalogBlock.objects.get(product_type__slug=product_type_slug)
+        return self.get_catalog_offers(catalog_id)[product_index].product.name
 
 
 def get_product_repository() -> ProductRepositoryInterface:

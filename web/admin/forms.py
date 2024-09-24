@@ -33,6 +33,12 @@ def check_code(email: str, code: int) -> bool:
     return repository.code_exists(email, code)
 
 
+def delete_login_code(email: str) -> None:
+    repository = get_system_repository()
+
+    repository.delete_user_code(email)
+
+
 class CustomAuthenticationAdminForm(AuthenticationForm):
     error_messages = {
         "invalid_login": _("Пожалуйста введите корректные %(username)s и пароль. Оба поля чувствительны к регистру."),
@@ -84,7 +90,7 @@ class CustomAuthenticationAdminForm(AuthenticationForm):
     def clean(self):
         username = self.cleaned_data.get("username")
         password = self.cleaned_data.get("password")
-        code = self.cleaned_data.get("code")
+        code = int(self.cleaned_data.get("code"))
 
         try:
             user = self.get_admin_user_interactor(username, password)
@@ -105,6 +111,7 @@ class CustomAuthenticationAdminForm(AuthenticationForm):
         request = self.request
         request.user = user
         user = authenticate(request)
+        delete_login_code(username)
         self.logger.success(self.request, {"username": username})
         return
 

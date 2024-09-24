@@ -3,9 +3,15 @@ import json
 from django.http import HttpResponse, JsonResponse
 from django.views.generic import View
 
-from .models.colors.colors import ColorStyles
-from .models.other import IconSize, MarginBlock
-from .models.texts.texts import ExplanationText, HeaderText, MainText, SubheaderText
+from infrastructure.persistence.models.styles.colors.colors import ColorStyles
+from infrastructure.persistence.models.styles.other import IconSize, MarginBlock
+from infrastructure.persistence.models.styles.texts.texts import (
+    ExplanationText,
+    HeaderText,
+    MainText,
+    SubheaderText,
+)
+
 from .serializers import (
     ColorsSerializer,
     FontSerializer,

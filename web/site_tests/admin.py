@@ -1,7 +1,11 @@
 from django.contrib import admin
 
+from infrastructure.persistence.models.site_tests import (
+    EnableErrorLogging,
+    Error,
+    TestUserSet,
+)
 from infrastructure.persistence.models.user.user import User
-from web.site_tests.models import Error, TestUserSet
 
 
 class TestUserInline(admin.StackedInline):
@@ -21,3 +25,4 @@ class AdminError(admin.ModelAdmin):
 
 admin.site.register(TestUserSet, AdminTestUserSet)
 admin.site.register(Error, AdminError)
+admin.site.register(EnableErrorLogging)

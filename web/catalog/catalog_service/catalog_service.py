@@ -4,13 +4,14 @@ from domain.page_blocks.catalog_service import CatalogServiceInterface
 from domain.page_blocks.page_service_interface import PageServiceInterface
 from infrastructure.persistence.models.blocks.blocks import Cover
 from infrastructure.persistence.models.blocks.catalog_block import CatalogBlock
+from infrastructure.persistence.models.styles.styles.styles import CatalogCustomStyles
+from infrastructure.persistence.repositories.page_repository import get_page_repository
 from web.blocks.pages_service.pages_service import get_page_service
 from web.blocks.serializers import PageSerializer
 from web.catalog.models.blocks import CatalogPageTemplate
 from web.catalog.models.product_type import ProductType
 from web.catalog.serializers import CatalogBlockSerializer
 from web.common.models import BlockRelationship
-from web.styles.models.styles.styles import CatalogCustomStyles
 from web.styles.serializers import CustomStylesSerializer
 
 
@@ -78,4 +79,4 @@ class CatalogService(CatalogServiceInterface):
 
 
 def get_catalog_service() -> CatalogServiceInterface:
-    return CatalogService(get_page_service())
+    return CatalogService(get_page_service(get_page_repository()))

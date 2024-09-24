@@ -1,32 +1,28 @@
-import os
-
 from django.db.models import Q
 from django.http import HttpResponseNotFound, HttpResponseRedirect
-from dotenv import load_dotenv
 
+from application.common.url_parser import UrlParserInterface
 from application.services.domains.service import get_domain_service
 from application.services.domains.url_parser import get_url_parser
 from domain.domains.service import DomainServiceInterface
+from infrastructure.admin.admin_settings import get_admin_settings
 from infrastructure.persistence.models.user.site import Site
 from web.domens.views.views import PartnerIndexPage
 from web.settings.models import Domain, SiteSettings
 from web.settings.views import SettingsMixin
 from web.template.views.base_page_not_found import BaseNotFoundPage
 
-load_dotenv()
-
 
 class SubdomainMixin(SettingsMixin):
     domain_service: DomainServiceInterface = get_domain_service()
-    url_parser = get_url_parser()
-    admin_site_domain = os.getenv("ADMIN_DOMAIN")
-    admin_site_url = "/" + os.getenv("ADMIN_URL") + "/"
+    url_parser: UrlParserInterface = get_url_parser()
+    admin_settings = get_admin_settings()
 
     def dispatch(self, request, *args, **kwargs):
         subdomain = self.url_parser.get_subdomain_from_host(request.get_host())
         domain = self.url_parser.get_domain_from_host(request.get_host())
 
-        if self.admin_site_domain in request.get_host():
+        if self.admin_settings.admin_domain in request.get_host():
             if not request.path.startswith(self.admin_site_url):
                 return HttpResponseNotFound()
 
