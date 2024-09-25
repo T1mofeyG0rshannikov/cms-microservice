@@ -8,10 +8,10 @@ class Migration(migrations.Migration):
         ("site_statistics", "0003_useractivity"),
     ]
 
-    operations = [
+    """operations = [
         migrations.AddField(
             model_name="useractivity",
             name="unique_key",
             field=models.CharField(max_length=1000, null=True, unique=True),
         ),
-    ]
+    ]"""

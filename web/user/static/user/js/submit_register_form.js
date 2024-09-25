@@ -1,8 +1,9 @@
-function submitRegisterForm(element, event, domain, ancor=null){
+function submitRegisterForm(element, event, domain, ancor=null, is_popup=false){
     event.preventDefault();
 
     const data = new FormData(element);
     data.append("ancor", ancor);
+    data.append("is_popup", is_popup);
 
     fetch(`/user/register`, {
         method: "post",

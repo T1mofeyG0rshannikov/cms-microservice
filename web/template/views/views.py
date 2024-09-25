@@ -1,10 +1,20 @@
-from django.http import JsonResponse
+from django.http import HttpRequest, JsonResponse
 from django.shortcuts import render
 from django.views import View
 
+from application.common.url_parser import UrlParserInterface
+from application.services.domains.url_parser import get_url_parser
+from domain.products.repository import ProductRepositoryInterface
 from domain.user.exceptions import InvalidReferalLevel, InvalidSortedByField
+from domain.user_sessions.repository import UserSessionRepositoryInterface
 from infrastructure.persistence.models.blocks.catalog_block import CatalogBlock
 from infrastructure.persistence.models.blocks.common import Page
+from infrastructure.persistence.repositories.product_repository import (
+    get_product_repository,
+)
+from infrastructure.persistence.repositories.user_session_repository import (
+    get_user_session_repository,
+)
 from web.account.views.templates import Profile
 from web.blocks.views import ShowPage
 from web.catalog.views import ShowCatalogPage
@@ -46,12 +56,33 @@ class BaseTemplateLoadView(View):
 
 
 class GetChangeUserFormTemplate(BaseTemplateLoadView):
-    def get_content(self, request):
+    url_parser: UrlParserInterface = get_url_parser()
+    user_session_repository = get_user_session_repository()
+
+    def get_content(self, request: HttpRequest):
+        adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
+
+        self.user_session_repository.create_user_action(
+            adress=adress,
+            text=f"""Открыл данные профиля""",
+            session_unique_key=request.session["user_activity"]["unique_key"],
+        )
         return self.template_loader.load_change_user_form(request)
 
 
 class GetChangeSiteFormTemplate(BaseTemplateLoadView):
-    def get_content(self, request):
+    url_parser: UrlParserInterface = get_url_parser()
+    user_session_repository = get_user_session_repository()
+
+    def get_content(self, request: HttpRequest):
+        adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
+
+        self.user_session_repository.create_user_action(
+            adress=adress,
+            text="Открыл настройку партнерского сайта",
+            session_unique_key=request.session["user_activity"]["unique_key"],
+        )
+
         return self.template_loader.load_change_site_form(request)
 
 
@@ -116,17 +147,43 @@ class UserProductsTemplate(View):
 
 
 class GetChoiceProductForm(BaseTemplateLoadView):
+    url_parser: UrlParserInterface = get_url_parser()
+    user_session_repository = get_user_session_repository()
+
     def get_content(self, request):
+        adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
+        self.user_session_repository.create_user_action(
+            adress=adress,
+            text="Открыл список продуктов",
+            session_unique_key=request.session["user_activity"]["unique_key"],
+        )
+
         return self.template_loader.load_choice_product_form(request)
 
 
 class GetCreateUserProductForm(BaseTemplateLoadView):
-    def get_content(self, request):
+    def get_content(self, request: HttpRequest):
         return self.template_loader.load_create_user_product_form(request)
 
 
 class GetProductDescriptionPopup(BaseTemplateLoadView):
-    def get_content(self, request):
+    url_parser: UrlParserInterface = get_url_parser()
+    user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
+    product_repository: ProductRepositoryInterface = get_product_repository()
+
+    def get_content(self, request: HttpRequest):
+        adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
+
+        product = int(request.GET.get("product"))
+
+        product_name = self.product_repository.get_product_by_id(product)
+
+        self.user_session_repository.create_user_action(
+            adress=adress,
+            text=f'''Открыл описание продукта "{product_name}"''',
+            session_unique_key=request.session["user_activity"]["unique_key"],
+        )
+
         return self.template_loader.load_product_description_popup(request)
 
 

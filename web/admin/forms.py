@@ -47,6 +47,9 @@ class CustomAuthenticationAdminForm(AuthenticationForm):
 
     validator: UserValidatorInterface = get_user_validator()
 
+    logging: bool = False
+    code_submit: bool = False
+
     def __init__(self, request=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.request = request
@@ -97,14 +100,17 @@ class CustomAuthenticationAdminForm(AuthenticationForm):
 
         except (UserDoesNotExist, UserNotAdmin, IncorrectPassword) as e:
             print(e, "error")
-            self.logger.error(self.request, self.cleaned_data, str(e))
             self.add_error("username", str(e))
+            if self.logging:
+                self.logger.error(self.request, self.cleaned_data, str(e))
             return self.cleaned_data
 
         print(user, 4)
 
-        if not check_code(user.email, code):
-            self.logger.error(self.request, self.cleaned_data, "неправильный код")
+        if self.code_submit and not check_code(user.email, code):
+            if self.logging:
+                self.logger.error(self.request, self.cleaned_data, "неправильный код")
+
             self.add_error("code", "неправильный код")
             return self.cleaned_data
 
@@ -112,7 +118,7 @@ class CustomAuthenticationAdminForm(AuthenticationForm):
         request.user = user
         user = authenticate(request)
         delete_login_code(username)
-        self.logger.success(self.request, {"username": username})
-        return
+        if self.logging:
+            self.logger.success(self.request, {"username": username})
 
-        return super().clean()
+        return

@@ -28,7 +28,7 @@ class TryLoginToFakeAdminPanel(models.Model):
 
 
 class UserActivity(models.Model):
-    unique_key = models.CharField(unique=True, max_length=1000, null=True)
+    unique_key = models.CharField(unique=True, max_length=500, null=True)
     ip = models.CharField(max_length=15)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
@@ -39,6 +39,10 @@ class UserActivity(models.Model):
 
     def __str__(self):
         return f"""{self.start_time.strftime("%d.%m.%Y")} - {self.end_time.strftime("%d.%m.%Y")}"""
+
+    class Meta:
+        verbose_name = "Посетители"
+        verbose_name_plural = "Посетители"
 
 
 class GoToThePage(models.Model):

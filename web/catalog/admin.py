@@ -149,14 +149,6 @@ class ProductInline(BaseInline):
 
     admin_site_url = os.getenv("ADMIN_URL")
 
-    readonly_fields = [
-        "image_tag",
-        "name_tag",
-        "category",
-        "organization",
-        "created_at_tag",
-    ]
-
     fields = (
         "image_tag",
         "name_tag",
@@ -164,6 +156,8 @@ class ProductInline(BaseInline):
         "organization",
         "created_at_tag",
     )
+
+    readonly_fields = fields
 
     ordering = ["name"]
 

@@ -1,11 +1,11 @@
 {% load static %}
 
-<form onsubmit="submitRegisterForm(this, event, '{{ domain }}')" autocomplete="off" method="post" id="register-form" class="user-form">
+<form onsubmit="submitRegisterForm(this, event, '{{ domain }}', null, true)" autocomplete="off" method="post" id="register-form" class="user-form">
+    {% csrf_token %}
     <img class="logo" src="{{ settings.form_logo.image }}" />
 
     <h3>Регистрация</h3>
 
-    {% csrf_token %}
     {% for field in register_form %}
         <div class="field" id="{{ field.name }}">
             {{ field }}

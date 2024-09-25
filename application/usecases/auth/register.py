@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import Any
 
 from application.common.url_parser import UrlParserInterface
@@ -10,6 +11,11 @@ from domain.user.exceptions import (
 from domain.user.repository import UserRepositoryInterface
 from domain.user.user import UserInterface
 from infrastructure.auth.jwt_processor_interface import JwtProcessorInterface
+
+
+@dataclass
+class TokenToSetPasswordResponse:
+    token_to_set_password: str
 
 
 class Register:
@@ -31,7 +37,6 @@ class Register:
 
     def get_site_model(self, host):
         subdomain = self.url_parser.get_subdomain_from_host(host)
-        print(subdomain, self.domain_repository.get_site(subdomain))
         return self.domain_repository.get_site(subdomain)
 
     def get_user_from_site(self, site: SiteInterface, domain: DomainInterface) -> UserInterface:
@@ -43,7 +48,7 @@ class Register:
 
         return None
 
-    def __call__(self, fields: dict[str, Any], host: str):
+    def __call__(self, fields: dict[str, Any], host: str) -> TokenToSetPasswordResponse:
         phone = fields.get("phone")
         email = fields.get("email")
 
@@ -67,6 +72,6 @@ class Register:
         if user:
             token_to_set_password = self.jwt_processor.create_set_password_token(user.id)
 
-            return token_to_set_password
+            return TokenToSetPasswordResponse(token_to_set_password=token_to_set_password)
 
         return None

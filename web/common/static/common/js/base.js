@@ -50,7 +50,9 @@ function openForm(form){
 function closeFormPopup(popup){
     for (let input of popup.querySelectorAll("input")){
         if ($(input).attr("type") != "submit"){
-            input.value = "";
+            if ($(input).attr("name") != "csrfmiddlewaretoken"){
+                input.value = "";
+            }
         }
     }
 

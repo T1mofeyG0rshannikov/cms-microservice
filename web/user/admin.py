@@ -49,8 +49,8 @@ class SuperUserRoleInline(BaseInline):
     model = SuperUserRole
     form = UserRoleInlineForm
 
-    readonly_fields = ["user", "email", "phone"]
     fields = ["user", "email", "phone"]
+    readonly_fields = fields
 
     def email(self, user_role):
         return user_role.user.email
@@ -115,7 +115,7 @@ class IdeaScreenInline(BaseInline):
     image_tag.short_description = "Скрин"
 
     fields = ["image_tag"]
-    readonly_fields = ["image_tag"]
+    readonly_fields = fields
 
 
 load_dotenv()

@@ -91,6 +91,9 @@ class DomainRepository(DomainRepositoryInterface):
     def site_adress_exists(site_id: int, site_url: str) -> bool:
         return Site.objects.get(id=site_id).subdomain != site_url and Site.objects.filter(subdomain=site_url).exists()
 
+    def get_user_site(self, user_id: int) -> SiteInterface:
+        return Site.objects.filter(user_id=user_id).first()
+
 
 def get_domain_repository() -> DomainRepositoryInterface:
     return DomainRepository()

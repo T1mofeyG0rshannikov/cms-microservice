@@ -123,3 +123,8 @@ function validateForm(){
 
     button.disabled = false;
 }
+
+function openChangePasswordForm(){
+    openForm(changePasswordForm);
+    fetch("/site_statistics/opened-change-password-form")
+}

@@ -1,11 +1,14 @@
 from django.contrib.auth import authenticate, login
-from django.http import JsonResponse
+from django.http import HttpRequest, JsonResponse
 from django.shortcuts import render
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
 
+from application.common.url_parser import UrlParserInterface
+from application.services.domains.url_parser import get_url_parser
 from domain.user.exceptions import InvalidReferalLevel, InvalidSortedByField
 from infrastructure.persistence.models.materials import Document
+from infrastructure.persistence.repositories.user_session_repository import (
+    get_user_session_repository,
+)
 from web.account.forms import ChangePasswordForm
 from web.common.views import FormView
 from web.domens.views.mixins import SubdomainMixin
@@ -18,7 +21,11 @@ from web.template.profile_template_loader.context_processor.context_processor im
 from web.template.profile_template_loader.context_processor.context_processor_interface import (
     ProfileTemplateContextProcessorInterface,
 )
-from web.user.views.base_user_view import BaseUserView, MyLoginRequiredMixin
+from web.user.views.base_user_view import (
+    APIUserRequired,
+    BaseUserView,
+    MyLoginRequiredMixin,
+)
 
 
 class BaseProfileView(MyLoginRequiredMixin, SubdomainMixin):
@@ -68,12 +75,14 @@ class ManualsView(BaseProfileView):
         return self.template_context_processor.get_manuals_template_context(self.request)
 
 
-@method_decorator(csrf_exempt, name="dispatch")
-class ChangePasswordView(BaseUserView, FormView):
+class ChangePasswordView(BaseUserView, FormView, APIUserRequired):
     form_class = ChangePasswordForm
+    user_session_repository = get_user_session_repository()
+    url_parser: UrlParserInterface = get_url_parser()
 
-    def form_valid(self, request, form):
-        user = request.user_from_header
+    def form_valid(self, request: HttpRequest, form):
+        user = request.user
+        adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
 
         if not user.check_password(form.cleaned_data.get("current_password")):
             form.add_error("current_password", "Неверный пароль")
@@ -88,12 +97,14 @@ class ChangePasswordView(BaseUserView, FormView):
 
         user.set_password(password)
         user.save()
-
+        print(user)
         request.user = user
         user = authenticate(request)
         login(request, user)
 
         access_token = self.jwt_processor.create_access_token(user.username, user.id)
+
+        self.user_session_repository.create_user_action(adress=adress, text=f"""Изменил пароль""")
 
         return JsonResponse({"access_token": access_token}, status=200)
 

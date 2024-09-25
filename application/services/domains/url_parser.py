@@ -4,10 +4,8 @@ from application.common.url_parser import UrlParserInterface
 
 
 class UrlParser(UrlParserInterface):
-    @staticmethod
-    def get_subdomain_from_host(host: str) -> str:
-        host = host.replace("http://", "")
-        host = host.replace("https://", "")
+    def get_subdomain_from_host(self, host: str) -> str:
+        host = self.remove_protocol(host)
         host = host.replace("127.0.0.1", "localhost")
 
         if "localhost" in host:
@@ -22,8 +20,7 @@ class UrlParser(UrlParserInterface):
         return host.split(".")[0]
 
     def get_domain_from_host(self, host: str) -> str:
-        host = host.replace("http://", "")
-        host = host.replace("https://", "")
+        host = self.remove_protocol(host)
         host = host.replace("127.0.0.1", "localhost")
 
         if ":" in host:
@@ -38,6 +35,13 @@ class UrlParser(UrlParserInterface):
             domain = domain[1::]
 
         return domain
+
+    @staticmethod
+    def remove_protocol(path: str) -> str:
+        path = path.replace("https://", "")
+        path = path.replace("http://", "")
+
+        return path
 
 
 def get_url_parser() -> UrlParserInterface:
