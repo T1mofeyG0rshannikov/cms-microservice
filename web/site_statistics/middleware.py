@@ -5,8 +5,8 @@ from django.conf import settings
 from django.http import HttpRequest
 from django.utils.timezone import now
 
-from infrastructure.admin.admin_settings import get_admin_settings
 from infrastructure.get_ip import get_client_ip
+from infrastructure.logging.user_activity.config import get_user_active_settings
 from web.site_statistics.models import UserAction, UserActivity
 
 
@@ -16,6 +16,7 @@ class UserActivityDTO:
     ip: str
     start_time: datetime
     end_time: datetime
+    site: str
     banks_count: int = 0
     pages_count: int = 0
     popups_count: int = 0
@@ -24,28 +25,12 @@ class UserActivityDTO:
 
 class UserActivityMiddleware:
     session_key = "user_activity"
-    admin_settings = get_admin_settings()
+    settings = get_user_active_settings()
 
     def __init__(self, get_response):
         self.get_response = get_response
-        self.exclude_urls = [
-            settings.STATIC_URL,
-            settings.MEDIA_URL,
-            "/styles/",
-            self.admin_settings.admin_url,
-            "set-token",
-            "site_statistics",
-            "register",
-            "login",
-            "get-change-user-form",
-            "change-user",
-            "get-change-site-form",
-            "get-create-user-product-form",
-            "get-choice-product-form",
-            "get-product-description-popup",
-            "add-user-product",
-            "delete-user-product",
-        ]
+        self.exclude_urls = self.settings.exclude_urls
+        self.enabled_adresses = self.settings.enable_adresses
 
     def is_enable_url_to_log(self, path: str) -> bool:
         for url in self.exclude_urls:
@@ -55,15 +40,24 @@ class UserActivityMiddleware:
         return True
 
     def __call__(self, request: HttpRequest):
+        # del request.session[self.session_key]
+        # request.session.save()
+
         path = request.build_absolute_uri()
+
+        for enable_adress in self.enabled_adresses:
+            if enable_adress in path:
+                return self.get_response(request)
+
+        site = request.get_host()
 
         user = str(request.user)
 
         ip = get_client_ip(request)
-        unique_key = f"{now().isoformat()}-{ip}-{user}"
+        unique_key = f"{site}-{ip}"
 
         session_data = UserActivityDTO(
-            ip=ip, start_time=now().isoformat(), unique_key=unique_key, end_time=now().isoformat()
+            ip=ip, start_time=now().isoformat(), unique_key=unique_key, end_time=now().isoformat(), site=site
         ).__dict__
 
         print(session_data)
@@ -76,6 +70,13 @@ class UserActivityMiddleware:
             session_data = request.session[self.session_key]
             print(session_data)
 
+            session_db, _ = UserActivity.objects.get_or_create(
+                unique_key=request.session[self.session_key]["unique_key"], defaults=session_data
+            )
+
+            UserAction.objects.create(adress=page_adress, session=session_db, text="перешёл на страницу")
+            request.session[self.session_key]["pages_count"] += 1
+
             UserActivity.objects.update_or_create(unique_key=session_data["unique_key"], defaults=session_data)
 
             return self.get_response(request)
@@ -84,14 +85,12 @@ class UserActivityMiddleware:
         if not self.is_enable_url_to_log(path) or response.status_code != 200:
             return response
 
-        print(path)
         if "popup" in path:
             request.session[self.session_key]["popups_count"] += 1
 
         page_adress = request.get_host() + request.get_full_path()
 
-        print(request.session[self.session_key])
-
+        print(request.session[self.session_key], "SESSION")
         session_db, _ = UserActivity.objects.get_or_create(
             unique_key=request.session[self.session_key]["unique_key"], defaults=session_data
         )

@@ -29,7 +29,17 @@ class UserActionInline(BaseInline):
 class UserActivityAdmin(admin.ModelAdmin):
     inlines = [UserActionInline]
 
-    fields = ["ip", "start_time", "end_time", "banks_count", "pages_count", "popups_count", "auth"]
+    fields = [
+        "site",
+        "unique_key",
+        "ip",
+        "start_time",
+        "end_time",
+        "banks_count",
+        "pages_count",
+        "popups_count",
+        "auth",
+    ]
 
     readonly_fields = fields
 

@@ -29,7 +29,7 @@ const loginForm = document.getElementById("login-form");
 function openLoginForm(domain){
     const token = getToken();
 
-    fetch(`http://${domain}/user/get-user-info`, {
+    fetch(`https://${domain}/user/get-user-info`, {
         method: "get",
         headers: {
             'Accept': 'application/json',

@@ -36,6 +36,7 @@ class UserActivity(models.Model):
     pages_count = models.PositiveIntegerField(default=0)
     popups_count = models.PositiveIntegerField(default=0)
     auth = models.CharField(null=True, max_length=20)
+    site = models.CharField(max_length=50, null=True)
 
     def __str__(self):
         return f"""{self.start_time.strftime("%d.%m.%Y")} - {self.end_time.strftime("%d.%m.%Y")}"""

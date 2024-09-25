@@ -81,7 +81,7 @@ function submitSetPasswordForm(element, event, domain, token){
     event.preventDefault();
     const data = new FormData(element);
 
-    let url = `http://${domain}/user/password`;
+    let url = `https://${domain}/user/password`;
     if (token.length > 0){
         url += "/" + token;
     }
