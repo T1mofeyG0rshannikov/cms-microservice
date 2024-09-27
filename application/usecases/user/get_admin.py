@@ -12,8 +12,6 @@ class GetAdminUser:
         user1 = self.repository.get_user_by_email(username)
         user2 = self.repository.get_user_by_phone(username)
 
-        print(user1, 1)
-        print(user2, 2)
         if not user1 and not user2:
             raise UserDoesNotExist(UserErrors.incorrect_login.value)
 
@@ -25,7 +23,6 @@ class GetAdminUser:
         if not user.check_password(password):
             raise IncorrectPassword("Неверный пароль")
 
-        print(user, 3)
         if not user.is_superuser:
             raise UserNotAdmin("Недостаточно прав")
 

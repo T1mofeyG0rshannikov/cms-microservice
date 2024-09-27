@@ -17,7 +17,7 @@ class AdminMiddleware:
     def __call__(self, request):
         response = self.get_response(request)
 
-        if request.path.startswith(self.settings.admin_url):
+        if request.path.startswith("/" + self.settings.admin_url):
             if (
                 self.settings.admin_domain in request.get_host()
                 or "127.0.0.1" in request.get_host()

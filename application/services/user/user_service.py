@@ -13,8 +13,6 @@ class UserService(UserServiceInterface):
         user1 = self.repository.get_user_by_email(login)
         user2 = self.repository.get_user_by_phone(login)
 
-        print(user1, 1)
-        print(user2, 2)
         if not user1 and not user2:
             raise UserDoesNotExist(UserErrors.incorrect_login.value)
 

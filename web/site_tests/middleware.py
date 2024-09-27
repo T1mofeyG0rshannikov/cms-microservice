@@ -11,7 +11,6 @@ from infrastructure.email_services.work_email_service.email_service import (
 from infrastructure.email_services.work_email_service.template_generator.template_generator import (
     get_work_email_template_generator,
 )
-from infrastructure.get_ip import get_client_ip
 from infrastructure.logging.errors import ErrorLogger
 from infrastructure.persistence.models.site_tests import EnableErrorLogging
 from infrastructure.persistence.repositories.errors_repository import (
@@ -20,6 +19,7 @@ from infrastructure.persistence.repositories.errors_repository import (
 from infrastructure.persistence.repositories.system_repository import (
     get_system_repository,
 )
+from infrastructure.requests.get_ip import get_client_ip
 
 
 class ExceptionLoggingMiddleware(MiddlewareMixin):

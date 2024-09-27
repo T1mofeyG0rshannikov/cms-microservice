@@ -30,7 +30,7 @@ function loadProfileContent(templateName, url){
     history.pushState(null, '', url);
     activeMenuItem(url)
 
-    fetch(`/get-template-${templateName}`).then(response => response.json()).then(response => {
+    fetch(`/get-template-${templateName}?url=${url}`).then(response => response.json()).then(response => {
         const template = response.content;
         const content = document.querySelector(".account-main");
         content.innerHTML = template;

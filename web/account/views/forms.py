@@ -1,5 +1,6 @@
 import json
 
+from django.conf import settings
 from django.http import HttpRequest, HttpResponse, JsonResponse
 
 from application.common.url_parser import UrlParserInterface
@@ -29,6 +30,7 @@ from infrastructure.persistence.repositories.user_repository import get_user_rep
 from infrastructure.persistence.repositories.user_session_repository import (
     get_user_session_repository,
 )
+from infrastructure.sessions.add_session_action import IncrementSessionCount
 from web.account.forms import (
     AddUserProductForm,
     ChangeSiteForm,
@@ -46,6 +48,9 @@ class ChangeSiteView(FormView, APIUserRequired):
     change_site_interactor = ChangeSite(domain_repository)
     url_parser: UrlParserInterface = get_url_parser()
     user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
+    increment_session_profile_action = IncrementSessionCount(
+        get_user_session_repository(), settings.USER_ACTIVITY_SESSION_KEY, "profile_actions_count"
+    )
 
     def form_valid(self, request: HttpRequest, form):
         user = request.user
@@ -56,6 +61,8 @@ class ChangeSiteView(FormView, APIUserRequired):
             user_activity_text = f'''Изменил партнерский сайт "{site.subdomain}"'''
         else:
             user_activity_text = f'''Добавил партнерский сайт "{site.subdomain}"'''
+
+        self.increment_session_profile_action(request.session)
 
         self.user_session_repository.create_user_action(
             adress=adress, text=user_activity_text, session_unique_key=request.session["user_activity"]["unique_key"]
@@ -90,6 +97,9 @@ class ChangeUserView(FormView, APIUserRequired):
     change_user_interactor = ChangeUser(get_user_repository())
     url_parser: UrlParserInterface = get_url_parser()
     user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
+    increment_session_profile_action = IncrementSessionCount(
+        get_user_session_repository(), settings.USER_ACTIVITY_SESSION_KEY, "profile_actions_count"
+    )
 
     def form_valid(self, request: HttpRequest, form):
         adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
@@ -97,6 +107,7 @@ class ChangeUserView(FormView, APIUserRequired):
         try:
             email_changed = self.change_user_interactor(request.user, form.cleaned_data)
 
+            self.increment_session_profile_action(request.session)
             self.user_session_repository.create_user_action(
                 adress=adress,
                 text="Изменил данные профиля",
@@ -131,6 +142,9 @@ class AddUserProductView(FormView, APIUserRequired):
     product_repository: ProductRepositoryInterface = get_product_repository()
     url_parser: UrlParserInterface = get_url_parser()
     user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
+    increment_session_profile_action = IncrementSessionCount(
+        get_user_session_repository(), settings.USER_ACTIVITY_SESSION_KEY, "profile_actions_count"
+    )
 
     def form_valid(self, request: HttpRequest, form):
         user = request.user
@@ -152,6 +166,7 @@ class AddUserProductView(FormView, APIUserRequired):
         else:
             user_activity_text = f'''Добавил продукт "{product_name}"'''
 
+        self.increment_session_profile_action(request.session)
         self.user_session_repository.create_user_action(
             adress=adress, text=user_activity_text, session_unique_key=request.session["user_activity"]["unique_key"]
         )

@@ -1,6 +1,7 @@
 import os
 
 from django import forms
+from django.conf import settings
 from django.contrib import admin
 from django.utils.html import mark_safe
 from dotenv import load_dotenv
@@ -141,13 +142,13 @@ class IdeaAdmin(admin.ModelAdmin):
 
     def status_img(self, idea):
         if idea.category == "errors":
-            src = "/static/account/images/bugs/icobug_error.png"
+            src = f"{settings.STATIC_URL}account/images/bugs/icobug_error.png"
         elif idea.category == "correction":
-            src = "/static/account/images/bugs/icobug_fix.png"
+            src = f"{settings.STATIC_URL}account/images/bugs/icobug_fix.png"
         elif idea.category == "modernization":
-            src = "/static/account/images/bugs/icobug_addon.png"
+            src = f"{settings.STATIC_URL}account/images/bugs/icobug_addon.png"
         elif idea.category == "new_feature":
-            src = "/static/account/images/bugs/icobug_idea.png"
+            src = f"{settings.STATIC_URL}account/images/bugs/icobug_idea.png"
 
         return mark_safe(f'<img width="15" src="{src}" />')
 

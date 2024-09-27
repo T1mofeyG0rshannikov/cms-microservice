@@ -7,7 +7,7 @@ from domain.logging.admin import AdminLogRepositoryInterface
 from infrastructure.email_services.work_email_service.email_service_interface import (
     WorkEmailServiceInterface,
 )
-from infrastructure.get_ip import get_client_ip
+from infrastructure.requests.get_ip import get_client_ip
 
 
 class AdminLoginLogger:

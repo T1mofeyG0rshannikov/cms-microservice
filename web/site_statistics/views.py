@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.http import HttpRequest, HttpResponse
 from django.views.generic import View
 
@@ -11,71 +12,85 @@ from infrastructure.persistence.repositories.product_repository import (
 from infrastructure.persistence.repositories.user_session_repository import (
     get_user_session_repository,
 )
-from web.site_statistics.models import UserAction, UserActivity
+from infrastructure.sessions.add_session_action import IncrementSessionCount
 
 
 class OpenedProductPopupView(View):
-    repository = get_product_repository()
+    roduct_repository: ProductRepositoryInterface = get_product_repository()
+    url_parser: UrlParserInterface = get_url_parser()
+    user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
+    increment_session_profile_action = IncrementSessionCount(
+        get_user_session_repository(), settings.USER_ACTIVITY_SESSION_KEY, "profile_actions_count"
+    )
 
-    def get(self, request: HttpRequest):
+    def get(self, request: HttpRequest) -> HttpResponse:
         product = int(request.GET.get("product_id")) - 1
 
-        adress = request.META.get("HTTP_REFERER")
-        adress = adress.replace("https://", "")
-        adress = adress.replace("http://", "")
+        adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
 
         product_name = self.repository.get_product_name_from_catalog(
             product_type_slug=adress.split("/")[1], product_index=product
         )
 
-        UserAction.objects.create(
+        self.increment_session_profile_action()
+        self.user_session_repository.create_user_action(
             adress=adress,
             text=f'''Открыл описание "{product_name}"''',
-            session=UserActivity.objects.get(unique_key=request.session["user_activity"]["unique_key"]),
+            session=request.session[settings.USER_ACTIVITY_SESSION_KEY]["unique_key"],
         )
 
         return HttpResponse(status=201)
 
 
 class OpenedProductLinkView(View):
-    repository = get_product_repository()
+    product_repository: ProductRepositoryInterface = get_product_repository()
+    url_parser: UrlParserInterface = get_url_parser()
+    user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
+    increment_banks_count = IncrementSessionCount(
+        get_user_session_repository(), settings.USER_ACTIVITY_SESSION_KEY, "banks_count"
+    )
 
     def get(self, request: HttpRequest):
         product = int(request.GET.get("product_id")) - 1
 
-        adress = request.META.get("HTTP_REFERER")
-        adress = adress.replace("https://", "")
-        adress = adress.replace("http://", "")
+        adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
 
-        product_name = self.repository.get_product_name_from_catalog(
+        product_name = self.product_repository.get_product_name_from_catalog(
             product_type_slug=adress.split("/")[1], product_index=product
         )
 
-        UserAction.objects.create(
+        self.increment_banks_count(request.session)
+
+        self.user_session_repository.create_user_action(
             adress=adress,
             text=f'''Перешел по ссылке "{product_name}"''',
-            session=UserActivity.objects.get(unique_key=request.session["user_activity"]["unique_key"]),
+            session_unique_key=request.session[settings.USER_ACTIVITY_SESSION_KEY]["unique_key"],
         )
 
         return HttpResponse(status=201)
 
 
 class OpenedProductPromoView(View):
-    repository = get_product_repository()
+    url_parser: UrlParserInterface = get_url_parser()
+    user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
+    product_repository: ProductRepositoryInterface = get_product_repository()
+    increment_banks_count = IncrementSessionCount(
+        get_user_session_repository(), settings.USER_ACTIVITY_SESSION_KEY, "banks_count"
+    )
 
-    def get(self, request: HttpRequest):
+    def get(self, request: HttpRequest) -> HttpResponse:
         product = int(request.GET.get("product_id")) - 1
 
-        adress = request.META.get("HTTP_REFERER")
-        adress = adress.replace("https://", "")
-        adress = adress.replace("http://", "")
+        adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
 
-        product_name = self.repository.get_offers()[product]
+        product_name = self.product_repository.get_offers()[product]
 
-        UserAction.objects.create(
+        self.increment_banks_count(request.session)
+
+        self.user_session_repository.create_user_action(
             adress=adress,
             text=f'''Перешел по баннеру "{product_name}"''',
-            session=UserActivity.objects.get(unique_key=request.session["user_activity"]["unique_key"]),
+            session_unique_key=request.session[settings.USER_ACTIVITY_SESSION_KEY]["unique_key"],
         )
 
         return HttpResponse(status=201)
@@ -84,14 +99,18 @@ class OpenedProductPromoView(View):
 class OpenedChangePasswordFormView(View):
     url_parser: UrlParserInterface = get_url_parser()
     user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
+    increment_session_profile_action = IncrementSessionCount(
+        get_user_session_repository(), settings.USER_ACTIVITY_SESSION_KEY, "profile_actions_count"
+    )
 
-    def get(self, request: HttpRequest):
+    def get(self, request: HttpRequest) -> HttpResponse:
         adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
 
+        self.increment_session_profile_action(request.session)
         self.user_session_repository.create_user_action(
             adress=adress,
             text=f"""Открыл изменение пароля""",
-            session_unique_key=request.session["user_activity"]["unique_key"],
+            session_unique_key=request.session[settings.USER_ACTIVITY_SESSION_KEY]["unique_key"],
         )
 
         return HttpResponse(status=201)
@@ -101,16 +120,31 @@ class OpenedUpdateProductFormView(View):
     url_parser: UrlParserInterface = get_url_parser()
     user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
     product_repository: ProductRepositoryInterface = get_product_repository()
+    increment_session_profile_action = IncrementSessionCount(
+        get_user_session_repository(), settings.USER_ACTIVITY_SESSION_KEY, "profile_actions_count"
+    )
 
-    def get(self, request: HttpRequest):
+    def get(self, request: HttpRequest) -> HttpResponse:
         adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
 
         product_name = self.product_repository.get_product_by_id(int(request.GET.get("product"))).name
 
+        self.increment_session_profile_action(request.session)
         self.user_session_repository.create_user_action(
             adress=adress,
             text=f'''Открыл настройку продукта "{product_name}"''',
-            session_unique_key=request.session["user_activity"]["unique_key"],
+            session_unique_key=request.session[settings.USER_ACTIVITY_SESSION_KEY]["unique_key"],
         )
 
         return HttpResponse(status=201)
+
+
+class IncrementBanksCountView(View):
+    increment_banks_count = IncrementSessionCount(
+        get_user_session_repository(), settings.USER_ACTIVITY_SESSION_KEY, "banks_count"
+    )
+
+    def get(self, request: HttpRequest) -> HttpResponse:
+        self.increment_banks_count(request.session)
+
+        return HttpResponse(status=200)

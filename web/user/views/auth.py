@@ -1,9 +1,9 @@
+from django.conf import settings
 from django.contrib.auth import logout
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.views.generic import View
 
-from application.common.url_parser import UrlParserInterface
 from application.services.domains.url_parser import get_url_parser
 from application.texts.errors import UserErrors
 from application.usecases.auth.login import Login
@@ -18,9 +18,6 @@ from infrastructure.persistence.repositories.domain_repository import (
     get_domain_repository,
 )
 from infrastructure.persistence.repositories.user_repository import get_user_repository
-from infrastructure.persistence.repositories.user_session_repository import (
-    get_user_session_repository,
-)
 from infrastructure.user.validator import get_user_validator
 from web.common.views import FormView
 from web.user.forms import LoginForm, RegistrationForm, ResetPasswordForm
@@ -30,8 +27,6 @@ from web.user.views.base_user_view import BaseUserView
 class RegisterUser(BaseUserView, FormView):
     template_name = "user/register.html"
     form_class = RegistrationForm
-    url_parser: UrlParserInterface = get_url_parser()
-    user_session_repository = get_user_session_repository()
 
     register_interactor = Register(
         get_user_repository(), get_domain_repository(), get_url_parser(), get_jwt_processor()
@@ -46,17 +41,7 @@ class RegisterUser(BaseUserView, FormView):
     def form_valid(self, request: HttpRequest, form):
         adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
         ancor = request.POST.get("ancor")
-        is_popup = request.POST.get("is_popup", "false")
-        if is_popup == "true":
-            is_popup = True
-        elif is_popup == "false":
-            is_popup = False
-        else:
-            is_popup = None
-
-        print(is_popup)
-
-        user_activity_text = None
+        is_popup = request.POST.get("is_popup", "false") != "false"
 
         try:
             token_to_set_password = self.register_interactor(
@@ -65,15 +50,16 @@ class RegisterUser(BaseUserView, FormView):
         except UserWithPhoneAlreadyExists:
             form.add_error("phone", UserErrors.username_with_phone_alredy_exists.value)
 
-            if not is_popup:
-                user_activity_text = f'''Ошибка регистрации в форме "{ancor}"'''
-            else:
-                user_activity_text = f"""Ошибка регистрации в попапе "{form.cleaned_data.get("username")}", "{form.cleaned_data.get("email")}", "{form.cleaned_data.get("phone")}"""
+            user_activity_text = (
+                f'''Ошибка регистрации в форме "{ancor}"'''
+                if not is_popup
+                else f"""Ошибка регистрации в попапе "{form.cleaned_data.get("username")}", "{form.cleaned_data.get("email")}", "{form.cleaned_data.get("phone")}"""
+            )
 
             self.user_session_repository.create_user_action(
                 adress=adress,
                 text=user_activity_text,
-                session_unique_key=request.session["user_activity"]["unique_key"],
+                session_unique_key=request.session[settings.USER_ACTIVITY_SESSION_KEY]["unique_key"],
             )
 
             return JsonResponse({"errors": form.errors}, status=400)
@@ -81,29 +67,33 @@ class RegisterUser(BaseUserView, FormView):
         except UserWithEmailAlreadyExists:
             form.add_error("email", UserErrors.username_with_email_alredy_exists.value)
 
-            if not is_popup:
-                user_activity_text = f'''Ошибка регистрации в форме "{ancor}"'''
-            else:
-                user_activity_text = f"""Ошибка регистрации в попапе "{form.cleaned_data.get("username")}", "{form.cleaned_data.get("email")}", "{form.cleaned_data.get("phone")}"""
+            user_activity_text = (
+                f'''Ошибка регистрации в форме "{ancor}"'''
+                if not is_popup
+                else f"""Ошибка регистрации в попапе "{form.cleaned_data.get("username")}", "{form.cleaned_data.get("email")}", "{form.cleaned_data.get("phone")}"""
+            )
 
             self.user_session_repository.create_user_action(
                 adress=adress,
                 text=user_activity_text,
-                session_unique_key=request.session["user_activity"]["unique_key"],
+                session_unique_key=request.session[settings.USER_ACTIVITY_SESSION_KEY]["unique_key"],
             )
 
             return JsonResponse({"errors": form.errors}, status=400)
 
         if token_to_set_password:
-            if not is_popup:
-                user_activity_text = f'''Регистрация в форме "{ancor}"'''
-            else:
-                user_activity_text = f'''Регистрация в попапе "{form.cleaned_data.get("username")}", "{form.cleaned_data.get("email")}", "{form.cleaned_data.get("phone")}"'''
+            self.session_setter(request.session, "auth", "register")
+
+            user_activity_text = (
+                f'''Регистрация в форме "{ancor}"'''
+                if not is_popup
+                else f'''Регистрация в попапе "{form.cleaned_data.get("username")}", "{form.cleaned_data.get("email")}", "{form.cleaned_data.get("phone")}"'''
+            )
 
             self.user_session_repository.create_user_action(
                 adress=adress,
                 text=user_activity_text,
-                session_unique_key=request.session["user_activity"]["unique_key"],
+                session_unique_key=request.session[settings.USER_ACTIVITY_SESSION_KEY]["unique_key"],
             )
 
             return JsonResponse({"token_to_set_password": token_to_set_password})
@@ -115,8 +105,6 @@ class LoginView(BaseUserView, FormView):
     template_name = "user/login.html"
     form_class = LoginForm
     login_interactor = Login(get_user_repository(), get_user_validator(), get_jwt_processor())
-    user_session_repository = get_user_session_repository()
-    url_parser: UrlParserInterface = get_url_parser()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -136,7 +124,7 @@ class LoginView(BaseUserView, FormView):
             self.user_session_repository.create_user_action(
                 adress=adress,
                 text=f'''Вход в ЛК "{form.cleaned_data.get("phone_or_email")}"''',
-                session_unique_key=request.session["user_activity"]["unique_key"],
+                session_unique_key=request.session[settings.USER_ACTIVITY_SESSION_KEY]["unique_key"],
             )
 
             return JsonResponse({"acess_token": access_token})
@@ -146,7 +134,7 @@ class LoginView(BaseUserView, FormView):
             self.user_session_repository.create_user_action(
                 adress=adress,
                 text=f'''Ошибка входа в ЛК "{form.cleaned_data.get("phone_or_email")}"''',
-                session_unique_key=request.session["user_activity"]["unique_key"],
+                session_unique_key=request.session[settings.USER_ACTIVITY_SESSION_KEY]["unique_key"],
             )
 
             return JsonResponse({"errors": form.errors}, status=400)

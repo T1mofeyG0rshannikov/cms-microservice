@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "web.materials",
     "web.system",
+    "django_user_agents",
 ]
 
 
@@ -87,6 +88,7 @@ MIDDLEWARE = [
     "web.user.middleware.JwtAuthMiddleware",
     "web.admin.middleware.AdminMiddleware",
     "web.site_tests.middleware.ExceptionLoggingMiddleware",
+    "django_user_agents.middleware.UserAgentMiddleware",
     "web.site_statistics.middleware.UserActivityMiddleware",
 ]
 
@@ -118,6 +120,9 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR.parent.parent / "db.sqlite3",
+        "OPTIONS": {
+            "timeout": 100,
+        },
     }
 }
 
@@ -272,3 +277,5 @@ CORS_ALLOW_HEADERS = "*"
 # SESSION_COOKIE_AGE = 60 * 3
 
 USE_TZ = False
+
+USER_ACTIVITY_SESSION_KEY = os.getenv("USER_ACTIVITY_SESSION_KEY")

@@ -12,7 +12,7 @@
         </div>
 
         {% if product.organization__partner_program %}
-        <a style="text-align: left; display: block; margin-bottom: 0; margin-top: 0;" href="{{ product.organization__partner_program }}" target="_blank">Полные условия программы</a>
+        <a onclick="incrementBanksCount()" style="text-align: left; display: block; margin-bottom: 0; margin-top: 0;" href="{{ product.organization__partner_program }}" target="_blank">Полные условия программы</a>
         {% endif %}
     </div>
 </div>

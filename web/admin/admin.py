@@ -13,6 +13,8 @@ class MyAdminSite(AdminSite):
     def get_app_list(self, request, app_label=None):
         app_order = [
             "user",
+            "site_statistics",
+            "system",
             "catalog",
             "materials",
             "blocks",
@@ -23,7 +25,6 @@ class MyAdminSite(AdminSite):
             "common",
             "styles",
             "site_tests",
-            "site_statistics",
         ]
         app_order_dict = dict(zip(app_order, range(len(app_order))))
         app_list = list(self._build_app_dict(request).values())

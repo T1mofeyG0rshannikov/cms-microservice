@@ -326,3 +326,7 @@ function deleteProduct(productId){
         }
     })
 }
+
+function incrementBanksCount(){
+    fetch(`/site_statistics/increment-banks-count`)
+}

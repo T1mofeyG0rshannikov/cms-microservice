@@ -22,6 +22,7 @@ class IndexPage(SubdomainMixin):
     page_repository: PageRepositoryInterface = get_page_repository()
 
     def get(self, *args, **kwargs):
+        print(self.request.get_port())
         partner_domain = self.domain_service.get_partners_domain_string()
 
         if self.request.domain == partner_domain and SiteSettings.objects.first().disable_partners_sites:

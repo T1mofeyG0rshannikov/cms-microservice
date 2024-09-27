@@ -1,12 +1,20 @@
+from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import View
 
+from application.common.url_parser import UrlParserInterface
 from application.services.domains.service import get_domain_service
+from application.services.domains.url_parser import get_url_parser
 from domain.domains.service import DomainServiceInterface
+from domain.user_sessions.repository import UserSessionRepositoryInterface
 from infrastructure.auth.jwt_processor import get_jwt_processor
 from infrastructure.auth.jwt_processor_interface import JwtProcessorInterface
+from infrastructure.persistence.repositories.user_session_repository import (
+    get_user_session_repository,
+)
+from infrastructure.sessions.set_session_field import SetSessionField
 from web.domens.views.mixins import SubdomainMixin
 from web.user.forms import LoginForm, RegistrationForm, ResetPasswordForm
 
@@ -15,6 +23,9 @@ class BaseUserView(SubdomainMixin):
     jwt_processor: JwtProcessorInterface = get_jwt_processor()
     login_url = "/user/login"
     account_url = "/my/"
+    url_parser: UrlParserInterface = get_url_parser()
+    user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
+    session_setter = SetSessionField(user_session_repository, settings.USER_ACTIVITY_SESSION_KEY)
 
     def login(self, user) -> None:
         self.request.user = user

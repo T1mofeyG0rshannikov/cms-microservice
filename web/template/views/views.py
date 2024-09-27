@@ -1,3 +1,6 @@
+from typing import Any
+
+from django.conf import settings
 from django.http import HttpRequest, JsonResponse
 from django.shortcuts import render
 from django.views import View
@@ -5,7 +8,6 @@ from django.views import View
 from application.common.url_parser import UrlParserInterface
 from application.services.domains.url_parser import get_url_parser
 from domain.products.repository import ProductRepositoryInterface
-from domain.user.exceptions import InvalidReferalLevel, InvalidSortedByField
 from domain.user_sessions.repository import UserSessionRepositoryInterface
 from infrastructure.persistence.models.blocks.catalog_block import CatalogBlock
 from infrastructure.persistence.models.blocks.common import Page
@@ -15,6 +17,7 @@ from infrastructure.persistence.repositories.product_repository import (
 from infrastructure.persistence.repositories.user_session_repository import (
     get_user_session_repository,
 )
+from infrastructure.sessions.add_session_action import IncrementSessionCount
 from web.account.views.templates import Profile
 from web.blocks.views import ShowPage
 from web.catalog.views import ShowCatalogPage
@@ -50,18 +53,25 @@ def slug_router(request, slug):
 class BaseTemplateLoadView(View):
     template_loader: TemplateLoaderInterface = get_template_loader(get_template_context_processor())
 
-    def get(self, request):
+    def get(self, request: HttpRequest):
         template = self.get_content(request)
         return JsonResponse({"content": template})
+
+    def get_context(request: HttpRequest) -> dict[Any, Any]:
+        raise NotImplementedError()
 
 
 class GetChangeUserFormTemplate(BaseTemplateLoadView):
     url_parser: UrlParserInterface = get_url_parser()
     user_session_repository = get_user_session_repository()
+    increment_session_profile_action = IncrementSessionCount(
+        get_user_session_repository(), settings.USER_ACTIVITY_SESSION_KEY, "profile_actions_count"
+    )
 
     def get_content(self, request: HttpRequest):
         adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
 
+        self.increment_session_profile_action(request.session)
         self.user_session_repository.create_user_action(
             adress=adress,
             text=f"""Открыл данные профиля""",
@@ -72,11 +82,15 @@ class GetChangeUserFormTemplate(BaseTemplateLoadView):
 
 class GetChangeSiteFormTemplate(BaseTemplateLoadView):
     url_parser: UrlParserInterface = get_url_parser()
-    user_session_repository = get_user_session_repository()
+    user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
+    increment_session_profile_action = IncrementSessionCount(
+        get_user_session_repository(), settings.USER_ACTIVITY_SESSION_KEY, "profile_actions_count"
+    )
 
     def get_content(self, request: HttpRequest):
         adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
 
+        self.increment_session_profile_action(request.session)
         self.user_session_repository.create_user_action(
             adress=adress,
             text="Открыл настройку партнерского сайта",
@@ -98,52 +112,59 @@ class PageNotFound(SubdomainMixin):
         return render(request, self.template_name, self.get_context_data(), status=404)
 
 
-class ProfileTemplate(View):
+class BaseProfileTemplateView(View):
+    url_parser: UrlParserInterface = get_url_parser()
+    user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
     template_loader: ProfileTemplateLoaderInterface = get_profile_template_loader()
 
-    def get(self, request):
-        return JsonResponse(self.template_loader.load_profile_template(request))
-
-
-class RefsTemplate(View):
-    template_loader: ProfileTemplateLoaderInterface = get_profile_template_loader()
-
-    def get(self, request):
+    def get(self, request: HttpRequest):
         try:
-            return JsonResponse(self.template_loader.load_refs_template(request))
-        except (InvalidSortedByField, InvalidReferalLevel) as e:
+            template = self.get_template(request)
+        except Exception as e:
             return JsonResponse({"error": str(e)}, status=400)
 
+        adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
+        print(request.session[settings.USER_ACTIVITY_SESSION_KEY])
+        self.user_session_repository.create_user_action(
+            adress=adress,
+            text="Перешёл на страницу",
+            session_unique_key=request.session[settings.USER_ACTIVITY_SESSION_KEY]["unique_key"],
+        )
 
-class IdeasTemplate(View):
-    template_loader: ProfileTemplateLoaderInterface = get_profile_template_loader()
+        return JsonResponse(template)
 
-    def get(self, request):
-        try:
-            return JsonResponse(self.template_loader.load_ideas_template(request))
-        except (InvalidSortedByField, InvalidReferalLevel) as e:
-            return JsonResponse({"error": str(e)}, status=400)
-
-
-class ManualsTemplate(View):
-    template_loader: ProfileTemplateLoaderInterface = get_profile_template_loader()
-
-    def get(self, request):
-        return JsonResponse(self.template_loader.load_manuals_template(request))
+    def get_template(self, request: HttpRequest):
+        raise NotImplementedError
 
 
-class SiteTemplate(View):
-    template_loader: ProfileTemplateLoaderInterface = get_profile_template_loader()
-
-    def get(self, request):
-        return JsonResponse(self.template_loader.load_site_template(request))
+class ProfileTemplate(BaseProfileTemplateView):
+    def get_template(self, request: HttpRequest) -> str:
+        return self.template_loader.load_profile_template(request)
 
 
-class UserProductsTemplate(View):
-    template_loader: ProfileTemplateLoaderInterface = get_profile_template_loader()
+class RefsTemplate(BaseProfileTemplateView):
+    def get_template(self, request: HttpRequest) -> str:
+        return self.template_loader.load_refs_template(request)
 
-    def get(self, request):
-        return JsonResponse(self.template_loader.load_products_template(request))
+
+class IdeasTemplate(BaseProfileTemplateView):
+    def get_template(self, request: HttpRequest) -> str:
+        return self.template_loader.load_ideas_template(request)
+
+
+class ManualsTemplate(BaseProfileTemplateView):
+    def get_template(self, request: HttpRequest) -> str:
+        return self.template_loader.load_manuals_template(request)
+
+
+class SiteTemplate(BaseProfileTemplateView):
+    def get_template(self, request: HttpRequest) -> str:
+        return self.template_loader.load_site_template(request)
+
+
+class UserProductsTemplate(BaseProfileTemplateView):
+    def get_template(self, request: HttpRequest) -> str:
+        return self.template_loader.load_products_template(request)
 
 
 class GetChoiceProductForm(BaseTemplateLoadView):

@@ -1,36 +1,25 @@
-from dataclasses import dataclass
-from datetime import datetime
-
 from django.conf import settings
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponse
 from django.utils.timezone import now
 
-from infrastructure.get_ip import get_client_ip
+from application.sessions.dto import RawSessionDTO, UserActivityDTO
+from domain.user_sessions.repository import UserSessionRepositoryInterface
 from infrastructure.logging.user_activity.config import get_user_active_settings
-from web.site_statistics.models import UserAction, UserActivity
-
-
-@dataclass
-class UserActivityDTO:
-    unique_key: str
-    ip: str
-    start_time: datetime
-    end_time: datetime
-    site: str
-    banks_count: int = 0
-    pages_count: int = 0
-    popups_count: int = 0
-    auth: str = None
+from infrastructure.persistence.repositories.user_session_repository import (
+    get_user_session_repository,
+)
+from infrastructure.requests.get_ip import get_client_ip
+from infrastructure.requests.valid_ip import is_valid_ip
+from web.site_statistics.models import SessionFilters
 
 
 class UserActivityMiddleware:
-    session_key = "user_activity"
-    settings = get_user_active_settings()
-
     def __init__(self, get_response):
         self.get_response = get_response
-        self.exclude_urls = self.settings.exclude_urls
-        self.enabled_adresses = self.settings.enable_adresses
+        self.exclude_urls = get_user_active_settings().exclude_urls
+        self.enabled_adresses = get_user_active_settings().enable_adresses
+        self.session_key = settings.USER_ACTIVITY_SESSION_KEY
+        self.user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
 
     def is_enable_url_to_log(self, path: str) -> bool:
         for url in self.exclude_urls:
@@ -39,84 +28,123 @@ class UserActivityMiddleware:
 
         return True
 
+    def is_enable_adress_to_log(self, path: str) -> bool:
+        for enable_adress in self.enabled_adresses:
+            if enable_adress in path:
+                return True
+
+        return False
+
     def __call__(self, request: HttpRequest):
         # del request.session[self.session_key]
         # request.session.save()
+        # return self.get_response(request)
 
-        path = request.build_absolute_uri()
+        # del request.session[self.session_key]["user"]
+        # request.session.save()
 
-        for enable_adress in self.enabled_adresses:
-            if enable_adress in path:
-                return self.get_response(request)
-
-        site = request.get_host()
-
-        user = str(request.user)
-
+        unique_key = request.COOKIES.get(settings.SESSION_COOKIE_NAME, None)
         ip = get_client_ip(request)
-        unique_key = f"{site}-{ip}"
+        path = request.get_full_path()
+        site = request.get_host()
+        page_adress = site + path
 
-        session_data = UserActivityDTO(
-            ip=ip, start_time=now().isoformat(), unique_key=unique_key, end_time=now().isoformat(), site=site
+        session_data = RawSessionDTO(
+            unique_key=unique_key,
+            ip=ip,
+            start_time=now().isoformat(),
+            end_time=now().isoformat(),
+            site=site,
+            device=request.user_agent.is_pc,
+        )
+
+        host = site.split(":")[0]
+        port = site.split(":")[1] if ":" in site else None
+
+        if host != "127.0.0.1" and host != "localhost":
+            if SessionFilters.objects.first().disable_ip and is_valid_ip(host):
+                session_data.hacking = True
+                session_data.hacking_reason = "Запрос по IP"
+
+            if SessionFilters.objects.first().disable_ports and port:
+                session_data.hacking = True
+                session_data.hacking_reason = "Запрос к порту"
+
+        for disable_url in SessionFilters.objects.first().disable_urls.splitlines():
+            if disable_url in page_adress:
+                session_data.hacking = True
+                session_data.hacking_reason = "Запрещенный адрес"
+                break
+
+        session_data = session_data.__dict__
+
+        self.user_session_repository.update_or_create_raw_session(unique_key=unique_key, session_data=session_data)
+
+        self.user_session_repository.create_session_action(
+            adress=page_adress,
+            session_unique_key=unique_key,
+        )
+
+        if self.is_enable_adress_to_log(path):
+            return self.get_response(request)
+
+        user_id = request.user.id if request.user.is_authenticated else None
+
+        user_session_data = UserActivityDTO(
+            unique_key=unique_key,
+            ip=ip,
+            start_time=now().isoformat(),
+            end_time=now().isoformat(),
+            site=site,
+            device=request.user_agent.is_pc,
+            user_id=user_id,
+            utm_source=request.GET.get("utm_source"),
         ).__dict__
 
-        print(session_data)
-
         if self.session_key not in request.session:
-            request.session[self.session_key] = session_data
+            request.session[self.session_key] = user_session_data
+            request.session[self.session_key]["pages_count"] += 1
 
             request.session.save()
 
-            session_data = request.session[self.session_key]
-            print(session_data)
-
-            session_db, _ = UserActivity.objects.get_or_create(
-                unique_key=request.session[self.session_key]["unique_key"], defaults=session_data
+            self.user_session_repository.get_or_create_user_session(
+                unique_key=unique_key, session_data=user_session_data
             )
 
-            UserAction.objects.create(adress=page_adress, session=session_db, text="перешёл на страницу")
-            request.session[self.session_key]["pages_count"] += 1
-
-            UserActivity.objects.update_or_create(unique_key=session_data["unique_key"], defaults=session_data)
+            self.user_session_repository.create_user_action(
+                adress=page_adress, session_unique_key=unique_key, text="перешёл на страницу"
+            )
 
             return self.get_response(request)
 
-        response = self.get_response(request)
-        if not self.is_enable_url_to_log(path) or response.status_code != 200:
-            return response
+        if not self.is_enable_url_to_log(path):  # or response.status_code != 200:
+            return self.get_response(request)
 
-        if "popup" in path:
-            request.session[self.session_key]["popups_count"] += 1
-
-        page_adress = request.get_host() + request.get_full_path()
-
-        print(request.session[self.session_key], "SESSION")
-        session_db, _ = UserActivity.objects.get_or_create(
-            unique_key=request.session[self.session_key]["unique_key"], defaults=session_data
-        )
-
-        UserAction.objects.create(adress=page_adress, session=session_db, text="перешёл на страницу")
-        request.session[self.session_key]["pages_count"] += 1
+        if not "profile_actions_cocunt" in request.session[self.session_key]:
+            request.session[self.session_key]["profile_actions_count"] = 0
+            request.session.save()
 
         if request.user.is_authenticated:
             request.session[self.session_key]["auth"] = "login"
-            session_data = request.session[self.session_key]
+            request.session[self.session_key]["user_id"] = user_id
 
-            session_data["unique_key"] = request.session[self.session_key]["unique_key"].replace("AnonymousUser", user)
-            print(session_data)
-            UserActivity.objects.update_or_create(unique_key=session_data["unique_key"], defaults=session_data)
-
-            request.session[self.session_key]["unique_key"] = request.session[self.session_key]["unique_key"].replace(
-                "AnonymousUser", user
-            )
-
+        request.session[self.session_key]["pages_count"] += 1
         request.session[self.session_key]["end_time"] = now().isoformat()
-
         request.session.save()
 
-        session_data = request.session[self.session_key]
-        print(session_data)
+        if "popups_count" in request.session[self.session_key]:
+            del request.session[self.session_key]["popups_count"]
+        user_session_data = request.session[self.session_key]
 
-        UserActivity.objects.update_or_create(unique_key=session_data["unique_key"], defaults=session_data)
+        self.user_session_repository.update_or_create_user_session(
+            unique_key=unique_key, session_data=user_session_data
+        )
 
-        return response
+        self.user_session_repository.create_user_action(
+            adress=page_adress, session_unique_key=unique_key, text="перешёл на страницу"
+        )
+
+        if session_data["hacking"]:
+            return HttpResponse(status=503)
+
+        return self.get_response(request)

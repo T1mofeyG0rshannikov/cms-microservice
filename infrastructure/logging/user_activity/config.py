@@ -19,8 +19,6 @@ class UserActivitySettings:
         "get-change-user-form",
         "change-user",
         "change-site",
-        "get-template-products",
-        "get-template-site",
         "get-change-site-form",
         "get-create-user-product-form",
         "get-choice-product-form",
@@ -28,6 +26,8 @@ class UserActivitySettings:
         "add-user-product",
         "delete-user-product",
         "/user/get-user-info",
+        "get-template-",
+        "/null",
     ]
 
 
