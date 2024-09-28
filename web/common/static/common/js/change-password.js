@@ -22,7 +22,7 @@ function onSubmitChangePasswordForm(domain, element, event){
             setToken(access_token);
             closeForm(changePasswordForm);
 
-            window.location.replace(`http://${domain}/user/set-token/${token}`);
+            window.location.replace(`${window.location.protocol}//${domain}/user/set-token/${token}`);
             return;
         }
         return response.json();

@@ -17,7 +17,7 @@ function submitRegisterForm(element, event, domain, ancor=null, is_popup=false){
         if (response.status === 200){
             response.json().then((response) => {
                 const token_to_set_password = response.token_to_set_password;
-                window.location.replace(`https://${domain}/user/password/${token_to_set_password}`)
+                window.location.replace(`${window.location.protocol}//${domain}/user/password/${token_to_set_password}`)
             })
         }
         return response.json();

@@ -60,12 +60,19 @@ function submitLoginForm(element, event, domain){
                     rememberUserInfo(data.get("phone_or_email"), data.get("password"));
                 }
 
-                window.location.replace(`https://${domain}/user/set-token/${token}`);
+                window.location.replace(`${window.location.protocol}//${domain}/user/set-token/${token}`);
             })
         }
+        else if (response.status === 400){
+            response.json().then(response => {
+                setErrors(response.errors, element)
+            })
+        }
+        else if (!response.ok){
+            setErrors({"password": ["Что-то пошло не так. Обновите страницу или попробуйте позже"]}, element)
+        }
+
         return response.json();
-    }).then(response => {
-        setErrors(response.errors, element)
     })
 }
 

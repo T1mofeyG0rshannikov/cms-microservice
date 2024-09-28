@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.views.generic import View
 
 from web.settings.views import SettingsMixin
@@ -6,9 +6,9 @@ from web.user.forms import LoginForm, ResetPasswordForm
 
 
 class StopSite(View):
-    def get(self, request):
-        if self.request.user_from_header:
-            self.request.user_from_header.site.deactivate()
+    def get(self, request: HttpRequest) -> HttpResponse:
+        if request.user.is_authenticated:
+            request.user.site.deactivate()
 
             return HttpResponse(status=200)
 
@@ -16,9 +16,9 @@ class StopSite(View):
 
 
 class ActivateSite(View):
-    def get(self, request):
-        if self.request.user_from_header:
-            self.request.user_from_header.site.activate()
+    def get(self, request: HttpRequest) -> HttpResponse:
+        if request.user.is_authenticated:
+            self.request.user.site.activate()
 
             return HttpResponse(status=200)
 

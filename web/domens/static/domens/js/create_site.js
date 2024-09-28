@@ -7,7 +7,7 @@ function submitCreateSiteForm(element, event, domain){
 
     const token = getToken();
 
-    fetch(`http://${domain}/domain/create-site`, {
+    fetch(`${window.location.protocol}//${domain}/domain/create-site`, {
         method: "POST",
         headers: {
             'Accept': 'application/json',

@@ -43,7 +43,14 @@ class UserActivityMiddleware:
         # del request.session[self.session_key]["user"]
         # request.session.save()
 
-        unique_key = request.COOKIES.get(settings.SESSION_COOKIE_NAME, None)
+        unique_key = request.session.session_key
+        if not unique_key:
+            request.session.save()
+
+        unique_key = request.session.session_key
+        print(unique_key, "unique_key")
+        # if not unique_key:
+        #    return self.get_response(request)
         ip = get_client_ip(request)
         path = request.get_full_path()
         site = request.get_host()
@@ -61,20 +68,24 @@ class UserActivityMiddleware:
         host = site.split(":")[0]
         port = site.split(":")[1] if ":" in site else None
 
-        if host != "127.0.0.1" and host != "localhost":
-            if SessionFilters.objects.first().disable_ip and is_valid_ip(host):
-                session_data.hacking = True
-                session_data.hacking_reason = "Запрос по IP"
+        session_filters = SessionFilters.objects.first()
+        print(host)
+        if session_filters:
+            if host != "127.0.0.1" and host != "localhost":
+                if session_filters.disable_ip and is_valid_ip(host):
+                    session_data.hacking = True
+                    session_data.hacking_reason = "Запрос по IP"
 
-            if SessionFilters.objects.first().disable_ports and port:
-                session_data.hacking = True
-                session_data.hacking_reason = "Запрос к порту"
+                if session_filters.disable_ports and port:
+                    session_data.hacking = True
+                    session_data.hacking_reason = "Запрос к порту"
 
-        for disable_url in SessionFilters.objects.first().disable_urls.splitlines():
-            if disable_url in page_adress:
-                session_data.hacking = True
-                session_data.hacking_reason = "Запрещенный адрес"
-                break
+                for disable_url in session_filters.disable_urls.splitlines():
+                    if disable_url in page_adress:
+                        print(disable_url, "disable_url")
+                        session_data.hacking = True
+                        session_data.hacking_reason = "Запрещенный адрес"
+                        break
 
         session_data = session_data.__dict__
 
@@ -120,7 +131,9 @@ class UserActivityMiddleware:
         if not self.is_enable_url_to_log(path):  # or response.status_code != 200:
             return self.get_response(request)
 
-        if not "profile_actions_cocunt" in request.session[self.session_key]:
+        self.user_session_repository.get_or_create_user_session(unique_key=unique_key, session_data=user_session_data)
+
+        if "profile_actions_cocunt" not in request.session[self.session_key]:
             request.session[self.session_key]["profile_actions_count"] = 0
             request.session.save()
 
@@ -130,11 +143,17 @@ class UserActivityMiddleware:
 
         request.session[self.session_key]["pages_count"] += 1
         request.session[self.session_key]["end_time"] = now().isoformat()
+
+        if host == "127.0.0.1" or host == "localhost":
+            request.session[self.session_key]["hacking"] = False
+
         request.session.save()
 
         if "popups_count" in request.session[self.session_key]:
             del request.session[self.session_key]["popups_count"]
+
         user_session_data = request.session[self.session_key]
+        user_session_data["unique_key"] = unique_key
 
         self.user_session_repository.update_or_create_user_session(
             unique_key=unique_key, session_data=user_session_data
@@ -143,6 +162,10 @@ class UserActivityMiddleware:
         self.user_session_repository.create_user_action(
             adress=page_adress, session_unique_key=unique_key, text="перешёл на страницу"
         )
+
+        session_data = request.session[self.session_key]
+        session_data["unique_key"] = unique_key
+        print(session_data)
 
         if session_data["hacking"]:
             return HttpResponse(status=503)

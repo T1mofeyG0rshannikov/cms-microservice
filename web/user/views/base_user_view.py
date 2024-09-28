@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.views.generic import View
 
 from application.common.url_parser import UrlParserInterface
@@ -38,11 +38,11 @@ class MyLoginRequiredMixin(LoginRequiredMixin):
     set_password_url = "/user/password"
     domain_service: DomainServiceInterface = get_domain_service()
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request: HttpRequest, *args, **kwargs):
         if not request.user.is_authenticated:
             return self.handle_no_permission()
 
-        if request.user_from_header and not request.user.is_authenticated:
+        if not request.user.is_authenticated:
             return self.handle_no_permission()
 
         path = request.build_absolute_uri()
@@ -72,7 +72,7 @@ class UserFormsView:
 
 
 class APIUserRequired(View):
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request: HttpRequest, *args, **kwargs):
         if not request.user.is_authenticated:
             return HttpResponse(status=401)
 

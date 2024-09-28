@@ -54,6 +54,8 @@ class BaseSessionModel(models.Model):
 
 
 class SessionModel(BaseSessionModel):
+    source_count = models.PositiveIntegerField(default=0, verbose_name="ресурсы")
+
     class Meta:
         verbose_name = "Сессии"
         verbose_name_plural = "Сессии"

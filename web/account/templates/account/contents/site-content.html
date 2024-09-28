@@ -23,7 +23,7 @@
                     <div class="site">
                         <p>{{ request.user.full_site_name }}</p>
 
-                        <a style="cursor: pointer; margin: 0px;" onclick="openLink('http://{{ request.user.full_site_name }}')">
+                        <a style="cursor: pointer; margin: 0px;" onclick="openLink('${window.location.protocol}//{{ request.user.full_site_name }}')">
                             <object class="link" data="/static/account/images/external-link.svg"></object>
                         </a>
                     </div>

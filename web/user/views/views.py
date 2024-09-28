@@ -19,16 +19,9 @@ from web.user.serializers import UserSerializer
 
 class GetUserInfo(View):
     def get(self, request: HttpRequest):
-        user_from_request = request.user
-        user_from_header = request.user_from_header
+        user = request.user
 
-        user = None
-        if user_from_header:
-            user = user_from_header
-        if user_from_request.is_authenticated:
-            user = user_from_request
-
-        if user:
+        if user.is_authenticated:
             user = UserSerializer(user).data
             return JsonResponse(user)
         else:

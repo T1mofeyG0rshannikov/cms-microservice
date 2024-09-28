@@ -1,6 +1,6 @@
 import random
 
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.views.generic import View
 
 from application.usecases.user.get_admin import GetAdminUser
@@ -32,8 +32,8 @@ from infrastructure.persistence.repositories.user_repository import get_user_rep
 class SendConfirmEmail(View):
     email_service: EmailServiceInterface = get_email_service()
 
-    def get(self, request):
-        user = request.user_from_header
+    def get(self, request: HttpRequest):
+        user = request.user
 
         if user:
             try:

@@ -80,7 +80,9 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
+    "django_user_agents.middleware.UserAgentMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "web.site_statistics.middleware.UserActivityMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_hosts.middleware.HostsRequestMiddleware",
@@ -88,8 +90,6 @@ MIDDLEWARE = [
     "web.user.middleware.JwtAuthMiddleware",
     "web.admin.middleware.AdminMiddleware",
     "web.site_tests.middleware.ExceptionLoggingMiddleware",
-    "django_user_agents.middleware.UserAgentMiddleware",
-    "web.site_statistics.middleware.UserActivityMiddleware",
 ]
 
 ROOT_URLCONF = "web.core.urls"
@@ -274,8 +274,10 @@ CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_HEADERS = "*"
 
-# SESSION_COOKIE_AGE = 60 * 3
+SESSION_COOKIE_AGE = 60 * int(os.getenv("SESSION_EXPIRES_IN"))
 
 USE_TZ = False
 
 USER_ACTIVITY_SESSION_KEY = os.getenv("USER_ACTIVITY_SESSION_KEY")
+
+SESSION_SAVE_EVERY_REQUEST = True

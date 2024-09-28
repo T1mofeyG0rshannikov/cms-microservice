@@ -14,6 +14,7 @@ from web.site_statistics.models import (
 
 class UserSessionRepository(UserSessionRepositoryInterface):
     def create_user_action(self, adress: str, text: str, session_unique_key: str) -> None:
+        print(session_unique_key, "session_unique_key")
         UserAction.objects.create(
             adress=adress,
             text=text,
@@ -43,7 +44,7 @@ class UserSessionRepository(UserSessionRepositoryInterface):
                 pages_count = SessionModel.objects.get(unique_key=unique_key).pages_count + 1
                 session_data["pages_count"] = pages_count
 
-                SessionModel.objects.update(**session_data)
+                SessionModel.objects.filter(unique_key=unique_key).update(**session_data)
                 return
 
             SessionModel.objects.create(**session_data)

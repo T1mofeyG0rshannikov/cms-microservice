@@ -29,7 +29,7 @@ const loginForm = document.getElementById("login-form");
 function openLoginForm(domain){
     const token = getToken();
 
-    fetch(`https://${domain}/user/get-user-info`, {
+    fetch(`${window.location.protocol}//${domain}/user/get-user-info`, {
         method: "get",
         headers: {
             'Accept': 'application/json',
@@ -39,7 +39,7 @@ function openLoginForm(domain){
     }).then(response => {
         if (response.status === 200){
             response.json().then(() => {
-                window.location.replace(`http://${domain}/my/`)
+                window.location.replace(`${window.location.protocol}//${domain}/my/`)
             })
         }
         return response.status;

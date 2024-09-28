@@ -81,7 +81,7 @@ function submitSetPasswordForm(element, event, domain, token){
     event.preventDefault();
     const data = new FormData(element);
 
-    let url = `https://${domain}/user/password`;
+    let url = `${window.location.protocol}//${domain}/user/password`;
     if (token.length > 0){
         url += "/" + token;
     }
@@ -98,7 +98,7 @@ function submitSetPasswordForm(element, event, domain, token){
             response.json().then((response) => {
                 const token = response.access_token;
                 setToken(token);
-                window.location.replace(`http://${domain}/user/set-token/${token}`);
+                window.location.replace(`${window.location.protocol}//${domain}/user/set-token/${token}`);
             })
         }
         return response.json();
