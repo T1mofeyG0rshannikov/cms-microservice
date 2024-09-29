@@ -12,7 +12,7 @@ from infrastructure.persistence.repositories.product_repository import (
 from infrastructure.persistence.repositories.user_session_repository import (
     get_user_session_repository,
 )
-from infrastructure.sessions.add_session_action import IncrementSessionCount
+from infrastructure.persistence.sessions.add_session_action import IncrementSessionCount
 
 
 class OpenedProductPopupView(View):

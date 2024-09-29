@@ -7,7 +7,6 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
     dependencies = [
         ("blocks", "0009_remove_additionalcatalogproducttype_offer_and_more"),
-        ("offers", "0002_remove_offertyperelation_type_and_more"),
     ]
 
     operations = [

@@ -7,11 +7,12 @@ from infrastructure.admin.admin_settings import get_admin_settings
 
 class UserActivitySettings:
     enable_adresses = [get_admin_settings().admin_url]
+    disable_user_session_urls_to_logg = [get_admin_settings().admin_url + "/jsi18n/"]
     exclude_urls = [
         settings.STATIC_URL,
         settings.MEDIA_URL,
         "/styles/",
-        get_admin_settings().admin_url,
+        # get_admin_settings().admin_url,
         "set-token",
         "site_statistics",
         "register",

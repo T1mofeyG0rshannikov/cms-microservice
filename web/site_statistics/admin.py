@@ -2,6 +2,8 @@ from django.conf import settings
 from django.contrib import admin
 from django.utils.html import mark_safe
 
+from infrastructure.admin.admin_settings import get_admin_settings
+from web.admin.admin import redirect_to_change_page_tag
 from web.common.admin import BaseInline
 from web.site_statistics.models import (
     SessionAction,
@@ -31,19 +33,49 @@ class UserActionInline(BaseInline):
         return False
 
 
-class UserActivityAdmin(admin.ModelAdmin):
+class BaseSessionAdmin(admin.ModelAdmin):
+    admin_url = get_admin_settings().admin_url
+
+    def start_time_tag(self, obj):
+        return obj.start_time.strftime("%d.%m %H:%M:%S")
+
+    start_time_tag.short_description = "Дата"
+
+    def time_tag(self, obj):
+        return str(obj.end_time - obj.start_time).split(".")[0]
+
+    time_tag.short_description = "Время"
+
+    def device_tag(self, obj):
+        src = f"""{settings.STATIC_URL}site_statistics/images/{"icoadm_desktop.png" if not obj.device else "icoadm_smart.png"}"""
+
+        return mark_safe(f"""<img height="15" src={src} />""")
+
+    device_tag.short_description = ""
+
+    def ip_tag(self, obj):
+        return redirect_to_change_page_tag(obj, obj.ip)
+
+    ip_tag.short_description = "ip"
+
+    class Media:
+        css = {"all": ("site_statistics/css/user_action_admin.css",)}
+
+
+class UserActivityAdmin(BaseSessionAdmin):
     inlines = [UserActionInline]
 
     fields = [
         "device_tag",
         "site",
         "unique_key",
-        "ip",
+        "ip_tag",
+        "user_tag",
         "start_time_tag",
+        "time_tag",
+        "pages_count",
         "banks_count",
         "profile_actions_count",
-        "pages_count",
-        "user_tag",
         "hacking",
     ]
 
@@ -62,36 +94,9 @@ class UserActivityAdmin(admin.ModelAdmin):
 
     user_tag.short_description = "Пользователь"
 
-    def start_time_tag(self, obj):
-        return obj.start_time.strftime("%d.%m %H:%M:%S")
-
-    start_time_tag.short_description = "Дата"
-
-    def device_tag(self, obj):
-        if obj.device:
-            src = f"{settings.STATIC_URL}site_statistics/images/icoadm_desktop.png"
-        else:
-            src = f"{settings.STATIC_URL}site_statistics/images/icoadm_smart.png"
-
-        return mark_safe(f"""<img height="30" src={src} />""")
-
-    device_tag.short_description = "Устройство"
-    readonly_fields = [
-        "device_tag",
-        "site",
-        "unique_key",
-        "ip",
-        "start_time_tag",
-        "banks_count",
-        "profile_actions_count",
-        "pages_count",
-        "user_tag",
-    ]
+    readonly_fields = fields
 
     list_display = fields
-
-    class Media:
-        css = {"all": ("site_statistics/css/user_action_admin.css",)}
 
 
 class SessionActionInline(BaseInline):
@@ -100,7 +105,7 @@ class SessionActionInline(BaseInline):
     readonly_fields = fields
 
     def action(self, obj):
-        return f"""{obj.time.strftime('%d.%m %H:%M:%S')}:{r"     "}{obj.adress}"""
+        return f"""{obj.time.strftime('%d.%m %H:%M:%S')}:{obj.adress}"""
 
     action.short_description = ""
 
@@ -111,40 +116,25 @@ class SessionActionInline(BaseInline):
         return False
 
 
-class SessionModelAdmin(admin.ModelAdmin):
+class SessionModelAdmin(BaseSessionAdmin):
     inlines = [SessionActionInline]
 
     fields = [
         "device_tag",
         "site",
         "unique_key",
-        "ip",
+        "ip_tag",
         "start_time_tag",
         "pages_count",
+        "source_count",
         "hacking",
         "hacking_reason",
+        "headers",
     ]
 
-    def start_time_tag(self, obj):
-        return obj.start_time.strftime("%d.%m %H:%M:%S")
-
-    start_time_tag.short_description = "Дата"
-
-    def device_tag(self, obj):
-        if obj.device:
-            src = f"{settings.STATIC_URL}site_statistics/images/icoadm_desktop.png"
-        else:
-            src = f"{settings.STATIC_URL}site_statistics/images/icoadm_smart.png"
-
-        return mark_safe(f"""<img height="30" src={src} />""")
-
-    device_tag.short_description = "Устройство"
     readonly_fields = fields
 
-    list_display = fields
-
-    class Media:
-        css = {"all": ("site_statistics/css/user_action_admin.css",)}
+    list_display = [field for field in fields if field != "headers"]
 
 
 admin.site.register(TryLoginToAdminPanel)

@@ -13,6 +13,7 @@ from infrastructure.persistence.models.user.roles import Roles, SuperUserRole
 from infrastructure.persistence.models.user.site import Site
 from infrastructure.persistence.models.user.user import User
 from infrastructure.persistence.repositories.user_repository import get_user_repository
+from web.admin.admin import redirect_to_change_page_tag
 from web.common.admin import BaseInline
 from web.domens.admin import SiteAdmin
 
@@ -90,8 +91,6 @@ class RolesAdmin(admin.ModelAdmin):
                     email = formset.cleaned_data[0].get("email")
                     user = self.repository.get_user_by_email(email)
 
-                    print(obj, formset.cleaned_data[obj_ind], user)
-
                     if user:
                         obj.user = user
                         obj.save()
@@ -129,7 +128,7 @@ class IdeaAdmin(admin.ModelAdmin):
     admin_site_url = os.getenv("ADMIN_URL")
 
     def title_tag(self, idea):
-        return mark_safe(f'<a href="/{self.admin_site_url}/user/idea/{idea.pk}/change/" >{idea.title}</a>')
+        return redirect_to_change_page_tag(idea, idea.title)
 
     def finishe_date_tag(self, idea):
         if idea.finishe_date:

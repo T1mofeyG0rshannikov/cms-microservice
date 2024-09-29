@@ -17,7 +17,7 @@ from infrastructure.persistence.repositories.product_repository import (
 from infrastructure.persistence.repositories.user_session_repository import (
     get_user_session_repository,
 )
-from infrastructure.sessions.add_session_action import IncrementSessionCount
+from infrastructure.persistence.sessions.add_session_action import IncrementSessionCount
 from web.account.views.templates import Profile
 from web.blocks.views import ShowPage
 from web.catalog.views import ShowCatalogPage
@@ -63,7 +63,7 @@ class BaseTemplateLoadView(View):
 
 class GetChangeUserFormTemplate(BaseTemplateLoadView):
     url_parser: UrlParserInterface = get_url_parser()
-    user_session_repository = get_user_session_repository()
+    user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
     increment_session_profile_action = IncrementSessionCount(
         get_user_session_repository(), settings.USER_ACTIVITY_SESSION_KEY, "profile_actions_count"
     )
@@ -124,7 +124,6 @@ class BaseProfileTemplateView(View):
             return JsonResponse({"error": str(e)}, status=400)
 
         adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
-        print(request.session[settings.USER_ACTIVITY_SESSION_KEY])
         self.user_session_repository.create_user_action(
             adress=adress,
             text="Перешёл на страницу",

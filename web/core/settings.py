@@ -35,7 +35,6 @@ INSTALLED_APPS = [
     "adminsortable2",
     "colorfield",
     "ckeditor",
-    "web.offers",
     "web.site_statistics",
     "web.catalog",
     "web.common",
@@ -82,7 +81,8 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django_user_agents.middleware.UserAgentMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "web.site_statistics.middleware.UserActivityMiddleware",
+    "web.site_statistics.raw_session_middleware.RawSessionMiddleware",
+    "web.site_statistics.user_activity_middleware.UserActivityMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_hosts.middleware.HostsRequestMiddleware",
@@ -279,5 +279,6 @@ SESSION_COOKIE_AGE = 60 * int(os.getenv("SESSION_EXPIRES_IN"))
 USE_TZ = False
 
 USER_ACTIVITY_SESSION_KEY = os.getenv("USER_ACTIVITY_SESSION_KEY")
+RAW_SESSION_SESSION_KEY = os.getenv("RAW_SESSION_SESSION_KEY")
 
 SESSION_SAVE_EVERY_REQUEST = True

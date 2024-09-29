@@ -121,8 +121,6 @@ class LoginView(BaseUserView, FormView):
             access_token, user = self.login_interactor(form.cleaned_data)
             self.login(user)
 
-            print(request.session.__dict__)
-
             self.user_session_repository.create_user_action(
                 adress=adress,
                 text=f'''Вход в ЛК "{form.cleaned_data.get("phone_or_email")}"''',

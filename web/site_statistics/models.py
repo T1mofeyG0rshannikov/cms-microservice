@@ -49,11 +49,9 @@ class BaseSessionModel(models.Model):
     class Meta:
         abstract = True
 
-    def __str__(self):
-        return f"""{self.start_time.strftime("%d.%m.%Y")} - {self.end_time.strftime("%d.%m.%Y")}"""
-
 
 class SessionModel(BaseSessionModel):
+    headers = models.TextField(max_length=2000, null=True)
     source_count = models.PositiveIntegerField(default=0, verbose_name="ресурсы")
 
     class Meta:

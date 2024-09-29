@@ -30,7 +30,7 @@ from infrastructure.persistence.repositories.user_repository import get_user_rep
 from infrastructure.persistence.repositories.user_session_repository import (
     get_user_session_repository,
 )
-from infrastructure.sessions.add_session_action import IncrementSessionCount
+from infrastructure.persistence.sessions.add_session_action import IncrementSessionCount
 from web.account.forms import (
     AddUserProductForm,
     ChangeSiteForm,

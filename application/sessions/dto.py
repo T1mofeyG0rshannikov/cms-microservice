@@ -1,3 +1,4 @@
+import inspect
 from dataclasses import dataclass
 from datetime import datetime
 
@@ -19,6 +20,10 @@ class UserActivityDTO:
     hacking: bool = False
     hacking_reason: str = None
 
+    @classmethod
+    def from_dict(cls, env):
+        return cls(**{k: v for k, v in env.items() if k in inspect.signature(cls).parameters})
+
 
 @dataclass
 class RawSessionDTO:
@@ -37,3 +42,4 @@ class RawSessionDTO:
     utm_source: str = None
     hacking: bool = False
     hacking_reason: str = None
+    headers: str = None

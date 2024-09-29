@@ -5,8 +5,8 @@ from django.contrib import admin
 from django.contrib.admin.widgets import AdminFileWidget
 from django.db import models
 from django.utils.html import format_html, mark_safe
-from dotenv import load_dotenv
 
+from web.admin.admin import redirect_to_change_page_tag
 from web.catalog.forms import OfferAdminForm
 from web.catalog.models.blocks import Block, CatalogPageTemplate
 from web.catalog.models.product_type import ProductCategory, ProductType
@@ -69,13 +69,8 @@ class CustomOrganizationLogo(CustomAdminFileWidget):
     width = 300
 
 
-load_dotenv()
-
-
 class ProductAdmin(admin.ModelAdmin):
     list_display = ["image_tag", "name_tag", "status_tag", "category", "organization", "created_at_tag", "offers"]
-
-    admin_site_url = os.getenv("ADMIN_URL")
 
     def offers(self, obj):
         return obj.offers.count()
@@ -98,7 +93,7 @@ class ProductAdmin(admin.ModelAdmin):
     ordering = ["organization"]
 
     def name_tag(self, obj):
-        return mark_safe(f'<a href="/{self.admin_site_url}/catalog/product/{obj.pk}/change/" >{obj.name}</a>')
+        return redirect_to_change_page_tag(obj, obj.name)
 
     def image_tag(self, obj):
         return mark_safe('<img src="%s" height="35" />' % (obj.cover.url))
@@ -147,8 +142,6 @@ class OrganizationTypeAdmin(admin.ModelAdmin):
 class ProductInline(BaseInline):
     model = Product
 
-    admin_site_url = os.getenv("ADMIN_URL")
-
     fields = (
         "image_tag",
         "name_tag",
@@ -162,7 +155,7 @@ class ProductInline(BaseInline):
     ordering = ["name"]
 
     def name_tag(self, obj):
-        return mark_safe(f'<a href="/{self.admin_site_url}/catalog/product/{obj.pk}/change/" >{obj.name}</a>')
+        return redirect_to_change_page_tag(obj, obj.name)
 
     def image_tag(self, obj):
         return mark_safe('<img src="%s" height="35" />' % (obj.cover.url))
@@ -196,7 +189,7 @@ class OrganizationAdmin(admin.ModelAdmin):
     admin_site_url = os.getenv("ADMIN_URL")
 
     def name_tag(self, obj):
-        return mark_safe(f'<a href="/{self.admin_site_url}/catalog/organization/{obj.pk}/change/" >{obj.name}</a>')
+        return redirect_to_change_page_tag(obj, obj.name)
 
     name_tag.short_description = "Название"
 
@@ -291,8 +284,6 @@ class OfferAdmin(admin.ModelAdmin):
     inlines = [LinkInline]
     formfield_overrides = {models.ImageField: {"widget": CustomAdminFileWidget}}
 
-    admin_site_url = os.getenv("ADMIN_URL")
-
     def organization(self, obj):
         return obj.product.organization
 
@@ -336,7 +327,7 @@ class OfferAdmin(admin.ModelAdmin):
     status_tag.short_description = ""
 
     def name_tag(self, obj):
-        return mark_safe(f'<a href="/{self.admin_site_url}/catalog/offer/{obj.pk}/change/" >{obj.name}</a>')
+        return redirect_to_change_page_tag(obj, obj.name)
 
     def created_at_tag(self, obj):
         return obj.created_at.strftime("%Y-%m-%d")

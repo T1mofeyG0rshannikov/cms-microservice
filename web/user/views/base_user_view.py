@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -14,7 +16,7 @@ from infrastructure.auth.jwt_processor_interface import JwtProcessorInterface
 from infrastructure.persistence.repositories.user_session_repository import (
     get_user_session_repository,
 )
-from infrastructure.sessions.set_session_field import SetSessionField
+from infrastructure.persistence.sessions.set_session_field import SetSessionField
 from web.domens.views.mixins import SubdomainMixin
 from web.user.forms import LoginForm, RegistrationForm, ResetPasswordForm
 
@@ -63,11 +65,12 @@ class MyLoginRequiredMixin(LoginRequiredMixin):
 
 class UserFormsView:
     @classmethod
-    def get_context_data(self):
-        context = {}
-        context["login_form"] = LoginForm()
-        context["register_form"] = RegistrationForm()
-        context["reset_password_form"] = ResetPasswordForm()
+    def get_context_data(self) -> dict[str, Any]:
+        context = {
+            "login_form": LoginForm(),
+            "register_form": RegistrationForm(),
+            "reset_password_form": ResetPasswordForm(),
+        }
         return context
 
 

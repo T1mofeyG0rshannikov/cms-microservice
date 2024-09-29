@@ -21,7 +21,5 @@ def hacking_session_handler(sender, instance, created, *args, **kwargs):
                 session=SessionModel.objects.get(unique_key=instance.unique_key)
             )"""
 
-        instance.delete()
-
 
 post_save.connect(hacking_session_handler, sender=UserActivity)

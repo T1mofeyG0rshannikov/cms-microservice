@@ -6,6 +6,7 @@ from domain.user_sessions.repository import UserSessionRepositoryInterface
 from domain.user_sessions.session import UserSessionInterface
 from web.site_statistics.models import (
     SessionAction,
+    SessionFilters,
     SessionModel,
     UserAction,
     UserActivity,
@@ -14,7 +15,6 @@ from web.site_statistics.models import (
 
 class UserSessionRepository(UserSessionRepositoryInterface):
     def create_user_action(self, adress: str, text: str, session_unique_key: str) -> None:
-        print(session_unique_key, "session_unique_key")
         UserAction.objects.create(
             adress=adress,
             text=text,
@@ -38,11 +38,14 @@ class UserSessionRepository(UserSessionRepositoryInterface):
 
         return session_db
 
+    def get_session_filters(self):
+        return SessionFilters.objects.first()
+
     def update_or_create_raw_session(self, unique_key: str, session_data: dict[str, Any]) -> None:
         try:
             if SessionModel.objects.filter(unique_key=unique_key).exists():
-                pages_count = SessionModel.objects.get(unique_key=unique_key).pages_count + 1
-                session_data["pages_count"] = pages_count
+                if "headers" in session_data:
+                    del session_data["headers"]
 
                 SessionModel.objects.filter(unique_key=unique_key).update(**session_data)
                 return

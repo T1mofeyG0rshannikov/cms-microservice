@@ -43,6 +43,17 @@ class UrlParser(UrlParserInterface):
 
         return path
 
+    @staticmethod
+    def is_source(path: str) -> bool:
+        if "." in path:
+            return True
+
+        return False
+
+    def is_ip(path: str) -> bool:
+        ip_pattern = re.compile(r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$")
+        return ip_pattern.match(path) is not None
+
 
 def get_url_parser() -> UrlParserInterface:
     return UrlParser()

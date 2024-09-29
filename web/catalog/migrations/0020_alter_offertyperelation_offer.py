@@ -7,7 +7,6 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
     dependencies = [
         ("catalog", "0019_rename_producttyperelation_offertyperelation_and_more"),
-        ("offers", "0003_offer_name"),
     ]
 
     operations = [
