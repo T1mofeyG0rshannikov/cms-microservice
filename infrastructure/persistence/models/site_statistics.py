@@ -10,6 +10,7 @@ class TryLoginToAdminPanel(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        app_label = "site_statistics"
         verbose_name = "Попытка входа в админку"
         verbose_name_plural = "Попытки входа в админку"
 
@@ -23,6 +24,7 @@ class TryLoginToFakeAdminPanel(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        app_label = "site_statistics"
         verbose_name = "Попытка входа в фейковую админку"
         verbose_name_plural = "Попытки входа в фейковую админку"
 
@@ -37,11 +39,11 @@ class BaseSessionModel(models.Model):
     end_time = models.DateTimeField()
     site = models.CharField(max_length=50, null=True, verbose_name="Сайт")
     device = models.BooleanField(default=False)
-    pages_count = models.PositiveIntegerField(verbose_name="Страницы", default=0)
+    pages_count = models.PositiveIntegerField(verbose_name="Стр.", default=0)
     hacking = models.BooleanField(default=False)
     hacking_reason = models.CharField(max_length=100, null=True, blank=True)
     banks_count = models.PositiveIntegerField(verbose_name="Банки", default=0)
-    profile_actions_count = models.PositiveIntegerField(verbose_name="Действия в лк", default=0)
+    profile_actions_count = models.PositiveIntegerField(verbose_name="ЛК", default=0)
     auth = models.CharField(null=True, max_length=20)
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     utm_source = models.CharField(max_length=500, null=True)
@@ -55,19 +57,21 @@ class SessionModel(BaseSessionModel):
     source_count = models.PositiveIntegerField(default=0, verbose_name="ресурсы")
 
     class Meta:
+        app_label = "site_statistics"
         verbose_name = "Сессии"
         verbose_name_plural = "Сессии"
 
 
 class UserActivity(BaseSessionModel):
     class Meta:
+        app_label = "site_statistics"
         verbose_name = "Посетители"
         verbose_name_plural = "Посетители"
 
 
 class BaseSessionAction(models.Model):
     adress = models.CharField(max_length=300, verbose_name="страница")
-    time = models.DateTimeField(auto_now_add=True)
+    time = models.DateTimeField()
 
     class Meta:
         abstract = True
@@ -83,9 +87,32 @@ class UserAction(BaseSessionAction):
     text = models.CharField(max_length=200, verbose_name="")
     session = models.ForeignKey(UserActivity, on_delete=models.CASCADE, null=True)
 
+    class Meta:
+        app_label = "site_statistics"
+
+        indexes = [
+            models.Index(
+                fields=[
+                    "session_id",
+                ]
+            )
+        ]
+
 
 class SessionAction(BaseSessionAction):
-    session = models.ForeignKey(SessionModel, on_delete=models.CASCADE, null=True)
+    session = models.ForeignKey(SessionModel, on_delete=models.CASCADE, null=True, related_name="actions")
+
+    class Meta:
+        app_label = "site_statistics"
+        ordering = ["-time"]
+
+        indexes = [
+            models.Index(
+                fields=[
+                    "session_id",
+                ]
+            )
+        ]
 
 
 class SessionFilters(OneInstanceModel):
@@ -95,5 +122,6 @@ class SessionFilters(OneInstanceModel):
     disable_urls = models.TextField(verbose_name="Запрос содержит")
 
     class Meta:
+        app_label = "site_statistics"
         verbose_name = "Фильтры сессий"
         verbose_name_plural = "Фильтры сессий"

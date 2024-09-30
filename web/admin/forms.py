@@ -24,6 +24,7 @@ from infrastructure.persistence.repositories.system_repository import (
     get_system_repository,
 )
 from infrastructure.persistence.repositories.user_repository import get_user_repository
+from infrastructure.requests.service import get_request_service
 from infrastructure.user.validator import get_user_validator
 
 
@@ -47,7 +48,7 @@ class CustomAuthenticationAdminForm(AuthenticationForm):
 
     validator: UserValidatorInterface = get_user_validator()
 
-    logging: bool = False
+    logging: bool = True
     code_submit: bool = False
 
     def __init__(self, request=None, *args, **kwargs):
@@ -57,6 +58,14 @@ class CustomAuthenticationAdminForm(AuthenticationForm):
         self.fields["username"].label = "Email или телефон"
         self.fields["password"].label = "Пароль"
         self.fields["code"].label = "Код"
+
+        self.logger = AdminLoginLogger(
+            get_admin_log_repository(),
+            get_work_email_service(
+                get_work_email_template_generator(get_work_email_context_processor()), get_system_repository()
+            ),
+            get_request_service(request),
+        )
 
     def confirm_login_allowed(self, user):
         if not user.is_active:
@@ -81,13 +90,6 @@ class CustomAuthenticationAdminForm(AuthenticationForm):
     )
 
     code = forms.IntegerField(max_value=999999, widget=forms.TextInput(attrs={"placeholder": "Код"}))
-
-    logger = AdminLoginLogger(
-        get_admin_log_repository(),
-        get_work_email_service(
-            get_work_email_template_generator(get_work_email_context_processor()), get_system_repository()
-        ),
-    )
     get_admin_user_interactor = GetAdminUser(get_user_repository())
 
     def clean(self):
@@ -99,17 +101,14 @@ class CustomAuthenticationAdminForm(AuthenticationForm):
             user = self.get_admin_user_interactor(username, password)
 
         except (UserDoesNotExist, UserNotAdmin, IncorrectPassword) as e:
-            print(e, "error")
             self.add_error("username", str(e))
             if self.logging:
-                self.logger.error(self.request, self.cleaned_data, str(e))
+                self.logger.error(self.cleaned_data, str(e))
             return self.cleaned_data
-
-        print(user, 4)
 
         if self.code_submit and not check_code(user.email, code):
             if self.logging:
-                self.logger.error(self.request, self.cleaned_data, "неправильный код")
+                self.logger.error(self.cleaned_data, "неправильный код")
 
             self.add_error("code", "неправильный код")
             return self.cleaned_data
@@ -119,6 +118,6 @@ class CustomAuthenticationAdminForm(AuthenticationForm):
         user = authenticate(request)
         delete_login_code(username)
         if self.logging:
-            self.logger.success(self.request, {"username": username})
+            self.logger.success({"username": username})
 
         return

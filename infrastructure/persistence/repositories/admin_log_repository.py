@@ -1,5 +1,8 @@
 from domain.logging.admin import AdminLogRepositoryInterface
-from web.site_statistics.models import TryLoginToAdminPanel, TryLoginToFakeAdminPanel
+from infrastructure.persistence.models.site_statistics import (
+    TryLoginToAdminPanel,
+    TryLoginToFakeAdminPanel,
+)
 
 
 class AdminLogRepository(AdminLogRepositoryInterface):

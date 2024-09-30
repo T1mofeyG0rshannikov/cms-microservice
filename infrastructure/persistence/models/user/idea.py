@@ -58,7 +58,6 @@ class Like(models.Model):
 
 
 def get_upload_to_idea_screen(instance, filename):
-    print(filename)
     return os.path.join("images", str(instance.idea_id), filename)
 
 

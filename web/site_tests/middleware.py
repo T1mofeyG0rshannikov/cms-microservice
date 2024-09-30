@@ -1,5 +1,6 @@
 import traceback
 
+from django.http import HttpRequest
 from django.utils.deprecation import MiddlewareMixin
 
 from infrastructure.email_services.work_email_service.context_processor.context_processor import (
@@ -19,21 +20,23 @@ from infrastructure.persistence.repositories.errors_repository import (
 from infrastructure.persistence.repositories.system_repository import (
     get_system_repository,
 )
-from infrastructure.requests.get_ip import get_client_ip
+from infrastructure.requests.service import get_request_service
 
 
 class ExceptionLoggingMiddleware(MiddlewareMixin):
-    logger = ErrorLogger(
-        get_errors_repository(),
-        get_work_email_service(
-            get_work_email_template_generator(get_work_email_context_processor()), get_system_repository()
-        ),
-    )
-
     def __init__(self, *args, **kwargs):
         return super().__init__(*args, **kwargs)
 
-    def process_response(self, request, response):
+    def process_response(self, request: HttpRequest, response):
+        request_service = get_request_service(request)
+
+        logger = ErrorLogger(
+            get_errors_repository(),
+            get_work_email_service(
+                get_work_email_template_generator(get_work_email_context_processor()), get_system_repository()
+            ),
+        )
+
         status_code = response.status_code
         if 500 <= status_code < 600:
             user = request.user if request.user.is_authenticated else None
@@ -42,9 +45,9 @@ class ExceptionLoggingMiddleware(MiddlewareMixin):
             enable_logging = enable_logging.enable_error_logging if enable_logging else False
 
             if enable_logging:
-                self.logger(
+                logger(
                     message=request.error_message,
-                    client_ip=get_client_ip(request),
+                    client_ip=request_service.get_client_ip(),
                     path=request.build_absolute_uri(),
                     user=user,
                 )

@@ -1,13 +1,11 @@
 from typing import Any
 
-from django.http import HttpRequest
-
 from domain.email.exceptions import CantSendMailError
 from domain.logging.admin import AdminLogRepositoryInterface
 from infrastructure.email_services.work_email_service.email_service_interface import (
     WorkEmailServiceInterface,
 )
-from infrastructure.requests.get_ip import get_client_ip
+from infrastructure.requests.service import RequestService
 
 
 class AdminLoginLogger:
@@ -15,26 +13,28 @@ class AdminLoginLogger:
         self,
         repository: AdminLogRepositoryInterface,
         email_service: WorkEmailServiceInterface,
+        request_service: RequestService,
     ) -> None:
         self.repository = repository
         self.email_service = email_service
+        self.request_service = request_service
 
-    def error(self, request: HttpRequest, fields: dict[str, Any], error: str) -> None:
-        ip_address = get_client_ip(request)
+    def error(self, fields: dict[str, Any], error: str) -> None:
+        ip_address = self.request_service.get_client_ip()
 
         log = self.repository.create_logg(ip_address, **fields)
 
         self.email_service.send_error_admin_login_message(ip=ip_address, **fields, time=log.date, error=error)
 
-    def success(self, request: HttpRequest, fields: dict[str, Any]) -> None:
-        ip_address = get_client_ip(request)
+    def success(self, fields: dict[str, Any]) -> None:
+        ip_address = self.request_service.get_client_ip()
 
         log = self.repository.create_logg(ip_address, **fields)
 
         self.email_service.send_success_admin_login_message(ip=ip_address, **fields, time=log.date)
 
-    def fake_admin_panel(self, request: HttpRequest, fields: dict[str, Any]) -> None:
-        ip_address = get_client_ip(request)
+    def fake_admin_panel(self, fields: dict[str, Any]) -> None:
+        ip_address = self.request_service.get_client_ip()
 
         log = self.repository.create_logg_fake_admin(ip_address, **fields)
 

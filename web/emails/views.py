@@ -52,9 +52,7 @@ class LoginCodeGenerator:
 
     def generate_admin_login_code(self, email: str) -> int:
         code = random.randrange(100000, 1000000)
-
         admin_code = self.repository.update_or_create_admin_code(email=email, code=code)
-        print(admin_code)
         return admin_code
 
 

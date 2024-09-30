@@ -1,6 +1,10 @@
 from django.db.models.signals import post_save
 
-from web.site_statistics.models import SessionAction, SessionModel, UserActivity
+from infrastructure.persistence.models.site_statistics import (
+    SessionAction,
+    SessionModel,
+    UserActivity,
+)
 
 
 def hacking_session_handler(sender, instance, created, *args, **kwargs):

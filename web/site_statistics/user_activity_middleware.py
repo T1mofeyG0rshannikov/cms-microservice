@@ -6,11 +6,12 @@ from application.common.url_parser import UrlParserInterface
 from application.services.domains.url_parser import get_url_parser
 from application.sessions.dto import UserActivityDTO
 from domain.user_sessions.repository import UserSessionRepositoryInterface
+from infrastructure.logging.tasks import create_user_activity_log
 from infrastructure.logging.user_activity.config import get_user_active_settings
 from infrastructure.persistence.repositories.user_session_repository import (
     get_user_session_repository,
 )
-from infrastructure.requests.get_ip import get_client_ip
+from infrastructure.requests.service import RequestService
 
 
 class UserActivityMiddleware:
@@ -46,6 +47,7 @@ class UserActivityMiddleware:
         return False
 
     def __call__(self, request: HttpRequest):
+        request_service = RequestService(request)
         unique_key = request.session.session_key
         if not unique_key:
             request.session.save()
@@ -57,7 +59,7 @@ class UserActivityMiddleware:
         user_id = request.user.id if request.user.is_authenticated else None
 
         if self.session_key not in request.session:
-            ip = get_client_ip(request)
+            ip = request_service.get_client_ip()
             hacking = False
             hacking_reason = None
 
@@ -76,7 +78,7 @@ class UserActivityMiddleware:
 
             request.session[self.session_key] = user_session_data
 
-        if request.user.is_authenticated:
+        if user_id:
             request.session[self.session_key]["auth"] = "login"
             request.session[self.session_key]["user_id"] = user_id
 
@@ -90,11 +92,25 @@ class UserActivityMiddleware:
 
         user_session_data = request.session[self.session_key]
 
-        self.user_session_repository.get_or_create_user_session(unique_key=unique_key, session_data=user_session_data)
+        create_user_activity_log.delay(
+            unique_key,
+            user_session_data,
+            page_adress,
+            self.is_disable_url_to_log(path),
+            self.is_enable_url_to_log(path),
+            now(),
+        )
 
-        if not self.is_disable_url_to_log(path) and self.is_enable_url_to_log(path):
-            self.user_session_repository.create_user_action(
-                adress=page_adress, session_unique_key=unique_key, text="перешёл на страницу"
-            )
+        """try:
+            executed_user_session = True
+            self.user_session_repository.update_or_create_user_session(unique_key=unique_key, session_data=user_session_data)
+        except:
+            executed_user_session = False
+
+        if executed_user_session:
+            if not self.is_disable_url_to_log(path) and self.is_enable_url_to_log(path):
+                self.user_session_repository.create_user_action(
+                    adress=page_adress, session_unique_key=unique_key, text="перешёл на страницу"
+                )"""
 
         return self.get_response(request)

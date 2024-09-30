@@ -97,7 +97,7 @@ class ChangePasswordView(BaseUserView, FormView, APIUserRequired):
 
         user.set_password(password)
         user.save()
-        print(user)
+
         request.user = user
         user = authenticate(request)
         login(request, user)

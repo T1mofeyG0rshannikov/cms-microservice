@@ -3,9 +3,7 @@ from django.contrib import admin
 from django.utils.html import mark_safe
 
 from infrastructure.admin.admin_settings import get_admin_settings
-from web.admin.admin import redirect_to_change_page_tag
-from web.common.admin import BaseInline
-from web.site_statistics.models import (
+from infrastructure.persistence.models.site_statistics import (
     SessionAction,
     SessionFilters,
     SessionModel,
@@ -14,6 +12,8 @@ from web.site_statistics.models import (
     UserAction,
     UserActivity,
 )
+from web.admin.admin import redirect_to_change_page_tag
+from web.common.admin import BaseInline
 
 
 class UserActionInline(BaseInline):
@@ -115,6 +115,17 @@ class SessionActionInline(BaseInline):
     def has_add_permission(self, *args, **kwargs) -> bool:
         return False
 
+    raw_id_fields = ["session"]
+
+    def get_formset(self, request, obj=None, **kwargs):
+        # import time
+        # start = time.time()
+        # for i in range(100):
+        #    super().get_formset(request, obj, **kwargs)
+
+        # print(time.time() - start)
+        return super().get_formset(request, obj, **kwargs)
+
 
 class SessionModelAdmin(BaseSessionAdmin):
     inlines = [SessionActionInline]
@@ -135,6 +146,13 @@ class SessionModelAdmin(BaseSessionAdmin):
     readonly_fields = fields
 
     list_display = [field for field in fields if field != "headers"]
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).prefetch_related("actions")
+
+    list_prefetch_related = [
+        "actions",
+    ]
 
 
 admin.site.register(TryLoginToAdminPanel)
