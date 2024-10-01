@@ -64,9 +64,12 @@ class UserSessionRepository(UserSessionRepositoryInterface):
 
     def is_raw_session_exists(self, unique_key: str) -> bool:
         return SessionModel.objects.filter(unique_key=unique_key).exists()
-    
+
     def increment_pages_count(self, unique_key: str) -> None:
-        UserActivity.objects.filter(unique_key=unique_key).update(pages_count=F("pages_count")+1)
+        UserActivity.objects.filter(unique_key=unique_key).update(pages_count=F("pages_count") + 1)
+
+    def update_raw_session_unique_key(self, old_unique_key: str, new_unique_key: str) -> None:
+        SessionModel.objects.filter(unique_key=old_unique_key).update(unique_key=new_unique_key)
 
     def update_or_create_raw_session(self, unique_key: str, session_data: dict[str, Any]) -> None:
         try:
@@ -78,10 +81,11 @@ class UserSessionRepository(UserSessionRepositoryInterface):
                     del session_data["headers"]
 
                 del session_data["new"]
-                old_unique_key = session_data["unique_key"]
+                # old_unique_key = session_data["unique_key"]
                 del session_data["unique_key"]
-                print(unique_key, old_unique_key)
-                SessionModel.objects.filter(unique_key=old_unique_key).update(**session_data, unique_key=unique_key)
+                # print(unique_key, old_unique_key)
+                print(SessionModel.objects.all())
+                SessionModel.objects.filter(unique_key=unique_key).update(**session_data)
                 return SessionModel.objects.get(unique_key=unique_key)
 
         except OperationalError:

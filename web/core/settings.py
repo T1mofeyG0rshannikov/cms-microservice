@@ -283,4 +283,4 @@ RAW_SESSION_SESSION_KEY = os.getenv("RAW_SESSION_SESSION_KEY")
 
 SESSION_SAVE_EVERY_REQUEST = True
 
-SESSION_ENGINE = "site_statistics.session_backend"
+SESSION_ENGINE = "web.site_statistics.session_backend"

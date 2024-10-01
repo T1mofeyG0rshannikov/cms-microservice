@@ -61,6 +61,9 @@ class SessionModel(BaseSessionModel):
         verbose_name = "Сессии"
         verbose_name_plural = "Сессии"
 
+    def __str__(self):
+        return self.unique_key
+
 
 class UserActivity(BaseSessionModel):
     class Meta:

@@ -48,6 +48,15 @@ class UrlParser(UrlParserInterface):
         if "." in path:
             return True
 
+        if "styles" in path:
+            return True
+
+        if "static" in path:
+            return True
+
+        if "media" in path:
+            return True
+
         return False
 
     @staticmethod

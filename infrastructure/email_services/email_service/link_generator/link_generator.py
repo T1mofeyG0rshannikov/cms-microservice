@@ -4,7 +4,7 @@ from .link_generator_interface import LinkGeneratorInterface
 
 
 class LinkGenerator(LinkGeneratorInterface):
-    protocol = "http"
+    protocol = "https"
 
     def __init__(self, jwt_processor: JwtProcessorInterface, host: str) -> None:
         self.jwt_processor = jwt_processor
