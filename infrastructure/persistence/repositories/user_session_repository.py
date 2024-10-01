@@ -64,6 +64,9 @@ class UserSessionRepository(UserSessionRepositoryInterface):
 
     def is_raw_session_exists(self, unique_key: str) -> bool:
         return SessionModel.objects.filter(unique_key=unique_key).exists()
+    
+    def increment_pages_count(self, unique_key: str) -> None:
+        UserActivity.objects.filter(unique_key=unique_key).update(pages_count=F("pages_count")+1)
 
     def update_or_create_raw_session(self, unique_key: str, session_data: dict[str, Any]) -> None:
         try:

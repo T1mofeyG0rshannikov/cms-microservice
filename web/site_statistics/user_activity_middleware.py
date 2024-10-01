@@ -86,7 +86,7 @@ class UserActivityMiddleware:
         request.session[self.session_key]["unique_key"] = unique_key
 
         if not self.is_disable_url_to_log(path) and self.is_enable_url_to_log(path):
-            request.session[self.session_key]["pages_count"] += 1
+            self.user_session_repository.increment_pages_count(unique_key)
 
         request.session.save()
 
