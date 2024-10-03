@@ -91,6 +91,7 @@ class UserAction(BaseSessionAction):
     session = models.ForeignKey(UserActivity, on_delete=models.CASCADE, null=True)
 
     class Meta:
+        ordering = ["-time"]
         app_label = "site_statistics"
 
         indexes = [

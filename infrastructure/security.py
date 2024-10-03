@@ -9,8 +9,8 @@ def get_fernet_key():
 
 
 class LinkEncryptor:
-    def __init__(self):
-        self.fernet = Fernet(get_fernet_key())
+    def __init__(self, fernet_key):
+        self.fernet = fernet_key
 
     def encrypt(self, string: str) -> str:
         enc_string = self.fernet.encrypt(string.encode())
@@ -18,3 +18,7 @@ class LinkEncryptor:
 
     def decrypt(self, string: str) -> str:
         return self.fernet.decrypt(string.encode()).decode()
+
+
+def get_link_encryptor():
+    return LinkEncryptor(Fernet(get_fernet_key()))

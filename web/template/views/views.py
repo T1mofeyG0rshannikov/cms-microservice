@@ -1,6 +1,5 @@
 from typing import Any
 
-from django.conf import settings
 from django.http import HttpRequest, JsonResponse
 from django.shortcuts import render
 from django.views import View
@@ -63,38 +62,25 @@ class BaseTemplateLoadView(View):
 
 class GetChangeUserFormTemplate(BaseTemplateLoadView):
     url_parser: UrlParserInterface = get_url_parser()
-    user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
-    increment_session_profile_action = IncrementSessionCount(
-        get_user_session_repository(), settings.USER_ACTIVITY_SESSION_KEY, "profile_actions_count"
-    )
+    increment_session_profile_action = IncrementSessionCount(get_user_session_repository(), "profile_actions_count")
 
     def get_content(self, request: HttpRequest):
         adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
 
-        self.increment_session_profile_action(request.session)
-        self.user_session_repository.create_user_action(
-            adress=adress,
-            text=f"""Открыл данные профиля""",
-            session_unique_key=request.session["user_activity"]["unique_key"],
-        )
+        self.increment_session_profile_action(request.session.session_key, adress, text=f"""Открыл данные профиля""")
+
         return self.template_loader.load_change_user_form(request)
 
 
 class GetChangeSiteFormTemplate(BaseTemplateLoadView):
     url_parser: UrlParserInterface = get_url_parser()
-    user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
-    increment_session_profile_action = IncrementSessionCount(
-        get_user_session_repository(), settings.USER_ACTIVITY_SESSION_KEY, "profile_actions_count"
-    )
+    increment_session_profile_action = IncrementSessionCount(get_user_session_repository(), "profile_actions_count")
 
     def get_content(self, request: HttpRequest):
         adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
 
-        self.increment_session_profile_action(request.session)
-        self.user_session_repository.create_user_action(
-            adress=adress,
-            text="Открыл настройку партнерского сайта",
-            session_unique_key=request.session["user_activity"]["unique_key"],
+        self.increment_session_profile_action(
+            request.session.session_key, adress, text="Открыл настройку партнерского сайта"
         )
 
         return self.template_loader.load_change_site_form(request)
@@ -127,7 +113,7 @@ class BaseProfileTemplateView(View):
         self.user_session_repository.create_user_action(
             adress=adress,
             text="Перешёл на страницу",
-            session_unique_key=request.session[settings.USER_ACTIVITY_SESSION_KEY]["unique_key"],
+            session_unique_key=request.session.session_key,
         )
 
         return JsonResponse(template)
@@ -168,14 +154,14 @@ class UserProductsTemplate(BaseProfileTemplateView):
 
 class GetChoiceProductForm(BaseTemplateLoadView):
     url_parser: UrlParserInterface = get_url_parser()
-    user_session_repository = get_user_session_repository()
+    user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
 
     def get_content(self, request):
         adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
         self.user_session_repository.create_user_action(
             adress=adress,
             text="Открыл список продуктов",
-            session_unique_key=request.session["user_activity"]["unique_key"],
+            session_unique_key=request.session.session_key,
         )
 
         return self.template_loader.load_choice_product_form(request)
@@ -201,7 +187,7 @@ class GetProductDescriptionPopup(BaseTemplateLoadView):
         self.user_session_repository.create_user_action(
             adress=adress,
             text=f'''Открыл описание продукта "{product_name}"''',
-            session_unique_key=request.session["user_activity"]["unique_key"],
+            session_unique_key=request.session.session_key,
         )
 
         return self.template_loader.load_product_description_popup(request)

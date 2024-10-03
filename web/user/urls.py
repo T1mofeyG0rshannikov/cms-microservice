@@ -14,14 +14,14 @@ from web.user.views.password import (
     SendMailToResetPassword,
     SetPassword,
 )
-from web.user.views.views import DeleteUserProductView, GetUserInfo
+from web.user.views.views import DeleteUserProductView, IsUserAuth
 
 urlpatterns = [
     path("register", RegisterUser.as_view()),
     path("password", SetPassword.as_view()),
     path("password/<str:token>", ResetPasswordView.as_view()),
     path("login", LoginView.as_view()),
-    path("get-user-info", GetUserInfo.as_view()),
+    path("get-user-info", IsUserAuth.as_view()),
     path("confirm-email/<str:token>", ConfirmEmail.as_view()),
     path("confirm-new-email/<str:token>", ConfirmNewEmail.as_view()),
     path("reset-password", SendMailToResetPassword.as_view()),

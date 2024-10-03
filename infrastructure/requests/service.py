@@ -1,7 +1,9 @@
 from django.http import HttpRequest
 
+from application.services.request_service import RequestServiceInterface
 
-class RequestService:
+
+class RequestService(RequestServiceInterface):
     def __init__(self, request: HttpRequest):
         self.request = request
 
@@ -22,5 +24,5 @@ class RequestService:
         return ip
 
 
-def get_request_service(request):
+def get_request_service(request: HttpRequest) -> RequestServiceInterface:
     return RequestService(request)

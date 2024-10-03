@@ -30,7 +30,7 @@ function openLoginForm(domain){
     const token = getToken();
 
     fetch(`${window.location.protocol}//${domain}/user/get-user-info`, {
-        method: "get",
+        credentials: 'include',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -38,17 +38,14 @@ function openLoginForm(domain){
         }
     }).then(response => {
         if (response.status === 200){
-            response.json().then(() => {
-                window.location.replace(`${window.location.protocol}//${domain}/my/`)
-            })
+            window.location.replace(`${window.location.protocol}//${domain}/my/`)
         }
-        return response.status;
-    }).then(status => {
-        if (status === 401){
+        else if (response.status === 401){
             compliteLoginForm();
             loginFormContainer.style.animation = "showPopup .3s";
             loginFormContainer.style.display = "flex";
         }
+        return response.status;
     })
 }
 

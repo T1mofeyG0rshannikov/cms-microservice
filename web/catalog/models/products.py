@@ -7,7 +7,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from infrastructure.persistence.models.blocks.mixins import ButtonMixin
-from infrastructure.security import LinkEncryptor
+from infrastructure.security import get_link_encryptor
 from web.catalog.models.product_type import ProductCategory, ProductType
 from web.common.models import OneInstanceModel
 
@@ -127,7 +127,7 @@ class Offer(models.Model):
     )
     verification_of_registration = models.BooleanField(default=False, verbose_name="Верификация оформления")
 
-    link_encryptor = LinkEncryptor()
+    link_encryptor = get_link_encryptor()
 
     @property
     def get_end_promotion(self):

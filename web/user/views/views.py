@@ -1,4 +1,4 @@
-from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.http import HttpRequest, HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
@@ -14,18 +14,21 @@ from infrastructure.persistence.repositories.product_repository import (
 from infrastructure.persistence.repositories.user_session_repository import (
     get_user_session_repository,
 )
-from web.user.serializers import UserSerializer
 
 
-class GetUserInfo(View):
-    def get(self, request: HttpRequest):
+class IsUserAuth(View):
+    def get(self, request: HttpRequest) -> HttpResponse:
         user = request.user
+        user_from_header = request.user_from_header
 
+        auth = None
         if user.is_authenticated:
-            user = UserSerializer(user).data
-            return JsonResponse(user)
-        else:
-            return HttpResponse(status=401)
+            auth = True
+        if user_from_header:
+            auth = True
+
+        status = 200 if auth else 401
+        return HttpResponse(status=status)
 
 
 @method_decorator(csrf_exempt, name="dispatch")

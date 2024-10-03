@@ -1,11 +1,11 @@
 from typing import Any
 
+from application.services.request_service import RequestServiceInterface
 from domain.email.exceptions import CantSendMailError
 from domain.logging.admin import AdminLogRepositoryInterface
 from infrastructure.email_services.work_email_service.email_service_interface import (
     WorkEmailServiceInterface,
 )
-from infrastructure.requests.service import RequestService
 
 
 class AdminLoginLogger:
@@ -13,7 +13,7 @@ class AdminLoginLogger:
         self,
         repository: AdminLogRepositoryInterface,
         email_service: WorkEmailServiceInterface,
-        request_service: RequestService,
+        request_service: RequestServiceInterface,
     ) -> None:
         self.repository = repository
         self.email_service = email_service

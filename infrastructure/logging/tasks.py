@@ -1,37 +1,36 @@
+from django.utils.timezone import now
+
+from application.services.domains.url_parser import get_url_parser
 from web.core.celery import app
 
 
 @app.task()
-def create_raw_log(unique_key, session_data, page_adress, time, path):
+def create_raw_log(unique_key, page_adress, path, time=now()):
     from infrastructure.persistence.repositories.user_session_repository import (
         get_user_session_repository,
     )
 
     user_session_repository = get_user_session_repository()
-    session = user_session_repository.update_or_create_raw_session(unique_key=unique_key, session_data=session_data)
-    if session:
-        user_session_repository.create_session_action(
-            adress=page_adress, time=time, session_unique_key=unique_key, path=path
-        )
+    url_parser = get_url_parser()
+
+    if "null" not in path:
+        increment_field = "source_count" if url_parser.is_source(path) else "pages_count"
+
+        user_session_repository.increment_raw_session_field(unique_key, increment_field)
+
+    user_session_repository.create_session_action(page_adress, unique_key, time)
 
 
 @app.task()
-def create_user_activity_log(
-    unique_key, user_session_data, page_adress, is_disable_url_to_log, is_enable_url_to_log, time
-):
+def create_user_activity_log(unique_key, page_adress, time):
     from infrastructure.persistence.repositories.user_session_repository import (
         get_user_session_repository,
     )
 
     user_session_repository = get_user_session_repository()
-    try:
-        executed_user_session = True
-        user_session_repository.update_or_create_user_session(unique_key=unique_key, session_data=user_session_data)
-    except:
-        executed_user_session = False
 
-    if executed_user_session:
-        if not is_disable_url_to_log and is_enable_url_to_log:
-            user_session_repository.create_user_action(
-                adress=page_adress, session_unique_key=unique_key, text="перешёл на страницу", time=time
-            )
+    user_session_repository.increment_user_session_field(unique_key, "pages_count")
+
+    user_session_repository.create_user_action(
+        adress=page_adress, session_unique_key=unique_key, text="перешёл на страницу", time=time
+    )

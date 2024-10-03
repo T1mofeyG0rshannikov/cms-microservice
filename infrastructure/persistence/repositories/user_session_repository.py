@@ -2,10 +2,8 @@ from datetime import datetime
 from typing import Any
 
 from django.db.models import F
-from django.db.utils import OperationalError
 from django.utils.timezone import now
 
-from application.services.domains.url_parser import get_url_parser
 from domain.user_sessions.repository import UserSessionRepositoryInterface
 from domain.user_sessions.session import UserSessionInterface
 from infrastructure.persistence.models.site_statistics import (
@@ -18,10 +16,8 @@ from infrastructure.persistence.models.site_statistics import (
 
 
 class UserSessionRepository(UserSessionRepositoryInterface):
-    def create_user_action(self, adress: str, text: str, session_unique_key: str, time: datetime = None) -> None:
-        if not time:
-            time = now()
-
+    def create_user_action(self, adress: str, text: str, session_unique_key: str, time: datetime = now()) -> None:
+        print(session_unique_key, "session_unique_key")
         UserAction.objects.create(
             adress=adress,
             text=text,
@@ -30,29 +26,26 @@ class UserSessionRepository(UserSessionRepositoryInterface):
         )
 
     def get_raw_session(self, unique_key: str):
-        return SessionModel.objects.get(unique_key=unique_key)
-
-    def create_session_action(self, adress: str, session_unique_key: str, time: datetime, path) -> None:
-        if not time:
-            time = now()
-
-        url_parser = get_url_parser()
-        if url_parser.is_source(path):
-            SessionModel.objects.filter(unique_key=session_unique_key).update(source_count=F("source_count") + 1)
-        else:
-            SessionModel.objects.filter(unique_key=session_unique_key).update(pages_count=F("pages_count") + 1)
-
         try:
-            SessionAction.objects.create(
-                adress=adress,
-                time=time,
-                session=SessionModel.objects.get(unique_key=session_unique_key),
-            )
-        except OperationalError:
-            pass
+            return SessionModel.objects.get(unique_key=unique_key)
+        except SessionModel.DoesNotExist:
+            return None
 
-    def update_or_create_user_session(self, unique_key: str, session_data: dict[str, Any]) -> None:
-        UserActivity.objects.update_or_create(unique_key=unique_key, defaults=session_data)
+    def get_user_session(self, unique_key: str):
+        try:
+            return UserActivity.objects.get(unique_key=unique_key)
+        except UserActivity.DoesNotExist:
+            return None
+
+    def create_session_action(self, adress: str, session_unique_key: str, time: datetime) -> None:
+        SessionAction.objects.create(
+            adress=adress,
+            time=time,
+            session_id=SessionModel.objects.values_list("id", flat=True).get(unique_key=session_unique_key),
+        )
+
+    def create_user_session(self, **kwargs) -> None:
+        UserActivity.objects.create(**kwargs)
 
     def get_or_create_user_session(self, unique_key: str, session_data: dict[str, Any]) -> UserSessionInterface:
         session_db, _ = UserActivity.objects.get_or_create(unique_key=unique_key, defaults=session_data)
@@ -65,31 +58,29 @@ class UserSessionRepository(UserSessionRepositoryInterface):
     def is_raw_session_exists(self, unique_key: str) -> bool:
         return SessionModel.objects.filter(unique_key=unique_key).exists()
 
-    def increment_pages_count(self, unique_key: str) -> None:
-        UserActivity.objects.filter(unique_key=unique_key).update(pages_count=F("pages_count") + 1)
+    def is_user_session_exists(self, unique_key: str) -> bool:
+        return UserActivity.objects.filter(unique_key=unique_key).exists()
 
     def update_raw_session_unique_key(self, old_unique_key: str, new_unique_key: str) -> None:
         SessionModel.objects.filter(unique_key=old_unique_key).update(unique_key=new_unique_key)
 
-    def update_or_create_raw_session(self, unique_key: str, session_data: dict[str, Any]) -> None:
-        try:
-            if session_data["new"]:
-                del session_data["new"]
-                return SessionModel.objects.create(**session_data)
-            else:
-                if "headers" in session_data:
-                    del session_data["headers"]
+    def update_user_session_unique_key(self, old_unique_key: str, new_unique_key: str) -> None:
+        UserActivity.objects.filter(unique_key=old_unique_key).update(unique_key=new_unique_key)
 
-                del session_data["new"]
-                # old_unique_key = session_data["unique_key"]
-                del session_data["unique_key"]
-                # print(unique_key, old_unique_key)
-                print(SessionModel.objects.all())
-                SessionModel.objects.filter(unique_key=unique_key).update(**session_data)
-                return SessionModel.objects.get(unique_key=unique_key)
+    def create_raw_session(self, **kwargs):
+        return SessionModel.objects.create(**kwargs)
 
-        except OperationalError:
-            pass
+    def update_raw_session(self, unique_key, **kwargs):
+        SessionModel.objects.filter(unique_key=unique_key).update(**kwargs)
+
+    def update_user_session(self, unique_key, **kwargs):
+        UserActivity.objects.filter(unique_key=unique_key).update(**kwargs)
+
+    def increment_user_session_field(self, unique_key: str, field_name: str) -> None:
+        UserActivity.objects.filter(unique_key=unique_key).update(**{field_name: F(field_name) + 1})
+
+    def increment_raw_session_field(self, unique_key: str, field_name: str) -> None:
+        SessionModel.objects.filter(unique_key=unique_key).update(**{field_name: F(field_name) + 1})
 
 
 def get_user_session_repository() -> UserSessionRepositoryInterface:

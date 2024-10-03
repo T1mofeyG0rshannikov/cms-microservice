@@ -6,8 +6,6 @@ class ChangeSocials:
         self.repository = repository
 
     def __call__(self, site_id: int, user_social_networks):
-        print(user_social_networks)
-
         if len({social_network["social"] for social_network in user_social_networks}) < len(user_social_networks):
             raise SocialChannelAlreadyExists("Вы можете указать только один канал для каждой соц. сети")
 

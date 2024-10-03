@@ -2,23 +2,8 @@ from rest_framework import serializers
 
 from infrastructure.persistence.models.user.idea import Idea, Like
 from infrastructure.persistence.models.user.product import UserOffer, UserProduct
-from infrastructure.persistence.models.user.user import User
 from web.catalog.serializers import ProductsSerializer
 from web.common.serializers import DateFieldDot
-
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = [
-            "username",
-            "second_name",
-            "email",
-            "phone",
-            "phone_is_confirmed",
-            "email_is_confirmed",
-            "profile_picture",
-        ]
 
 
 class UserProductsSerializer(serializers.ModelSerializer):

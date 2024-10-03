@@ -124,7 +124,7 @@ class LoginView(BaseUserView, FormView):
             self.user_session_repository.create_user_action(
                 adress=adress,
                 text=f'''Вход в ЛК "{form.cleaned_data.get("phone_or_email")}"''',
-                session_unique_key=request.session[settings.USER_ACTIVITY_SESSION_KEY]["unique_key"],
+                session_unique_key=request.session.session_key,
             )
 
             return JsonResponse({"acess_token": access_token})
@@ -134,7 +134,7 @@ class LoginView(BaseUserView, FormView):
             self.user_session_repository.create_user_action(
                 adress=adress,
                 text=f'''Ошибка входа в ЛК "{form.cleaned_data.get("phone_or_email")}"''',
-                session_unique_key=request.session[settings.USER_ACTIVITY_SESSION_KEY]["unique_key"],
+                session_unique_key=request.session.session_key,
             )
 
             return JsonResponse({"errors": form.errors}, status=400)

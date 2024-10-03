@@ -12,6 +12,3 @@ class UserSessionRepositoryInterface(Protocol):
 
     def get_or_create_user_session(self, unique_key: str, session_data: dict[str, Any]) -> UserSessionInterface:
         raise NotADirectoryError
-
-    def update_or_create_raw_session(self, unique_key: str, session_data: dict[str, Any]) -> None:
-        raise NotADirectoryError

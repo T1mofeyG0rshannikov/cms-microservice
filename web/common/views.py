@@ -3,11 +3,11 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
-from infrastructure.security import LinkEncryptor
+from infrastructure.security import get_link_encryptor
 
 
 class RedirectToLink(View):
-    link_encryptor = LinkEncryptor()
+    link_encryptor = get_link_encryptor()
 
     def get(self, request):
         tracker = self.request.GET.get("product")

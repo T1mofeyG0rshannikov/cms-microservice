@@ -76,6 +76,7 @@ AUTH_USER_MODEL = "user.User"
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "web.user.middleware.JwtAuthMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -87,7 +88,6 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_hosts.middleware.HostsRequestMiddleware",
     "django_hosts.middleware.HostsResponseMiddleware",
-    "web.user.middleware.JwtAuthMiddleware",
     "web.admin.middleware.AdminMiddleware",
     "web.site_tests.middleware.ExceptionLoggingMiddleware",
 ]
@@ -261,6 +261,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://idri.ru",
     "http://127.0.0.1:8000",
     "http://localhost:8000",
+    "http://127.0.0.1",
+    "http://localhost",
 ]
 
 CORS_ORIGIN_WHITELIST = [
@@ -269,6 +271,8 @@ CORS_ORIGIN_WHITELIST = [
     "https://idri.ru",
     "http://127.0.0.1:8000",
     "http://localhost:8000",
+    "http://127.0.0.1",
+    "http://localhost",
 ]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -284,3 +288,10 @@ RAW_SESSION_SESSION_KEY = os.getenv("RAW_SESSION_SESSION_KEY")
 SESSION_SAVE_EVERY_REQUEST = True
 
 SESSION_ENGINE = "web.site_statistics.session_backend"
+USER_ACTIVITY_COOKIE_NAME = "user_activity"
+
+# SESSION_COOKIE_DOMAIN_DYNAMIC = ['.127.0.0.1:8000', '.localhost:8000', '.127.0.0.1', '.localhost']
+
+# SESSION_COOKIE_DOMAIN = 'localhost'
+
+CORS_ALLOW_HEADERS = ("content-disposition", "accept-encoding", "content-type", "accept", "origin", "authorization")

@@ -109,8 +109,16 @@ class ChangePasswordView(BaseUserView, FormView, APIUserRequired):
         return JsonResponse({"access_token": access_token}, status=200)
 
 
-class Profile(BaseProfileView):
+class Profile(BaseProfileView, BaseUserView):
     template_name = "account/profile.html"
+
+    def dispath(self, request: HttpRequest, *args, **kwargs):
+        if request.user.is_authenticated():
+            return super().dispatch(request, *args, **kwargs)
+        if request.user_from_header:
+            self.login(request.user_from_header)
+
+        return super().dispatch(request, *args, **kwargs)
 
 
 class PageNotFound(SubdomainMixin):

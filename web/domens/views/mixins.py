@@ -23,7 +23,7 @@ class SubdomainMixin(SettingsMixin):
         domain = self.url_parser.get_domain_from_host(request.get_host())
 
         if self.admin_settings.admin_domain in request.get_host():
-            if not request.path.startswith(self.admin_site_url):
+            if not request.path.startswith(self.admin_settings.admin_url):
                 return HttpResponseNotFound()
 
         if not self.domain_service.valid_subdomain(subdomain):

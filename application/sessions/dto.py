@@ -12,7 +12,6 @@ class UserActivityDTO:
     site: str
     device: bool
     banks_count: int = 0
-    # pages_count: int = 0
     auth: str = None
     user_id: int = None
     profile_actions_count: int = 0
@@ -34,8 +33,6 @@ class RawSessionDTO:
     site: str
     device: bool
     banks_count: int = 0
-    # pages_count: int = 0
-    # source_count: int = 0
     auth: str = None
     user_id: int = None
     profile_actions_count: int = 0
@@ -43,7 +40,6 @@ class RawSessionDTO:
     hacking: bool = False
     hacking_reason: str = None
     headers: str = None
-    new: bool = True
 
     @classmethod
     def from_dict(cls, env):
