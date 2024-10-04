@@ -13,6 +13,10 @@ from infrastructure.persistence.repositories.user_session_repository import (
 )
 from infrastructure.persistence.sessions.service import RawSessionService
 from infrastructure.requests.service import get_request_service
+import logging
+
+
+logger = logging.getLogger("main")
 
 
 class RawSessionMiddleware:
@@ -52,8 +56,9 @@ class RawSessionMiddleware:
                 unique_key, path, site, request.user_agent.is_mobile
             )
             # print(1, session_data)
-
+            logger.info("create new cookie session 1")
             self.user_session_repository.create_raw_session(**session_data.__dict__)
+            logger.info("create raw log 2")
             create_raw_log.delay(unique_key, page_adress, path, time=now())
         else:
             cookie_unique_key = cookie
@@ -64,8 +69,10 @@ class RawSessionMiddleware:
                 session_data = raw_session_service.filter_sessions(session_data, host, page_adress, port)
 
                 if not self.user_session_repository.is_raw_session_exists(unique_key):
+                    logger.info("create raw session 3")
                     self.user_session_repository.create_raw_session(**session_data.__dict__)
                 else:
+                    logger.info("update raw session 4")
                     self.user_session_repository.update_raw_session(
                         unique_key,
                         end_time=now(),
@@ -82,25 +89,32 @@ class RawSessionMiddleware:
                     session_data = raw_session_service.get_initial_raw_session(
                         cookie_unique_key, path, site, request.user_agent.is_mobile
                     )
+                    logger.info("сreate raw session 5")
                     self.user_session_repository.create_raw_session(**session_data.__dict__)
                     if not self.user_session_repository.is_raw_session_exists(unique_key):
+                        logger.info("update raw session 6")
                         self.user_session_repository.update_raw_session_unique_key(cookie_unique_key, unique_key)
 
                 if not self.user_session_repository.is_raw_session_exists(unique_key):
+                    logger.info("update raw session 7")
                     self.user_session_repository.update_raw_session_unique_key(cookie_unique_key, unique_key)
 
+                logger.info("get raw session 8")
                 session_data = self.user_session_repository.get_raw_session(unique_key)
                 session_data = raw_session_service.get_initial_raw_session(
                     unique_key, path, site, request.user_agent.is_mobile
                 )
                 if not self.user_session_repository.is_raw_session_exists(unique_key):
+                    logger.info("create raw session 9")
                     self.user_session_repository.create_raw_session(**session_data.__dict__)
+                logger.info("create raw log 10")
                 create_raw_log.delay(unique_key, page_adress, path, time=now())
                 # print(3, session_data)
 
         if session_data.hacking:
             return HttpResponse(status=503)
 
+        logger.info("create raw log 11")
         create_raw_log.delay(unique_key, page_adress, path, time=now())
 
         return response

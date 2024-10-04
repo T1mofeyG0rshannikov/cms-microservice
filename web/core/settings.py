@@ -2,6 +2,8 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
+import logging
+
 
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -295,3 +297,45 @@ USER_ACTIVITY_COOKIE_NAME = "user_activity"
 # SESSION_COOKIE_DOMAIN = 'localhost'
 
 CORS_ALLOW_HEADERS = ("content-disposition", "accept-encoding", "content-type", "accept", "origin", "authorization")
+
+LOGGING = {
+    "version": 1,
+    "disabled_existing_loggers": False,
+
+    "formatters": {
+        "main_format": {
+            "format": "{asctime} - {levelname} - {module} - {filename} - {message}",
+            "style": "{",
+        },
+    },
+
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "main_format",
+        },
+        "file": {
+            "class": "logging.FileHandler",
+            "formatter": "main_format",
+            "filename": "information.log",
+        },
+    },
+
+    "loggers": {
+        "main": {
+            "handlers": ["console", "file"],
+            "level": "INFO",
+            "propagate": True,
+        }
+    },
+}
+
+import sys
+
+logger = logging.getLogger('main')
+logger.setLevel(logging.DEBUG)
+handler = logging.StreamHandler(sys.stderr)
+handler.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(levelname)-8s %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
