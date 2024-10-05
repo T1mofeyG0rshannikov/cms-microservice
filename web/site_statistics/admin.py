@@ -93,6 +93,11 @@ class UserActivityAdmin(BaseSessionAdmin):
         return mark_safe(tag)
 
     user_tag.short_description = "Пользователь"
+    
+    def pages_count(self, session):
+        return session.actions.filter(is_page=True).count()
+    
+    pages_count.short_description = "Страницы"
 
     readonly_fields = fields
 
@@ -142,6 +147,16 @@ class SessionModelAdmin(BaseSessionAdmin):
         "hacking_reason",
         "headers",
     ]
+    
+    def pages_count(self, session):
+        return session.actions.filter(is_page=True).count()
+    
+    pages_count.short_description = "Страницы"
+    
+    def source_count(self, session):
+        return session.actions.filter(is_source=True).count()
+    
+    source_count.short_description = "Ресурсы"
 
     readonly_fields = fields
 

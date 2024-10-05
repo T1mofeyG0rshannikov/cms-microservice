@@ -39,7 +39,6 @@ class BaseSessionModel(models.Model):
     end_time = models.DateTimeField()
     site = models.CharField(max_length=50, null=True, verbose_name="Сайт")
     device = models.BooleanField(default=False)
-    pages_count = models.PositiveIntegerField(verbose_name="Стр.", default=0)
     hacking = models.BooleanField(default=False)
     hacking_reason = models.CharField(max_length=100, null=True, blank=True)
     banks_count = models.PositiveIntegerField(verbose_name="Банки", default=0)
@@ -54,7 +53,6 @@ class BaseSessionModel(models.Model):
 
 class SessionModel(BaseSessionModel):
     headers = models.TextField(max_length=2000, null=True)
-    source_count = models.PositiveIntegerField(default=0, verbose_name="ресурсы")
 
     class Meta:
         app_label = "site_statistics"
@@ -89,6 +87,7 @@ class BaseSessionAction(models.Model):
 class UserAction(BaseSessionAction):
     text = models.CharField(max_length=200, verbose_name="")
     session = models.ForeignKey(UserActivity, on_delete=models.CASCADE, null=True)
+    is_page = models.BooleanField(default=True)
 
     class Meta:
         ordering = ["-time"]
@@ -105,6 +104,8 @@ class UserAction(BaseSessionAction):
 
 class SessionAction(BaseSessionAction):
     session = models.ForeignKey(SessionModel, on_delete=models.CASCADE, null=True, related_name="actions")
+    is_page = models.BooleanField(default=True)
+    is_source = models.BooleanField(default=False)
 
     class Meta:
         app_label = "site_statistics"

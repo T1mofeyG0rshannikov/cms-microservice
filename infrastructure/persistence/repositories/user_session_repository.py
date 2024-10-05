@@ -37,10 +37,12 @@ class UserSessionRepository(UserSessionRepositoryInterface):
         except UserActivity.DoesNotExist:
             return None
 
-    def create_session_action(self, adress: str, session_unique_key: str, time: datetime) -> None:
+    def create_session_action(self, adress: str, session_unique_key: str, time: datetime, is_page: bool, is_source: bool) -> None:
         SessionAction.objects.create(
             adress=adress,
             time=time,
+            is_page=is_page,
+            is_source=is_source,
             session_id=SessionModel.objects.values_list("id", flat=True).get(unique_key=session_unique_key),
         )
 
@@ -81,6 +83,9 @@ class UserSessionRepository(UserSessionRepositoryInterface):
 
     def increment_raw_session_field(self, unique_key: str, field_name: str) -> None:
         SessionModel.objects.filter(unique_key=unique_key).update(**{field_name: F(field_name) + 1})
+        
+    def bulk_create_raw_session_logs(self, logs):
+        SessionAction.objects.bulk_crete(logs)
 
 
 def get_user_session_repository() -> UserSessionRepositoryInterface:

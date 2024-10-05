@@ -4,9 +4,10 @@ from application.sessions.dto import RawSessionDTO
 
 
 class RawSessionService:
-    def __init__(self, request_service, user_session_repository):
+    def __init__(self, request_service, user_session_repository, url_parser):
         self.request_service = request_service
         self.user_session_repository = user_session_repository
+        self.url_parser = url_parser
 
     def get_initial_raw_session(self, unique_key, path, site, device):
         headers = self.request_service.get_all_headers_to_string()

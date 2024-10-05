@@ -1,6 +1,7 @@
 from django.utils.timezone import now
 
 from application.services.domains.url_parser import get_url_parser
+from application.sessions.dto import RawSessionDTO
 from web.core.celery import app
 
 
@@ -20,6 +21,34 @@ def create_raw_log(unique_key, page_adress, path, time=now()):
 
     user_session_repository.create_session_action(page_adress, unique_key, time)
 
+
+@app.task()
+def create_raw_session(session_data: dict):
+    from infrastructure.persistence.repositories.user_session_repository import get_user_session_repository
+    
+    user_session_repository = get_user_session_repository()
+    user_session_repository.create_raw_session(session_data)
+
+
+@app.task()
+def update_raw_session_unique_key(cookie_unique_key, unique_key):
+    from infrastructure.persistence.repositories.user_session_repository import get_user_session_repository
+    
+    user_session_repository = get_user_session_repository()
+    user_session_repository.update_raw_session_unique_key(cookie_unique_key, unique_key)
+
+
+@app.task()
+def update_raw_session(unique_key, end_time, hacking, hacking_reason):
+    from infrastructure.persistence.repositories.user_session_repository import get_user_session_repository
+    
+    user_session_repository = get_user_session_repository()
+    user_session_repository.update_raw_session(
+        unique_key,
+        end_time=end_time,
+        hacking=hacking,
+        hacking_reason=hacking_reason,
+    )
 
 @app.task()
 def create_user_activity_log(unique_key, page_adress, time):
