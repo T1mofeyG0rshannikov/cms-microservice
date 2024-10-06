@@ -4,73 +4,72 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('site_statistics', '0023_remove_useractivity_headers_and_more'),
+        ("site_statistics", "0023_remove_useractivity_headers_and_more"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='sessionaction',
-            options={'ordering': ['-time']},
+            name="sessionaction",
+            options={"ordering": ["-time"]},
         ),
         migrations.AlterModelOptions(
-            name='useraction',
-            options={'ordering': ['-time']},
+            name="useraction",
+            options={"ordering": ["-time"]},
         ),
         migrations.RemoveField(
-            model_name='sessionmodel',
-            name='pages_count',
+            model_name="sessionmodel",
+            name="pages_count",
         ),
         migrations.RemoveField(
-            model_name='sessionmodel',
-            name='source_count',
+            model_name="sessionmodel",
+            name="source_count",
         ),
         migrations.RemoveField(
-            model_name='useractivity',
-            name='pages_count',
+            model_name="useractivity",
+            name="pages_count",
         ),
         migrations.AddField(
-            model_name='sessionaction',
-            name='is_page',
+            model_name="sessionaction",
+            name="is_page",
             field=models.BooleanField(default=True),
         ),
         migrations.AddField(
-            model_name='sessionaction',
-            name='is_source',
+            model_name="sessionaction",
+            name="is_source",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='useraction',
-            name='is_page',
+            model_name="useraction",
+            name="is_page",
             field=models.BooleanField(default=True),
         ),
         migrations.AlterField(
-            model_name='sessionaction',
-            name='time',
+            model_name="sessionaction",
+            name="time",
             field=models.DateTimeField(),
         ),
         migrations.AlterField(
-            model_name='sessionmodel',
-            name='profile_actions_count',
-            field=models.PositiveIntegerField(default=0, verbose_name='ЛК'),
+            model_name="sessionmodel",
+            name="profile_actions_count",
+            field=models.PositiveIntegerField(default=0, verbose_name="ЛК"),
         ),
         migrations.AlterField(
-            model_name='useraction',
-            name='time',
+            model_name="useraction",
+            name="time",
             field=models.DateTimeField(),
         ),
         migrations.AlterField(
-            model_name='useractivity',
-            name='profile_actions_count',
-            field=models.PositiveIntegerField(default=0, verbose_name='ЛК'),
+            model_name="useractivity",
+            name="profile_actions_count",
+            field=models.PositiveIntegerField(default=0, verbose_name="ЛК"),
         ),
         migrations.AddIndex(
-            model_name='sessionaction',
-            index=models.Index(fields=['session_id'], name='site_statis_session_e3ab7b_idx'),
+            model_name="sessionaction",
+            index=models.Index(fields=["session_id"], name="site_statis_session_e3ab7b_idx"),
         ),
         migrations.AddIndex(
-            model_name='useraction',
-            index=models.Index(fields=['session_id'], name='site_statis_session_c7d8f2_idx'),
+            model_name="useraction",
+            index=models.Index(fields=["session_id"], name="site_statis_session_c7d8f2_idx"),
         ),
     ]

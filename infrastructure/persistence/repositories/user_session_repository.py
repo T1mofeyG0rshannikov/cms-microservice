@@ -37,7 +37,9 @@ class UserSessionRepository(UserSessionRepositoryInterface):
         except UserActivity.DoesNotExist:
             return None
 
-    def create_session_action(self, adress: str, session_unique_key: str, time: datetime, is_page: bool, is_source: bool) -> None:
+    def create_session_action(
+        self, adress: str, session_unique_key: str, time: datetime, is_page: bool, is_source: bool
+    ) -> None:
         SessionAction.objects.create(
             adress=adress,
             time=time,
@@ -60,11 +62,15 @@ class UserSessionRepository(UserSessionRepositoryInterface):
     def is_raw_session_exists(self, unique_key: str) -> bool:
         return SessionModel.objects.filter(unique_key=unique_key).exists()
 
+    def is_raw_session_exists_by_id(self, id: int) -> bool:
+        return SessionModel.objects.filter(id=id).exists()
+
     def is_user_session_exists(self, unique_key: str) -> bool:
         return UserActivity.objects.filter(unique_key=unique_key).exists()
 
     def update_raw_session_unique_key(self, old_unique_key: str, new_unique_key: str) -> None:
         SessionModel.objects.filter(unique_key=old_unique_key).update(unique_key=new_unique_key)
+        return SessionModel.objects.get(unique_key=new_unique_key)
 
     def update_user_session_unique_key(self, old_unique_key: str, new_unique_key: str) -> None:
         UserActivity.objects.filter(unique_key=old_unique_key).update(unique_key=new_unique_key)
@@ -74,6 +80,7 @@ class UserSessionRepository(UserSessionRepositoryInterface):
 
     def update_raw_session(self, unique_key, **kwargs):
         SessionModel.objects.filter(unique_key=unique_key).update(**kwargs)
+        return SessionModel.objects.get(unique_key=unique_key)
 
     def update_user_session(self, unique_key, **kwargs):
         UserActivity.objects.filter(unique_key=unique_key).update(**kwargs)
@@ -83,9 +90,16 @@ class UserSessionRepository(UserSessionRepositoryInterface):
 
     def increment_raw_session_field(self, unique_key: str, field_name: str) -> None:
         SessionModel.objects.filter(unique_key=unique_key).update(**{field_name: F(field_name) + 1})
-        
+
     def bulk_create_raw_session_logs(self, logs):
-        SessionAction.objects.bulk_crete(logs)
+        new_logs = []
+        for log in logs:
+            if self.is_raw_session_exists_by_id(log["session_id"]):
+                new_logs.append(log)
+            else:
+                print(log)
+
+        SessionAction.objects.bulk_create([SessionAction(**log) for log in new_logs])
 
 
 def get_user_session_repository() -> UserSessionRepositoryInterface:

@@ -24,24 +24,30 @@ def create_raw_log(unique_key, page_adress, path, time=now()):
 
 @app.task()
 def create_raw_session(session_data: dict):
-    from infrastructure.persistence.repositories.user_session_repository import get_user_session_repository
-    
+    from infrastructure.persistence.repositories.user_session_repository import (
+        get_user_session_repository,
+    )
+
     user_session_repository = get_user_session_repository()
     user_session_repository.create_raw_session(session_data)
 
 
 @app.task()
 def update_raw_session_unique_key(cookie_unique_key, unique_key):
-    from infrastructure.persistence.repositories.user_session_repository import get_user_session_repository
-    
+    from infrastructure.persistence.repositories.user_session_repository import (
+        get_user_session_repository,
+    )
+
     user_session_repository = get_user_session_repository()
     user_session_repository.update_raw_session_unique_key(cookie_unique_key, unique_key)
 
 
 @app.task()
 def update_raw_session(unique_key, end_time, hacking, hacking_reason):
-    from infrastructure.persistence.repositories.user_session_repository import get_user_session_repository
-    
+    from infrastructure.persistence.repositories.user_session_repository import (
+        get_user_session_repository,
+    )
+
     user_session_repository = get_user_session_repository()
     user_session_repository.update_raw_session(
         unique_key,
@@ -49,6 +55,7 @@ def update_raw_session(unique_key, end_time, hacking, hacking_reason):
         hacking=hacking,
         hacking_reason=hacking_reason,
     )
+
 
 @app.task()
 def create_user_activity_log(unique_key, page_adress, time):
@@ -63,3 +70,14 @@ def create_user_activity_log(unique_key, page_adress, time):
     user_session_repository.create_user_action(
         adress=page_adress, session_unique_key=unique_key, text="перешёл на страницу", time=time
     )
+
+
+@app.task()
+def create_raw_logs(logs):
+    from infrastructure.persistence.repositories.user_session_repository import (
+        get_user_session_repository,
+    )
+
+    user_session_repository = get_user_session_repository()
+
+    user_session_repository.bulk_create_raw_session_logs(logs)

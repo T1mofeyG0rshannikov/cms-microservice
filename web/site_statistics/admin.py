@@ -42,7 +42,13 @@ class BaseSessionAdmin(admin.ModelAdmin):
     start_time_tag.short_description = "Дата"
 
     def time_tag(self, obj):
-        return str(obj.end_time - obj.start_time).split(".")[0]
+        last_action = obj.actions.first()
+        if last_action:
+            end_time = last_action.time
+        else:
+            end_time = obj.start_time
+
+        return str(end_time - obj.start_time).split(".")[0]
 
     time_tag.short_description = "Время"
 
@@ -93,10 +99,10 @@ class UserActivityAdmin(BaseSessionAdmin):
         return mark_safe(tag)
 
     user_tag.short_description = "Пользователь"
-    
+
     def pages_count(self, session):
         return session.actions.filter(is_page=True).count()
-    
+
     pages_count.short_description = "Страницы"
 
     readonly_fields = fields
@@ -141,21 +147,22 @@ class SessionModelAdmin(BaseSessionAdmin):
         "unique_key",
         "ip_tag",
         "start_time_tag",
+        "time_tag",
         "pages_count",
         "source_count",
         "hacking",
         "hacking_reason",
         "headers",
     ]
-    
+
     def pages_count(self, session):
         return session.actions.filter(is_page=True).count()
-    
+
     pages_count.short_description = "Страницы"
-    
+
     def source_count(self, session):
         return session.actions.filter(is_source=True).count()
-    
+
     source_count.short_description = "Ресурсы"
 
     readonly_fields = fields

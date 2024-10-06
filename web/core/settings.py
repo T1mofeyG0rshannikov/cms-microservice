@@ -1,6 +1,6 @@
-import sys
 import logging
 import os
+import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -26,6 +26,7 @@ ALLOWED_HOSTS: list[str] = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     "web.admin",
     "web.user",
     "django.contrib.admin",
@@ -50,7 +51,6 @@ INSTALLED_APPS = [
     "web.domens",
     "qr_code",
     "sass_processor",
-    "daphne",
     "channels",
     "rest_framework",
     "web.emails",
@@ -85,7 +85,7 @@ MIDDLEWARE = [
     "django_user_agents.middleware.UserAgentMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "web.site_statistics.raw_session_middleware.RawSessionMiddleware",
-    #"web.site_statistics.user_activity_middleware.UserActivityMiddleware",
+    # "web.site_statistics.user_activity_middleware.UserActivityMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_hosts.middleware.HostsRequestMiddleware",
@@ -297,7 +297,7 @@ USER_ACTIVITY_COOKIE_NAME = "user_activity"
 # SESSION_COOKIE_DOMAIN = 'localhost'
 
 CORS_ALLOW_HEADERS = ("content-disposition", "accept-encoding", "content-type", "accept", "origin", "authorization")
-'''
+"""
 LOGGING = {
     "version": 1,
     "disabled_existing_loggers": False,
@@ -339,4 +339,4 @@ handler.setLevel(logging.DEBUG)
 formatter = logging.Formatter("%(levelname)-8s %(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
-'''
+"""

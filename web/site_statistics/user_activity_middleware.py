@@ -115,7 +115,10 @@ class UserActivityMiddleware:
                         )
             else:
                 expires = datetime.utcnow() + timedelta(days=365 * 10)
-                response.set_cookie(settings.USER_ACTIVITY_COOKIE_NAME, f"{unique_key}", expires=expires)
+                session_db_id = int(cookie.split("/")[1])
+                response.set_cookie(
+                    settings.USER_ACTIVITY_COOKIE_NAME, f"{unique_key}/{str(session_db_id)}", expires=expires
+                )
 
                 self.user_session_repository.update_user_session_unique_key(cookie_unique_key, unique_key)
 
