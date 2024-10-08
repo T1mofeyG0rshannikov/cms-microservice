@@ -62,7 +62,7 @@ class ChangeSiteView(FormView, APIUserRequired):
         self.increment_session_profile_action(request.session)
 
         self.user_session_repository.create_user_action(
-            adress=adress, text=user_activity_text, session_unique_key=request.session["user_activity"]["unique_key"]
+            adress=adress, text=user_activity_text, session_id=request.user_session_id
         )
 
         try:
@@ -101,7 +101,7 @@ class ChangeUserView(FormView, APIUserRequired):
         try:
             email_changed = self.change_user_interactor(request.user, form.cleaned_data)
 
-            self.increment_session_profile_action(request.session.session_key, adress, text="Изменил данные профиля")
+            self.increment_session_profile_action(request.user_session_id, adress, text="Изменил данные профиля")
 
             if email_changed:
                 return JsonResponse(
@@ -151,6 +151,6 @@ class AddUserProductView(FormView, APIUserRequired):
             f'''Изменил продукт "{product_name}"''' if user_product_exists else f'''Добавил продукт "{product_name}"'''
         )
 
-        self.increment_session_profile_action(request.session.session_key, adress, text=user_activity_text)
+        self.increment_session_profile_action(request.user_sessionid, adress, text=user_activity_text)
 
         return HttpResponse(status=200)

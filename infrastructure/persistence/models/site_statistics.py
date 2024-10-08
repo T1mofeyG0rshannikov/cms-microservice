@@ -60,7 +60,7 @@ class SessionModel(BaseSessionModel):
         verbose_name_plural = "Сессии"
 
     def __str__(self):
-        return self.unique_key
+        return f"{self.site} - {self.ip}"
 
 
 class UserActivity(BaseSessionModel):
@@ -86,7 +86,7 @@ class BaseSessionAction(models.Model):
 
 class UserAction(BaseSessionAction):
     text = models.CharField(max_length=200, verbose_name="")
-    session = models.ForeignKey(UserActivity, on_delete=models.CASCADE, null=True)
+    session = models.ForeignKey(UserActivity, on_delete=models.CASCADE, null=True, related_name="actions")
     is_page = models.BooleanField(default=True)
 
     class Meta:

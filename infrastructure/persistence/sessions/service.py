@@ -9,7 +9,7 @@ class RawSessionService:
         self.user_session_repository = user_session_repository
         self.url_parser = url_parser
 
-    def get_initial_raw_session(self, unique_key, path, site, device):
+    def get_initial_raw_session(self, path, site, device):
         headers = self.request_service.get_all_headers_to_string()
         ip = self.request_service.get_client_ip()
         page_adress = site + path
@@ -17,7 +17,6 @@ class RawSessionService:
         port = site.split(":")[1] if ":" in site else None
 
         session_data = RawSessionDTO(
-            unique_key=unique_key,
             ip=ip,
             start_time=now().isoformat(),
             end_time=now().isoformat(),

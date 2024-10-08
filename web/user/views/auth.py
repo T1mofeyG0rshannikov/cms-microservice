@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib.auth import logout
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
@@ -13,6 +12,7 @@ from domain.user.exceptions import (
     UserWithEmailAlreadyExists,
     UserWithPhoneAlreadyExists,
 )
+from domain.user.repository import UserRepositoryInterface
 from infrastructure.auth.jwt_processor import get_jwt_processor
 from infrastructure.persistence.repositories.domain_repository import (
     get_domain_repository,
@@ -59,7 +59,7 @@ class RegisterUser(BaseUserView, FormView):
             self.user_session_repository.create_user_action(
                 adress=adress,
                 text=user_activity_text,
-                session_unique_key=request.session[settings.USER_ACTIVITY_SESSION_KEY]["unique_key"],
+                session_id=request.user_session_id,
             )
 
             return JsonResponse({"errors": form.errors}, status=400)
@@ -76,13 +76,13 @@ class RegisterUser(BaseUserView, FormView):
             self.user_session_repository.create_user_action(
                 adress=adress,
                 text=user_activity_text,
-                session_unique_key=request.session[settings.USER_ACTIVITY_SESSION_KEY]["unique_key"],
+                session_id=self.request.user_session_id,
             )
 
             return JsonResponse({"errors": form.errors}, status=400)
 
         if token_to_set_password:
-            self.session_setter(request.session, "auth", "register")
+            # set register in session
 
             user_activity_text = (
                 f'''Регистрация в форме "{ancor}"'''
@@ -93,7 +93,7 @@ class RegisterUser(BaseUserView, FormView):
             self.user_session_repository.create_user_action(
                 adress=adress,
                 text=user_activity_text,
-                session_unique_key=request.session[settings.USER_ACTIVITY_SESSION_KEY]["unique_key"],
+                session_id=request.user_session_id,
             )
 
             return JsonResponse({"token_to_set_password": token_to_set_password})
@@ -114,7 +114,7 @@ class LoginView(BaseUserView, FormView):
 
         return context
 
-    def form_valid(self, request: HttpRequest, form):
+    def form_valid(self, request, form):
         adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
 
         try:
@@ -124,7 +124,7 @@ class LoginView(BaseUserView, FormView):
             self.user_session_repository.create_user_action(
                 adress=adress,
                 text=f'''Вход в ЛК "{form.cleaned_data.get("phone_or_email")}"''',
-                session_unique_key=request.session.session_key,
+                session_id=request.user_session_id,
             )
 
             return JsonResponse({"acess_token": access_token})
@@ -134,7 +134,7 @@ class LoginView(BaseUserView, FormView):
             self.user_session_repository.create_user_action(
                 adress=adress,
                 text=f'''Ошибка входа в ЛК "{form.cleaned_data.get("phone_or_email")}"''',
-                session_unique_key=request.session.session_key,
+                session_id=request.user_session_id,
             )
 
             return JsonResponse({"errors": form.errors}, status=400)
@@ -144,9 +144,9 @@ class LoginView(BaseUserView, FormView):
 
 class SetToken(BaseUserView):
     template_name = "user/set-token.html"
-    repository = get_user_repository()
+    repository: UserRepositoryInterface = get_user_repository()
 
-    def get(self, request, token):
+    def get(self, request: HttpRequest, token):
         payload = self.jwt_processor.validate_token(token)
         if payload:
             user = self.repository.get_user_by_id(payload["id"])
@@ -158,6 +158,6 @@ class SetToken(BaseUserView):
 
 
 class Logout(View):
-    def get(self, request):
+    def get(self, request: HttpRequest):
         logout(request)
         return redirect("/")

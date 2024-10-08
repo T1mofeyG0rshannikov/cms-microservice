@@ -28,7 +28,7 @@ class OpenedProductPopupView(View):
         )
 
         self.increment_session_profile_action(
-            request.session.session_key, adress, text=f'''Открыл описание "{product_name}"'''
+            request.user_session_id, adress, text=f'''Открыл описание "{product_name}"'''
         )
 
         return HttpResponse(status=201)
@@ -47,7 +47,7 @@ class OpenedProductLinkView(View):
             product_type_slug=adress.split("/")[1], product_index=product
         )
 
-        self.increment_banks_count(request.session.session_key, adress, f'''Перешел по ссылке "{product_name}"''')
+        self.increment_banks_count(request.user_session_id, adress, f'''Перешел по ссылке "{product_name}"''')
 
         return HttpResponse(status=201)
 
@@ -64,7 +64,7 @@ class OpenedProductPromoView(View):
 
         product_name = self.product_repository.get_offers()[product]
 
-        self.increment_banks_count(request.session.session_key, adress, f'''Перешел по баннеру "{product_name}"''')
+        self.increment_banks_count(request.user_session_id, adress, f'''Перешел по баннеру "{product_name}"''')
 
         return HttpResponse(status=201)
 
@@ -76,7 +76,7 @@ class OpenedChangePasswordFormView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
 
-        self.increment_session_profile_action(request.session.session_key, adress, text="""Открыл изменение пароля""")
+        self.increment_session_profile_action(request.user_session_id, adress, text="""Открыл изменение пароля""")
 
         return HttpResponse(status=201)
 
@@ -92,7 +92,7 @@ class OpenedUpdateProductFormView(View):
         product_name = self.product_repository.get_product_by_id(int(request.GET.get("product"))).name
 
         self.increment_session_profile_action(
-            request.session.session_key, adress, text=f'''Открыл настройку продукта "{product_name}"'''
+            request.user_session_id, adress, text=f'''Открыл настройку продукта "{product_name}"'''
         )
 
         return HttpResponse(status=201)
@@ -104,6 +104,6 @@ class IncrementBanksCountView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
 
-        self.increment_banks_count(request.session.session_key, adress, f"""Открыл описание продукта""")
+        self.increment_banks_count(request.user_session_id, adress, f"""Открыл описание продукта""")
 
         return HttpResponse(status=200)

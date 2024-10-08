@@ -33,7 +33,7 @@ class ConfirmEmail(BaseUserView):
         self.user_session_repository.create_user_action(
             adress=adress,
             text=f"""Верифицировал емейл {user.email}""",
-            session_unique_key=request.session["user_activity"]["unique_key"],
+            session_id=request.user_session_id,
         )
 
         if not user.password:
@@ -68,7 +68,7 @@ class ConfirmNewEmail(BaseUserView):
         self.user_session_repository.create_user_action(
             adress=adress,
             text=f"""Верифицировал емейл {user.email}""",
-            session_unique_key=request.session["user_activity"]["unique_key"],
+            session_id=request.user_session_id,
         )
 
         return HttpResponseRedirect(

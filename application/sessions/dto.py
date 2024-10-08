@@ -5,7 +5,6 @@ from datetime import datetime
 
 @dataclass
 class UserActivityDTO:
-    unique_key: str
     ip: str
     start_time: datetime
     end_time: datetime
@@ -26,7 +25,6 @@ class UserActivityDTO:
 
 @dataclass
 class RawSessionDTO:
-    unique_key: str
     ip: str
     start_time: datetime
     end_time: datetime

@@ -10,4 +10,4 @@ class EmailLogoSerializer(serializers.Serializer):
 
     def get_image(self, obj):
         domain_service = get_domain_service()
-        return f"http://{domain_service.get_domain_string()}" + obj.image.url
+        return f"https://{domain_service.get_domain_string()}" + obj.image.url

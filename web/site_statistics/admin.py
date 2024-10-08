@@ -74,7 +74,6 @@ class UserActivityAdmin(BaseSessionAdmin):
     fields = [
         "device_tag",
         "site",
-        "unique_key",
         "ip_tag",
         "user_tag",
         "start_time_tag",
@@ -144,7 +143,6 @@ class SessionModelAdmin(BaseSessionAdmin):
     fields = [
         "device_tag",
         "site",
-        "unique_key",
         "ip_tag",
         "start_time_tag",
         "time_tag",

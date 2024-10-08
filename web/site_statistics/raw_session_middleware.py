@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timedelta
 
 from django.conf import settings
@@ -14,21 +15,6 @@ from infrastructure.persistence.repositories.user_session_repository import (
 )
 from infrastructure.persistence.sessions.service import RawSessionService
 from infrastructure.requests.service import get_request_service
-
-
-def update_raw_session_unique_key(cookie_unique_key, unique_key):
-    user_session_repository = get_user_session_repository()
-    return user_session_repository.update_raw_session_unique_key(cookie_unique_key, unique_key)
-
-
-def update_raw_session(unique_key, end_time, hacking, hacking_reason):
-    user_session_repository = get_user_session_repository()
-    return user_session_repository.update_raw_session(
-        unique_key,
-        end_time=end_time,
-        hacking=hacking,
-        hacking_reason=hacking_reason,
-    )
 
 
 def create_raw_log(session_id, page_adress, path, time=now()) -> SessionAction:
@@ -49,15 +35,12 @@ def create_raw_log(session_id, page_adress, path, time=now()) -> SessionAction:
     }
 
 
-def create_raw_session(session_data: dict):
-    user_session_repository = get_user_session_repository()
-    return user_session_repository.create_raw_session(**session_data)
+logger = logging.getLogger("main")
 
 
 class RawSessionMiddleware:
     url_parser: UrlParserInterface = get_url_parser()
     user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
-    session_key = settings.RAW_SESSION_SESSION_KEY
     logs_array_length = 100
     logs = []
 
@@ -75,12 +58,7 @@ class RawSessionMiddleware:
         port = site.split(":")[1] if ":" in site else None
         expires = datetime.utcnow() + timedelta(days=365 * 10)
 
-        unique_key = request.session.session_key
-        if not unique_key:
-            request.session.save()
-        unique_key = request.session.session_key
-
-        cookie = request.COOKIES.get(settings.USER_ACTIVITY_COOKIE_NAME)
+        cookie = request.COOKIES.get(settings.RAW_SESSION_COOKIE_NAME)
 
         response = self.get_response(request)
 
@@ -88,34 +66,35 @@ class RawSessionMiddleware:
             return response
         # cookie = None
         session_id = None
-        print(cookie)
+        # print(cookie)
 
         if not cookie or ("/" not in cookie):
-            session_data = raw_session_service.get_initial_raw_session(
-                unique_key, path, site, request.user_agent.is_mobile
-            )
+            session_data = raw_session_service.get_initial_raw_session(path, site, request.user_agent.is_mobile)
 
-            session_id = create_raw_session(session_data.__dict__).id
+            session_id = self.user_session_repository.create_raw_session(**session_data.__dict__).id
         else:
-            cookie_unique_key = cookie.split("/")[0]
             session_id = int(cookie.split("/")[1])
 
             session_data = raw_session_service.filter_sessions(
-                raw_session_service.get_initial_raw_session(unique_key, path, site, request.user_agent.is_mobile),
+                raw_session_service.get_initial_raw_session(path, site, request.user_agent.is_mobile),
                 host,
                 page_adress,
                 port,
             )
 
             if not self.user_session_repository.is_raw_session_exists_by_id(session_id):
-                session_id = create_raw_session(session_data.__dict__).id
+                session_id = self.user_session_repository.create_raw_session(**session_data.__dict__).id
 
             else:
                 if session_data.hacking:
-                    update_raw_session(unique_key, session_data.hacking, session_data.hacking_reason)
+                    self.user_session_repository.update_raw_session(
+                        id,
+                        hacking=session_data.hacking,
+                        hacking_reason=session_data.hacking_reason,
+                    )
                     return HttpResponse(status=503)
 
-        response.set_cookie(settings.USER_ACTIVITY_COOKIE_NAME, f"{unique_key}/{session_id}", expires=expires)
+        response.set_cookie(settings.RAW_SESSION_COOKIE_NAME, f"{session_id}/{session_id}", expires=expires)
 
         if "null" not in path:
             self.logs.append(create_raw_log(session_id, page_adress, path, time=now()))

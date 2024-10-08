@@ -4,7 +4,6 @@ from datetime import datetime
 
 @dataclass
 class UserSessionInterface:
-    unique_key: str
     ip: str
     start_time: datetime
     end_time: datetime

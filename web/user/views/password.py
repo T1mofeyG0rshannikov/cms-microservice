@@ -98,7 +98,7 @@ class SetPassword(BaseUserView, FormView):
         self.user_session_repository.create_user_action(
             adress=adress,
             text=f"""Установил пароль""",
-            session_unique_key=request.session["user_activity"]["unique_key"],
+            session_id=request.user_session_id,
         )
 
         return JsonResponse(
@@ -132,7 +132,7 @@ class SendMailToResetPassword(FormView):
             self.user_session_repository.create_user_action(
                 adress=adress,
                 text=f'''Ошибка восстановления пароля "{email}"''',
-                session_unique_key=request.session["user_activity"]["unique_key"],
+                session_id=request.user_session_id,
             )
 
             form.add_error("email", UserErrors.user_by_email_not_found.value)
@@ -143,7 +143,7 @@ class SendMailToResetPassword(FormView):
         self.user_session_repository.create_user_action(
             adress=adress,
             text=f'''Восстановление пароля "{email}"''',
-            session_unique_key=request.session["user_activity"]["unique_key"],
+            session_id=request.user_session_id,
         )
 
         return JsonResponse({"message": Messages.sent_message_to_reset_password.value})

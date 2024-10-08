@@ -1,6 +1,5 @@
 from typing import Any
 
-from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
@@ -16,7 +15,6 @@ from infrastructure.auth.jwt_processor_interface import JwtProcessorInterface
 from infrastructure.persistence.repositories.user_session_repository import (
     get_user_session_repository,
 )
-from infrastructure.persistence.sessions.set_session_field import SetSessionField
 from web.domens.views.mixins import SubdomainMixin
 from web.user.forms import LoginForm, RegistrationForm, ResetPasswordForm
 
@@ -27,7 +25,6 @@ class BaseUserView(SubdomainMixin):
     account_url = "/my/"
     url_parser: UrlParserInterface = get_url_parser()
     user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
-    session_setter = SetSessionField(user_session_repository, settings.USER_ACTIVITY_SESSION_KEY)
 
     def login(self, user) -> None:
         self.request.user = user

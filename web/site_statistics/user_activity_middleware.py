@@ -7,7 +7,7 @@ from django.utils.timezone import now
 from application.common.url_parser import UrlParserInterface
 from application.services.domains.url_parser import get_url_parser
 from domain.user_sessions.repository import UserSessionRepositoryInterface
-from infrastructure.logging.tasks import create_user_activity_log
+from infrastructure.logging.tasks import create_user_activity_logs
 from infrastructure.logging.user_activity.config import get_user_active_settings
 from infrastructure.persistence.repositories.user_session_repository import (
     get_user_session_repository,
@@ -18,10 +18,15 @@ from infrastructure.persistence.sessions.user_activity_service import (
 from infrastructure.requests.service import RequestService
 
 
+def create_user_log(session_id, page_adress, text, time=now()):
+    return {"adress": page_adress, "time": time, "session_id": session_id, "text": text}
+
+
 class UserActivityMiddleware:
     url_parser: UrlParserInterface = get_url_parser()
     user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
-    session_key = settings.USER_ACTIVITY_SESSION_KEY
+    logs = []
+    logs_array_length = 5
 
     def __init__(self, get_response):
         self.get_response = get_response
@@ -58,83 +63,66 @@ class UserActivityMiddleware:
         page_adress = site + path
         user_id = request.user.id if request.user.is_authenticated else None
 
-        unique_key = request.session.session_key
-        if not unique_key:
-            request.session.save()
-
-        unique_key = request.session.session_key
+        expires = datetime.utcnow() + timedelta(days=365 * 10)
 
         cookie = request.COOKIES.get(settings.USER_ACTIVITY_COOKIE_NAME)
-        print(cookie, type(cookie), "user")
+        # print(cookie, type(cookie), "user")
+        # cookie = None
+
+        session_id = None
+        print(cookie)
+
+        if not cookie or ("/" not in cookie):
+            session_data = user_activity_service.get_initial_data(
+                site=site,
+                user_id=user_id,
+                device=request.user_agent.is_mobile,
+                utm_source=request.GET.get("utm_source"),
+            )
+
+            session_id = self.user_session_repository.create_user_session(**session_data.__dict__).id
+
+        else:
+            session_id = int(cookie.split("/")[1])
+
+            auth = "login" if user_id else None
+            if auth:
+                session_data = user_activity_service.get_initial_data(
+                    site=site,
+                    user_id=user_id,
+                    device=request.user_agent.is_mobile,
+                    utm_source=request.GET.get("utm_source"),
+                    auth=auth,
+                )
+            else:
+                session_data = user_activity_service.get_initial_data(
+                    site=site,
+                    user_id=user_id,
+                    device=request.user_agent.is_mobile,
+                    utm_source=request.GET.get("utm_source"),
+                )
+
+            if not self.user_session_repository.is_user_session_exists_by_id(session_id):
+                session_id = self.user_session_repository.create_user_session(**session_data.__dict__).id
+
+            else:
+                if session_data.auth:
+                    self.user_session_repository.update_user_session(session_id, auth=auth, user_id=user_id)
+
+        print(session_id)
+        request.user_session_id = session_id
         response = self.get_response(request)
 
         if path == "/user/get-user-info":
             return response
-        # cookie = None
-        if not cookie:
-            expires = datetime.utcnow() + timedelta(days=365 * 10)
-            response.set_cookie(settings.USER_ACTIVITY_COOKIE_NAME, f"{unique_key}", expires=expires)
 
-            session_data = user_activity_service.get_initial_data(
-                site, user_id, unique_key, request.user_agent.is_mobile, request.GET.get("utm_source")
-            )
-
-            self.user_session_repository.create_user_session(**session_data.__dict__)
-            if not self.is_disable_url_to_log(path) and self.is_enable_url_to_log(path):
-                create_user_activity_log.delay(
-                    unique_key,
-                    page_adress,
-                    now(),
-                )
-        else:
-            cookie_unique_key = cookie
-            if cookie_unique_key == unique_key:
-                session_data = user_activity_service.get_initial_data(
-                    site, user_id, unique_key, request.user_agent.is_mobile, request.GET.get("utm_source")
-                )
-
-                if not self.user_session_repository.is_user_session_exists(unique_key):
-                    self.user_session_repository.create_user_session(**session_data.__dict__)
-                else:
-                    auth = "login" if user_id else None
-                    if auth:
-                        self.user_session_repository.update_user_session(
-                            unique_key,
-                            end_time=now(),
-                            hacking=session_data.hacking,
-                            hacking_reason=session_data.hacking_reason,
-                            auth=auth,
-                            user_id=user_id,
-                        )
-                    else:
-                        self.user_session_repository.update_user_session(
-                            unique_key,
-                            end_time=now(),
-                            hacking=session_data.hacking,
-                            hacking_reason=session_data.hacking_reason,
-                        )
-            else:
-                expires = datetime.utcnow() + timedelta(days=365 * 10)
-                session_db_id = int(cookie.split("/")[1])
-                response.set_cookie(
-                    settings.USER_ACTIVITY_COOKIE_NAME, f"{unique_key}/{str(session_db_id)}", expires=expires
-                )
-
-                self.user_session_repository.update_user_session_unique_key(cookie_unique_key, unique_key)
-
-                auth = "login" if user_id else None
-                if auth:
-                    self.user_session_repository.update_user_session(
-                        unique_key, end_time=now(), auth=auth, user_id=user_id
-                    )
-                else:
-                    self.user_session_repository.update_user_session(unique_key, end_time=now())
+        response.set_cookie(settings.USER_ACTIVITY_COOKIE_NAME, f"{session_id}/{session_id}", expires=expires)
 
         if not self.is_disable_url_to_log(path) and self.is_enable_url_to_log(path):
-            create_user_activity_log.delay(
-                unique_key,
-                page_adress,
-                now(),
-            )
+            self.logs.append(create_user_log(session_id, page_adress, "Перешёл на страницу"))
+
+        if len(self.logs) > self.logs_array_length:
+            create_user_activity_logs.delay(self.logs)
+            self.logs.clear()
 
         return response

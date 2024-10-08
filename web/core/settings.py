@@ -85,7 +85,7 @@ MIDDLEWARE = [
     "django_user_agents.middleware.UserAgentMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "web.site_statistics.raw_session_middleware.RawSessionMiddleware",
-    # "web.site_statistics.user_activity_middleware.UserActivityMiddleware",
+    "web.site_statistics.user_activity_middleware.UserActivityMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_hosts.middleware.HostsRequestMiddleware",
@@ -291,10 +291,8 @@ SESSION_SAVE_EVERY_REQUEST = True
 
 SESSION_ENGINE = "web.site_statistics.session_backend"
 USER_ACTIVITY_COOKIE_NAME = "user_activity"
+RAW_SESSION_COOKIE_NAME = "raw_session"
 
-# SESSION_COOKIE_DOMAIN_DYNAMIC = ['.127.0.0.1:8000', '.localhost:8000', '.127.0.0.1', '.localhost']
-
-# SESSION_COOKIE_DOMAIN = 'localhost'
 
 CORS_ALLOW_HEADERS = ("content-disposition", "accept-encoding", "content-type", "accept", "origin", "authorization")
 """

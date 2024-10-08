@@ -67,7 +67,7 @@ class GetChangeUserFormTemplate(BaseTemplateLoadView):
     def get_content(self, request: HttpRequest):
         adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
 
-        self.increment_session_profile_action(request.session.session_key, adress, text=f"""Открыл данные профиля""")
+        self.increment_session_profile_action(request.user_session_id, adress, text=f"""Открыл данные профиля""")
 
         return self.template_loader.load_change_user_form(request)
 
@@ -80,7 +80,7 @@ class GetChangeSiteFormTemplate(BaseTemplateLoadView):
         adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
 
         self.increment_session_profile_action(
-            request.session.session_key, adress, text="Открыл настройку партнерского сайта"
+            request.user_session_id, adress, text="Открыл настройку партнерского сайта"
         )
 
         return self.template_loader.load_change_site_form(request)
@@ -113,7 +113,7 @@ class BaseProfileTemplateView(View):
         self.user_session_repository.create_user_action(
             adress=adress,
             text="Перешёл на страницу",
-            session_unique_key=request.session.session_key,
+            session_id=request.user_session_id,
         )
 
         return JsonResponse(template)
@@ -161,7 +161,7 @@ class GetChoiceProductForm(BaseTemplateLoadView):
         self.user_session_repository.create_user_action(
             adress=adress,
             text="Открыл список продуктов",
-            session_unique_key=request.session.session_key,
+            session_id=request.user_session_id,
         )
 
         return self.template_loader.load_choice_product_form(request)
@@ -187,7 +187,7 @@ class GetProductDescriptionPopup(BaseTemplateLoadView):
         self.user_session_repository.create_user_action(
             adress=adress,
             text=f'''Открыл описание продукта "{product_name}"''',
-            session_unique_key=request.session.session_key,
+            session_id=request.user_session_id,
         )
 
         return self.template_loader.load_product_description_popup(request)
