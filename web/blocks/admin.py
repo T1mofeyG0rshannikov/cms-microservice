@@ -82,11 +82,11 @@ class CatalogProductInline(SortableStackedInline, BaseInline):
     model = CatalogProduct
     repository = get_product_repository()
 
-    def get_formset(self, request, obj=None, **kwargs):
+    """def get_formset(self, request, obj=None, **kwargs):
         formset = super().get_formset(request, obj, **kwargs)
         if obj:
             formset.form.base_fields["offer"].queryset = self.repository.get_published_offers(obj.product_type_id)
-        return formset
+        return formset"""
 
 
 class MainPageCatalogProductInline(SortableStackedInline, BaseInline):

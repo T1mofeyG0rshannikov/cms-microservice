@@ -6,6 +6,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
+from application.adapters.page import PageAdapter
 from domain.page_blocks.page_repository import PageRepositoryInterface
 from domain.page_blocks.page_service_interface import PageServiceInterface
 from infrastructure.files.files import find_class_in_directory
@@ -36,11 +37,12 @@ class IndexPage(SubdomainMixin):
         context = super().get_context_data(**kwargs)
         context |= UserFormsView.get_context_data()
 
-        page = self.page_repository.get_page_by_url(None)
+        page = self.page_repository.get_page_by_url(url=None)
+        page_adapter = PageAdapter()
+        page = page_adapter(page)
+        page = PageSerializer(page).data
 
-        serialized_page = PageSerializer(page).data
-
-        context["page"] = serialized_page
+        context["page"] = page
 
         return context
 
@@ -54,9 +56,11 @@ class ShowPage(SubdomainMixin):
         context |= UserFormsView.get_context_data()
 
         page = self.page_repository.get_page_by_url(url=kwargs["page_url"])
-        serialized_page = PageSerializer(page).data
+        page_adapter = PageAdapter()
+        page = page_adapter(page)
+        page = PageSerializer(page).data
 
-        context["page"] = serialized_page
+        context["page"] = page
 
         return context
 

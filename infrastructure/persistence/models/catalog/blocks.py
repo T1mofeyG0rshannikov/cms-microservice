@@ -7,6 +7,7 @@ class CatalogPageTemplate(models.Model):
     title = models.CharField(verbose_name="Заголовок", max_length=50)
 
     class Meta:
+        app_label = "catalog"
         verbose_name = "каталог"
         verbose_name_plural = "каталог"
 
@@ -21,3 +22,6 @@ class Block(BasePageBlock):
     page = models.ForeignKey(
         CatalogPageTemplate, related_name="blocks", verbose_name="Страница", on_delete=models.CASCADE
     )
+
+    class Meta(BasePageBlock.Meta):
+        app_label = "catalog"

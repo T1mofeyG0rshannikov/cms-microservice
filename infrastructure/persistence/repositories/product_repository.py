@@ -6,9 +6,13 @@ from domain.products.product import ProductInterface
 from domain.products.repository import ProductRepositoryInterface
 from domain.user.product import UserProductInterface
 from infrastructure.persistence.models.blocks.catalog_block import CatalogBlock
+from infrastructure.persistence.models.catalog.product_type import ProductType
+from infrastructure.persistence.models.catalog.products import (
+    Offer,
+    Organization,
+    Product,
+)
 from infrastructure.persistence.models.user.product import UserOffer, UserProduct
-from web.catalog.models.product_type import ProductType
-from web.catalog.models.products import Offer, Organization, Product
 
 
 class ProductRepository(ProductRepositoryInterface):
@@ -105,14 +109,15 @@ class ProductRepository(ProductRepositoryInterface):
         product.deleted = True
         product.save()
 
-    def get_unprivate_catalog_offers(self, catalog_id: int):
-        return self.get_catalog_offers(catalog_id).filter(product__private=False)
+    def get_unprivate_catalog_offers(self, product_type_slug: str):
+        return self.get_catalog_offers(product_type_slug).filter(product__private=False)
 
-    def get_catalog_offers(self, catalog_id: int):
+    def get_catalog_offers(self, product_type_slug: str):
         return (
             self.get_offers()
             .prefetch_related("catalog_product")
-            .filter(catalog_product__block=catalog_id)
+            .select_related("product")
+            .filter(types__type__slug=product_type_slug)
             .order_by("catalog_product__my_order")
         )
 

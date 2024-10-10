@@ -38,13 +38,13 @@ INSTALLED_APPS = [
     "adminsortable2",
     "colorfield",
     "ckeditor",
+    "web.blocks",
     "web.site_statistics",
     "web.catalog",
     "web.common",
     "web.account",
     "web.settings",
     "web.styles",
-    "web.blocks",
     "web.notifications",
     "web.site_tests",
     "django_hosts",
@@ -67,7 +67,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("redis", 6379)],
+            "hosts": [("localhost", 6379)],
             # "hosts": [("localhost", 6379), ("bankomag.ru", 6379), ("idri.ru", 6379)],
         },
     },

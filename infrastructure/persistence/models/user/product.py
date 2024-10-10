@@ -2,8 +2,8 @@ from django.db import models
 from django.db.models.signals import pre_save
 
 from domain.user.exceptions import UserProductAlreadyExists
+from infrastructure.persistence.models.catalog.products import Offer, Product
 from infrastructure.persistence.models.user.user import User
-from web.catalog.models.products import Offer, Product
 
 
 def user_directory_path(instance, filename):

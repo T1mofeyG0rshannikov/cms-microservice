@@ -1,57 +1,10 @@
 from rest_framework import serializers
 
 from application.formats.date_russian import get_date_in_russian
-from infrastructure.persistence.models.blocks.catalog_block import CatalogBlock
-from infrastructure.persistence.repositories.product_repository import (
-    get_product_repository,
+from infrastructure.persistence.models.catalog.products import (
+    OfferTypeRelation,
+    Product,
 )
-from web.catalog.models.products import ExclusiveCard, OfferTypeRelation, Product
-
-
-class CatalogBlockSerializer(serializers.ModelSerializer):
-    products = serializers.SerializerMethodField()
-    template = serializers.SerializerMethodField()
-    exclusive_card = serializers.SerializerMethodField()
-
-    repository = get_product_repository()
-
-    class Meta:
-        model = CatalogBlock
-        fields = (
-            "ancor",
-            "title",
-            "template",
-            "button_text",
-            "button_ref",
-            "product_type",
-            "introductory_text",
-            "add_exclusive",
-            "products",
-            "exclusive_card",
-            "add_category",
-        )
-
-    def get_exclusive_card(self, catalog):
-        if catalog.add_exclusive:
-            return ExclusiveCard.objects.first()
-
-    def get_template(self, catalog):
-        template = catalog.template
-        template.file = "blocks/" + template.file
-
-        return template
-
-    def get_products(self, catalog):
-        user_is_authenticated = self.context["user_is_authenticated"]
-
-        if user_is_authenticated:
-            products = self.repository.get_catalog_offers(catalog.id)
-        else:
-            products = self.repository.get_unprivate_catalog_offers(catalog.id)
-
-        product_type = catalog.product_type
-
-        return CatalogProductSerializer(products, context={"type": product_type}, many=True).data
 
 
 class CatalogProductSerializer(serializers.ModelSerializer):

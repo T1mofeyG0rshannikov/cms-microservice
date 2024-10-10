@@ -1,13 +1,18 @@
 from django.http import JsonResponse
 
 from application.services.products_service import get_products_service
-from domain.page_blocks.catalog_service import CatalogServiceInterface
+from application.usecases.public.catalog_page import GetCatalogPage
 from domain.products.service import ProductsServiceInterface
+from infrastructure.persistence.models.catalog.product_type import ProductType
+from infrastructure.persistence.models.catalog.products import (
+    ExclusiveCard,
+    Organization,
+)
 from infrastructure.persistence.repositories.product_repository import (
     get_product_repository,
 )
-from web.catalog.catalog_service.catalog_service import get_catalog_service
-from web.catalog.models.products import Organization
+from web.blocks.serializers import PageSerializer
+from web.catalog.serializers import CatalogProductSerializer
 from web.common.pagination import Pagination
 from web.domens.views.mixins import SubdomainMixin
 from web.user.serializers import UserProductsSerializer
@@ -16,16 +21,31 @@ from web.user.views.base_user_view import APIUserRequired, UserFormsView
 
 class ShowCatalogPage(SubdomainMixin):
     template_name = "blocks/page.html"
-    catalog_service: CatalogServiceInterface = get_catalog_service()
+    product_repository = get_product_repository()
+    get_catalog_page = GetCatalogPage()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context |= UserFormsView.get_context_data()
-        page = self.catalog_service.get_page(
-            user_is_authenticated=self.request.user.is_authenticated, slug=kwargs["products_slug"]
-        )
 
-        context["page"] = page
+        page = self.get_catalog_page(slug=kwargs["products_slug"])
+
+        context["page"] = PageSerializer(page).data
+
+        exclusive_card = ExclusiveCard.objects.first()
+
+        user_is_authenticated = self.request.user.is_authenticated
+
+        if user_is_authenticated:
+            products = self.product_repository.get_catalog_offers(self.kwargs["products_slug"])
+        else:
+            products = self.product_repository.get_unprivate_catalog_offers(self.kwargs["products_slug"])
+
+        product_type = ProductType.objects.get(slug=self.kwargs["products_slug"])
+
+        products = CatalogProductSerializer(products, context={"type": product_type}, many=True).data
+        context["products"] = products
+        context["exclusive_card"] = exclusive_card
 
         return context
 

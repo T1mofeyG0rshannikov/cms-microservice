@@ -4,7 +4,6 @@ from django.db.models import F
 from django.utils.timezone import now
 
 from domain.user_sessions.repository import UserSessionRepositoryInterface
-from domain.user_sessions.session import UserSessionInterface
 from infrastructure.persistence.models.site_statistics import (
     SessionAction,
     SessionFilters,
@@ -63,24 +62,18 @@ class UserSessionRepository(UserSessionRepositoryInterface):
         SessionModel.objects.filter(id=id).update(**{field_name: F(field_name) + 1})
 
     def bulk_create_raw_session_logs(self, logs):
-        new_logs = []
-        for log in logs:
-            if self.is_raw_session_exists_by_id(log["session_id"]):
-                new_logs.append(log)
-            else:
-                print(log)
-
+        new_logs = [log for log in logs if log["session_id"] in SessionModel.objects.values_list("id", flat=True)]
         SessionAction.objects.bulk_create([SessionAction(**log) for log in new_logs])
 
     def bulk_create_user_session_logs(self, logs):
-        new_logs = []
-        for log in logs:
-            if self.is_user_session_exists_by_id(log["session_id"]):
-                new_logs.append(log)
-            else:
-                print(log)
-
+        new_logs = [log for log in logs if log["session_id"] in UserAction.objects.values_list("id", flat=True)]
         UserAction.objects.bulk_create([UserAction(**log) for log in new_logs])
+
+    def get_raw_session(self, id: int):
+        return SessionModel.objects.get(id=id)
+
+    def delete_user_session(self, id):
+        return SessionModel.objects.filter(id=id).delete()
 
 
 def get_user_session_repository() -> UserSessionRepositoryInterface:

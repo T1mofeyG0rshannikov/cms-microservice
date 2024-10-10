@@ -1,8 +1,7 @@
-import logging
 from datetime import datetime, timedelta
 
 from django.conf import settings
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest
 from django.utils.timezone import now
 
 from application.common.url_parser import UrlParserInterface
@@ -35,9 +34,6 @@ def create_raw_log(session_id, page_adress, path, time=now()) -> SessionAction:
     }
 
 
-logger = logging.getLogger("main")
-
-
 class RawSessionMiddleware:
     url_parser: UrlParserInterface = get_url_parser()
     user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
@@ -60,10 +56,6 @@ class RawSessionMiddleware:
 
         cookie = request.COOKIES.get(settings.RAW_SESSION_COOKIE_NAME)
 
-        response = self.get_response(request)
-
-        if path == "/user/get-user-info":
-            return response
         # cookie = None
         session_id = None
         # print(cookie)
@@ -88,11 +80,20 @@ class RawSessionMiddleware:
             else:
                 if session_data.hacking:
                     self.user_session_repository.update_raw_session(
-                        id,
+                        session_id,
                         hacking=session_data.hacking,
                         hacking_reason=session_data.hacking_reason,
                     )
-                    return HttpResponse(status=503)
+                    # return HttpResponse(status=503)
+
+        session_db = self.user_session_repository.get_raw_session(session_id)
+        # if session_db.hacking:
+        #    return HttpResponse(status=503)
+        request.raw_session = session_db
+        response = self.get_response(request)
+
+        if path == "/user/get-user-info":
+            return response
 
         response.set_cookie(settings.RAW_SESSION_COOKIE_NAME, f"{session_id}/{session_id}", expires=expires)
 

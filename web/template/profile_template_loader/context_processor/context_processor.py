@@ -7,6 +7,7 @@ from application.usecases.ideas.get_ideas import GetIdeas
 from domain.domains.service import DomainServiceInterface
 from domain.products.service import ProductsServiceInterface
 from domain.referrals.service import ReferralServiceInterface
+from infrastructure.persistence.models.catalog.product_type import ProductCategory
 from infrastructure.persistence.models.materials import Document
 from infrastructure.persistence.repositories.idea_repository import get_idea_repository
 from infrastructure.persistence.repositories.product_repository import (
@@ -15,7 +16,6 @@ from infrastructure.persistence.repositories.product_repository import (
 from infrastructure.persistence.repositories.user_repository import get_user_repository
 from infrastructure.user.validator import get_user_validator
 from web.account.serializers import ReferralsSerializer
-from web.catalog.models.product_type import ProductCategory
 from web.common.pagination import Pagination
 from web.template.profile_template_loader.context_processor.context_processor_interface import (
     ProfileTemplateContextProcessorInterface,

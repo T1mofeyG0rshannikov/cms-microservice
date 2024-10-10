@@ -3,7 +3,7 @@ from django.db import models
 
 from infrastructure.persistence.models.blocks.common import BaseBlock
 from infrastructure.persistence.models.blocks.mixins import ButtonMixin, TitleMixin
-from web.catalog.models.product_type import ProductType
+from infrastructure.persistence.models.catalog.product_type import ProductType
 
 
 class BaseCatalogBlock(BaseBlock):

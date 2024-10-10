@@ -6,11 +6,12 @@ from django.contrib.admin.widgets import AdminFileWidget
 from django.db import models
 from django.utils.html import format_html, mark_safe
 
-from web.admin.admin import redirect_to_change_page_tag
-from web.catalog.forms import OfferAdminForm
-from web.catalog.models.blocks import Block, CatalogPageTemplate
-from web.catalog.models.product_type import ProductCategory, ProductType
-from web.catalog.models.products import (
+from infrastructure.persistence.models.catalog.blocks import Block, CatalogPageTemplate
+from infrastructure.persistence.models.catalog.product_type import (
+    ProductCategory,
+    ProductType,
+)
+from infrastructure.persistence.models.catalog.products import (
     ExclusiveCard,
     Link,
     Offer,
@@ -19,6 +20,8 @@ from web.catalog.models.products import (
     OrganizationType,
     Product,
 )
+from web.admin.admin import redirect_to_change_page_tag
+from web.catalog.forms import OfferAdminForm
 from web.common.admin import BaseInline
 
 

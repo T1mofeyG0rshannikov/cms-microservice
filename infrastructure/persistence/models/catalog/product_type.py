@@ -9,6 +9,7 @@ class ProductCategory(models.Model):
     short = models.CharField(max_length=100, verbose_name="Сокращение", null=True)
 
     class Meta:
+        app_label = "catalog"
         verbose_name = "Категория продуктов"
         verbose_name_plural = "Категории продуктов"
 
@@ -32,6 +33,7 @@ class ProductType(models.Model):
     profit = models.CharField(max_length=500, verbose_name="Выгода", null=True)
 
     class Meta:
+        app_label = "catalog"
         verbose_name = "Тип продукта/акции"
         verbose_name_plural = "Типы продукта/акции"
 

@@ -14,8 +14,8 @@ from infrastructure.persistence.models.blocks.catalog_block import (
     MainPageCatalogBlock,
 )
 from infrastructure.persistence.models.blocks.mixins import ButtonMixin, TitleMixin
-from web.catalog.models.product_type import ProductType
-from web.catalog.models.products import Offer
+from infrastructure.persistence.models.catalog.product_type import ProductType
+from infrastructure.persistence.models.catalog.products import Offer
 from web.common.models import Sortable
 from web.settings.models import SocialNetwork
 

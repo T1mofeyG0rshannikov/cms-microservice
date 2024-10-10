@@ -7,8 +7,11 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from infrastructure.persistence.models.blocks.mixins import ButtonMixin
+from infrastructure.persistence.models.catalog.product_type import (
+    ProductCategory,
+    ProductType,
+)
 from infrastructure.security import get_link_encryptor
-from web.catalog.models.product_type import ProductCategory, ProductType
 from web.common.models import OneInstanceModel
 
 
@@ -36,6 +39,7 @@ class Organization(models.Model):
     partner_program = models.CharField(max_length=100, null=True, blank=True, verbose_name="Партнерская программа")
 
     class Meta:
+        app_label = "catalog"
         verbose_name = "Организация"
         verbose_name_plural = "Организации"
 
@@ -72,6 +76,7 @@ class Product(models.Model):
     partner_description = RichTextField(max_length=5000, null=True, blank=True, verbose_name="Партнерское описание")
 
     class Meta:
+        app_label = "catalog"
         verbose_name = "продукт/акция"
         verbose_name_plural = "продукты/акции"
 
@@ -86,6 +91,7 @@ class ExclusiveCard(OneInstanceModel, ButtonMixin):
     annotation = models.TextField(verbose_name="аннотация", max_length=700, null=True)
 
     class Meta:
+        app_label = "catalog"
         verbose_name = "Карточка Эксклюзив"
         verbose_name_plural = "Карточка Эксклюзив"
 
@@ -156,6 +162,7 @@ class Offer(models.Model):
         return ""
 
     class Meta:
+        app_label = "catalog"
         db_table = "offers_offer"
         verbose_name = "оффер"
         verbose_name_plural = "офферы"
@@ -175,6 +182,7 @@ class Link(models.Model):
     offer = models.ForeignKey(Offer, on_delete=models.CASCADE, related_name="links")
 
     class Meta:
+        app_label = "catalog"
         db_table = "offers_link"
         verbose_name = "ссылка"
         verbose_name = "ссылки"
@@ -195,3 +203,6 @@ class OfferTypeRelation(models.Model):
 
     def __str__(self):
         return str(self.type)
+
+    class Meta:
+        app_label = "catalog"
