@@ -1,6 +1,6 @@
 from django.db import models
 
-from web.common.models import BasePageBlock, BlockRelationship
+from infrastructure.persistence.models.common import BasePageBlock, BlockRelationship
 
 
 class CatalogPageTemplate(models.Model):

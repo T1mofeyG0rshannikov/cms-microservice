@@ -1,8 +1,8 @@
 from django.db import models
 from django.db.models.signals import post_save
 
+from infrastructure.persistence.models.common import OneInstanceModel
 from infrastructure.persistence.models.user.user import User
-from web.common.models import OneInstanceModel
 
 
 class Roles(OneInstanceModel):

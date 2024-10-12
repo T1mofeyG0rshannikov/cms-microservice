@@ -2,7 +2,7 @@ from domain.page_blocks.base_block import BaseBlockInterface
 from domain.page_blocks.page_repository import PageRepositoryInterface
 from domain.page_blocks.page_service_interface import PageServiceInterface
 from infrastructure.persistence.models.blocks.common import BaseBlock
-from web.common.models import BlockRelationship
+from infrastructure.persistence.models.common import BlockRelationship
 
 
 class PageService(PageServiceInterface):

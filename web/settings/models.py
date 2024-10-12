@@ -1,7 +1,7 @@
 from colorfield.fields import ColorField
 from django.db import models
 
-from web.common.models import BaseFont, OneInstanceModel
+from infrastructure.persistence.models.common import BaseFont, OneInstanceModel
 
 FONT_SIZES = (
     (6, 6),

@@ -3,9 +3,11 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.http import HttpRequest
 from django.utils.timezone import now
+from rest_framework.renderers import JSONRenderer
 
 from application.common.url_parser import UrlParserInterface
 from application.services.domains.url_parser import get_url_parser
+from application.sessions.dto import RawSessionDTO
 from domain.user_sessions.repository import UserSessionRepositoryInterface
 from infrastructure.logging.tasks import create_raw_logs
 from infrastructure.persistence.models.site_statistics import SessionAction
@@ -14,6 +16,7 @@ from infrastructure.persistence.repositories.user_session_repository import (
 )
 from infrastructure.persistence.sessions.service import RawSessionService
 from infrastructure.requests.service import get_request_service
+from web.site_statistics.views import CapchaView
 
 
 def create_raw_log(session_id, page_adress, path, time=now()) -> SessionAction:
@@ -67,15 +70,28 @@ class RawSessionMiddleware:
         else:
             session_id = int(cookie.split("/")[1])
 
+            if not self.user_session_repository.is_raw_session_exists_by_id(session_id):
+                session_id = self.user_session_repository.create_raw_session(**session_data.__dict__).id
+
+            session_data = self.user_session_repository.get_raw_session(session_id)
             session_data = raw_session_service.filter_sessions(
-                raw_session_service.get_initial_raw_session(path, site, request.user_agent.is_mobile),
+                RawSessionDTO.from_dict(session_data.__dict__),
                 host,
                 page_adress,
                 port,
             )
 
-            if not self.user_session_repository.is_raw_session_exists_by_id(session_id):
-                session_id = self.user_session_repository.create_raw_session(**session_data.__dict__).id
+            if session_data.show_capcha and (not self.url_parser.is_source(path) and not "submit-capcha" in path):
+                response = CapchaView.as_view()(request)
+                response.accepted_renderer = JSONRenderer()
+                response.accepted_media_type = "application/json"
+                response.renderer_context = {}
+                try:
+                    response.render()
+                except:
+                    pass
+
+                return response
 
             else:
                 if session_data.hacking:
@@ -87,6 +103,7 @@ class RawSessionMiddleware:
                     # return HttpResponse(status=503)
 
         session_db = self.user_session_repository.get_raw_session(session_id)
+        print(session_db.ban_rate)
         # if session_db.hacking:
         #    return HttpResponse(status=503)
         request.raw_session = session_db
@@ -107,3 +124,15 @@ class RawSessionMiddleware:
             self.logs.clear()
 
         return response
+
+        """if not url_parser.is_source(path) and not "submit-capcha" in path:
+            response = CapchaView.as_view()(request)
+            response.accepted_renderer = JSONRenderer()
+            response.accepted_media_type = "application/json"
+            response.renderer_context = {}
+            try:
+                response.render()
+            except:
+                pass
+
+            return response"""

@@ -75,6 +75,12 @@ class UserSessionRepository(UserSessionRepositoryInterface):
     def delete_user_session(self, id):
         return SessionModel.objects.filter(id=id).delete()
 
+    def get_success_capcha_increase(self):
+        return SessionFilters.objects.values_list("capcha_success", flat=True).first()
+
+    def increase_ban_rate(self, session_id: int, increase_value: int):
+        SessionModel.objects.filter(id=session_id).update(ban_rate=F("ban_rate") - increase_value)
+
 
 def get_user_session_repository() -> UserSessionRepositoryInterface:
     return UserSessionRepository()

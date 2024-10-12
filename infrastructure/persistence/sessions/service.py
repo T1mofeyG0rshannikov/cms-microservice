@@ -1,10 +1,18 @@
 from django.utils.timezone import now
 
+from application.common.url_parser import UrlParserInterface
+from application.services.request_service import RequestServiceInterface
 from application.sessions.dto import RawSessionDTO
+from domain.user_sessions.repository import UserSessionRepositoryInterface
 
 
 class RawSessionService:
-    def __init__(self, request_service, user_session_repository, url_parser):
+    def __init__(
+        self,
+        request_service: RequestServiceInterface,
+        user_session_repository: UserSessionRepositoryInterface,
+        url_parser: UrlParserInterface,
+    ):
         self.request_service = request_service
         self.user_session_repository = user_session_repository
         self.url_parser = url_parser
@@ -34,18 +42,36 @@ class RawSessionService:
 
         if session_filters:
             if host != "127.0.0.1" and host != "localhost":
-                if session_filters.disable_ip and self.url_parser.is_ip(host):
-                    session_data.hacking = True
-                    session_data.hacking_reason = "Запрос по IP"
+                if self.url_parser.is_ip(host):
+                    session_data.ban_rate += session_filters.ip_penalty
 
-                if session_filters.disable_ports and port:
-                    session_data.hacking = True
-                    session_data.hacking_reason = "Запрос к порту"
+                if port:
+                    session_data.ban_rate += session_filters.ports_penalty
 
                 for disable_url in session_filters.disable_urls.splitlines():
                     if disable_url in page_adress:
-                        session_data.hacking = True
-                        session_data.hacking_reason = "Запрещенный адрес"
+                        session_data.ban_rate += session_filters.disable_urls_penalty
                         break
 
+            print(session_data.ban_rate, session_filters.ban_limit, session_filters.capcha_limit)
+            if session_data.ban_rate >= session_filters.ban_limit:
+                session_data.hacking = True
+
+            if session_data.ban_rate >= session_filters.capcha_limit:
+                session_data.show_capcha = True
+
         return session_data
+
+    def success_capcha(self, session_id: int):
+        increase_value = self.user_session_repository.get_success_capcha_increase()
+        self.user_session_repository.increase_ban_rate(session_id, increase_value)
+
+
+def get_raw_session_service(
+    request_service: RequestServiceInterface,
+    user_session_repository: UserSessionRepositoryInterface,
+    url_parser: UrlParserInterface,
+) -> RawSessionService:
+    return RawSessionService(
+        request_service=request_service, user_session_repository=user_session_repository, url_parser=url_parser
+    )

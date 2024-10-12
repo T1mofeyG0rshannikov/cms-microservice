@@ -1,6 +1,6 @@
 from django.db import models
 
-from web.common.models import OneInstanceModel
+from infrastructure.persistence.models.common import OneInstanceModel
 from web.settings.models import GlobalStyles
 
 

@@ -8,6 +8,7 @@ from application.usecases.site.change_site import ChangeSite
 from application.usecases.site.change_socials import ChangeSocials
 from application.usecases.user.change_user import ChangeUser
 from application.usecases.user_products.add_user_product import AddUserProduct
+from domain.domains.exceptions import SiteAdressExists
 from domain.products.repository import ProductRepositoryInterface
 from domain.user.exceptions import (
     SocialChannelAlreadyExists,
@@ -37,7 +38,6 @@ from web.account.forms import (
     ChangeUserForm,
 )
 from web.common.views import FormView
-from web.domens.exceptions import SiteAdressExists
 from web.user.views.base_user_view import APIUserRequired
 
 

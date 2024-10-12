@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.http import HttpRequest, HttpResponse
 from django.views.generic import View
 
@@ -11,6 +13,9 @@ from infrastructure.persistence.repositories.user_session_repository import (
     get_user_session_repository,
 )
 from infrastructure.persistence.sessions.add_session_action import IncrementSessionCount
+from infrastructure.persistence.sessions.service import get_raw_session_service
+from infrastructure.requests.service import get_request_service
+from web.domens.views.mixins import SubdomainMixin
 
 
 class OpenedProductPopupView(View):
@@ -105,5 +110,29 @@ class IncrementBanksCountView(View):
         adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
 
         self.increment_banks_count(request.user_session_id, adress, f"""Открыл описание продукта""")
+
+        return HttpResponse(status=200)
+
+
+class CapchaView(SubdomainMixin):
+    template_name = "common/capcha.html"
+
+
+class SubmitCapcha(View):
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        # print("processing dispatch")
+        response = super().dispatch(request, *args, **kwargs)
+        # print(response.status_code)
+        return response
+
+    def post(self, request: HttpRequest) -> HttpResponse:
+        session = request.raw_session
+        if session:
+            session_id = session.id
+
+            raw_session_service = get_raw_session_service(
+                get_request_service(request), get_user_session_repository(), get_url_parser()
+            )
+            raw_session_service.success_capcha(session_id)
 
         return HttpResponse(status=200)

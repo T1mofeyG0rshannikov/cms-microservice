@@ -38,6 +38,8 @@ class RawSessionDTO:
     hacking: bool = False
     hacking_reason: str = None
     headers: str = None
+    ban_rate: int = 0
+    show_capcha: bool = False
 
     @classmethod
     def from_dict(cls, env):

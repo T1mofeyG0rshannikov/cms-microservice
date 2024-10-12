@@ -1,7 +1,7 @@
 from django.db import models
 
+from infrastructure.persistence.models.common import OneInstanceModel
 from infrastructure.persistence.models.user.user import User
-from web.common.models import OneInstanceModel
 
 
 class TryLoginToAdminPanel(models.Model):
@@ -53,6 +53,7 @@ class BaseSessionModel(models.Model):
 
 class SessionModel(BaseSessionModel):
     headers = models.TextField(max_length=2000, null=True)
+    ban_rate = models.SmallIntegerField(default=0, verbose_name="Штраф")
 
     class Meta:
         app_label = "site_statistics"
@@ -121,12 +122,40 @@ class SessionAction(BaseSessionAction):
 
 
 class SessionFilters(OneInstanceModel):
-    disable_ip = models.BooleanField(verbose_name="Запретить запросы по IP")
-    disable_ports = models.BooleanField(verbose_name="Запретить обращение к нетипичным портам")
-    disable_robots = models.BooleanField(verbose_name="Разрешить доступ к robots.txt только поисковкам")
+    searchers = models.TextField(verbose_name="Поисковики", null=True)
+    capcha_limit = models.SmallIntegerField(verbose_name="Порог капчи", default=0)
+    ban_limit = models.SmallIntegerField(verbose_name="Порог бана", default=0)
+
+    ip_penalty = models.SmallIntegerField(verbose_name="Запрос к IP", default=0)
+    ports_penalty = models.SmallIntegerField(verbose_name="Запретить обращение к нетипичным портам", default=0)
     disable_urls = models.TextField(verbose_name="Запрос содержит")
+    disable_urls_penalty = models.SmallIntegerField("Несуществующий адрес", default=0)
+
+    reject_capcha = models.SmallIntegerField(verbose_name="Отказ от капчи", default=0)
+    capcha_error = models.SmallIntegerField(verbose_name="Ошибка в капче", default=0)
+
+    capcha_success = models.SmallIntegerField(verbose_name="Успешная капча", default=0)
 
     class Meta:
         app_label = "site_statistics"
         verbose_name = "Фильтры сессий"
         verbose_name_plural = "Фильтры сессий"
+
+
+class SessionFiltersHeader(models.Model):
+    session_filters = models.ForeignKey(SessionFilters, on_delete=models.CASCADE)
+    header = models.CharField(max_length=50, verbose_name="Заголовок")
+    CONTAIN_CHOICES = [
+        ("Присутствует", "Присутствует"),
+        ("Отсутствует", "Отсутствует"),
+        ("Содержит", "Содержит"),
+        ("Не содержит", "Не содержит"),
+        ("Совпадает", "Совпадает"),
+        ("Не совпадает", "Не совпадает"),
+    ]
+
+    contain = models.CharField(max_length=50, choices=CONTAIN_CHOICES)
+    penalty = models.SmallIntegerField(default=0)
+
+    class Meta:
+        app_label = "site_statistics"

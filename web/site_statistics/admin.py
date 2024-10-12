@@ -151,6 +151,7 @@ class SessionModelAdmin(BaseSessionAdmin):
         "hacking",
         "hacking_reason",
         "headers",
+        "ban_rate"
     ]
 
     def pages_count(self, session):

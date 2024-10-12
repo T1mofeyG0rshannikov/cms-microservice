@@ -127,6 +127,8 @@ class UserActivityMiddleware:
 
             return response
         else:
+            pass
+            """print(request.raw_session, "raw_session")
             cookie = request.COOKIES.get(self.cookie_name)
             # print(cookie, type(cookie), "user")
             # cookie = None
@@ -141,6 +143,6 @@ class UserActivityMiddleware:
                 self.user_session_repository.delete_user_session(session_id)
 
             response = HttpResponse(status=503)
-            response.delete_cookie(self.cookie_name)
-
-            return response
+            response.delete_cookie(self.cookie_name)"""
+        response = self.get_response(request)
+        return response

@@ -1,5 +1,5 @@
 from django.db.models import Q
-from django.http import HttpResponseNotFound, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponseNotFound, HttpResponseRedirect
 
 from application.common.url_parser import UrlParserInterface
 from application.services.domains.service import get_domain_service
@@ -18,7 +18,7 @@ class SubdomainMixin(SettingsMixin):
     url_parser: UrlParserInterface = get_url_parser()
     admin_settings = get_admin_settings()
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request: HttpRequest, *args, **kwargs):
         subdomain = self.url_parser.get_subdomain_from_host(request.get_host())
         domain = self.url_parser.get_domain_from_host(request.get_host())
 

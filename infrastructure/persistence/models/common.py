@@ -14,6 +14,7 @@ class BlockRelationship(models.Model):
     block = models.CharField(max_length=50)
 
     class Meta:
+        app_label = "common"
         verbose_name = "Блок"
         verbose_name_plural = "Блоки"
         ordering = ["block_name"]

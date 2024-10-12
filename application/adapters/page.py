@@ -6,10 +6,10 @@ from infrastructure.persistence.models.blocks.catalog_block import (
     PromoCatalog,
 )
 from infrastructure.persistence.models.blocks.common import BaseBlock, Page
+from infrastructure.persistence.models.common import BlockRelationship
 from infrastructure.persistence.repositories.product_repository import (
     get_product_repository,
 )
-from web.common.models import BlockRelationship
 
 
 class BlockAdapter:

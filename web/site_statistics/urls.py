@@ -7,6 +7,7 @@ from web.site_statistics.views import (
     OpenedProductPopupView,
     OpenedProductPromoView,
     OpenedUpdateProductFormView,
+    SubmitCapcha,
 )
 
 urlpatterns = [
@@ -16,4 +17,5 @@ urlpatterns = [
     path("opened-change-password-form", OpenedChangePasswordFormView.as_view()),
     path("opened-update-user-form", OpenedUpdateProductFormView.as_view()),
     path("increment-banks-count", IncrementBanksCountView.as_view()),
+    path("submit-capcha", SubmitCapcha.as_view()),
 ]

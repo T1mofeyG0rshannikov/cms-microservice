@@ -1,7 +1,7 @@
 from colorfield.fields import ColorField
 from django.db import models
 
-from web.common.models import OneInstanceModel
+from infrastructure.persistence.models.common import OneInstanceModel
 
 
 class ColorMixin(OneInstanceModel):

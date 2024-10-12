@@ -11,8 +11,8 @@ from infrastructure.persistence.models.catalog.product_type import (
     ProductCategory,
     ProductType,
 )
+from infrastructure.persistence.models.common import OneInstanceModel
 from infrastructure.security import get_link_encryptor
-from web.common.models import OneInstanceModel
 
 
 class OrganizationType(models.Model):
