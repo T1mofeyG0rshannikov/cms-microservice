@@ -123,13 +123,14 @@ class SessionAction(BaseSessionAction):
 
 class SessionFilters(OneInstanceModel):
     searchers = models.TextField(verbose_name="Поисковики", null=True)
-    capcha_limit = models.SmallIntegerField(verbose_name="Порог капчи", default=0)
-    ban_limit = models.SmallIntegerField(verbose_name="Порог бана", default=0)
+    capcha_limit = models.SmallIntegerField(verbose_name="Порог капчи", default=10000)
+    ban_limit = models.SmallIntegerField(verbose_name="Порог бана", default=10000)
 
     ip_penalty = models.SmallIntegerField(verbose_name="Запрос к IP", default=0)
-    ports_penalty = models.SmallIntegerField(verbose_name="Запретить обращение к нетипичным портам", default=0)
+    ports_penalty = models.SmallIntegerField(verbose_name="Запрос к порту", default=0)
     disable_urls = models.TextField(verbose_name="Запрос содержит")
-    disable_urls_penalty = models.SmallIntegerField("Несуществующий адрес", default=0)
+    disable_urls_penalty = models.SmallIntegerField("Запрещенный адрес", default=0)
+    page_not_found_penalty = models.SmallIntegerField("Несуществующий адрес", default=0)
 
     reject_capcha = models.SmallIntegerField(verbose_name="Отказ от капчи", default=0)
     capcha_error = models.SmallIntegerField(verbose_name="Ошибка в капче", default=0)

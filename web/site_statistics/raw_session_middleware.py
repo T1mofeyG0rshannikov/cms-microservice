@@ -65,42 +65,55 @@ class RawSessionMiddleware:
 
         if not cookie or ("/" not in cookie):
             session_data = raw_session_service.get_initial_raw_session(path, site, request.user_agent.is_mobile)
-
             session_id = self.user_session_repository.create_raw_session(**session_data.__dict__).id
         else:
             session_id = int(cookie.split("/")[1])
 
-            if not self.user_session_repository.is_raw_session_exists_by_id(session_id):
-                session_id = self.user_session_repository.create_raw_session(**session_data.__dict__).id
+        if not self.user_session_repository.is_raw_session_exists_by_id(session_id):
+            session_data = raw_session_service.get_initial_raw_session(path, site, request.user_agent.is_mobile)
+            session_id = self.user_session_repository.create_raw_session(**session_data.__dict__).id
 
-            session_data = self.user_session_repository.get_raw_session(session_id)
-            session_data = raw_session_service.filter_sessions(
-                RawSessionDTO.from_dict(session_data.__dict__),
-                host,
-                page_adress,
-                port,
-            )
+        session_data = self.user_session_repository.get_raw_session(session_id)
 
-            if session_data.show_capcha and (not self.url_parser.is_source(path) and not "submit-capcha" in path):
-                response = CapchaView.as_view()(request)
-                response.accepted_renderer = JSONRenderer()
-                response.accepted_media_type = "application/json"
-                response.renderer_context = {}
-                try:
-                    response.render()
-                except:
-                    pass
+        capcha_limit = self.user_session_repository.get_capcha_limit()
+        ban_limit = self.user_session_repository.get_ban_limit()
+        reject_capcha_penalty = self.user_session_repository.get_reject_capcha_penalty()
 
-                return response
+        if capcha_limit <= session_data.ban_rate <= ban_limit:
+            # print(path, self.url_parser.is_source(path))
+            if not self.url_parser.is_source(path) and "submit-capcha" not in path:
+                session_data.ban_rate += reject_capcha_penalty
+                # print("capcha_reject")
 
-            else:
-                if session_data.hacking:
-                    self.user_session_repository.update_raw_session(
-                        session_id,
-                        hacking=session_data.hacking,
-                        hacking_reason=session_data.hacking_reason,
-                    )
-                    # return HttpResponse(status=503)
+        session_data = raw_session_service.filter_sessions(
+            RawSessionDTO.from_dict(session_data.__dict__),
+            host,
+            path,
+            port,
+        )
+
+        self.user_session_repository.update_raw_session(
+            session_id,
+            hacking=session_data.hacking,
+            hacking_reason=session_data.hacking_reason,
+            ban_rate=session_data.ban_rate,
+        )
+
+        if (
+            session_data.show_capcha
+            and (not self.url_parser.is_source(path) and not "submit-capcha" in path)
+            and not session_data.hacking
+        ):
+            response = CapchaView.as_view()(request)
+            response.accepted_renderer = JSONRenderer()
+            response.accepted_media_type = "application/json"
+            response.renderer_context = {}
+            try:
+                response.render()
+            except:
+                pass
+
+            return response
 
         session_db = self.user_session_repository.get_raw_session(session_id)
         print(session_db.ban_rate)

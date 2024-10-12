@@ -1,5 +1,7 @@
 from django.conf import settings
 from django.contrib import admin
+from django.contrib.admin import SimpleListFilter
+from django.db.models import Max
 from django.utils.html import mark_safe
 
 from infrastructure.admin.admin_settings import get_admin_settings
@@ -64,8 +66,33 @@ class BaseSessionAdmin(admin.ModelAdmin):
 
     ip_tag.short_description = "ip"
 
+    def last_action_tag(self, obj):
+        last_action = obj.actions.first()
+        if last_action:
+            return last_action.time.strftime("%d.%m %H:%M:%S")
+
+    last_action_tag.short_description = "Последнее действие"
+
     class Media:
         css = {"all": ("site_statistics/css/user_action_admin.css",)}
+
+
+class CustomFilter(SimpleListFilter):
+    title = "Фильтр сессий"
+    parameter_name = "custom_filter"
+
+    def lookups(self, request, model_admin):
+        return (
+            ("last_action", "Последнее действие"),
+            ("new", "Сначала новые"),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == "last_action":
+            return queryset.annotate(last_action_time=Max("actions__time")).order_by("-last_action_time")
+        elif self.value() == "new":
+            return queryset.all()
+        return queryset
 
 
 class UserActivityAdmin(BaseSessionAdmin):
@@ -82,6 +109,7 @@ class UserActivityAdmin(BaseSessionAdmin):
         "banks_count",
         "profile_actions_count",
         "hacking",
+        "last_action_tag",
     ]
 
     def user_tag(self, obj):
@@ -102,11 +130,13 @@ class UserActivityAdmin(BaseSessionAdmin):
     def pages_count(self, session):
         return session.actions.filter(is_page=True).count()
 
-    pages_count.short_description = "Страницы"
+    pages_count.short_description = "Стр."
 
     readonly_fields = fields
 
     list_display = fields
+
+    list_filter = [CustomFilter]
 
 
 class SessionActionInline(BaseInline):
@@ -128,12 +158,6 @@ class SessionActionInline(BaseInline):
     raw_id_fields = ["session"]
 
     def get_formset(self, request, obj=None, **kwargs):
-        # import time
-        # start = time.time()
-        # for i in range(100):
-        #    super().get_formset(request, obj, **kwargs)
-
-        # print(time.time() - start)
         return super().get_formset(request, obj, **kwargs)
 
 
@@ -151,13 +175,14 @@ class SessionModelAdmin(BaseSessionAdmin):
         "hacking",
         "hacking_reason",
         "headers",
-        "ban_rate"
+        "ban_rate",
+        "last_action_tag",
     ]
 
     def pages_count(self, session):
         return session.actions.filter(is_page=True).count()
 
-    pages_count.short_description = "Страницы"
+    pages_count.short_description = "Стр."
 
     def source_count(self, session):
         return session.actions.filter(is_source=True).count()
@@ -174,6 +199,8 @@ class SessionModelAdmin(BaseSessionAdmin):
     list_prefetch_related = [
         "actions",
     ]
+
+    list_filter = [CustomFilter]
 
 
 admin.site.register(TryLoginToAdminPanel)

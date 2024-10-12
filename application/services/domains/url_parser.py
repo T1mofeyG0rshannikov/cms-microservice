@@ -45,7 +45,28 @@ class UrlParser(UrlParserInterface):
 
     @staticmethod
     def is_source(path: str) -> bool:
-        if "." in path:
+        if ".png" in path:
+            return True
+
+        if ".jpg" in path:
+            return True
+
+        if ".js" in path:
+            return True
+
+        if ".css" in path:
+            return True
+
+        if ".scss" in path:
+            return True
+
+        if ".webp" in path:
+            return True
+
+        if ".WEBP" in path:
+            return True
+
+        if ".jpeg" in path:
             return True
 
         if "styles" in path:

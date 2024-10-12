@@ -70,7 +70,6 @@ class UserActivityMiddleware:
             # cookie = None
 
             session_id = None
-            print(cookie)
 
             if not cookie or ("/" not in cookie):
                 session_data = user_activity_service.get_initial_data(
@@ -109,7 +108,6 @@ class UserActivityMiddleware:
                     if session_data.auth:
                         self.user_session_repository.update_user_session(session_id, auth=auth, user_id=user_id)
 
-            print(session_id)
             request.user_session_id = session_id
             response = self.get_response(request)
 
@@ -127,13 +125,7 @@ class UserActivityMiddleware:
 
             return response
         else:
-            pass
-            """print(request.raw_session, "raw_session")
             cookie = request.COOKIES.get(self.cookie_name)
-            # print(cookie, type(cookie), "user")
-            # cookie = None
-
-            print(cookie)
 
             if not cookie or ("/" not in cookie):
                 pass
@@ -143,6 +135,6 @@ class UserActivityMiddleware:
                 self.user_session_repository.delete_user_session(session_id)
 
             response = HttpResponse(status=503)
-            response.delete_cookie(self.cookie_name)"""
-        response = self.get_response(request)
+            response.delete_cookie(self.cookie_name)
+
         return response

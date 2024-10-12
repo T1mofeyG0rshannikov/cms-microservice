@@ -84,6 +84,7 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django_user_agents.middleware.UserAgentMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "web.site_statistics.page_not_found_middleware.PageNotFoundMiddleware",
     "web.site_statistics.raw_session_middleware.RawSessionMiddleware",
     "web.site_statistics.user_activity_middleware.UserActivityMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",

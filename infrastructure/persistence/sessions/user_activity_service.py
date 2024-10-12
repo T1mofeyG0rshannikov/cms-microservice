@@ -10,8 +10,7 @@ class UserActivitySessionService:
 
     def get_initial_data(self, site, user_id, device, utm_source, auth=None):
         ip = self.request_service.get_client_ip()
-        hacking = False
-        hacking_reason = None
+
         if not auth:
             auth = "login" if user_id else None
 
@@ -23,8 +22,6 @@ class UserActivitySessionService:
             device=device,
             user_id=user_id,
             utm_source=utm_source,
-            hacking=hacking,
-            hacking_reason=hacking_reason,
             auth=auth,
         )
 
