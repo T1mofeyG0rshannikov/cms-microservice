@@ -72,6 +72,7 @@ class RawSessionMiddleware:
             session_data = raw_session_service.get_initial_raw_session(site, request.user_agent.is_mobile)
             session_id = self.user_session_repository.create_raw_session(**session_data.__dict__).id
 
+        print(cookie, session_id)
         session_data = self.user_session_repository.get_raw_session(session_id)
 
         capcha_limit = self.user_session_repository.get_capcha_limit()
@@ -85,7 +86,12 @@ class RawSessionMiddleware:
                 # print("capcha_reject")
 
         session_data = raw_session_service.filter_sessions(
-            RawSessionDTO.from_dict(session_data.__dict__), host, path, port, request_service.get_all_headers()
+            RawSessionDTO.from_dict(session_data.__dict__),
+            host,
+            path,
+            port,
+            request_service.get_all_headers(),
+            session_data,
         )
 
         self.user_session_repository.update_raw_session(

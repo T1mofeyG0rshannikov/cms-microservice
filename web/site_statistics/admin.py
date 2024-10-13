@@ -5,6 +5,7 @@ from django.utils.html import mark_safe
 
 from infrastructure.admin.admin_settings import get_admin_settings
 from infrastructure.persistence.models.site_statistics import (
+    PenaltyLog,
     SessionAction,
     SessionFilters,
     SessionFiltersHeader,
@@ -147,8 +148,14 @@ class SessionActionInline(BaseInline):
         return super().get_formset(request, obj, **kwargs)
 
 
+class PenaltylogAdmin(BaseInline):
+    model = PenaltyLog
+    fields = ["text"]
+    readonly_fields = fields
+
+
 class SessionModelAdmin(BaseSessionAdmin):
-    inlines = [SessionActionInline]
+    inlines = [PenaltylogAdmin, SessionActionInline]
 
     fields = [
         "device_tag",

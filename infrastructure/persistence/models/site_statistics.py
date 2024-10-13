@@ -167,3 +167,11 @@ class SessionFiltersHeader(models.Model):
 
     class Meta:
         app_label = "site_statistics"
+
+
+class PenaltyLog(models.Model):
+    session = models.ForeignKey(SessionModel, on_delete=models.CASCADE)
+    text = models.CharField(max_length=500)
+
+    class Meta:
+        app_label = "site_statistics"
