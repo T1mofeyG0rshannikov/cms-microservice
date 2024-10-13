@@ -6,6 +6,3 @@ class SiteStatisticsConfig(AppConfig):
     name = "web.site_statistics"
 
     verbose_name = "СТАТИСТИКА"
-
-    def ready(self) -> None:
-        import web.site_statistics.signals

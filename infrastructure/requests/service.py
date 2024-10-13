@@ -15,6 +15,14 @@ class RequestService(RequestServiceInterface):
 
         return str_headers
 
+    def get_all_headers(self) -> dict:
+        headers = {}
+        for key, value in self.request.META.items():
+            if "HTTP" in key:
+                headers[key] = value
+
+        return headers
+
     def get_client_ip(self) -> str:
         x_forwarded_for = self.request.META.get("HTTP_X_REAL_IP")
         if x_forwarded_for:

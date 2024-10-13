@@ -47,9 +47,9 @@ class RawSessionMiddleware:
         self.get_response = get_response
 
     def __call__(self, request: HttpRequest):
-        raw_session_service = RawSessionService(
-            get_request_service(request), self.user_session_repository, self.url_parser
-        )
+        request_service = get_request_service(request)
+        raw_session_service = RawSessionService(request_service, self.user_session_repository, self.url_parser)
+
         path = request.get_full_path()
         site = request.get_host()
         page_adress = site + path
@@ -61,16 +61,15 @@ class RawSessionMiddleware:
 
         # cookie = None
         session_id = None
-        # print(cookie)
 
         if not cookie or ("/" not in cookie):
-            session_data = raw_session_service.get_initial_raw_session(path, site, request.user_agent.is_mobile)
+            session_data = raw_session_service.get_initial_raw_session(site, request.user_agent.is_mobile)
             session_id = self.user_session_repository.create_raw_session(**session_data.__dict__).id
         else:
             session_id = int(cookie.split("/")[1])
 
         if not self.user_session_repository.is_raw_session_exists_by_id(session_id):
-            session_data = raw_session_service.get_initial_raw_session(path, site, request.user_agent.is_mobile)
+            session_data = raw_session_service.get_initial_raw_session(site, request.user_agent.is_mobile)
             session_id = self.user_session_repository.create_raw_session(**session_data.__dict__).id
 
         session_data = self.user_session_repository.get_raw_session(session_id)
@@ -86,10 +85,7 @@ class RawSessionMiddleware:
                 # print("capcha_reject")
 
         session_data = raw_session_service.filter_sessions(
-            RawSessionDTO.from_dict(session_data.__dict__),
-            host,
-            path,
-            port,
+            RawSessionDTO.from_dict(session_data.__dict__), host, path, port, request_service.get_all_headers()
         )
 
         self.user_session_repository.update_raw_session(

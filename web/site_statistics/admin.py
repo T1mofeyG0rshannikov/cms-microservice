@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.contrib import admin
-from django.contrib.admin import SimpleListFilter
 from django.db.models import Max
 from django.utils.html import mark_safe
 
@@ -8,6 +7,7 @@ from infrastructure.admin.admin_settings import get_admin_settings
 from infrastructure.persistence.models.site_statistics import (
     SessionAction,
     SessionFilters,
+    SessionFiltersHeader,
     SessionModel,
     TryLoginToAdminPanel,
     TryLoginToFakeAdminPanel,
@@ -42,6 +42,7 @@ class BaseSessionAdmin(admin.ModelAdmin):
         return obj.start_time.strftime("%d.%m %H:%M:%S")
 
     start_time_tag.short_description = "Дата"
+    start_time_tag.admin_order_field = "-start_time"
 
     def time_tag(self, obj):
         last_action = obj.actions.first()
@@ -72,27 +73,14 @@ class BaseSessionAdmin(admin.ModelAdmin):
             return last_action.time.strftime("%d.%m %H:%M:%S")
 
     last_action_tag.short_description = "Последнее действие"
+    last_action_tag.admin_order_field = "last_action"
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.annotate(last_action=Max("actions__time")).order_by("-last_action")
 
     class Media:
         css = {"all": ("site_statistics/css/user_action_admin.css",)}
-
-
-class CustomFilter(SimpleListFilter):
-    title = "Фильтр сессий"
-    parameter_name = "custom_filter"
-
-    def lookups(self, request, model_admin):
-        return (
-            ("last_action", "Последнее действие"),
-            ("new", "Сначала новые"),
-        )
-
-    def queryset(self, request, queryset):
-        if self.value() == "last_action":
-            return queryset.annotate(last_action_time=Max("actions__time")).order_by("-last_action_time")
-        elif self.value() == "new":
-            return queryset.all()
-        return queryset
 
 
 class UserActivityAdmin(BaseSessionAdmin):
@@ -135,8 +123,6 @@ class UserActivityAdmin(BaseSessionAdmin):
     readonly_fields = fields
 
     list_display = fields
-
-    list_filter = [CustomFilter]
 
 
 class SessionActionInline(BaseInline):
@@ -200,11 +186,17 @@ class SessionModelAdmin(BaseSessionAdmin):
         "actions",
     ]
 
-    list_filter = [CustomFilter]
+
+class SessionHeaderInline(BaseInline):
+    model = SessionFiltersHeader
+
+
+class SessionFiltersAdmin(admin.ModelAdmin):
+    inlines = [SessionHeaderInline]
 
 
 admin.site.register(TryLoginToAdminPanel)
 admin.site.register(TryLoginToFakeAdminPanel)
 admin.site.register(UserActivity, UserActivityAdmin)
 admin.site.register(SessionModel, SessionModelAdmin)
-admin.site.register(SessionFilters)
+admin.site.register(SessionFilters, SessionFiltersAdmin)

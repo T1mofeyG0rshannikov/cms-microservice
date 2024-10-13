@@ -108,6 +108,12 @@ class SessionAction(BaseSessionAction):
     is_page = models.BooleanField(default=True)
     is_source = models.BooleanField(default=False)
 
+    @property
+    def last_action(self):
+        last_action = self.actions.first()
+        if last_action:
+            return last_action.time
+
     class Meta:
         app_label = "site_statistics"
         ordering = ["-time"]
@@ -144,7 +150,7 @@ class SessionFilters(OneInstanceModel):
 
 
 class SessionFiltersHeader(models.Model):
-    session_filters = models.ForeignKey(SessionFilters, on_delete=models.CASCADE)
+    session_filters = models.ForeignKey(SessionFilters, on_delete=models.CASCADE, related_name="headers")
     header = models.CharField(max_length=50, verbose_name="Заголовок")
     CONTAIN_CHOICES = [
         ("Присутствует", "Присутствует"),
@@ -155,8 +161,9 @@ class SessionFiltersHeader(models.Model):
         ("Не совпадает", "Не совпадает"),
     ]
 
-    contain = models.CharField(max_length=50, choices=CONTAIN_CHOICES)
-    penalty = models.SmallIntegerField(default=0)
+    contain = models.CharField(max_length=50, choices=CONTAIN_CHOICES, verbose_name="содержит")
+    content = models.CharField(max_length=50, null=True, blank=True, verbose_name="строка")
+    penalty = models.SmallIntegerField(default=0, verbose_name="штраф")
 
     class Meta:
         app_label = "site_statistics"

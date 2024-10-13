@@ -18,13 +18,11 @@ class RawSessionService(RawSessionServiceInterface):
         self.user_session_repository = user_session_repository
         self.url_parser = url_parser
 
-    def get_initial_raw_session(self, path, site, device):
+    def get_initial_raw_session(self, site, device):
         headers = self.request_service.get_all_headers_to_string()
         ip = self.request_service.get_client_ip()
-        host = site.split(":")[0]
-        port = site.split(":")[1] if ":" in site else None
 
-        session_data = RawSessionDB(
+        return RawSessionDB(
             ip=ip,
             start_time=now().isoformat(),
             end_time=now().isoformat(),
@@ -33,11 +31,9 @@ class RawSessionService(RawSessionServiceInterface):
             headers=headers,
         )
 
-        # session_data = self.filter_sessions(session_data, host, path, port)
-
-        return session_data
-
-    def filter_sessions(self, session_data: RawSessionDTO, host: str, path: str, port: str) -> RawSessionDTO:
+    def filter_sessions(
+        self, session_data: RawSessionDTO, host: str, path: str, port: str, headers: dict
+    ) -> RawSessionDTO:
         session_filters = self.user_session_repository.get_session_filters()
 
         if session_filters:
@@ -53,6 +49,33 @@ class RawSessionService(RawSessionServiceInterface):
                     print(disable_url, "disable_url")
                     session_data.ban_rate += session_filters.disable_urls_penalty
                     break
+
+            for session_filter_header in session_filters.headers.all():
+                contain = session_filter_header.contain
+                session_header_name = session_filter_header.header
+                session_header_content = session_filter_header.content
+                penalty = session_filter_header.penalty
+
+                for header_name, header_content in headers.items():
+                    if contain == "Присутствует":
+                        if header_name == session_header_name:
+                            session_data.ban_rate += penalty
+                    if contain == "Содержит":
+                        if session_header_content in header_content:
+                            session_data.ban_rate += penalty
+                    if contain == "Не содержит":
+                        if session_header_content not in header_content:
+                            session_data.ban_rate += penalty
+                    if contain == "Не совпадает":
+                        if session_header_content != header_content:
+                            session_data.ban_rate += penalty
+                    if contain == "Совпадает":
+                        if session_header_content == header_content:
+                            session_data.ban_rate += penalty
+
+                if contain == "Отсутствует":
+                    if session_header_name not in headers.keys():
+                        session_data.ban_rate += penalty
 
             if session_data.ban_rate >= session_filters.ban_limit:
                 session_data.hacking = True

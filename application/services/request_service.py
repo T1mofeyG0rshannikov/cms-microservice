@@ -7,3 +7,6 @@ class RequestServiceInterface(Protocol):
 
     def get_client_ip(self) -> str:
         raise NotImplementedError
+
+    def get_all_headers(self) -> dict:
+        raise NotImplementedError
