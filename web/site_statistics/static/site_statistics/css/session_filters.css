@@ -1,0 +1,11 @@
+#headers-group fieldset.aligned{
+    display: flex;
+}
+
+#headers-group fieldset.aligned .flex-container{
+    flex-direction: column;
+}
+
+.vTextField, .vUUIDField{
+    width: auto!important;
+}

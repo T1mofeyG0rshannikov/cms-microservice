@@ -8,7 +8,7 @@ class UserActivitySessionService:
         self.request_service = request_service
         self.user_session_repository = user_session_repository
 
-    def get_initial_data(self, site, user_id, device, utm_source, auth=None):
+    def get_initial_data(self, user_id, device, utm_source, auth=None):
         ip = self.request_service.get_client_ip()
 
         if not auth:
@@ -18,7 +18,7 @@ class UserActivitySessionService:
             ip=ip,
             start_time=now().isoformat(),
             end_time=now().isoformat(),
-            site=site,
+            site=self.request_service.get_host(),
             device=device,
             user_id=user_id,
             utm_source=utm_source,

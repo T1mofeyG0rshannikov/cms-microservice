@@ -14,6 +14,8 @@ from infrastructure.persistence.models.site_statistics import (
     TryLoginToFakeAdminPanel,
     UserAction,
     UserActivity,
+    WebSearcher,
+    WebSearcherAction,
 )
 from web.admin.admin import redirect_to_change_page_tag
 from web.common.admin import BaseInline
@@ -200,10 +202,42 @@ class SessionHeaderInline(BaseInline):
 
 class SessionFiltersAdmin(admin.ModelAdmin):
     inlines = [SessionHeaderInline]
+    
+    class Media:
+        css = {"all": ("site_statistics/css/session_filters.css",)}
+
+
+class WebSearcherActionInline(BaseInline):
+    model = WebSearcherAction
+
+
+class WebSearcherAdmin(BaseSessionAdmin):
+    inlines = [WebSearcherActionInline]
+
+    fields = [
+        "site",
+        "ip_tag",
+        "start_time_tag",
+        "time_tag",
+        "headers",
+        "last_action_tag",
+    ]
+
+    readonly_fields = fields
+
+    list_display = [field for field in fields if field != "headers"]
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).prefetch_related("actions")
+
+    list_prefetch_related = [
+        "actions",
+    ]
 
 
 admin.site.register(TryLoginToAdminPanel)
 admin.site.register(TryLoginToFakeAdminPanel)
 admin.site.register(UserActivity, UserActivityAdmin)
 admin.site.register(SessionModel, SessionModelAdmin)
+admin.site.register(WebSearcher, WebSearcherAdmin)
 admin.site.register(SessionFilters, SessionFiltersAdmin)

@@ -58,7 +58,7 @@ class UserActivityMiddleware:
             user_activity_service = UserActivitySessionService(RequestService(request), get_user_session_repository())
 
             path = request.get_full_path()
-            site = request.raw_session.site  # get_host()
+            site = request.raw_session.site
             page_adress = site + path
 
             user_id = request.user.id if request.user.is_authenticated else None
@@ -73,7 +73,6 @@ class UserActivityMiddleware:
 
             if not cookie or ("/" not in cookie):
                 session_data = user_activity_service.get_initial_data(
-                    site=site,
                     user_id=user_id,
                     device=request.user_agent.is_mobile,
                     utm_source=request.GET.get("utm_source"),
@@ -87,7 +86,6 @@ class UserActivityMiddleware:
                 auth = "login" if user_id else None
                 if auth:
                     session_data = user_activity_service.get_initial_data(
-                        site=site,
                         user_id=user_id,
                         device=request.user_agent.is_mobile,
                         utm_source=request.GET.get("utm_source"),
@@ -95,7 +93,6 @@ class UserActivityMiddleware:
                     )
                 else:
                     session_data = user_activity_service.get_initial_data(
-                        site=site,
                         user_id=user_id,
                         device=request.user_agent.is_mobile,
                         utm_source=request.GET.get("utm_source"),

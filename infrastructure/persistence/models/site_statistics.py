@@ -51,6 +51,34 @@ class BaseSessionModel(models.Model):
         abstract = True
 
 
+class WebSearcher(models.Model):
+    ip = models.CharField(max_length=15)
+    start_time = models.DateTimeField(verbose_name="Дата")
+    end_time = models.DateTimeField()
+    site = models.CharField(max_length=50, null=True, verbose_name="Сайт")
+    headers = models.TextField(max_length=2000, null=True)
+
+    class Meta:
+        app_label = "site_statistics"
+        verbose_name = "Поисковик"
+        verbose_name_plural = "Поисковики"
+
+
+class WebSearcherAction(models.Model):
+    searcher = models.ForeignKey(WebSearcher, on_delete=models.CASCADE, related_name="actions")
+    adress = models.CharField(max_length=300, verbose_name="страница")
+    time = models.DateTimeField()
+
+    class Meta:
+        app_label = "site_statistics"
+        ordering = ["-time"]
+        verbose_name = "Событие"
+        verbose_name_plural = "События"
+
+    def __str__(self):
+        return ""
+
+
 class SessionModel(BaseSessionModel):
     headers = models.TextField(max_length=2000, null=True)
     ban_rate = models.SmallIntegerField(default=0, verbose_name="Штраф")

@@ -66,3 +66,12 @@ class RawSessionDB:
     @classmethod
     def from_dict(cls, env):
         return cls(**{k: v for k, v in env.items() if k in inspect.signature(cls).parameters})
+
+
+@dataclass
+class SearcherDTO:
+    ip: str
+    start_time: datetime
+    end_time: datetime
+    site: str
+    headers: str = None

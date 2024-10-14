@@ -42,6 +42,7 @@ class RawSessionMiddleware:
     user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
     logs_array_length = 100
     logs = []
+    cookie_name = settings.RAW_SESSION_COOKIE_NAME
 
     def __init__(self, get_response):
         self.get_response = get_response
@@ -57,20 +58,34 @@ class RawSessionMiddleware:
         port = site.split(":")[1] if ":" in site else None
         expires = datetime.utcnow() + timedelta(days=365 * 10)
 
-        cookie = request.COOKIES.get(settings.RAW_SESSION_COOKIE_NAME)
+        cookie = request.COOKIES.get(self.cookie_name)
 
         # cookie = None
         session_id = None
 
         if not cookie or ("/" not in cookie):
-            session_data = raw_session_service.get_initial_raw_session(site, request.user_agent.is_mobile)
-            session_id = self.user_session_repository.create_raw_session(**session_data.__dict__).id
+            session_data = raw_session_service.get_initial_raw_session(request.user_agent.is_mobile)
+            session_db = self.user_session_repository.create_raw_session(**session_data.__dict__)
+            session_id = session_db.id
+
+            session_data = raw_session_service.check_headers(
+                RawSessionDTO.from_dict(session_db.__dict__),
+                request_service.get_all_headers(),
+                session_db,
+            )
         else:
             session_id = int(cookie.split("/")[1])
 
         if not self.user_session_repository.is_raw_session_exists_by_id(session_id):
-            session_data = raw_session_service.get_initial_raw_session(site, request.user_agent.is_mobile)
-            session_id = self.user_session_repository.create_raw_session(**session_data.__dict__).id
+            session_data = raw_session_service.get_initial_raw_session(request.user_agent.is_mobile)
+            session_db = self.user_session_repository.create_raw_session(**session_data.__dict__)
+            session_id = session_db.id
+
+            session_data = raw_session_service.check_headers(
+                RawSessionDTO.from_dict(session_db.__dict__),
+                request_service.get_all_headers(),
+                session_db,
+            )
 
         print(cookie, session_id)
         session_data = self.user_session_repository.get_raw_session(session_id)
@@ -101,6 +116,8 @@ class RawSessionMiddleware:
             ban_rate=session_data.ban_rate,
         )
 
+        session_db = self.user_session_repository.get_raw_session(session_id)
+
         if (
             session_data.show_capcha
             and (not self.url_parser.is_source(path) and not "submit-capcha" in path)
@@ -117,7 +134,6 @@ class RawSessionMiddleware:
 
             return response
 
-        session_db = self.user_session_repository.get_raw_session(session_id)
         print(session_db.ban_rate)
         # if session_db.hacking:
         #    return HttpResponse(status=503)
@@ -127,7 +143,7 @@ class RawSessionMiddleware:
         if path == "/user/get-user-info":
             return response
 
-        response.set_cookie(settings.RAW_SESSION_COOKIE_NAME, f"{session_id}/{session_id}", expires=expires)
+        response.set_cookie(self.cookie_name, f"{session_id}/{session_id}", expires=expires)
 
         if "null" not in path:
             self.logs.append(create_raw_log(session_id, page_adress, path, time=now()))

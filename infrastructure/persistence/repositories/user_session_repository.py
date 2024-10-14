@@ -10,6 +10,8 @@ from infrastructure.persistence.models.site_statistics import (
     SessionModel,
     UserAction,
     UserActivity,
+    WebSearcher,
+    WebSearcherAction,
 )
 
 
@@ -51,6 +53,15 @@ class UserSessionRepository(UserSessionRepositoryInterface):
     def update_raw_session(self, id, **kwargs):
         SessionModel.objects.filter(id=id).update(**kwargs)
         return SessionModel.objects.get(id=id)
+
+    def is_searcher_exists_by_id(self, id: int) -> bool:
+        return WebSearcher.objects.filter(id=id).exists()
+
+    def create_searcher_log(self, **kwargs) -> None:
+        WebSearcherAction.objects.create(**kwargs)
+
+    def create_searcher(self, **kwargs) -> None:
+        WebSearcher.objects.create(**kwargs)
 
     def update_user_session(self, id: int, **kwargs):
         UserActivity.objects.filter(id=id).update(**kwargs)

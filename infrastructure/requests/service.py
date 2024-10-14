@@ -15,6 +15,9 @@ class RequestService(RequestServiceInterface):
 
         return str_headers
 
+    def get_host(self) -> str:
+        return self.request.get_host()
+
     def get_all_headers(self) -> dict:
         headers = {}
         for key, value in self.request.META.items():

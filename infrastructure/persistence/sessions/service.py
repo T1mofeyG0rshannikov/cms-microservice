@@ -23,7 +23,7 @@ class RawSessionService(RawSessionServiceInterface):
         self.user_session_repository = user_session_repository
         self.url_parser = url_parser
 
-    def get_initial_raw_session(self, site, device):
+    def get_initial_raw_session(self, device):
         headers = self.request_service.get_all_headers_to_string()
         ip = self.request_service.get_client_ip()
 
@@ -31,10 +31,71 @@ class RawSessionService(RawSessionServiceInterface):
             ip=ip,
             start_time=now().isoformat(),
             end_time=now().isoformat(),
-            site=site,
+            site=self.request_service.get_host(),
             device=device,
             headers=headers,
         )
+
+    def check_headers(self, session_data, headers: dict, session):
+        session_filters = self.user_session_repository.get_session_filters()
+        if session_filters:
+            for session_filter_header in session_filters.headers.all():
+                contain = session_filter_header.contain
+                session_header_name = session_filter_header.header
+                session_header_content = session_filter_header.content
+                penalty = session_filter_header.penalty
+
+                for header_name, header_content in headers.items():
+                    if contain == "Присутствует":
+                        if header_name == session_header_name:
+                            session_data.ban_rate += penalty
+                            PenaltyLog.objects.create(
+                                session=session,
+                                text=f"{contain}({session_header_content}) - {header_name}: {header_content}, {penalty}",
+                            )
+                    if header_name == session_header_name:
+                        if contain == "Содержит":
+                            for content in session_header_content.lower().split(","):
+                                content = content.strip()
+                                if content in header_content.lower():
+                                    session_data.ban_rate += penalty
+                                    PenaltyLog.objects.create(
+                                        session=session,
+                                        text=f"{contain}({session_header_content}) - {header_name}: {header_content}, {penalty}",
+                                    )
+
+                        if contain == "Не содержит":
+                            for content in session_header_content.lower().split(","):
+                                content = content.strip()
+                                if content not in header_content.lower():
+                                    session_data.ban_rate += penalty
+                                    PenaltyLog.objects.create(
+                                        session=session,
+                                        text=f"{contain}({session_header_content}) - {header_name}: {header_content}, {penalty}",
+                                    )
+
+                        if contain == "Не совпадает":
+                            if session_header_content.lower() != header_content.lower():
+                                session_data.ban_rate += penalty
+                                PenaltyLog.objects.create(
+                                    session=session,
+                                    text=f"{contain}({session_header_content}) - {header_name}: {header_content}, {penalty}",
+                                )
+                        if contain == "Совпадает":
+                            if session_header_content.lower() == header_content.lower():
+                                session_data.ban_rate += penalty
+                                PenaltyLog.objects.create(
+                                    session=session,
+                                    text=f"{contain}({session_header_content}) - {header_name}: {header_content}, {penalty}",
+                                )
+
+                if contain == "Отсутствует":
+                    if session_header_name not in headers.keys():
+                        session_data.ban_rate += penalty
+                        PenaltyLog.objects.create(
+                            session=session,
+                            text=f"{contain} - {session_header_name}",
+                        )
 
     def filter_sessions(
         self, session_data: RawSessionDTO, host: str, path: str, port: str, headers: dict, session
@@ -55,57 +116,7 @@ class RawSessionService(RawSessionServiceInterface):
                     session_data.ban_rate += session_filters.disable_urls_penalty
                     break
 
-            for session_filter_header in session_filters.headers.all():
-                contain = session_filter_header.contain
-                session_header_name = session_filter_header.header
-                session_header_content = session_filter_header.content
-                penalty = session_filter_header.penalty
-
-                for header_name, header_content in headers.items():
-                    if contain == "Присутствует":
-                        if header_name == session_header_name:
-                            session_data.ban_rate += penalty
-                            PenaltyLog.objects.create(
-                                session=session,
-                                text=f"{contain}({session_header_content}) - {header_name}: {header_content}, {penalty}",
-                            )
-                    if header_name == session_header_name:
-                        if contain == "Содержит":
-                            if session_header_content in header_content:
-                                session_data.ban_rate += penalty
-                                PenaltyLog.objects.create(
-                                    session=session,
-                                    text=f"{contain}({session_header_content}) - {header_name}: {header_content}, {penalty}",
-                                )
-                        if contain == "Не содержит":
-                            if session_header_content not in header_content:
-                                session_data.ban_rate += penalty
-                                PenaltyLog.objects.create(
-                                    session=session,
-                                    text=f"{contain}({session_header_content}) - {header_name}: {header_content}, {penalty}",
-                                )
-                        if contain == "Не совпадает":
-                            if session_header_content != header_content:
-                                session_data.ban_rate += penalty
-                                PenaltyLog.objects.create(
-                                    session=session,
-                                    text=f"{contain}({session_header_content}) - {header_name}: {header_content}, {penalty}",
-                                )
-                        if contain == "Совпадает":
-                            if session_header_content == header_content:
-                                session_data.ban_rate += penalty
-                                PenaltyLog.objects.create(
-                                    session=session,
-                                    text=f"{contain}({session_header_content}) - {header_name}: {header_content}, {penalty}",
-                                )
-
-                if contain == "Отсутствует":
-                    if session_header_name not in headers.keys():
-                        session_data.ban_rate += penalty
-                        PenaltyLog.objects.create(
-                            session=session,
-                            text=f"{contain}({session_header_content}) - {header_name}: {header_content}, {penalty}",
-                        )
+            # self.check_headers(session_filters, session_data, headers, session)
 
             if session_data.ban_rate >= session_filters.ban_limit:
                 session_data.hacking = True
