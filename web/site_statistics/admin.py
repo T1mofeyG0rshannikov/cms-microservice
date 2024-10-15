@@ -202,7 +202,7 @@ class SessionHeaderInline(BaseInline):
 
 class SessionFiltersAdmin(admin.ModelAdmin):
     inlines = [SessionHeaderInline]
-    
+
     class Media:
         css = {"all": ("site_statistics/css/session_filters.css",)}
 

@@ -156,13 +156,14 @@ class SessionAction(BaseSessionAction):
 
 
 class SessionFilters(OneInstanceModel):
-    searchers = models.TextField(verbose_name="Поисковики", null=True)
+    searchers = models.CharField(verbose_name="Поисковики", null=True, max_length=500)
     capcha_limit = models.SmallIntegerField(verbose_name="Порог капчи", default=10000)
     ban_limit = models.SmallIntegerField(verbose_name="Порог бана", default=10000)
 
     ip_penalty = models.SmallIntegerField(verbose_name="Запрос к IP", default=0)
     ports_penalty = models.SmallIntegerField(verbose_name="Запрос к порту", default=0)
-    disable_urls = models.TextField(verbose_name="Запрос содержит")
+    disable_urls = models.TextField(verbose_name="Запрос содержит(все)")
+    disable_urls_sites = models.TextField(verbose_name="Запрос содержит(сайты)", null=True)
     disable_urls_penalty = models.SmallIntegerField("Запрещенный адрес", default=0)
     page_not_found_penalty = models.SmallIntegerField("Несуществующий адрес", default=0)
 

@@ -118,22 +118,6 @@ class RawSessionMiddleware:
 
         session_db = self.user_session_repository.get_raw_session(session_id)
 
-        if (
-            session_data.show_capcha
-            and (not self.url_parser.is_source(path) and not "submit-capcha" in path)
-            and not session_data.hacking
-        ):
-            response = CapchaView.as_view()(request)
-            response.accepted_renderer = JSONRenderer()
-            response.accepted_media_type = "application/json"
-            response.renderer_context = {}
-            try:
-                response.render()
-            except:
-                pass
-
-            return response
-
         print(session_db.ban_rate)
         # if session_db.hacking:
         #    return HttpResponse(status=503)
@@ -154,9 +138,11 @@ class RawSessionMiddleware:
             # self.user_session_repository.bulk_create_raw_session_logs(self.logs)
             self.logs.clear()
 
-        return response
-
-        """if not url_parser.is_source(path) and not "submit-capcha" in path:
+        if (
+            session_data.show_capcha
+            and (not self.url_parser.is_source(path) and not "submit-capcha" in path)
+            and not session_data.hacking
+        ):
             response = CapchaView.as_view()(request)
             response.accepted_renderer = JSONRenderer()
             response.accepted_media_type = "application/json"
@@ -166,4 +152,6 @@ class RawSessionMiddleware:
             except:
                 pass
 
-            return response"""
+            return response
+
+        return response
