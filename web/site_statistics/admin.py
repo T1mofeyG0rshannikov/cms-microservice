@@ -99,7 +99,6 @@ class UserActivityAdmin(BaseSessionAdmin):
         "pages_count",
         "banks_count",
         "profile_actions_count",
-        "hacking",
         "last_action_tag",
     ]
 
@@ -168,7 +167,6 @@ class SessionModelAdmin(BaseSessionAdmin):
         "pages_count",
         "source_count",
         "hacking",
-        "hacking_reason",
         "headers",
         "ban_rate",
         "last_action_tag",

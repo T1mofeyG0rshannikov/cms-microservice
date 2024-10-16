@@ -54,6 +54,9 @@ class UserActivityMiddleware:
         return False
 
     def __call__(self, request: HttpRequest):
+        if request.searcher:
+            return self.get_response(request)
+
         if not request.raw_session.hacking:
             user_activity_service = UserActivitySessionService(RequestService(request), get_user_session_repository())
 

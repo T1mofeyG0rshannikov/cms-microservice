@@ -39,12 +39,6 @@ class BaseSessionModel(models.Model):
     end_time = models.DateTimeField()
     site = models.CharField(max_length=50, null=True, verbose_name="Сайт")
     device = models.BooleanField(default=False)
-    hacking = models.BooleanField(default=False)
-    hacking_reason = models.CharField(max_length=100, null=True, blank=True)
-    banks_count = models.PositiveIntegerField(verbose_name="Банки", default=0)
-    profile_actions_count = models.PositiveIntegerField(verbose_name="ЛК", default=0)
-    auth = models.CharField(null=True, max_length=20)
-    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     utm_source = models.CharField(max_length=500, null=True)
 
     class Meta:
@@ -82,6 +76,7 @@ class WebSearcherAction(models.Model):
 class SessionModel(BaseSessionModel):
     headers = models.TextField(max_length=2000, null=True)
     ban_rate = models.SmallIntegerField(default=0, verbose_name="Штраф")
+    hacking = models.BooleanField(default=False)
 
     class Meta:
         app_label = "site_statistics"
@@ -93,6 +88,12 @@ class SessionModel(BaseSessionModel):
 
 
 class UserActivity(BaseSessionModel):
+    session = models.ForeignKey(SessionModel, on_delete=models.SET_NULL, null=True)
+    banks_count = models.PositiveIntegerField(verbose_name="Банки", default=0)
+    profile_actions_count = models.PositiveIntegerField(verbose_name="ЛК", default=0)
+    auth = models.CharField(null=True, max_length=20)
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+
     class Meta:
         app_label = "site_statistics"
         verbose_name = "Посетители"
@@ -162,6 +163,8 @@ class SessionFilters(OneInstanceModel):
 
     ip_penalty = models.SmallIntegerField(verbose_name="Запрос к IP", default=0)
     ports_penalty = models.SmallIntegerField(verbose_name="Запрос к порту", default=0)
+    disallowed_host = models.SmallIntegerField(verbose_name="Несуществующий домен", default=0)
+
     disable_urls = models.TextField(verbose_name="Запрос содержит(все)")
     disable_urls_sites = models.TextField(verbose_name="Запрос содержит(сайты)", null=True)
     disable_urls_penalty = models.SmallIntegerField("Запрещенный адрес", default=0)
@@ -171,6 +174,8 @@ class SessionFilters(OneInstanceModel):
     capcha_error = models.SmallIntegerField(verbose_name="Ошибка в капче", default=0)
 
     capcha_success = models.SmallIntegerField(verbose_name="Успешная капча", default=0)
+
+    no_cookie = models.SmallIntegerField(default=0, verbose_name="Нет cookies")
 
     class Meta:
         app_label = "site_statistics"
@@ -191,7 +196,7 @@ class SessionFiltersHeader(models.Model):
     ]
 
     contain = models.CharField(max_length=50, choices=CONTAIN_CHOICES, verbose_name="содержит")
-    content = models.CharField(max_length=50, null=True, blank=True, verbose_name="строка")
+    content = models.CharField(max_length=1000, null=True, blank=True, verbose_name="строка")
     penalty = models.SmallIntegerField(default=0, verbose_name="штраф")
 
     class Meta:

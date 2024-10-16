@@ -93,8 +93,10 @@ class RawSessionService(RawSessionServiceInterface):
                         session_data.ban_rate += penalty
                         PenaltyLog.objects.create(
                             session=session,
-                            text=f"{contain} - {session_header_name}",
+                            text=f"{contain} - {session_header_name}, {penalty}",
                         )
+
+        return session_data
 
     def filter_sessions(
         self, session_data: RawSessionDTO, host: str, path: str, port: str, headers: dict, session
@@ -105,23 +107,37 @@ class RawSessionService(RawSessionServiceInterface):
             if host != "127.0.0.1" and host != "localhost":
                 if self.url_parser.is_ip(host):
                     session_data.ban_rate += session_filters.ip_penalty
+                    PenaltyLog.objects.create(
+                        session=session,
+                        text=f"Запрос к ip, {session_filters.ip_penalty}",
+                    )
 
                 if port:
                     session_data.ban_rate += session_filters.ports_penalty
+                    PenaltyLog.objects.create(
+                        session=session,
+                        text=f"Запрос к порту, {session_filters.ports_penalty}",
+                    )
 
             for disable_url in session_filters.disable_urls.splitlines():
                 disable_url = disable_url.strip()
                 if disable_url in path:
-                    print(disable_url, "disable_url")
                     session_data.ban_rate += session_filters.disable_urls_penalty
+                    PenaltyLog.objects.create(
+                        session=session,
+                        text=f"Запрещенный адрес(для всех), {session_filters.session_filters.disable_urls_penalty}",
+                    )
                     break
 
-            if host != self.admin_settings.admin_domain:
+            if host != self.admin_settings.admin_domain and session_filters.disable_urls_sites:
                 for disable_url in session_filters.disable_urls_sites.splitlines():
                     disable_url = disable_url.strip()
                     if disable_url in path:
-                        print(disable_url, "disable_url")
                         session_data.ban_rate += session_filters.disable_urls_penalty
+                        PenaltyLog.objects.create(
+                            session=session,
+                            text=f"Запрещенный адрес(для сайтов), {session_filters.session_filters.disable_urls_penalty}",
+                        )
                         break
 
             if session_data.ban_rate >= session_filters.ban_limit:
@@ -135,6 +151,10 @@ class RawSessionService(RawSessionServiceInterface):
     def success_capcha(self, session_id: int):
         increase_value = -self.user_session_repository.get_success_capcha_increase()
         self.user_session_repository.change_ban_rate(session_id, increase_value)
+        PenaltyLog.objects.create(
+            session_id=session_id,
+            text=f"Успешная капча, {-increase_value}",
+        )
 
 
 def get_raw_session_service(

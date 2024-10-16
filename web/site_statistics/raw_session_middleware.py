@@ -9,8 +9,9 @@ from application.common.url_parser import UrlParserInterface
 from application.services.domains.url_parser import get_url_parser
 from application.sessions.dto import RawSessionDTO
 from domain.user_sessions.repository import UserSessionRepositoryInterface
+from infrastructure.admin.admin_settings import get_admin_settings
 from infrastructure.logging.tasks import create_raw_logs
-from infrastructure.persistence.models.site_statistics import SessionAction
+from infrastructure.persistence.models.site_statistics import PenaltyLog, SessionAction
 from infrastructure.persistence.repositories.user_session_repository import (
     get_user_session_repository,
 )
@@ -48,8 +49,13 @@ class RawSessionMiddleware:
         self.get_response = get_response
 
     def __call__(self, request: HttpRequest):
+        if request.searcher:
+            return self.get_response(request)
+
         request_service = get_request_service(request)
-        raw_session_service = RawSessionService(request_service, self.user_session_repository, self.url_parser)
+        raw_session_service = RawSessionService(
+            request_service, self.user_session_repository, self.url_parser, get_admin_settings()
+        )
 
         path = request.get_full_path()
         site = request.get_host()
@@ -73,6 +79,11 @@ class RawSessionMiddleware:
                 request_service.get_all_headers(),
                 session_db,
             )
+
+            self.user_session_repository.update_raw_session(
+                session_id,
+                ban_rate=session_data.ban_rate,
+            )
         else:
             session_id = int(cookie.split("/")[1])
 
@@ -87,7 +98,12 @@ class RawSessionMiddleware:
                 session_db,
             )
 
-        print(cookie, session_id)
+            self.user_session_repository.update_raw_session(
+                session_id,
+                ban_rate=session_data.ban_rate,
+            )
+
+        # print(cookie, session_id)
         session_data = self.user_session_repository.get_raw_session(session_id)
 
         capcha_limit = self.user_session_repository.get_capcha_limit()
@@ -95,10 +111,12 @@ class RawSessionMiddleware:
         reject_capcha_penalty = self.user_session_repository.get_reject_capcha_penalty()
 
         if capcha_limit <= session_data.ban_rate <= ban_limit:
-            # print(path, self.url_parser.is_source(path))
             if not self.url_parser.is_source(path) and "submit-capcha" not in path:
                 session_data.ban_rate += reject_capcha_penalty
-                # print("capcha_reject")
+                PenaltyLog.objects.create(
+                    session_id=session_id,
+                    text=f"Отказ от капчи, {reject_capcha_penalty}",
+                )
 
         session_data = raw_session_service.filter_sessions(
             RawSessionDTO.from_dict(session_data.__dict__),
@@ -112,25 +130,26 @@ class RawSessionMiddleware:
         self.user_session_repository.update_raw_session(
             session_id,
             hacking=session_data.hacking,
-            hacking_reason=session_data.hacking_reason,
             ban_rate=session_data.ban_rate,
         )
 
         session_db = self.user_session_repository.get_raw_session(session_id)
 
-        print(session_db.ban_rate)
+        # print(session_db.ban_rate)
         # if session_db.hacking:
         #    return HttpResponse(status=503)
         request.raw_session = session_db
         response = self.get_response(request)
 
-        if path == "/user/get-user-info":
-            return response
+        # if path == "/user/get-user-info":
+        #    return response
 
         response.set_cookie(self.cookie_name, f"{session_id}/{session_id}", expires=expires)
 
-        if "null" not in path:
-            self.logs.append(create_raw_log(session_id, page_adress, path, time=now()))
+        # if "null" not in path:
+        self.logs.append(create_raw_log(session_id, page_adress, path, time=now()))
+
+        print(len(self.logs))
 
         if len(self.logs) > self.logs_array_length:
             print(self.logs, "LLLLOGGGS")

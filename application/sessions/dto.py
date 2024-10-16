@@ -15,8 +15,6 @@ class UserActivityDTO:
     user_id: int = None
     profile_actions_count: int = 0
     utm_source: str = None
-    hacking: bool = False
-    hacking_reason: str = None
 
     @classmethod
     def from_dict(cls, env):
@@ -36,7 +34,6 @@ class RawSessionDTO:
     profile_actions_count: int = 0
     utm_source: str = None
     hacking: bool = False
-    hacking_reason: str = None
     headers: str = None
     ban_rate: int = 0
     show_capcha: bool = False
@@ -53,13 +50,8 @@ class RawSessionDB:
     end_time: datetime
     site: str
     device: bool
-    banks_count: int = 0
-    auth: str = None
-    user_id: int = None
-    profile_actions_count: int = 0
     utm_source: str = None
     hacking: bool = False
-    hacking_reason: str = None
     headers: str = None
     ban_rate: int = 0
 

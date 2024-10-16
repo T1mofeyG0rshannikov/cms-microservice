@@ -1,6 +1,7 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
-from django.db.models import F
+from django.db.models import Count, F
+from django.utils import timezone
 from django.utils.timezone import now
 
 from domain.user_sessions.repository import UserSessionRepositoryInterface
@@ -103,6 +104,22 @@ class UserSessionRepository(UserSessionRepositoryInterface):
 
     def get_reject_capcha_penalty(self):
         return SessionFilters.objects.values_list("reject_capcha", flat=True).first()
+
+    def get_disallowed_host_penalty(self):
+        return SessionFilters.objects.values_list("disallowed_host", flat=True).first()
+
+    def add_penalty_to_single_page_session(self, penalty: int):
+        time_threshold = timezone.now() - timedelta(minutes=20)
+
+        SessionModel.objects.annotate(actions_count=Count("actions")).filter(
+            actions_count__lte=1, start_time__lte=time_threshold
+        ).update(ban_rate=F("ban_rate") + penalty)
+
+    def delete_hacking_visitors(self, ban_limit: int):
+        UserActivity.objects.filter(session__ban_rate__gte=ban_limit).delete()
+
+    def get_no_cookie_penalty(self) -> int:
+        return SessionFilters.objects.values_list("no_cookie", flat=True).first()
 
 
 def get_user_session_repository() -> UserSessionRepositoryInterface:

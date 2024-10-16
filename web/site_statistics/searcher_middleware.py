@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from django.conf import settings
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponse
 from django.utils.timezone import now
 
 from application.sessions.searcher_service import SearcherService
@@ -22,8 +22,6 @@ class SearcherMiddleware:
     def __call__(self, request: HttpRequest):
         request_service = get_request_service(request)
         searcher_service = SearcherService(request_service, self.user_session_repository)
-
-        response = self.get_response(request)
 
         if searcher_service.is_searcher():
             path = request.get_full_path()
@@ -50,8 +48,19 @@ class SearcherMiddleware:
 
             print(cookie, session_id)
 
+            request.searcher = True
+
+            session_filters = self.user_session_repository.get_session_filters()
+            if session_filters.hide_admin:
+                response = HttpResponse(status=503)
+                return response
+
+            response = self.get_response(request)
             response.set_cookie(self.cookie_name, f"{session_id}/{session_id}", expires=expires)
 
-            self.user_session_repository.create_searcher_log(session_id, adress=page_adress, time=now())
+            self.user_session_repository.create_searcher_log(searcher_id=session_id, adress=page_adress, time=now())
 
-        return response
+            return response
+
+        request.searcher = False
+        return self.get_response(request)
