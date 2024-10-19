@@ -6,6 +6,7 @@ from django.utils.timezone import now
 
 from application.sessions.searcher_service import SearcherService
 from domain.user_sessions.repository import UserSessionRepositoryInterface
+from infrastructure.admin.admin_settings import get_admin_settings
 from infrastructure.persistence.repositories.user_session_repository import (
     get_user_session_repository,
 )
@@ -14,6 +15,7 @@ from infrastructure.requests.service import get_request_service
 
 class SearcherMiddleware:
     user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
+    admin_settings = get_admin_settings()
     cookie_name = settings.SEARCHER_COOKIE_NAME
 
     def __init__(self, get_response):
@@ -46,14 +48,13 @@ class SearcherMiddleware:
                 session_db = self.user_session_repository.create_searcher(**session_data.__dict__)
                 session_id = session_db.id
 
-            print(cookie, session_id)
+            # print(cookie, session_id)
 
             request.searcher = True
 
             session_filters = self.user_session_repository.get_session_filters()
-            if session_filters.hide_admin:
-                response = HttpResponse(status=503)
-                return response
+            if self.admin_settings.admin_domain in request.get_host() and session_filters.hide_admin:
+                return HttpResponse(status=503)
 
             response = self.get_response(request)
             response.set_cookie(self.cookie_name, f"{session_id}/{session_id}", expires=expires)

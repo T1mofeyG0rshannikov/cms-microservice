@@ -151,6 +151,6 @@ class AddUserProductView(FormView, APIUserRequired):
             f'''Изменил продукт "{product_name}"''' if user_product_exists else f'''Добавил продукт "{product_name}"'''
         )
 
-        self.increment_session_profile_action(request.user_sessionid, adress, text=user_activity_text)
+        self.increment_session_profile_action(request.user_session_id, adress, text=user_activity_text)
 
         return HttpResponse(status=200)

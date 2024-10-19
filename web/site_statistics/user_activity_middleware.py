@@ -54,10 +54,14 @@ class UserActivityMiddleware:
         return False
 
     def __call__(self, request: HttpRequest):
+        print("5555555555555555555555555555")
         if request.searcher:
             return self.get_response(request)
 
-        if not request.raw_session.hacking:
+        ban_limit = self.user_session_repository.get_ban_limit()
+        raw_session = self.user_session_repository.get_raw_session(request.raw_session.id)
+
+        if raw_session.ban_rate < ban_limit:
             user_activity_service = UserActivitySessionService(RequestService(request), get_user_session_repository())
 
             path = request.get_full_path()
@@ -120,6 +124,7 @@ class UserActivityMiddleware:
                 self.logs.append(create_user_log(session_id, page_adress, "Перешёл на страницу"))
 
             if len(self.logs) > self.logs_array_length:
+                print(self.logs, "USER LOOGSSS")
                 create_user_activity_logs.delay(self.logs)
                 self.logs.clear()
 

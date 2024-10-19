@@ -49,6 +49,7 @@ class RawSessionMiddleware:
         self.get_response = get_response
 
     def __call__(self, request: HttpRequest):
+        print("111111111111111111111111111111")
         if request.searcher:
             return self.get_response(request)
 
@@ -106,26 +107,15 @@ class RawSessionMiddleware:
         # print(cookie, session_id)
         session_data = self.user_session_repository.get_raw_session(session_id)
 
-        capcha_limit = self.user_session_repository.get_capcha_limit()
-        ban_limit = self.user_session_repository.get_ban_limit()
         reject_capcha_penalty = self.user_session_repository.get_reject_capcha_penalty()
 
-        if capcha_limit <= session_data.ban_rate <= ban_limit:
-            if not self.url_parser.is_source(path) and "submit-capcha" not in path:
+        if session_data.show_capcha:
+            if not self.url_parser.is_source(path) and "submit-capcha" not in path and "null" not in path:
                 session_data.ban_rate += reject_capcha_penalty
                 PenaltyLog.objects.create(
                     session_id=session_id,
-                    text=f"Отказ от капчи, {reject_capcha_penalty}",
+                    text=f"Отказ от капчи, {reject_capcha_penalty}, {path}",
                 )
-
-        session_data = raw_session_service.filter_sessions(
-            RawSessionDTO.from_dict(session_data.__dict__),
-            host,
-            path,
-            port,
-            request_service.get_all_headers(),
-            session_data,
-        )
 
         self.user_session_repository.update_raw_session(
             session_id,
@@ -135,11 +125,25 @@ class RawSessionMiddleware:
 
         session_db = self.user_session_repository.get_raw_session(session_id)
 
+        # request.raw_session = session_db
+        """response = self.get_response(request)
+        if response.status_code == 404 and not self.url_parser.is_source(request.path) and "null" not in request.path:
+            page_not_found_penalty = self.user_session_repository.get_page_not_found_penalty()
+            self.user_session_repository.change_ban_rate(session_id, page_not_found_penalty)"""
+
+        """session_data = raw_session_service.filter_sessions(
+            RawSessionDTO.from_dict(session_data.__dict__),
+            host,
+            path,
+            port,
+            request_service.get_all_headers(),
+            session_data,
+        )"""
+        request.raw_session = session_db
+        response = self.get_response(request)
         # print(session_db.ban_rate)
         # if session_db.hacking:
         #    return HttpResponse(status=503)
-        request.raw_session = session_db
-        response = self.get_response(request)
 
         # if path == "/user/get-user-info":
         #    return response
@@ -156,21 +160,5 @@ class RawSessionMiddleware:
             create_raw_logs.delay(self.logs)
             # self.user_session_repository.bulk_create_raw_session_logs(self.logs)
             self.logs.clear()
-
-        if (
-            session_data.show_capcha
-            and (not self.url_parser.is_source(path) and not "submit-capcha" in path)
-            and not session_data.hacking
-        ):
-            response = CapchaView.as_view()(request)
-            response.accepted_renderer = JSONRenderer()
-            response.accepted_media_type = "application/json"
-            response.renderer_context = {}
-            try:
-                response.render()
-            except:
-                pass
-
-            return response
 
         return response

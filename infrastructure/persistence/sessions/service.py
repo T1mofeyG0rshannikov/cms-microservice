@@ -1,4 +1,4 @@
-import logging
+# import logging
 
 from django.utils.timezone import now
 
@@ -9,7 +9,7 @@ from application.sessions.raw_session_service import RawSessionServiceInterface
 from domain.user_sessions.repository import UserSessionRepositoryInterface
 from infrastructure.persistence.models.site_statistics import PenaltyLog
 
-logger = logging.getLogger("main")
+# logger = logging.getLogger("main")
 
 
 class RawSessionService(RawSessionServiceInterface):
@@ -125,7 +125,7 @@ class RawSessionService(RawSessionServiceInterface):
                     session_data.ban_rate += session_filters.disable_urls_penalty
                     PenaltyLog.objects.create(
                         session=session,
-                        text=f"Запрещенный адрес(для всех), {session_filters.session_filters.disable_urls_penalty}",
+                        text=f"Запрещенный адрес(для всех), {session_filters.disable_urls_penalty}",
                     )
                     break
 
@@ -151,6 +151,7 @@ class RawSessionService(RawSessionServiceInterface):
     def success_capcha(self, session_id: int):
         increase_value = -self.user_session_repository.get_success_capcha_increase()
         self.user_session_repository.change_ban_rate(session_id, increase_value)
+        self.user_session_repository.update_raw_session(session_id, show_capcha=False)
         PenaltyLog.objects.create(
             session_id=session_id,
             text=f"Успешная капча, {-increase_value}",

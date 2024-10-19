@@ -78,7 +78,7 @@ class UserSessionRepository(UserSessionRepositoryInterface):
         SessionAction.objects.bulk_create([SessionAction(**log) for log in new_logs])
 
     def bulk_create_user_session_logs(self, logs):
-        new_logs = [log for log in logs if log["session_id"] in UserAction.objects.values_list("id", flat=True)]
+        new_logs = [log for log in logs if log["session_id"] in UserActivity.objects.values_list("id", flat=True)]
         UserAction.objects.bulk_create([UserAction(**log) for log in new_logs])
 
     def get_raw_session(self, id: int):

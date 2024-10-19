@@ -23,6 +23,7 @@ class UserActivityDTO:
 
 @dataclass
 class RawSessionDTO:
+    id: int
     ip: str
     start_time: datetime
     end_time: datetime

@@ -77,6 +77,7 @@ class SessionModel(BaseSessionModel):
     headers = models.TextField(max_length=2000, null=True)
     ban_rate = models.SmallIntegerField(default=0, verbose_name="Штраф")
     hacking = models.BooleanField(default=False)
+    show_capcha = models.BooleanField(default=False)
 
     class Meta:
         app_label = "site_statistics"
@@ -176,6 +177,7 @@ class SessionFilters(OneInstanceModel):
     capcha_success = models.SmallIntegerField(verbose_name="Успешная капча", default=0)
 
     no_cookie = models.SmallIntegerField(default=0, verbose_name="Нет cookies")
+    hide_admin = models.BooleanField(default=False)
 
     class Meta:
         app_label = "site_statistics"

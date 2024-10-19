@@ -128,8 +128,7 @@ class ProductRepository(ProductRepositoryInterface):
         )
 
     def get_product_name_from_catalog(self, product_type_slug: str, product_index: int):
-        catalog_id = CatalogBlock.objects.get(product_type__slug=product_type_slug)
-        return self.get_catalog_offers(catalog_id)[product_index].product.name
+        return self.get_catalog_offers(product_type_slug)[product_index].product.name
 
     def user_product_exists(self, user_id: int, product_id: int) -> bool:
         return UserProduct.objects.filter(user_id=user_id, product_id=product_id).exists()

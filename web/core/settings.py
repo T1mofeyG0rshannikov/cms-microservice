@@ -84,10 +84,13 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django_user_agents.middleware.UserAgentMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "web.site_statistics.page_not_found_middleware.PageNotFoundMiddleware",
     "web.site_statistics.searcher_middleware.SearcherMiddleware",
     "web.site_statistics.raw_session_middleware.RawSessionMiddleware",
+    "web.site_statistics.page_not_found_middleware.PageNotFoundMiddleware",
+    "web.site_statistics.filter_session_middleware.FilterSessionMiddleware",
+    "web.site_statistics.disallowed_host_middleware.DisallowedHostMiddleware",
     "web.site_statistics.user_activity_middleware.UserActivityMiddleware",
+    "web.site_statistics.show_capcha_middleware.ShowCapchaMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_hosts.middleware.HostsRequestMiddleware",
@@ -252,8 +255,10 @@ SYSTEM_EMAIL_HOST_USER = "system@bmdom.ru"
 
 CSRF_TRUSTED_ORIGINS = [
     "https://bmdom.ru",
+    "https://*.bankomag.ru",
     "https://bankomag.ru",
     "https://idri.ru",
+    "https://*.idri.ru",
     "http://127.0.0.1:8000",
     "http://localhost:8000",
 ]
@@ -261,8 +266,10 @@ CSRF_TRUSTED_ORIGINS = [
 
 CORS_ALLOWED_ORIGINS = [
     "https://bmdom.ru",
+    "https://*.bankomag.ru",
     "https://bankomag.ru",
     "https://idri.ru",
+    "https://*.idri.ru",
     "http://127.0.0.1:8000",
     "http://localhost:8000",
     "http://127.0.0.1",
@@ -271,8 +278,10 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ORIGIN_WHITELIST = [
     "https://bmdom.ru",
+    "https://*.bankomag.ru",
     "https://bankomag.ru",
     "https://idri.ru",
+    "https://*.idri.ru",
     "http://127.0.0.1:8000",
     "http://localhost:8000",
     "http://127.0.0.1",
@@ -280,7 +289,6 @@ CORS_ORIGIN_WHITELIST = [
 ]
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOW_HEADERS = "*"
 
 SESSION_COOKIE_AGE = 60 * int(os.getenv("SESSION_EXPIRES_IN"))
 
