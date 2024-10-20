@@ -54,7 +54,12 @@ class UserActivityMiddleware:
         return False
 
     def __call__(self, request: HttpRequest):
-        print("5555555555555555555555555555")
+        if request.searcher:
+            return self.get_response(request)
+        
+        if "null" in path or "get-user-info" in path:
+            return self.get_response(request)
+
         if request.searcher:
             return self.get_response(request)
 

@@ -3,3 +3,4 @@ __pycache__
 web/media
 prod_settings.py
 .env
+celerybeat-schedule.*

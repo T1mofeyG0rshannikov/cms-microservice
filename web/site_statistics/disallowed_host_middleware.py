@@ -15,7 +15,6 @@ class DisallowedHostMiddleware:
         self.get_response = get_response
 
     def __call__(self, request: HttpRequest):
-        print("444444444444444444444444444444444444")
         try:
             host = request.get_host()
         except DisallowedHost:

@@ -33,12 +33,11 @@ class IndexPage(SubdomainMixin):
 
         return super().get(*args, **kwargs)
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, page_adapter = PageAdapter(), **kwargs):
         context = super().get_context_data(**kwargs)
         context |= UserFormsView.get_context_data()
 
         page = self.page_repository.get_page_by_url(url=None)
-        page_adapter = PageAdapter()
         page = page_adapter(page)
         page = PageSerializer(page).data
 

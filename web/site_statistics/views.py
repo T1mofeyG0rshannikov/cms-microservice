@@ -16,7 +16,7 @@ from infrastructure.persistence.repositories.user_session_repository import (
 from infrastructure.persistence.sessions.add_session_action import IncrementSessionCount
 from infrastructure.persistence.sessions.service import get_raw_session_service
 from infrastructure.requests.service import get_request_service
-from web.domens.views.mixins import SubdomainMixin
+from web.settings.views import SettingsMixin
 
 
 class OpenedProductPopupView(View):
@@ -115,7 +115,7 @@ class IncrementBanksCountView(View):
         return HttpResponse(status=200)
 
 
-class CapchaView(SubdomainMixin):
+class CapchaView(SettingsMixin):
     template_name = "common/capcha.html"
 
 

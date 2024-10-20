@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.http import HttpRequest
 from django.utils.timezone import now
-from rest_framework.renderers import JSONRenderer
 
 from application.common.url_parser import UrlParserInterface
 from application.services.domains.url_parser import get_url_parser
@@ -17,12 +16,9 @@ from infrastructure.persistence.repositories.user_session_repository import (
 )
 from infrastructure.persistence.sessions.service import RawSessionService
 from infrastructure.requests.service import get_request_service
-from web.site_statistics.views import CapchaView
 
 
-def create_raw_log(session_id, page_adress, path, time=now()) -> SessionAction:
-    url_parser = get_url_parser()
-
+def create_raw_log(session_id: int, page_adress: str, path: str, time=now(), url_parser: UrlParserInterface = get_url_parser()) -> SessionAction:
     is_page = None
     is_source = None
 
@@ -49,8 +45,10 @@ class RawSessionMiddleware:
         self.get_response = get_response
 
     def __call__(self, request: HttpRequest):
-        print("111111111111111111111111111111")
         if request.searcher:
+            return self.get_response(request)
+        
+        if "null" in path or "get-user-info" in path:
             return self.get_response(request)
 
         request_service = get_request_service(request)
@@ -61,8 +59,6 @@ class RawSessionMiddleware:
         path = request.get_full_path()
         site = request.get_host()
         page_adress = site + path
-        host = site.split(":")[0]
-        port = site.split(":")[1] if ":" in site else None
         expires = datetime.utcnow() + timedelta(days=365 * 10)
 
         cookie = request.COOKIES.get(self.cookie_name)
@@ -125,40 +121,14 @@ class RawSessionMiddleware:
 
         session_db = self.user_session_repository.get_raw_session(session_id)
 
-        # request.raw_session = session_db
-        """response = self.get_response(request)
-        if response.status_code == 404 and not self.url_parser.is_source(request.path) and "null" not in request.path:
-            page_not_found_penalty = self.user_session_repository.get_page_not_found_penalty()
-            self.user_session_repository.change_ban_rate(session_id, page_not_found_penalty)"""
-
-        """session_data = raw_session_service.filter_sessions(
-            RawSessionDTO.from_dict(session_data.__dict__),
-            host,
-            path,
-            port,
-            request_service.get_all_headers(),
-            session_data,
-        )"""
         request.raw_session = session_db
         response = self.get_response(request)
-        # print(session_db.ban_rate)
-        # if session_db.hacking:
-        #    return HttpResponse(status=503)
-
-        # if path == "/user/get-user-info":
-        #    return response
-
         response.set_cookie(self.cookie_name, f"{session_id}/{session_id}", expires=expires)
 
-        # if "null" not in path:
         self.logs.append(create_raw_log(session_id, page_adress, path, time=now()))
 
-        print(len(self.logs))
-
         if len(self.logs) > self.logs_array_length:
-            print(self.logs, "LLLLOGGGS")
             create_raw_logs.delay(self.logs)
-            # self.user_session_repository.bulk_create_raw_session_logs(self.logs)
             self.logs.clear()
 
         return response

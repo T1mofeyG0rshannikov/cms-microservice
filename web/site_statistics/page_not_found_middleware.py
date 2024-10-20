@@ -22,7 +22,12 @@ class PageNotFoundMiddleware:
         self.get_response = get_response
 
     def __call__(self, request: HttpRequest):
-        print("2222222222222222222222222222222222")
+        if request.searcher:
+            return self.get_response(request)
+        
+        if "null" in path or "get-user-info" in path:
+            return self.get_response(request)
+        
         response = self.get_response(request)
         if response.status_code == 404 and not self.url_parser.is_source(request.path) and "null" not in request.path:
             session_id = request.raw_session.id
@@ -53,8 +58,7 @@ class PageNotFoundMiddleware:
 
         raw_session = session_data
         path = request.get_full_path()
-        print(raw_session.ban_rate, raw_session.show_capcha)
-        print(path)
+
         print(
             raw_session.show_capcha
             and (not self.url_parser.is_source(path) and not "submit-capcha" in path)
