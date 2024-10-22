@@ -18,7 +18,9 @@ from infrastructure.persistence.sessions.service import RawSessionService
 from infrastructure.requests.service import get_request_service
 
 
-def create_raw_log(session_id: int, page_adress: str, path: str, time=now(), url_parser: UrlParserInterface = get_url_parser()) -> SessionAction:
+def create_raw_log(
+    session_id: int, page_adress: str, path: str, time=now(), url_parser: UrlParserInterface = get_url_parser()
+) -> SessionAction:
     is_page = None
     is_source = None
 
@@ -47,7 +49,8 @@ class RawSessionMiddleware:
     def __call__(self, request: HttpRequest):
         if request.searcher:
             return self.get_response(request)
-        
+
+        path = request.get_full_path()
         if "null" in path or "get-user-info" in path:
             return self.get_response(request)
 

@@ -16,7 +16,6 @@ class SearcherService:
         return SearcherDTO(
             ip=self.request_service.get_client_ip(),
             start_time=now().isoformat(),
-            end_time=now().isoformat(),
             site=self.request_service.get_host(),
             headers=self.request_service.get_all_headers_to_string(),
         )

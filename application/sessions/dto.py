@@ -7,7 +7,6 @@ from datetime import datetime
 class UserActivityDTO:
     ip: str
     start_time: datetime
-    end_time: datetime
     site: str
     device: bool
     banks_count: int = 0
@@ -26,7 +25,6 @@ class RawSessionDTO:
     id: int
     ip: str
     start_time: datetime
-    end_time: datetime
     site: str
     device: bool
     banks_count: int = 0
@@ -48,7 +46,6 @@ class RawSessionDTO:
 class RawSessionDB:
     ip: str
     start_time: datetime
-    end_time: datetime
     site: str
     device: bool
     utm_source: str = None
@@ -65,6 +62,5 @@ class RawSessionDB:
 class SearcherDTO:
     ip: str
     start_time: datetime
-    end_time: datetime
     site: str
     headers: str = None

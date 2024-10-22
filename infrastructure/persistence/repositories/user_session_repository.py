@@ -112,8 +112,8 @@ class UserSessionRepository(UserSessionRepositoryInterface):
         time_threshold = timezone.now() - timedelta(minutes=20)
 
         SessionModel.objects.annotate(actions_count=Count("actions")).filter(
-            actions_count__lte=1, start_time__lte=time_threshold
-        ).update(ban_rate=F("ban_rate") + penalty)
+            actions_count=1, start_time__lte=time_threshold, checked_single_page=False
+        ).update(ban_rate=F("ban_rate") + penalty, checked_single_page=True)
 
     def delete_hacking_visitors(self, ban_limit: int):
         UserActivity.objects.filter(session__ban_rate__gte=ban_limit).delete()

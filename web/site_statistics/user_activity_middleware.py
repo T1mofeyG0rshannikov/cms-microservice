@@ -16,7 +16,7 @@ from infrastructure.persistence.sessions.user_activity_service import (
 from infrastructure.requests.service import RequestService
 
 
-def create_user_log(session_id, adress, text, time=now()):
+def create_user_log(session_id, adress, text, time=now().isoformat()):
     return {"adress": adress, "time": time, "session_id": session_id, "text": text}
 
 
@@ -56,7 +56,8 @@ class UserActivityMiddleware:
     def __call__(self, request: HttpRequest):
         if request.searcher:
             return self.get_response(request)
-        
+
+        path = request.get_full_path()
         if "null" in path or "get-user-info" in path:
             return self.get_response(request)
 

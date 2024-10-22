@@ -44,7 +44,7 @@ class Cover(BaseBlock, ButtonMixin, TitleMixin, MainTextMixin):
 
 
 class FeaturesBlock(BaseBlock, ButtonMixin, TitleMixin):
-    introductory_text = RichTextField(verbose_name="Вводный текст", max_length=300)
+    introductory_text = RichTextField(verbose_name="Вводный текст", max_length=300, null=True, blank=True)
 
     class Meta:
         app_label = "blocks"

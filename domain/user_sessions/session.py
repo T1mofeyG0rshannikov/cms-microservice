@@ -6,7 +6,6 @@ from datetime import datetime
 class UserSessionInterface:
     ip: str
     start_time: datetime
-    end_time: datetime
     site: str
     device: bool
     banks_count: int = 0

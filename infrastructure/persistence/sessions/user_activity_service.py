@@ -17,7 +17,6 @@ class UserActivitySessionService:
         user_session_data = UserActivityDTO(
             ip=ip,
             start_time=now().isoformat(),
-            end_time=now().isoformat(),
             site=self.request_service.get_host(),
             device=device,
             user_id=user_id,

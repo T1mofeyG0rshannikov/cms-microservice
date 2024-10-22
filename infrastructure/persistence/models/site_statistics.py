@@ -36,7 +36,6 @@ class BaseSessionModel(models.Model):
     unique_key = models.CharField(unique=True, max_length=500, null=True)
     ip = models.CharField(max_length=15)
     start_time = models.DateTimeField(verbose_name="Дата")
-    end_time = models.DateTimeField()
     site = models.CharField(max_length=50, null=True, verbose_name="Сайт")
     device = models.BooleanField(default=False)
     utm_source = models.CharField(max_length=500, null=True)
@@ -48,7 +47,6 @@ class BaseSessionModel(models.Model):
 class WebSearcher(models.Model):
     ip = models.CharField(max_length=15)
     start_time = models.DateTimeField(verbose_name="Дата")
-    end_time = models.DateTimeField()
     site = models.CharField(max_length=50, null=True, verbose_name="Сайт")
     headers = models.TextField(max_length=2000, null=True)
 
@@ -78,6 +76,7 @@ class SessionModel(BaseSessionModel):
     ban_rate = models.SmallIntegerField(default=0, verbose_name="Штраф")
     hacking = models.BooleanField(default=False)
     show_capcha = models.BooleanField(default=False)
+    checked_single_page = models.BooleanField(default=False)
 
     class Meta:
         app_label = "site_statistics"
