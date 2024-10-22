@@ -58,6 +58,7 @@ class ProductRepository(ProductRepositoryInterface):
             .select_related("product")
             .filter(types__type_id=type_id)
             .order_by("product__organization__name")
+            .annotate(count=Count("id"))
         )
 
     @staticmethod
