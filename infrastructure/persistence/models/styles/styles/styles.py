@@ -6,6 +6,7 @@ from infrastructure.persistence.models.blocks.blocks import (
     ContentBlock,
     Cover,
     FeaturesBlock,
+    Footer,
     Navbar,
     QuestionsBlock,
     RegisterBlock,
@@ -48,6 +49,13 @@ class ContentCustomStyles(BaseCustomStyles):
 
 class CoverCustomStyles(BaseCustomStyles):
     block = related_block(Cover)
+
+    class Meta:
+        app_label = "styles"
+
+
+class FooterCustomStyles(BaseCustomStyles):
+    block = related_block(Footer)
 
     class Meta:
         app_label = "styles"

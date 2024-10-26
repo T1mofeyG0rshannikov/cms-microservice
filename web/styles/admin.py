@@ -8,6 +8,7 @@ from infrastructure.persistence.models.styles.styles.styles import (
     ContentCustomStyles,
     CoverCustomStyles,
     FeaturesCustomStyles,
+    FooterCustomStyles,
     MainPageCatalogCustomStyles,
     NavbarCustomStyles,
     PromoCatalogCustomStyles,
@@ -58,6 +59,10 @@ class QuestionsCustomStylesInline(StyleInline):
 
 class StagesCustomStylesInline(StyleInline):
     model = StagesCustomStyles
+
+
+class FooterCustomStylesInline(StyleInline):
+    model = FooterCustomStyles
 
 
 class CatalogCustomStylesInline(StyleInline):

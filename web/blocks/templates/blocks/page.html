@@ -20,6 +20,7 @@
     <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/stages.scss' %}">
     <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/stages.scss' %}">
     <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/catalog.scss' %}">
+    <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/footer.scss' %}">
     <link type="text/css" rel="stylesheet" href="{% sass_src 'user/css/main.scss' %}">
 {% endblock %}
 
@@ -70,6 +71,10 @@
                                         color: {{styles.main_text_color}};
                                     }
 
+                                    #block{{id}} a.ref{
+                                        color: {{styles.refs_color}};
+                                    }
+
                                     @media screen and (max-width: 760px) {
                                         #block{{id}} h1{
                                             font-size: {{styles.header_size_mobile}};
@@ -111,4 +116,5 @@
     <script src="{% static "user/js/validators/username_validator.js" %}"></script>
     <script src="{% static "user/js/validators/phone_validator.js" %}"></script>
     <script src="{% static "user/js/token.js" %}"></script>
+    <script src="{% static "materials/js/popup.js" %}"></script>
 {% endblock %}

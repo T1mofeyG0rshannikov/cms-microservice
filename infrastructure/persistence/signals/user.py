@@ -7,15 +7,19 @@ from domain.user.exceptions import (
     UserWithPhoneAlreadyExists,
 )
 from infrastructure.email_services.email_service.email_service import get_email_service
+from infrastructure.email_services.email_service.email_service_interface import (
+    EmailServiceInterface,
+)
 from infrastructure.persistence.models.user.user import User
 from web.notifications.create_user_notification import create_user_notification
 from web.notifications.error import CantSendNotification
 from web.notifications.send_message import send_message_to_user
 
 
-def user_created_handler(sender, instance, created, *args, **kwargs):
+def user_created_handler(
+    sender, instance, created, *args, email_service: EmailServiceInterface = get_email_service(), **kwargs
+):
     if created and not instance.test:
-        email_service = get_email_service()
         try:
             email_service.send_mail_to_confirm_email(instance)
         except CantSendMailError:
@@ -42,13 +46,13 @@ def user_verified_email_handler(sender, instance, *args, **kwargs):
                 pass
 
 
-def user_change_email_handler(sender, instance, *args, **kwargs):
+def user_change_email_handler(
+    sender, instance, *args, email_service: EmailServiceInterface = get_email_service(), **kwargs
+):
     if instance.id is None:
         pass
     else:
         previous = User.objects.get_user_by_id(id=instance.id)
-
-        email_service = get_email_service()
 
         if (not previous.new_email and instance.new_email) or (previous.email != instance.email):
             try:

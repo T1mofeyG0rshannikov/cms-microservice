@@ -16,7 +16,7 @@ from web.user.views.base_user_view import APIUserRequired
 
 
 class GetReferals(APIUserRequired):
-    referral_service: ReferralServiceInterface = get_referral_service(get_user_validator(), get_user_repository())
+    referral_service: ReferralServiceInterface = get_referral_service()
 
     def get(self, request):
         level = self.request.GET.get("level")

@@ -2,6 +2,5 @@ from typing import Protocol
 
 
 class ErrorLogRepositoryInterface(Protocol):
-    @staticmethod
-    def create_error_log(**kwargs) -> None:
+    def create_error_log(self, **kwargs) -> None:
         raise NotImplementedError()

@@ -51,7 +51,7 @@ class ConfirmNewEmail(BaseUserView):
     user_session_repository = get_user_session_repository()
     url_parser: UrlParserInterface = get_url_parser()
 
-    def get(self, request: HttpRequest, token):
+    def get(self, request: HttpRequest, token) -> HttpResponseRedirect:
         adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
         payload = self.jwt_processor.validate_token(token)
 

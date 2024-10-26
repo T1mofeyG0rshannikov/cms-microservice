@@ -1,7 +1,7 @@
 from django.db import models
 
 from infrastructure.persistence.models.common import OneInstanceModel
-from web.settings.models import GlobalStyles
+from infrastructure.persistence.models.settings import GlobalStyles
 
 
 class BaseStyles(OneInstanceModel):

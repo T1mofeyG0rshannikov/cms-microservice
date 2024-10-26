@@ -16,7 +16,7 @@ from infrastructure.email_services.work_email_service.email_service import (
 from infrastructure.email_services.work_email_service.template_generator.template_generator import (
     get_work_email_template_generator,
 )
-from infrastructure.logging.admin import AdminLoginLogger
+from infrastructure.logging.admin import AdminLoginLogger, get_admin_logger
 from infrastructure.persistence.repositories.admin_log_repository import (
     get_admin_log_repository,
 )
@@ -59,13 +59,7 @@ class CustomAuthenticationAdminForm(AuthenticationForm):
         self.fields["password"].label = "Пароль"
         self.fields["code"].label = "Код"
 
-        self.logger = AdminLoginLogger(
-            get_admin_log_repository(),
-            get_work_email_service(
-                get_work_email_template_generator(get_work_email_context_processor()), get_system_repository()
-            ),
-            get_request_service(request),
-        )
+        self.logger = get_admin_logger(get_request_service(request))
 
     def confirm_login_allowed(self, user):
         if not user.is_active:

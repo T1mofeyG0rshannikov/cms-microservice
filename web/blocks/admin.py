@@ -6,6 +6,7 @@ from infrastructure.persistence.models.blocks.blocks import (
     ContentBlock,
     Cover,
     FeaturesBlock,
+    Footer,
     Navbar,
     QuestionsBlock,
     RegisterBlock,
@@ -17,6 +18,7 @@ from infrastructure.persistence.models.blocks.blocks_components import (
     CatalogProduct,
     CatalogProductType,
     Feature,
+    FooterMenuItem,
     NavMenuItem,
     Question,
     SocialMediaButton,
@@ -44,6 +46,7 @@ from web.styles.admin import (
     ContentCustomStylesInline,
     CoverCustomStylesInline,
     FeaturesCustomStylesInline,
+    FooterCustomStylesInline,
     MainPageCatalogCustomStylesInline,
     NavbarCustomStylesInline,
     PromoCatalogCustomStylesInline,
@@ -60,6 +63,10 @@ class QuestionInline(BaseInline):
 
 class NavMenuItemAdmin(BaseInline):
     model = NavMenuItem
+
+
+class FooterMenuItemAdmin(BaseInline):
+    model = FooterMenuItem
 
 
 class FeatureInline(BaseInline):
@@ -83,11 +90,8 @@ class CatalogProductInline(SortableStackedInline, BaseInline):
     repository = get_product_repository()
 
     def get_formset(self, request, obj=None, **kwargs):
-        print("aaaaaa")
-        print(obj)
         formset = super().get_formset(request, obj, **kwargs)
         if obj:
-            print(self.repository.get_published_offers(obj.product_type_id))
             formset.form.base_fields["offer"].queryset = self.repository.get_published_offers(obj.product_type_id)
         return formset
 
@@ -127,6 +131,10 @@ class BaseBlockAdmin(admin.ModelAdmin):
 
 class NavbarAdmin(BaseBlockAdmin):
     inlines = [NavMenuItemAdmin, NavbarCustomStylesInline]
+
+
+class FooterAdmin(BaseBlockAdmin):
+    inlines = [FooterMenuItemAdmin, FooterCustomStylesInline]
 
 
 class ContentAdmin(BaseBlockAdmin):
@@ -190,6 +198,7 @@ class PageAdmin(SortableAdminBase, admin.ModelAdmin):
 
 
 admin.site.register(Page, PageAdmin)
+admin.site.register(Footer, FooterAdmin)
 admin.site.register(Navbar, NavbarAdmin)
 admin.site.register(Cover, CoverAdmin)
 admin.site.register(RegisterBlock, RegisterBlockAdmin)

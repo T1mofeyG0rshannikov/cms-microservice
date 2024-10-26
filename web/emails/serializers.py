@@ -8,6 +8,5 @@ class EmailLogoSerializer(serializers.Serializer):
     width = serializers.CharField()
     height = serializers.CharField()
 
-    def get_image(self, obj):
-        domain_service = get_domain_service()
+    def get_image(self, obj, domain_service=get_domain_service()):
         return f"https://{domain_service.get_domain_string()}" + obj.image.url

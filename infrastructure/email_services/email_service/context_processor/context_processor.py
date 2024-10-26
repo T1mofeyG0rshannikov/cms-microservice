@@ -1,12 +1,15 @@
 from typing import Any
 
 from domain.referrals.referral import UserInterface
+from infrastructure.email_services.email_service.link_generator.link_generator import (
+    get_link_generator,
+)
 from infrastructure.email_services.email_service.link_generator.link_generator_interface import (
     LinkGeneratorInterface,
 )
+from infrastructure.persistence.models.settings import FormLogo
 from infrastructure.persistence.models.styles.colors.colors import ColorStyles
 from web.emails.serializers import EmailLogoSerializer
-from web.settings.models import FormLogo
 
 from .context_processor_interface import EmailContextProcessorInterface
 
@@ -65,5 +68,7 @@ class EmailContextProcessor(EmailContextProcessorInterface):
         return context
 
 
-def get_email_context_processor(link_generator: LinkGeneratorInterface) -> EmailContextProcessorInterface:
-    return EmailContextProcessor(link_generator)
+def get_email_context_processor(
+    link_generator: LinkGeneratorInterface = get_link_generator(),
+) -> EmailContextProcessorInterface:
+    return EmailContextProcessor(link_generator=link_generator)

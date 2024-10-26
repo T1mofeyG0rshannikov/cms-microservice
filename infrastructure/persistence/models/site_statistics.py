@@ -116,7 +116,7 @@ class BaseSessionAction(models.Model):
 
 class UserAction(BaseSessionAction):
     text = models.CharField(max_length=200, verbose_name="")
-    session = models.ForeignKey(UserActivity, on_delete=models.CASCADE, null=True, related_name="actions")
+    session = models.ForeignKey(UserActivity, on_delete=models.CASCADE, related_name="actions")
     is_page = models.BooleanField(default=True)
 
     class Meta:

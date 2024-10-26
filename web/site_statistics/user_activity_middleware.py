@@ -16,7 +16,7 @@ from infrastructure.persistence.sessions.user_activity_service import (
 from infrastructure.requests.service import RequestService
 
 
-def create_user_log(session_id, adress, text, time=now().isoformat()):
+def create_user_log(session_id, adress, text, time=now()):
     return {"adress": adress, "time": time, "session_id": session_id, "text": text}
 
 
@@ -121,13 +121,10 @@ class UserActivityMiddleware:
             request.user_session_id = session_id
             response = self.get_response(request)
 
-            if path == "/user/get-user-info":
-                return response
-
             response.set_cookie(self.cookie_name, f"{session_id}/{session_id}", expires=expires)
 
             if not self.is_disable_url_to_log(path) and self.is_enable_url_to_log(path):
-                self.logs.append(create_user_log(session_id, page_adress, "Перешёл на страницу"))
+                self.logs.append(create_user_log(session_id, page_adress, "Перешёл на страницу", time=now()))
 
             if len(self.logs) > self.logs_array_length:
                 print(self.logs, "USER LOOGSSS")

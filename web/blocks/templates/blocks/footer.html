@@ -1,0 +1,32 @@
+{% load static %}
+{% load replace %}
+
+
+<footer id="{{ block.ancor }}">
+    <div class="inner">
+        <div class="menu">
+            {% for item in block.menu_items.all %}
+                <a onclick="smoothScroll('{{ item.button_ref }}')">{{ item.button_text }}</a>
+            {% endfor %}
+        </div>
+
+        {% replace '<a class="ref" onclick="openDocumentPopup([PRIVACY.SLUG])">[PRIVACY.TITLE]</a>' '[PRIVACY.SLUG]' "'[PRIVACY.SLUG]'" as privacy_text %}{% replace privacy_text '[PRIVACY.SLUG]' privacy.slug as privacy_text %}{% replace privacy_text '[PRIVACY.TITLE]' privacy.text as privacy_text %}
+        {% with text=block.text1 %}{% replace text '[PRIVACY]' privacy_text as text %}{% replace text '[SITEDOMAIN]' request.get_host as text %}{% replace text '[SITENAME]' request.site_name as text %}{{ text|safe }}{% endwith %}
+        {% with text=block.text2 %}{% replace text '[PRIVACY]' privacy_text as text %}{% replace text '[SITEDOMAIN]' request.get_host as text %}{% replace text '[SITENAME]' request.site_name as text %}{{ text|safe }}{% endwith %}
+        {% with text=block.text3 %}{% replace text '[PRIVACY]' privacy_text as text %}{% replace text '[SITEDOMAIN]' request.get_host as text %}{% replace text '[SITENAME]' request.site_name as text %}{{ text|safe }}{% endwith %}
+    </div>
+
+    <style>
+        footer{
+            background-color: {{styles.background_color}};
+            padding-top: {{styles.margin_top}};
+            padding-bottom: {{styles.margin_bottom}};
+        }
+
+        footer a.ref{
+            color: {{styles.refs_color}}
+        }
+    </style>
+</header>
+
+<script src="{% static 'blocks/js/footer.js' %}" ></script>

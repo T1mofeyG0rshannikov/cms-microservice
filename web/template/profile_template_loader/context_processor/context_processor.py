@@ -110,10 +110,15 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
         return context
 
 
-def get_profile_template_context_processor() -> ProfileTemplateContextProcessorInterface:
+def get_profile_template_context_processor(
+    referral_service: ReferralServiceInterface = get_referral_service(),
+    products_service: ProductsServiceInterface = get_products_service(),
+    domain_service: DomainServiceInterface = get_domain_service(),
+    get_ideas_interactor: GetIdeas = GetIdeas(get_idea_repository()),
+) -> ProfileTemplateContextProcessorInterface:
     return ProfileTemplateContextProcessor(
-        get_referral_service(get_user_validator(), get_user_repository()),
-        get_products_service(get_product_repository()),
-        get_domain_service(),
-        GetIdeas(get_idea_repository()),
+        referral_service=referral_service,
+        products_service=products_service,
+        domain_service=domain_service,
+        get_ideas_interactor=get_ideas_interactor,
     )

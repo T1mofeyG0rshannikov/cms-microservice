@@ -6,12 +6,10 @@ from infrastructure.persistence.models.site_statistics import (
 
 
 class AdminLogRepository(AdminLogRepositoryInterface):
-    @staticmethod
-    def create_logg(ip: str, **kwargs):
+    def create_logg(self, ip: str, **kwargs):
         return TryLoginToAdminPanel.objects.create(client_ip=ip, login=kwargs.get("username"))
 
-    @staticmethod
-    def create_logg_fake_admin(ip: str, **kwargs):
+    def create_logg_fake_admin(self, ip: str, **kwargs):
         return TryLoginToFakeAdminPanel.objects.create(client_ip=ip, login=kwargs.get("username"))
 
 

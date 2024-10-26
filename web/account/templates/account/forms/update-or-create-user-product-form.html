@@ -1,4 +1,5 @@
 {% load static %}
+{% load replace %}
 
 <form class="form create-product-form" onsubmit="onSubmitCreateUserProductForm(this, event, {{ product.id }})">
     <div class="title">
@@ -68,8 +69,10 @@
         <div class="field checkbox-container" id="connected_with_link">
             <input onchange="showAdditionalFields(event)" name="connected_with_link" type="checkbox">
             <p>Оформлен по ссылке на {{ site_name }} или {{ user.site.name }}</p>
-
-            {% include "common/context_help.html" with text='Вы получите бонусы и более выгодные условия, если оформили продукт по ссылке на сайте Банкомаг или партнерском сайте' %}
+            {% with 'Вы получите бонусы и более выгодные условия, если оформили продукт по ссылке на сайте [SITENAME] или партнерском сайте' as text%}
+                {% replace text '[SITENAME]' site_name as text %}
+                {% include "common/context_help.html" with text=text %}
+            {% endwith %}
         </div>
 
         <div class="additional-fields" style="display: none;">

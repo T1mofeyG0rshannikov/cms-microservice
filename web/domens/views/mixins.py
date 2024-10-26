@@ -6,9 +6,9 @@ from application.services.domains.service import get_domain_service
 from application.services.domains.url_parser import get_url_parser
 from domain.domains.service import DomainServiceInterface
 from infrastructure.admin.admin_settings import get_admin_settings
+from infrastructure.persistence.models.settings import Domain, SiteSettings
 from infrastructure.persistence.models.user.site import Site
 from web.domens.views.views import PartnerIndexPage
-from web.settings.models import Domain, SiteSettings
 from web.settings.views import SettingsMixin
 from web.template.views.base_page_not_found import BaseNotFoundPage
 
@@ -52,5 +52,13 @@ class SubdomainMixin(SettingsMixin):
 
         request.domain = domain
         request.subdomain = subdomain
+
+        site_name = self.domain_service.get_site_name()
+        if subdomain:
+            site = self.domain_service.get_site_by_name(subdomain)
+            if site:
+                site_name = site.name
+
+        request.site_name = site_name
 
         return super().dispatch(request, *args, **kwargs)

@@ -38,7 +38,7 @@ class RegisterUser(BaseUserView, FormView):
 
         return context
 
-    def form_valid(self, request: HttpRequest, form):
+    def form_valid(self, request: HttpRequest, form) -> JsonResponse:
         adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
         ancor = request.POST.get("ancor")
         is_popup = request.POST.get("is_popup", "false") != "false"
@@ -114,7 +114,7 @@ class LoginView(BaseUserView, FormView):
 
         return context
 
-    def form_valid(self, request, form):
+    def form_valid(self, request: HttpRequest, form) -> JsonResponse:
         adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
 
         try:

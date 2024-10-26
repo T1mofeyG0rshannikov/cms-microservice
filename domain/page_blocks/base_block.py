@@ -12,3 +12,14 @@ class BaseBlockInterface:
     name: str
     template: TemplateInterface
     ancor: str | None
+
+
+@dataclass
+class BlockStyles:
+    pass
+
+
+@dataclass
+class PageBlockInterface:
+    content: BaseBlockInterface
+    styles: BlockStyles

@@ -10,7 +10,11 @@ from infrastructure.persistence.models.user.site import Site
 from infrastructure.persistence.repositories.user_repository import get_user_repository
 
 
-class UserGenerator:
+class UserGeneratorInterface:
+    pass
+
+
+class UserGenerator(UserGeneratorInterface):
     def __init__(self, domain_service: DomainServiceInterface, test_user_set, repository: UserRepositoryInterface):
         self.domain_service = domain_service
         self.test_user_set = test_user_set
@@ -78,5 +82,9 @@ class UserGenerator:
             return None
 
 
-def get_user_generator(test_user_set) -> UserGenerator:
-    return UserGenerator(get_domain_service(), test_user_set, get_user_repository())
+def get_user_generator(
+    test_user_set,
+    domain_service: DomainServiceInterface = get_domain_service(),
+    repository: UserRepositoryInterface = get_user_repository(),
+) -> UserGeneratorInterface:
+    return UserGenerator(test_user_set, domain_service=domain_service, repository=repository)

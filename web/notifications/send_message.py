@@ -5,8 +5,7 @@ from redis.exceptions import ConnectionError
 from web.notifications.error import CantSendNotification
 
 
-def send_message_to_user(user_id: int, message) -> None:
-    channel_layer = get_channel_layer()
+def send_message_to_user(user_id: int, message, channel_layer=get_channel_layer()) -> None:
     group_name = f"user_{user_id}"
 
     try:

@@ -1,4 +1,4 @@
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
@@ -106,7 +106,7 @@ class DeleteIdeaView(APIUserRequired):
 class GetIdeasView(APIUserRequired):
     get_ideas_interactor = GetIdeas(get_idea_repository())
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> JsonResponse:
         filter = self.request.GET.get("category")
         sorted_by = self.request.GET.get("sorted_by")
         status = self.request.GET.get("status")

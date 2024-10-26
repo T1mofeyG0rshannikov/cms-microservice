@@ -1,9 +1,6 @@
 from django.contrib import admin
 
-from web.account.admin import MessangerAdmin, UserFontAdmin
-from web.common.admin import SocialNetworkAdmin
-from web.domens.admin import DomainAdmin
-from web.settings.models import (
+from infrastructure.persistence.models.settings import (
     Domain,
     Font,
     FormLogo,
@@ -15,6 +12,9 @@ from web.settings.models import (
     SocialNetwork,
     UserFont,
 )
+from web.account.admin import MessangerAdmin, UserFontAdmin
+from web.common.admin import SocialNetworkAdmin
+from web.domens.admin import DomainAdmin
 from web.styles.admin import FontAdmin, GlobalStylesAdmin
 
 

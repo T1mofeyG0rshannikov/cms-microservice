@@ -1,20 +1,20 @@
 import json
 
 from django.db.utils import IntegrityError
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpRequest, HttpResponse, HttpResponseNotFound
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
-from application.adapters.page import PageAdapter
+from application.adapters.page import PageAdapter, get_page_adapter
+from application.services.pages_service import get_page_service
 from domain.page_blocks.page_repository import PageRepositoryInterface
 from domain.page_blocks.page_service_interface import PageServiceInterface
 from infrastructure.files.files import find_class_in_directory
+from infrastructure.persistence.models.settings import SiteSettings
 from infrastructure.persistence.repositories.page_repository import get_page_repository
-from web.blocks.pages_service.pages_service import get_page_service
 from web.blocks.serializers import PageSerializer
 from web.domens.views.mixins import SubdomainMixin
-from web.settings.models import SiteSettings
 from web.user.views.base_user_view import UserFormsView
 
 
@@ -33,7 +33,7 @@ class IndexPage(SubdomainMixin):
 
         return super().get(*args, **kwargs)
 
-    def get_context_data(self, page_adapter = PageAdapter(), **kwargs):
+    def get_context_data(self, page_adapter=get_page_adapter(), **kwargs):
         context = super().get_context_data(**kwargs)
         context |= UserFormsView.get_context_data()
 
@@ -48,14 +48,17 @@ class IndexPage(SubdomainMixin):
 
 class ShowPage(SubdomainMixin):
     template_name = "blocks/page.html"
-    page_repository: PageRepositoryInterface = get_page_repository()
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(
+        self,
+        page_repository: PageRepositoryInterface = get_page_repository(),
+        page_adapter: PageAdapter = get_page_adapter(),
+        **kwargs,
+    ):
         context = super().get_context_data(**kwargs)
         context |= UserFormsView.get_context_data()
 
-        page = self.page_repository.get_page_by_url(url=kwargs["page_url"])
-        page_adapter = PageAdapter()
+        page = page_repository.get_page_by_url(url=kwargs["page_url"])
         page = page_adapter(page)
         page = PageSerializer(page).data
 
@@ -66,13 +69,11 @@ class ShowPage(SubdomainMixin):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class ClonePage(View):
-    page_service: PageServiceInterface = get_page_service(get_page_repository())
-
-    def post(self, request):
+    def post(self, request: HttpRequest, page_service: PageServiceInterface = get_page_service()) -> HttpResponse:
         data = json.loads(request.body)
         page_id = data.get("page_id")
 
-        self.page_service.clone_page(page_id)
+        page_service.clone_page(page_id)
 
         return HttpResponse(status=201)
 

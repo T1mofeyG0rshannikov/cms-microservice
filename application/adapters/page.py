@@ -1,36 +1,36 @@
-from domain.page_blocks.base_block import BaseBlockInterface
+from domain.page_blocks.base_block import (
+    BaseBlockInterface,
+    BlockStyles,
+    PageBlockInterface,
+)
 from domain.page_blocks.page import PageInterface
+from domain.page_blocks.page_repository import PageRepositoryInterface
+from domain.products.repository import ProductRepositoryInterface
 from infrastructure.persistence.models.blocks.catalog_block import (
     AdditionalCatalogBlock,
     MainPageCatalogBlock,
     PromoCatalog,
 )
-from infrastructure.persistence.models.blocks.common import BaseBlock, Page
-from infrastructure.persistence.models.common import BlockRelationship
+from infrastructure.persistence.models.blocks.common import Page
+from infrastructure.persistence.repositories.page_repository import get_page_repository
 from infrastructure.persistence.repositories.product_repository import (
     get_product_repository,
 )
 
 
 class BlockAdapter:
-    repository = get_product_repository()
+    def __init__(self, repository: ProductRepositoryInterface, page_repository: PageRepositoryInterface):
+        self.repository = repository
+        self.page_repository = page_repository
 
-    def get_styles(self, block):
+    def get_styles(self, block: BaseBlockInterface) -> BlockStyles:
         if not block:
             return False
 
         return block.get_styles()
 
-    def __call__(self, blocks_name: str) -> BaseBlockInterface:
-        block = None
-
-        blocks_name = BlockRelationship.objects.get(block_name=blocks_name)
-
-        for f in blocks_name._meta.related_objects:
-            if isinstance(f.related_model.objects.first(), BaseBlock):
-                if f.field.model.objects.filter(block_relation=blocks_name).exists():
-                    block = f.field.model.objects.select_related("styles").get(block_relation_id=blocks_name.id)
-                    break
+    def __call__(self, blocks_name: str) -> PageBlockInterface:
+        block = self.page_repository.get_page_block(blocks_name)
 
         if isinstance(block, MainPageCatalogBlock):
             block.products = self.repository.get_product_types_for_catalog(block.id)
@@ -44,26 +44,12 @@ class BlockAdapter:
         if block is not None:
             block.template.file = "blocks/" + block.template.file
 
-        styles = self.get_styles(block)
-
-        return {"content": block, "styles": styles}
+        return PageBlockInterface(content=block, styles=self.get_styles(block))
 
 
 class PageAdapter:
-    block_adapter = BlockAdapter()
-
-    def get_page_block(self, blocks_name: str) -> BaseBlockInterface:
-        block = None
-
-        blocks_name = BlockRelationship.objects.get(block_name=blocks_name)
-
-        for f in blocks_name._meta.related_objects:
-            if isinstance(f.related_model.objects.first(), BaseBlock):
-                if f.field.model.objects.filter(block_relation=blocks_name).exists():
-                    block = f.field.model.objects.select_related("styles").get(block_relation_id=blocks_name.id)
-                    break
-
-        return block
+    def __init__(self, block_adapter: BlockAdapter):
+        self.block_adapter = block_adapter
 
     def __call__(self, page_model: Page) -> PageInterface:
         page_data = {
@@ -76,3 +62,14 @@ class PageAdapter:
             page_data["url"] = page_model.url
 
         return PageInterface(**page_data)
+
+
+def get_block_adapter(
+    repository: ProductRepositoryInterface = get_product_repository(),
+    page_repository: PageRepositoryInterface = get_page_repository(),
+) -> BlockAdapter:
+    return BlockAdapter(repository=repository, page_repository=page_repository)
+
+
+def get_page_adapter(block_adapter: BlockAdapter = get_block_adapter()) -> PageAdapter:
+    return PageAdapter(block_adapter)

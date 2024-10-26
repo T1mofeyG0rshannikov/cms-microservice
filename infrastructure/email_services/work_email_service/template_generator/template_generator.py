@@ -2,6 +2,9 @@ from typing import Any
 
 from django.template import loader
 
+from infrastructure.email_services.work_email_service.context_processor.context_processor import (
+    get_work_email_context_processor,
+)
 from infrastructure.email_services.work_email_service.context_processor.context_processor_interface import (
     WorkEmailContextProcessorInterface,
 )
@@ -45,6 +48,6 @@ class WorkEmailTemplateGenerator(WorkEmailTemplateGeneratorInterface):
 
 
 def get_work_email_template_generator(
-    email_context_processor: WorkEmailContextProcessorInterface,
+    email_context_processor: WorkEmailContextProcessorInterface = get_work_email_context_processor(),
 ) -> WorkEmailTemplateGeneratorInterface:
     return WorkEmailTemplateGenerator(email_context_processor)

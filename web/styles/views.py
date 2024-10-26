@@ -65,7 +65,7 @@ class GetIconSize(View):
 
 class GetFonts(View):
     def get(self, request):
-        from web.settings.models import Font, UserFont
+        from infrastructure.persistence.models.settings import Font, UserFont
 
         fonts = [*Font.objects.all(), *UserFont.objects.all()]
         return HttpResponse(json.dumps(FontSerializer(fonts, many=True).data))

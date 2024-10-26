@@ -58,7 +58,6 @@ class ProductRepository(ProductRepositoryInterface):
             .select_related("product")
             .filter(types__type_id=type_id)
             .order_by("product__organization__name")
-            .annotate(count=Count("id"))
         )
 
     @staticmethod
@@ -126,7 +125,7 @@ class ProductRepository(ProductRepositoryInterface):
     def get_offers():
         return Offer.objects.filter(
             status="Опубликовано", product__status="Опубликовано", types__type__status="Опубликовано"
-        )
+        ).annotate(count=Count("id"))
 
     def get_product_name_from_catalog(self, product_type_slug: str, product_index: int):
         return self.get_catalog_offers(product_type_slug)[product_index].product.name

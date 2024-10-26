@@ -57,9 +57,7 @@ class LoginCodeGenerator:
 
 
 class SendAdminAuthCode(View):
-    email_service: WorkEmailServiceInterface = get_work_email_service(
-        get_work_email_template_generator(get_work_email_context_processor()), get_system_repository()
-    )
+    email_service: WorkEmailServiceInterface = get_work_email_service()
     code_generator = LoginCodeGenerator(get_system_repository())
     get_admin_user_interactor = GetAdminUser(get_user_repository())
 

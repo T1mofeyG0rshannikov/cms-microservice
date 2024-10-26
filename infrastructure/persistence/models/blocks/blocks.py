@@ -83,3 +83,14 @@ class StagesBlock(BaseBlock, TitleMixin, MainTextMixin):
         app_label = "blocks"
         verbose_name = "Этапы"
         verbose_name_plural = "Этапы"
+
+
+class Footer(BaseBlock):
+    text1 = RichTextField(max_length=1000)
+    text2 = RichTextField(max_length=1000)
+    text3 = RichTextField(max_length=1000)
+
+    class Meta:
+        app_label = "blocks"
+        verbose_name = "Футер"
+        verbose_name_plural = "Футер"

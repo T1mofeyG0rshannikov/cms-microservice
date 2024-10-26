@@ -2,10 +2,10 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.utils import timezone
 
+from infrastructure.persistence.models.settings import Domain, UserFont
 from web.notifications.create_user_notification import create_user_notification
 from web.notifications.error import CantSendNotification
 from web.notifications.send_message import send_message_to_user
-from web.settings.models import Domain, UserFont
 
 
 class Site(models.Model):

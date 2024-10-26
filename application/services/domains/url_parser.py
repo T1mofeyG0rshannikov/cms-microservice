@@ -66,6 +66,9 @@ class UrlParser(UrlParserInterface):
         if ".WEBP" in path:
             return True
 
+        if ".ico" in path:
+            return True
+
         if ".jpeg" in path:
             return True
 

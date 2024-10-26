@@ -41,5 +41,5 @@ class JwtProcessor(JwtProcessorInterface):
         return jwt.encode(payload, self.jwt_settings.secret_key, algorithm=self.jwt_settings.algorithm)
 
 
-def get_jwt_processor() -> JwtProcessor:
-    return JwtProcessor(get_jwt_settings())
+def get_jwt_processor(settings: JwtSettings = get_jwt_settings()) -> JwtProcessor:
+    return JwtProcessor(jwt_settings=settings)

@@ -3,11 +3,16 @@
 from django.utils.timezone import now
 
 from application.common.url_parser import UrlParserInterface
+from application.services.domains.url_parser import get_url_parser
 from application.services.request_service import RequestServiceInterface
 from application.sessions.dto import RawSessionDB, RawSessionDTO
 from application.sessions.raw_session_service import RawSessionServiceInterface
 from domain.user_sessions.repository import UserSessionRepositoryInterface
+from infrastructure.admin.admin_settings import get_admin_settings
 from infrastructure.persistence.models.site_statistics import PenaltyLog
+from infrastructure.persistence.repositories.user_session_repository import (
+    get_user_session_repository,
+)
 
 # logger = logging.getLogger("main")
 
@@ -159,9 +164,9 @@ class RawSessionService(RawSessionServiceInterface):
 
 def get_raw_session_service(
     request_service: RequestServiceInterface,
-    user_session_repository: UserSessionRepositoryInterface,
-    url_parser: UrlParserInterface,
-    admin_settings,
+    user_session_repository: UserSessionRepositoryInterface = get_user_session_repository(),
+    url_parser: UrlParserInterface = get_url_parser(),
+    admin_settings=get_admin_settings(),
 ) -> RawSessionServiceInterface:
     return RawSessionService(
         request_service=request_service,

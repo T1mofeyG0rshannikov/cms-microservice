@@ -1,0 +1,20 @@
+footer{
+    background-color: var(--main-color);
+    display: flex;
+    justify-content: center;
+    color: var(--header-inverted-color);
+    width: 100vw;
+    padding-top: var(--padding-block-top);
+    padding-bottom: var(--padding-block-bottom);
+    position: relative;
+
+    .menu{
+        display: flex;
+        align-items: center;
+
+        a{
+            margin: 0px 20px;
+            cursor: pointer;
+        }
+    }
+}

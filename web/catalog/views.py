@@ -1,7 +1,7 @@
-from django.http import JsonResponse
+from django.http import HttpRequest, JsonResponse
 
 from application.services.products_service import get_products_service
-from application.usecases.public.catalog_page import GetCatalogPage
+from application.usecases.public.catalog_page import get_catalog_page
 from domain.products.service import ProductsServiceInterface
 from infrastructure.persistence.models.catalog.product_type import ProductType
 from infrastructure.persistence.models.catalog.products import (
@@ -22,17 +22,15 @@ from web.user.views.base_user_view import APIUserRequired, UserFormsView
 class ShowCatalogPage(SubdomainMixin):
     template_name = "blocks/page.html"
     product_repository = get_product_repository()
-    get_catalog_page = GetCatalogPage()
+    get_catalog_page_interactor = get_catalog_page()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context |= UserFormsView.get_context_data()
 
-        page = self.get_catalog_page(slug=kwargs["products_slug"])
+        page = self.get_catalog_page_interactor(slug=kwargs["products_slug"])
 
         context["page"] = PageSerializer(page).data
-
-        exclusive_card = ExclusiveCard.objects.first()
 
         user_is_authenticated = self.request.user.is_authenticated
 
@@ -43,23 +41,20 @@ class ShowCatalogPage(SubdomainMixin):
 
         product_type = ProductType.objects.get(slug=self.kwargs["products_slug"])
 
-        products = CatalogProductSerializer(products, context={"type": product_type}, many=True).data
-        context["products"] = products
-        context["exclusive_card"] = exclusive_card
+        context["products"] = CatalogProductSerializer(products, context={"type": product_type}, many=True).data
+        context["exclusive_card"] = ExclusiveCard.objects.first()
 
         return context
 
 
 class GetProducts(APIUserRequired):
-    products_service: ProductsServiceInterface = get_products_service(get_product_repository())
-
-    def get(self, request):
+    def get(
+        self, request: HttpRequest, products_service: ProductsServiceInterface = get_products_service()
+    ) -> JsonResponse:
         organization = request.GET.get("organization")
 
         try:
-            products = self.products_service.filter_enabled_products(
-                organization_id=organization, user_id=request.user.id
-            )
+            products = products_service.filter_enabled_products(organization_id=organization, user_id=request.user.id)
         except Organization.DoesNotExist:
             return JsonResponse({"error": f"no organization with id '{organization}'"})
 
@@ -67,12 +62,12 @@ class GetProducts(APIUserRequired):
 
 
 class GetUserProducts(APIUserRequired):
-    products_service: ProductsServiceInterface = get_products_service(get_product_repository())
-
-    def get(self, request):
+    def get(
+        self, request: HttpRequest, products_service: ProductsServiceInterface = get_products_service()
+    ) -> JsonResponse:
         product_category = request.GET.get("category")
 
-        products = self.products_service.filter_user_products(category_id=product_category, user_id=request.user.id)
+        products = products_service.filter_user_products(category_id=product_category, user_id=request.user.id)
 
         pagination = Pagination(request)
         products = pagination.paginate(products, "products", UserProductsSerializer)

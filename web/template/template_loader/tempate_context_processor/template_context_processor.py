@@ -1,3 +1,5 @@
+from django.http import HttpRequest
+
 from application.services.domains.service import get_domain_service
 from application.services.products_service import get_products_service
 from application.services.user.referrals_service import get_referral_service
@@ -7,6 +9,13 @@ from domain.products.service import ProductsServiceInterface
 from domain.referrals.service import ReferralServiceInterface
 from infrastructure.persistence.models.catalog.products import Product
 from infrastructure.persistence.models.materials import Document
+from infrastructure.persistence.models.settings import (
+    Domain,
+    Messanger,
+    SiteSettings,
+    SocialNetwork,
+    UserFont,
+)
 from infrastructure.persistence.models.user.product import UserProduct
 from infrastructure.persistence.repositories.idea_repository import get_idea_repository
 from infrastructure.persistence.repositories.product_repository import (
@@ -15,7 +24,6 @@ from infrastructure.persistence.repositories.product_repository import (
 from infrastructure.persistence.repositories.user_repository import get_user_repository
 from infrastructure.user.validator import get_user_validator
 from web.catalog.serializers import ProductSerializer
-from web.settings.models import Domain, Messanger, SiteSettings, SocialNetwork, UserFont
 from web.template.template_loader.tempate_context_processor.base_context_processor import (
     BaseContextProcessor,
 )
@@ -37,14 +45,14 @@ class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInt
         self.domain_service = domain_service
         self.get_ideas_interactor = get_ideas_interactor
 
-    def get_change_user_form_context(self, request):
+    def get_change_user_form_context(self, request: HttpRequest):
         context = self.get_context(request)
 
         context["messangers"] = Messanger.objects.select_related("social_network").all()
 
         return context
 
-    def get_change_site_form_context(self, request):
+    def get_change_site_form_context(self, request: HttpRequest):
         context = self.get_context(request)
 
         context["fonts"] = UserFont.objects.all()
@@ -54,13 +62,13 @@ class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInt
 
         return context
 
-    def get_change_socials_form_context(self, request):
+    def get_change_socials_form_context(self, request: HttpRequest):
         context = self.get_context(request)
         context["socials"] = SocialNetwork.objects.all()
 
         return context
 
-    def get_referral_popup_context(self, request):
+    def get_referral_popup_context(self, request: HttpRequest):
         context = self.get_context(request)
 
         user_id = request.GET.get("user_id")
@@ -69,7 +77,7 @@ class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInt
 
         return context
 
-    def get_choice_product_form(self, request):
+    def get_choice_product_form(self, request: HttpRequest):
         context = self.get_context(request)
         organization = request.GET.get("organization")
 
@@ -78,7 +86,7 @@ class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInt
 
         return context
 
-    def get_create_user_product_form(self, request):
+    def get_create_user_product_form(self, request: HttpRequest):
         context = self.get_context(request)
         context["site_name"] = self.domain_service.get_site_name()
 
@@ -97,7 +105,7 @@ class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInt
 
         return context
 
-    def get_product_description_popup(self, request):
+    def get_product_description_popup(self, request: HttpRequest):
         product_id = request.GET.get("product")
         context = dict()
         context["product"] = (
@@ -108,19 +116,19 @@ class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInt
 
         return context
 
-    def get_delete_product_popup(self, request):
+    def get_delete_product_popup(self, request: HttpRequest):
         product_id = request.GET.get("product")
         context = dict()
         context["product"] = UserProduct.objects.values("id").get(id=product_id)
 
         return context
 
-    def get_document_popup(self, request):
+    def get_document_popup(self, request: HttpRequest):
         document_slug = request.GET.get("document")
 
         return {"document": Document.objects.values("name", "text").get(slug=document_slug)}
 
-    def get_create_idea_form(self, request):
+    def get_create_idea_form(self, request: HttpRequest):
         context = {}
 
         idea_id = request.GET.get("idea")
@@ -129,10 +137,15 @@ class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInt
         return context
 
 
-def get_template_context_processor() -> TemplateContextProcessorInterface:
+def get_template_context_processor(
+    referral_service: ReferralServiceInterface = get_referral_service(),
+    products_service: ProductsServiceInterface = get_products_service(),
+    domain_service: DomainServiceInterface = get_domain_service(),
+    get_ideas_interactor: GetIdeas = GetIdeas(get_idea_repository()),
+) -> TemplateContextProcessorInterface:
     return TemplateContextProcessor(
-        get_referral_service(get_user_validator(), get_user_repository()),
-        get_products_service(get_product_repository()),
-        get_domain_service(),
-        GetIdeas(get_idea_repository()),
+        referral_service=referral_service,
+        products_service=products_service,
+        domain_service=domain_service,
+        get_ideas_interactor=get_ideas_interactor,
     )

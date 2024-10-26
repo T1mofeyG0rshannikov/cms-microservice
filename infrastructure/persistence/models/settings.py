@@ -27,6 +27,7 @@ class SiteSettings(OneInstanceModel):
     )
 
     class Meta:
+        app_label = "settings"
         verbose_name = "Айдентика"
         verbose_name_plural = "Айдентика"
 
@@ -47,6 +48,7 @@ class Logo(BaseLogo):
     settings = models.OneToOneField(SiteSettings, on_delete=models.CASCADE, related_name="logo")
 
     class Meta:
+        app_label = "settings"
         verbose_name = "Логотип"
         verbose_name_plural = "Логотип"
 
@@ -64,6 +66,7 @@ class FormLogo(BaseLogo):
     settings = models.OneToOneField(SiteSettings, on_delete=models.CASCADE, related_name="form_logo")
 
     class Meta:
+        app_label = "settings"
         verbose_name = "Логотип для форм"
         verbose_name_plural = "Логотип для форм"
 
@@ -83,6 +86,7 @@ class Icon(OneInstanceModel):
     settings = models.OneToOneField(SiteSettings, on_delete=models.CASCADE, related_name="icon")
 
     class Meta:
+        app_label = "settings"
         verbose_name = "Иконка"
         verbose_name_plural = "Иконка"
 
@@ -96,18 +100,21 @@ class Domain(models.Model):
         return self.domain
 
     class Meta:
+        app_label = "settings"
         verbose_name = "домен"
         verbose_name_plural = "домены"
 
 
 class GlobalStyles(OneInstanceModel):
     class Meta:
+        app_label = "settings"
         verbose_name = "стили"
         verbose_name_plural = "стили"
 
 
 class Font(BaseFont):
     class Meta:
+        app_label = "settings"
         verbose_name = "Шрифт"
         verbose_name_plural = "Шрифты"
         ordering = ["name"]
@@ -121,6 +128,7 @@ class SocialNetwork(models.Model):
     button_color = ColorField(verbose_name="Цвет кнопки")
 
     class Meta:
+        app_label = "settings"
         verbose_name = "Социальная сеть"
         verbose_name_plural = "Социальные сети"
 
@@ -132,6 +140,7 @@ class Messanger(models.Model):
     social_network = models.ForeignKey(SocialNetwork, on_delete=models.CASCADE, verbose_name="Соц. сеть")
 
     class Meta:
+        app_label = "settings"
         verbose_name = "Мессенджер"
         verbose_name_plural = "Мессенджеры"
 
@@ -141,6 +150,7 @@ class Messanger(models.Model):
 
 class UserFont(BaseFont):
     class Meta:
+        app_label = "settings"
         verbose_name = "Бренд шрифт"
         verbose_name_plural = "Бренд шрифты"
         ordering = ["name"]

@@ -1,3 +1,5 @@
+from application.services.domains.service import get_domain_service
+from infrastructure.auth.jwt_processor import get_jwt_processor
 from infrastructure.auth.jwt_processor_interface import JwtProcessorInterface
 
 from .link_generator_interface import LinkGeneratorInterface
@@ -23,5 +25,7 @@ class LinkGenerator(LinkGeneratorInterface):
         return f"{self.protocol}://{self.host}/user/password/{token_to_reset_password}"
 
 
-def get_link_generator(jwt_processor: JwtProcessorInterface, host: str) -> LinkGenerator:
+def get_link_generator(
+    jwt_processor: JwtProcessorInterface = get_jwt_processor(), host: str = get_domain_service().get_domain_string()
+) -> LinkGeneratorInterface:
     return LinkGenerator(jwt_processor, host)

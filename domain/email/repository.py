@@ -2,6 +2,5 @@ from typing import Protocol
 
 
 class SystemRepositoryInterface(Protocol):
-    @staticmethod
-    def get_system_emails() -> list[str]:
+    def get_system_emails(self) -> list[str]:
         raise NotImplementedError()

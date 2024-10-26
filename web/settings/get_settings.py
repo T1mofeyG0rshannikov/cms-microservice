@@ -1,13 +1,10 @@
+from infrastructure.persistence.models.settings import SiteSettings
 from infrastructure.persistence.models.user.site import Site
-from web.settings.models import SiteSettings
 from web.settings.serializers import SettingsSerializer
 
 
-def get_settings(request) -> dict:
-    if hasattr(request, "domain"):
-        domain = request.domain
-        subdomain = request.subdomain
-
+def get_settings(domain: str = None, subdomain: str = None) -> dict:
+    if domain:
         if domain == "localhost":
             sites = Site.objects.all()
         else:

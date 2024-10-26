@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
+from infrastructure.persistence.models.settings import Font
 from infrastructure.persistence.models.styles.colors.colors import ColorStyles
 from infrastructure.persistence.models.styles.other import IconSize, MarginBlock
-from web.settings.models import Font
 
 
 class FontSerializer(serializers.ModelSerializer):
@@ -89,6 +89,7 @@ class CustomStylesSerializer(serializers.Serializer):
     add_button = serializers.BooleanField(required=False)
     swiper_columns = serializers.CharField(required=False)
     column_width = serializers.SerializerMethodField(required=False)
+    refs_color = serializers.CharField(required=False)
 
     def get_column_width(self, obj):
         try:

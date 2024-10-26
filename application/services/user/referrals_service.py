@@ -8,6 +8,8 @@ from domain.user.exceptions import (
 )
 from domain.user.repository import UserRepositoryInterface
 from domain.user.validator import UserValidatorInterface
+from infrastructure.persistence.repositories.user_repository import get_user_repository
+from infrastructure.user.validator import get_user_validator
 from web.account.serializers import ReferralSerializer
 
 
@@ -79,6 +81,7 @@ class ReferralService(ReferralServiceInterface):
 
 
 def get_referral_service(
-    validator: UserValidatorInterface, repository: UserRepositoryInterface
+    validator: UserValidatorInterface = get_user_validator(),
+    repository: UserRepositoryInterface = get_user_repository(),
 ) -> ReferralServiceInterface:
-    return ReferralService(validator, repository)
+    return ReferralService(validator=validator, repository=repository)

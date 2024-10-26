@@ -2,6 +2,9 @@ from web.template.profile_template_loader.context_processor.context_processor im
     ProfileTemplateContextProcessor,
     get_profile_template_context_processor,
 )
+from web.template.profile_template_loader.context_processor.context_processor_interface import (
+    ProfileTemplateContextProcessorInterface,
+)
 from web.template.profile_template_loader.profile_template_loader_interface import (
     ProfileTemplateLoaderInterface,
 )
@@ -70,5 +73,7 @@ class ProfileTemplateLoader(BaseTemplateLoader, ProfileTemplateLoaderInterface):
         }
 
 
-def get_profile_template_loader() -> ProfileTemplateLoader:
-    return ProfileTemplateLoader(get_profile_template_context_processor())
+def get_profile_template_loader(
+    context_processor: ProfileTemplateContextProcessorInterface = get_profile_template_context_processor(),
+) -> ProfileTemplateLoader:
+    return ProfileTemplateLoader(context_processor=context_processor)

@@ -3,6 +3,9 @@ from typing import Any
 from django.template import loader
 
 from domain.user.user import UserInterface
+from infrastructure.email_services.email_service.context_processor.context_processor import (
+    get_email_context_processor,
+)
 from infrastructure.email_services.email_service.context_processor.context_processor_interface import (
     EmailContextProcessorInterface,
 )
@@ -49,5 +52,7 @@ class EmailTemplateGenerator(EmailTemplateGeneratorInterface):
         return self.generate_template("emails/login_in_fake_admin.html", context)
 
 
-def get_email_template_generator(email_context_processor: EmailContextProcessorInterface) -> EmailTemplateGenerator:
-    return EmailTemplateGenerator(email_context_processor)
+def get_email_template_generator(
+    email_context_processor: EmailContextProcessorInterface = get_email_context_processor(),
+) -> EmailTemplateGeneratorInterface:
+    return EmailTemplateGenerator(context_processor=email_context_processor)

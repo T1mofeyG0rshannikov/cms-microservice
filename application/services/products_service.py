@@ -2,6 +2,9 @@ from typing import Any
 
 from domain.products.repository import ProductRepositoryInterface
 from domain.products.service import ProductsServiceInterface
+from infrastructure.persistence.repositories.product_repository import (
+    get_product_repository,
+)
 from web.catalog.serializers import ProductsSerializer
 
 
@@ -26,5 +29,5 @@ class ProductsService(ProductsServiceInterface):
         return self.repository.get_enabled_organizations(user_id)
 
 
-def get_products_service(repository: ProductRepositoryInterface) -> ProductsServiceInterface:
+def get_products_service(repository: ProductRepositoryInterface = get_product_repository()) -> ProductsServiceInterface:
     return ProductsService(repository)

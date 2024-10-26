@@ -3,6 +3,7 @@ from django.db import models
 
 from infrastructure.persistence.models.blocks.blocks import (
     FeaturesBlock,
+    Footer,
     Navbar,
     QuestionsBlock,
     SocialMediaBlock,
@@ -17,11 +18,18 @@ from infrastructure.persistence.models.blocks.mixins import ButtonMixin, TitleMi
 from infrastructure.persistence.models.catalog.product_type import ProductType
 from infrastructure.persistence.models.catalog.products import Offer
 from infrastructure.persistence.models.common import Sortable
-from web.settings.models import SocialNetwork
+from infrastructure.persistence.models.settings import SocialNetwork
 
 
 class NavMenuItem(ButtonMixin):
-    navbar = models.ForeignKey(Navbar, on_delete=models.SET_NULL, null=True, related_name="menu_items")
+    navbar = models.ForeignKey(Navbar, on_delete=models.CASCADE, related_name="menu_items")
+
+    class Meta:
+        app_label = "blocks"
+
+
+class FooterMenuItem(ButtonMixin):
+    footer = models.ForeignKey(Footer, on_delete=models.CASCADE, related_name="menu_items")
 
     class Meta:
         app_label = "blocks"

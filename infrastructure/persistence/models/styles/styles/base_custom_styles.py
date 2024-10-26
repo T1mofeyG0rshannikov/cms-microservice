@@ -36,6 +36,8 @@ class BaseCustomStyles(MarginMixin):
     )
     main_text_color = ColorField(verbose_name="Цвет основного текста", null=True, blank=True)
 
+    refs_color = ColorField(verbose_name="Цвет ссылок", null=True, blank=True)
+
     class Meta:
         verbose_name = "Кастомные стили"
         verbose_name_plural = "Кастомные стили"

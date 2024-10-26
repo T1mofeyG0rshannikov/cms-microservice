@@ -5,8 +5,14 @@ from infrastructure.email_services.base_email_service import BaseEmailService
 from infrastructure.email_services.work_email_service.email_service_interface import (
     WorkEmailServiceInterface,
 )
+from infrastructure.email_services.work_email_service.template_generator.template_generator import (
+    get_work_email_template_generator,
+)
 from infrastructure.email_services.work_email_service.template_generator.template_generator_interface import (
     WorkEmailTemplateGeneratorInterface,
+)
+from infrastructure.persistence.repositories.system_repository import (
+    get_system_repository,
 )
 
 
@@ -47,6 +53,7 @@ class WorkEmailService(BaseEmailService, WorkEmailServiceInterface):
 
 
 def get_work_email_service(
-    template_generator: WorkEmailTemplateGeneratorInterface, repository: SystemRepositoryInterface
+    template_generator: WorkEmailTemplateGeneratorInterface = get_work_email_template_generator(),
+    repository: SystemRepositoryInterface = get_system_repository(),
 ) -> WorkEmailServiceInterface:
     return WorkEmailService(template_generator, repository)

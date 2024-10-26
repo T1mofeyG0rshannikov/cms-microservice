@@ -3,7 +3,7 @@ from functools import lru_cache
 from cryptography.fernet import Fernet
 
 # Генерация ключа
-key = Fernet.generate_key()
+key = b"P6CFrx15uVDNlvJxer5KkZWRj_fyOPNIlW4dLqGA4OQ="
 cipher = Fernet(key)
 
 

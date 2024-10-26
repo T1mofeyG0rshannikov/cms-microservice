@@ -69,6 +69,12 @@ class DomainService(DomainServiceInterface):
         domain = self.url_parser.get_domain_from_host(host)
         return self.repository.get_domain(domain)
 
+    def get_site_by_name(self, site_name: str) -> SiteInterface:
+        return self.repository.get_site(site_name)
 
-def get_domain_service() -> DomainService:
-    return DomainService(get_domain_repository(), get_url_parser())
+
+def get_domain_service(
+    domain_repository: DomainRepositoryInterface = get_domain_repository(),
+    url_parser: UrlParserInterface = get_url_parser(),
+) -> DomainServiceInterface:
+    return DomainService(repository=domain_repository, url_parser=url_parser)

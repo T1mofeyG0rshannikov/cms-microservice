@@ -1,17 +1,9 @@
 from django.conf import settings
 
-from application.services.domains.service import get_domain_service
 from domain.referrals.referral import UserInterface
-from infrastructure.auth.jwt_processor import get_jwt_processor
 from infrastructure.email_services.base_email_service import BaseEmailService
-from infrastructure.email_services.email_service.context_processor.context_processor import (
-    get_email_context_processor,
-)
 from infrastructure.email_services.email_service.email_service_interface import (
     EmailServiceInterface,
-)
-from infrastructure.email_services.email_service.link_generator.link_generator import (
-    get_link_generator,
 )
 from infrastructure.email_services.email_service.template_generator.template_generator import (
     get_email_template_generator,
@@ -40,11 +32,7 @@ class EmailService(BaseEmailService, EmailServiceInterface):
         self.send_email("Восстановление пароля", self.sender, [user.email], template)
 
 
-def get_email_service() -> EmailServiceInterface:
-    domain_service = get_domain_service()
-
-    return EmailService(
-        get_email_template_generator(
-            get_email_context_processor(get_link_generator(get_jwt_processor(), domain_service.get_domain_string()))
-        )
-    )
+def get_email_service(
+    template_generator: EmailTemplateGeneratorInterface = get_email_template_generator(),
+) -> EmailServiceInterface:
+    return EmailService(template_generator=template_generator)

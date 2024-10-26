@@ -1,12 +1,9 @@
-from typing import Any
-
 from django.http import HttpRequest, HttpResponse
 from django.views.generic import View
 
 from application.common.url_parser import UrlParserInterface
 from application.services.domains.url_parser import get_url_parser
 from domain.products.repository import ProductRepositoryInterface
-from infrastructure.admin.admin_settings import get_admin_settings
 from infrastructure.persistence.repositories.product_repository import (
     get_product_repository,
 )
@@ -120,20 +117,12 @@ class CapchaView(SettingsMixin):
 
 
 class SubmitCapcha(View):
-    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        # print("processing dispatch")
-        response = super().dispatch(request, *args, **kwargs)
-        # print(response.status_code)
-        return response
-
     def post(self, request: HttpRequest) -> HttpResponse:
         session = request.raw_session
         if session:
             session_id = session.id
 
-            raw_session_service = get_raw_session_service(
-                get_request_service(request), get_user_session_repository(), get_url_parser(), get_admin_settings()
-            )
+            raw_session_service = get_raw_session_service(get_request_service(request))
             raw_session_service.success_capcha(session_id)
 
         return HttpResponse(status=200)

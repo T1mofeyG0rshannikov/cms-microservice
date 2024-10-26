@@ -27,9 +27,6 @@ from web.template.profile_template_loader.profile_template_loader import (
 from web.template.profile_template_loader.profile_template_loader_interface import (
     ProfileTemplateLoaderInterface,
 )
-from web.template.template_loader.tempate_context_processor.template_context_processor import (
-    get_template_context_processor,
-)
 from web.template.template_loader.template_loader import get_template_loader
 from web.template.template_loader.template_loader_interface import (
     TemplateLoaderInterface,
@@ -50,7 +47,7 @@ def slug_router(request, slug):
 
 
 class BaseTemplateLoadView(View):
-    template_loader: TemplateLoaderInterface = get_template_loader(get_template_context_processor())
+    template_loader: TemplateLoaderInterface = get_template_loader()
 
     def get(self, request: HttpRequest):
         template = self.get_content(request)
@@ -194,15 +191,15 @@ class GetProductDescriptionPopup(BaseTemplateLoadView):
 
 
 class GetDeleteProductPopup(BaseTemplateLoadView):
-    def get_content(self, request):
+    def get_content(self, request: HttpRequest):
         return self.template_loader.load_delete_product_popup(request)
 
 
 class GetReferralPopupTemplate(BaseTemplateLoadView):
-    def get_content(self, request):
+    def get_content(self, request: HttpRequest):
         return self.template_loader.load_referral_popup(request)
 
 
 class GetCreateIdeaForm(BaseTemplateLoadView):
-    def get_content(self, request):
+    def get_content(self, request: HttpRequest):
         return self.template_loader.load_create_idea_form(request)
