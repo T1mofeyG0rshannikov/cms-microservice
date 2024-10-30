@@ -10,11 +10,19 @@ class DomainInterface:
 @dataclass
 class SiteInterface:
     domain: DomainInterface
-    subdomain: str
-    is_active: bool
-    use_default_settings: bool
-    advertising_channel: str
 
     name: str
     owner: str
     contact_info: str
+    created_at: str
+
+    advertising_channel: str = None
+    use_default_settings: bool = None
+    is_active: bool = None
+    subdomain: str = None
+
+    @property
+    def adress(self) -> str:
+        if self.subdomain:
+            return f"{self.subdomain}.{self.domain.domain}"
+        return self.domain.domain

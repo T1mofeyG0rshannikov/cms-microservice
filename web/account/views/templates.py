@@ -4,15 +4,19 @@ from django.shortcuts import render
 
 from application.common.url_parser import UrlParserInterface
 from application.services.domains.url_parser import get_url_parser
+from domain.materials.repository import DocumentRepositoryInterface
 from domain.user.exceptions import InvalidReferalLevel, InvalidSortedByField
-from infrastructure.persistence.models.materials import Document
+from domain.user.notifications.repository import NotificationRepositoryInterface
+from infrastructure.persistence.repositories.document_repository import get_document_repository
+from infrastructure.persistence.repositories.notification_repository import (
+    get_notification_repository,
+)
 from infrastructure.persistence.repositories.user_session_repository import (
     get_user_session_repository,
 )
 from web.account.forms import ChangePasswordForm
 from web.common.views import FormView
 from web.domens.views.mixins import SubdomainMixin
-from web.notifications.models import UserNotification
 from web.notifications.serializers import UserNotificationSerializer
 from web.settings.views import SettingsMixin
 from web.template.profile_template_loader.context_processor.context_processor import (
@@ -29,13 +33,14 @@ from web.user.views.base_user_view import (
 
 
 class BaseProfileView(MyLoginRequiredMixin, SubdomainMixin):
-    template_context_processor = get_profile_template_context_processor()
+    template_context_processor: ProfileTemplateContextProcessorInterface = get_profile_template_context_processor()
+    notifications_repository: NotificationRepositoryInterface = get_notification_repository()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         context["notifications"] = UserNotificationSerializer(
-            UserNotification.objects.filter(user_id=self.request.user.id),
+            self.notifications_repository.get_user_notifications(user_id=self.request.user.id),
             context={"user": self.request.user},
             many=True,
         ).data
@@ -130,18 +135,18 @@ class PageNotFound(SubdomainMixin):
 
 class DocumentPage(SettingsMixin):
     template_name = "account/manual.html"
-
-    def dispatch(self, request, slug, *args, **kwargs):
-        try:
-            Document.objects.get(slug=slug)
-        except Document.DoesNotExist:
+    document_repository: DocumentRepositoryInterface = get_document_repository()
+    
+    def dispatch(self, request: HttpRequest, slug: str, *args, **kwargs):
+        document = self.document_repository.get_document(slug)
+        if not document:
             return PageNotFound.as_view()(request)
 
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["document"] = Document.objects.get(slug=self.kwargs.get("slug"))
+        context["document"] = self.document_repository.get_document(self.kwargs.get("slug"))
 
         return context
 

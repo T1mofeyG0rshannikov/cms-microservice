@@ -3,8 +3,7 @@ from infrastructure.persistence.models.site_tests import Error
 
 
 class ErrorsRepository(ErrorLogRepositoryInterface):
-    @staticmethod
-    def create_error_log(**kwargs) -> None:
+    def create_error_log(self, **kwargs) -> None:
         Error.objects.create(**kwargs)
 
 

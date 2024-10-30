@@ -1,14 +1,12 @@
 from django.http import HttpRequest
 
 from application.services.domains.service import get_domain_service
-from application.services.products_service import get_products_service
 from application.services.user.referrals_service import get_referral_service
 from application.usecases.ideas.get_ideas import GetIdeas
 from domain.domains.service import DomainServiceInterface
-from domain.products.service import ProductsServiceInterface
+from domain.products.repository import ProductRepositoryInterface
 from domain.referrals.service import ReferralServiceInterface
 from infrastructure.persistence.models.catalog.products import Product
-from infrastructure.persistence.models.materials import Document
 from infrastructure.persistence.models.settings import (
     Domain,
     Messanger,
@@ -21,9 +19,7 @@ from infrastructure.persistence.repositories.idea_repository import get_idea_rep
 from infrastructure.persistence.repositories.product_repository import (
     get_product_repository,
 )
-from infrastructure.persistence.repositories.user_repository import get_user_repository
-from infrastructure.user.validator import get_user_validator
-from web.catalog.serializers import ProductSerializer
+from web.catalog.serializers import ProductSerializer, ProductsSerializer
 from web.template.template_loader.tempate_context_processor.base_context_processor import (
     BaseContextProcessor,
 )
@@ -36,12 +32,12 @@ class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInt
     def __init__(
         self,
         referral_service: ReferralServiceInterface,
-        products_service: ProductsServiceInterface,
         domain_service: DomainServiceInterface,
+        products_repository: ProductRepositoryInterface,
         get_ideas_interactor: GetIdeas,
     ):
         self.referral_service = referral_service
-        self.products_service = products_service
+        self.products_repository = products_repository
         self.domain_service = domain_service
         self.get_ideas_interactor = get_ideas_interactor
 
@@ -81,8 +77,10 @@ class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInt
         context = self.get_context(request)
         organization = request.GET.get("organization")
 
-        context["organizations"] = self.products_service.get_enabled_organizations(request.user.id)
-        context["products"] = self.products_service.get_enabled_products_to_create(request.user.id, organization)
+        context["organizations"] = self.products_repository.get_enabled_organizations(request.user.id)
+        context["products"] = ProductsSerializer(
+            self.products_repository.get_enabled_products_to_create(request.user.id, organization), many=True
+        ).data
 
         return context
 
@@ -92,7 +90,7 @@ class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInt
 
         product_id = request.GET.get("product")
         try:
-            product = Product.objects.get(id=product_id)
+            product = self.products_repository.get_product_by_id(product_id)
             context["product"] = ProductSerializer(product).data
 
             if UserProduct.objects.filter(user=request.user, product=product, deleted=False).exists():
@@ -123,11 +121,6 @@ class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInt
 
         return context
 
-    def get_document_popup(self, request: HttpRequest):
-        document_slug = request.GET.get("document")
-
-        return {"document": Document.objects.values("name", "text").get(slug=document_slug)}
-
     def get_create_idea_form(self, request: HttpRequest):
         context = {}
 
@@ -139,13 +132,13 @@ class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInt
 
 def get_template_context_processor(
     referral_service: ReferralServiceInterface = get_referral_service(),
-    products_service: ProductsServiceInterface = get_products_service(),
+    products_repository: ProductRepositoryInterface = get_product_repository(),
     domain_service: DomainServiceInterface = get_domain_service(),
     get_ideas_interactor: GetIdeas = GetIdeas(get_idea_repository()),
 ) -> TemplateContextProcessorInterface:
     return TemplateContextProcessor(
         referral_service=referral_service,
-        products_service=products_service,
+        products_repository=products_repository,
         domain_service=domain_service,
         get_ideas_interactor=get_ideas_interactor,
     )

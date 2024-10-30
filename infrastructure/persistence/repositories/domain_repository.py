@@ -8,8 +8,7 @@ from infrastructure.persistence.models.user.site import Site
 
 
 class DomainRepository(DomainRepositoryInterface):
-    @staticmethod
-    def get_site(subdomain: str) -> SiteInterface:
+    def get_site(self, subdomain: str) -> SiteInterface:
         try:
             return Site.objects.get(subdomain__iexact=subdomain)
         except Site.DoesNotExist:
@@ -34,20 +33,17 @@ class DomainRepository(DomainRepositoryInterface):
     def get_partner_domain_model(self) -> DomainInterface:
         return Domain.objects.filter(is_partners=True).first()
 
-    @staticmethod
-    def get_domain(domain: str) -> DomainInterface:
+    def get_domain(self, domain: str) -> DomainInterface:
         if Domain.objects.filter(domain=domain).exists():
             return Domain.objects.get(domain=domain)
 
-    @staticmethod
-    def get_domain_model_by_id(id: int) -> DomainInterface:
+    def get_domain_model_by_id(self, id: int) -> DomainInterface:
         if Domain.objects.filter(id=id).exists():
             return Domain.objects.get(id=id)
 
         return None
 
-    @staticmethod
-    def get_domain_model() -> DomainInterface:
+    def get_domain_model(self) -> DomainInterface:
         try:
             return Domain.objects.filter(is_partners=False).first()
 
@@ -87,12 +83,14 @@ class DomainRepository(DomainRepositoryInterface):
         except IntegrityError:
             raise SiteAdressExists("Такой адрес уже существует")
 
-    @staticmethod
-    def site_adress_exists(site_id: int, site_url: str) -> bool:
+    def site_adress_exists(self, site_id: int, site_url: str) -> bool:
         return Site.objects.get(id=site_id).subdomain != site_url and Site.objects.filter(subdomain=site_url).exists()
 
     def get_user_site(self, user_id: int) -> SiteInterface:
         return Site.objects.filter(user_id=user_id).first()
+
+    def get_domain_sites(self, domain: str) -> list[SiteInterface]:
+        return Site.objects.all() if domain == "localhost" else Site.objects.filter(domain__domain=domain)
 
 
 def get_domain_repository() -> DomainRepositoryInterface:

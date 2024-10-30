@@ -271,14 +271,18 @@ function closeCreateProductForm(){
     openForm(choiceProductForm);
 }
 
-function openUpdateProductForm(productId){
-    createProductForm = document.querySelector(".create-product-form");
+function getCreateProductForm(){
+    return document.querySelector(".create-product-form")
+}
 
-    fetch(`/site_statistics/opened-update-user-form?product=${productId}`)
+function openUpdateProductForm(productId){
+    createProductForm = getCreateProductForm();
+
+    fetch(`/site_statistics/opened-update-user-form?product=${productId}`);
 
     fetch(`/get-create-user-product-form?product=${productId}`).then(response => response.json()).then(response => {
         createProductForm.outerHTML = response.content;
-        createProductForm = document.querySelector(".create-product-form");
+        createProductForm = getCreateProductForm();
         openForm(createProductForm);
         initCreateProductForm();
         createProductForm.querySelector(".cross img").removeEventListener('click', closeCreateProductForm);

@@ -58,7 +58,7 @@ class UserActivityMiddleware:
             return self.get_response(request)
 
         path = request.get_full_path()
-        if "null" in path or "get-user-info" in path:
+        if "get-user-info" in path:
             return self.get_response(request)
 
         if request.searcher:

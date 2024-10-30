@@ -1,6 +1,10 @@
 from ckeditor.fields import RichTextField
 from django.db import models
 
+from infrastructure.persistence.models.base_formater_patterns import (
+    BaseFormatterPattern,
+)
+
 
 class Document(models.Model):
     image = models.ImageField(upload_to="docs", verbose_name="Обложка")
@@ -16,3 +20,10 @@ class Document(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class DocumentFormatPattern(BaseFormatterPattern):
+    document = models.ForeignKey(Document, on_delete=models.CASCADE)
+
+    class Meta(BaseFormatterPattern.Meta):
+        app_label = "materials"

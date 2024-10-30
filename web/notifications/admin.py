@@ -1,6 +1,10 @@
 from django.contrib import admin
 
-from web.notifications.models import Notification, Trigger, UserNotification
+from infrastructure.persistence.models.notifications import (
+    Notification,
+    Trigger,
+    UserNotification,
+)
 
 
 class NotificationAdmin(admin.ModelAdmin):

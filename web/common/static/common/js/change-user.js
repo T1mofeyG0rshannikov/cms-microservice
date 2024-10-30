@@ -94,7 +94,11 @@ function sendConfirmEmail(elem){
     })
 }
 
-function openUserForm(form){
+function getUserForm(){
+    return document.querySelector(".change-user-form")
+}
+
+function openUserForm(form=getUserForm()){
     fetch(`/get-change-user-form`).then(response => response.json()).then(response => {
         form.innerHTML = response.content;
         initChangeUserForm();

@@ -35,5 +35,5 @@ urlpatterns = [
     path("get-delete-product-popup", GetDeleteProductPopup.as_view()),
     path("get-referral-popup", GetReferralPopupTemplate.as_view()),
     path("get-create-idea-form", GetCreateIdeaForm.as_view()),
-    path("<slug>", slug_router),
+    path("<slug:str>", slug_router),
 ]

@@ -7,7 +7,7 @@
                 <img onclick="location.href='/'" class="logo"/>
             {% else %}
                 <div onclick="location.href='/'" class="logo">
-                    <a style="font-family: {{settings.site_font}}; font-size: {{settings.site_font_size}}; color: var(--main-text-inverted-color);">{{ settings.site_name }}</a>
+                    <a style="font-family: {{settings.site_font}}; font-size: {{settings.site_font_size}}; color: var(--main-text-inverted-color);">{{ site_name }}</a>
                 </div>
             {% endif %}
 
@@ -67,7 +67,7 @@
                     <hr />
 
                     <div class="content">
-                        <a onclick="openUserForm(changeUserForm)" ><img src="{% static 'common/images/profile/menu_profile.png' %}" />Профиль</a>
+                        <a onclick="openUserForm()" ><img src="{% static 'common/images/profile/menu_profile.png' %}" />Профиль</a>
                         <a onclick="openChangePasswordForm(changePasswordForm)"><img src="{% static 'common/images/profile/menu_password.png' %}" />Пароль</a>
                         <a><img src="{% static 'common/images/profile/menu_settings.png' %}" />Настройки</a>
                     </div>

@@ -3,6 +3,7 @@ import json
 from django.http import HttpResponse, JsonResponse
 from django.views.generic import View
 
+from infrastructure.persistence.models.settings import Font, UserFont
 from infrastructure.persistence.models.styles.colors.colors import ColorStyles
 from infrastructure.persistence.models.styles.other import IconSize, MarginBlock
 from infrastructure.persistence.models.styles.texts.texts import (
@@ -65,7 +66,5 @@ class GetIconSize(View):
 
 class GetFonts(View):
     def get(self, request):
-        from infrastructure.persistence.models.settings import Font, UserFont
-
-        fonts = [*Font.objects.all(), *UserFont.objects.all()]
+        fonts = [*Font.objects.exclude(link=None), *UserFont.objects.exclude(link=None)]
         return HttpResponse(json.dumps(FontSerializer(fonts, many=True).data))

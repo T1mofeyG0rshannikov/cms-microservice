@@ -8,13 +8,16 @@ class TemplateLoaderInterface(Protocol):
     def load_template(
         app_name: str, template_name: str, request: HttpRequest = None, context: dict[Any, Any] = None
     ) -> str | None:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def load_change_user_form(self, request: HttpRequest) -> str | None:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def load_change_site_form(self, request: HttpRequest) -> str | None:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def load_change_socials_form(self, request: HttpRequest) -> str | None:
-        raise NotImplementedError()
+        raise NotImplementedError
+
+    def load_document_popup(self, request: HttpRequest) -> str | None:
+        raise NotImplementedError

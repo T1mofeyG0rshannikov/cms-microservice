@@ -1,13 +1,18 @@
 from domain.referrals.referral import UserInterface
-from web.notifications.models import Notification, UserNotification
+from domain.user.notifications.repository import NotificationRepositoryInterface
+from infrastructure.persistence.models.notifications import Notification
+from infrastructure.persistence.repositories.notification_repository import (
+    get_notification_repository,
+)
 from web.notifications.serializers import UserNotificationSerializer
 
 
-def create_user_notification(user: UserInterface, trigger_name: str):
+def create_user_notification(
+    user: UserInterface,
+    trigger_name: str,
+    notification_repository: NotificationRepositoryInterface = get_notification_repository(),
+):
     alert = Notification.objects.get(trigger__name=trigger_name)
-    user_alert = UserNotification(user=user, notification=alert)
-    user_alert.save()
+    user_alert = notification_repository.create_user_notification(user=user, notification_id=alert.id)
 
-    user_alert = UserNotificationSerializer(user_alert, context={"user": user}).data
-
-    return user_alert
+    return UserNotificationSerializer(user_alert, context={"user": user}).data

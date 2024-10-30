@@ -244,6 +244,7 @@ CKEDITOR_CONFIGS = {
             ["Smiley"],
             ["Source"],
         ],
+        "allowedContent": True,
     },
 }
 

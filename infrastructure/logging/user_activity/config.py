@@ -33,7 +33,6 @@ class UserActivitySettings:
         "delete-user-product",
         "/user/get-user-info",
         "get-template-",
-        "/null",
     ]
 
 

@@ -12,6 +12,11 @@ class ProductCategoryInterface:
 
 
 @dataclass
+class ProductTypeInterface:
+    name: str
+
+
+@dataclass
 class ProductInterface:
     organization: OrganizationInterface
 
@@ -26,3 +31,10 @@ class ProductInterface:
     partner_annotation: str
     partner_bonus: str
     partner_description: str
+
+
+@dataclass
+class OfferInterface:
+    name: str
+    status: str
+    product: ProductInterface

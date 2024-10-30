@@ -1,3 +1,5 @@
+from django.http import HttpRequest
+
 from web.template.profile_template_loader.context_processor.context_processor import (
     ProfileTemplateContextProcessor,
     get_profile_template_context_processor,
@@ -18,13 +20,13 @@ class ProfileTemplateLoader(BaseTemplateLoader, ProfileTemplateLoaderInterface):
     def __init__(self, context_processor: ProfileTemplateContextProcessor):
         self.context_processor = context_processor
 
-    def load_template(self, template_name: str, request=None, context=None) -> str | None:
+    def load_template(self, template_name: str, request: HttpRequest = None, context=None) -> str | None:
         return super().load_template(self.app_name, self.template_folder + "/" + template_name, request, context)
 
-    def get_title(self, page_title):
+    def get_title(self, page_title: str) -> str:
         return f"{page_title} | {self.context_processor.domain_service.get_site_name()}"
 
-    def load_profile_template(self, request):
+    def load_profile_template(self, request: HttpRequest):
         context = self.context_processor.get_profile_template_context(request)
 
         return {
@@ -32,7 +34,7 @@ class ProfileTemplateLoader(BaseTemplateLoader, ProfileTemplateLoaderInterface):
             "title": self.get_title("Обзор"),
         }
 
-    def load_refs_template(self, request):
+    def load_refs_template(self, request: HttpRequest):
         context = self.context_processor.get_refs_template_context(request)
 
         return {
@@ -40,7 +42,7 @@ class ProfileTemplateLoader(BaseTemplateLoader, ProfileTemplateLoaderInterface):
             "title": self.get_title("Мои рефералы"),
         }
 
-    def load_site_template(self, request):
+    def load_site_template(self, request: HttpRequest):
         context = self.context_processor.get_site_template_context(request)
 
         return {
@@ -48,7 +50,7 @@ class ProfileTemplateLoader(BaseTemplateLoader, ProfileTemplateLoaderInterface):
             "title": self.get_title("Мой сайт"),
         }
 
-    def load_manuals_template(self, request):
+    def load_manuals_template(self, request: HttpRequest):
         context = self.context_processor.get_manuals_template_context(request)
 
         return {
@@ -56,7 +58,7 @@ class ProfileTemplateLoader(BaseTemplateLoader, ProfileTemplateLoaderInterface):
             "title": self.get_title("Руководства"),
         }
 
-    def load_products_template(self, request):
+    def load_products_template(self, request: HttpRequest):
         context = self.context_processor.get_products_template_context(request)
 
         return {
@@ -64,7 +66,7 @@ class ProfileTemplateLoader(BaseTemplateLoader, ProfileTemplateLoaderInterface):
             "title": self.get_title("Продукты"),
         }
 
-    def load_ideas_template(self, request):
+    def load_ideas_template(self, request: HttpRequest):
         context = self.context_processor.get_ideas_template_context(request)
 
         return {
@@ -75,5 +77,5 @@ class ProfileTemplateLoader(BaseTemplateLoader, ProfileTemplateLoaderInterface):
 
 def get_profile_template_loader(
     context_processor: ProfileTemplateContextProcessorInterface = get_profile_template_context_processor(),
-) -> ProfileTemplateLoader:
+) -> ProfileTemplateLoaderInterface:
     return ProfileTemplateLoader(context_processor=context_processor)

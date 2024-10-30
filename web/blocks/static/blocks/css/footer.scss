@@ -14,7 +14,12 @@ footer{
 
         a{
             margin: 0px 20px;
+            font-weight: 600;
             cursor: pointer;
+
+            &:first-child{
+                margin-left: 0px;
+            }
         }
     }
 }

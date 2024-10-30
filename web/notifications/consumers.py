@@ -40,8 +40,9 @@ class SendAlertConsumer(WebsocketConsumer):
 
         # async_to_sync(self.channel_layer.group_add)(f"user_{user_id}", self.channel_name)
 
-        from notifications.models import UserNotification
         from notifications.serializers import UserNotificationSerializer
+
+        from infrastructure.persistence.models.notifications import UserNotification
 
         channel_layer = self.channel_layer
         group_name = f"user_{user_id}"

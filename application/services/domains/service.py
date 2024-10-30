@@ -3,16 +3,26 @@ from application.services.domains.url_parser import get_url_parser
 from domain.domains.domain import SiteInterface
 from domain.domains.repository import DomainRepositoryInterface
 from domain.domains.service import DomainServiceInterface
+from domain.page_blocks.settings_repository import SettingsRepositoryInterface
 from domain.referrals.referral import UserInterface
 from infrastructure.persistence.repositories.domain_repository import (
     get_domain_repository,
 )
+from infrastructure.persistence.repositories.settings_repository import (
+    get_settings_repository,
+)
 
 
 class DomainService(DomainServiceInterface):
-    def __init__(self, repository: DomainRepositoryInterface, url_parser: UrlParserInterface):
+    def __init__(
+        self,
+        repository: DomainRepositoryInterface,
+        url_parser: UrlParserInterface,
+        settings_repository: SettingsRepositoryInterface,
+    ):
         self.repository = repository
         self.url_parser = url_parser
+        self.settings_repository = settings_repository
 
     def valid_subdomain(self, subdomain: str) -> bool:
         if not subdomain:
@@ -69,6 +79,31 @@ class DomainService(DomainServiceInterface):
         domain = self.url_parser.get_domain_from_host(host)
         return self.repository.get_domain(domain)
 
+    def get_site_from_url(self, url: str) -> SiteInterface:
+        subdomain = self.url_parser.get_subdomain_from_host(url)
+
+        if subdomain:
+            site = self.get_site_by_name(subdomain)
+            if site:
+                return SiteInterface(
+                    name=site.name,
+                    domain=site.domain,
+                    owner=site.owner,
+                    contact_info=site.contact_info,
+                    created_at=site.created_at.strftime("%d.%m.%Y"),
+                )
+
+        domain = self.get_domain_model()
+        settings = self.settings_repository.get_settings()
+
+        return SiteInterface(
+            name=domain.name,
+            domain=domain,
+            owner=settings.owner,
+            contact_info=settings.contact_info,
+            created_at=settings.created_at.strftime("%d.%m.%Y"),
+        )
+
     def get_site_by_name(self, site_name: str) -> SiteInterface:
         return self.repository.get_site(site_name)
 
@@ -76,5 +111,6 @@ class DomainService(DomainServiceInterface):
 def get_domain_service(
     domain_repository: DomainRepositoryInterface = get_domain_repository(),
     url_parser: UrlParserInterface = get_url_parser(),
+    settings_repository: SettingsRepositoryInterface = get_settings_repository(),
 ) -> DomainServiceInterface:
-    return DomainService(repository=domain_repository, url_parser=url_parser)
+    return DomainService(repository=domain_repository, url_parser=url_parser, settings_repository=settings_repository)

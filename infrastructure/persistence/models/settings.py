@@ -26,6 +26,11 @@ class SiteSettings(OneInstanceModel):
         null=True, choices=FONT_SIZES, verbose_name="Размер пользовательского шрифта по умолчанию"
     )
 
+    owner = models.CharField(max_length=150, verbose_name="Владелец", null=True)
+    contact_info = models.CharField(max_length=200, verbose_name="Контактная информация", null=True)
+
+    created_at = models.DateTimeField(verbose_name="сайт создан", auto_now_add=True, null=True)
+
     class Meta:
         app_label = "settings"
         verbose_name = "Айдентика"

@@ -27,11 +27,11 @@ class PageNotFoundMiddleware:
             return self.get_response(request)
 
         path = request.get_full_path()
-        if "null" in path or "get-user-info" in path:
+        if "get-user-info" in path:
             return self.get_response(request)
 
         response = self.get_response(request)
-        if response.status_code == 404 and not self.url_parser.is_source(request.path) and "null" not in request.path:
+        if response.status_code == 404 and not self.url_parser.is_source(request.path):
             session_id = request.raw_session.id
             page_not_found_penalty = self.user_session_repository.get_page_not_found_penalty()
             self.user_session_repository.change_ban_rate(session_id, page_not_found_penalty)
@@ -68,7 +68,6 @@ class PageNotFoundMiddleware:
             raw_session.show_capcha
             and (not self.url_parser.is_source(path) and not "submit-capcha" in path)
             and not raw_session.hacking
-            and not "null" in path
         ):
             response = CapchaView.as_view()(request)
             response.accepted_renderer = JSONRenderer()

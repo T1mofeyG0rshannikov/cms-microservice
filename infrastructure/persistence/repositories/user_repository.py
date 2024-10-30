@@ -8,24 +8,19 @@ from infrastructure.persistence.models.user.user import User
 
 
 class UserRepository(UserRepositoryInterface):
-    @staticmethod
-    def get_user_by_phone(phone: str) -> UserInterface:
+    def get_user_by_phone(self, phone: str) -> UserInterface:
         return User.objects.get_user_by_phone(phone)
 
-    @staticmethod
-    def get_user_by_email(email: str) -> UserInterface:
+    def get_user_by_email(self, email: str) -> UserInterface:
         return User.objects.get_user_by_email(email)
 
-    @staticmethod
-    def get_supersponsor() -> UserInterface:
+    def get_supersponsor(self) -> UserInterface:
         return User.objects.filter(supersponsor=True).first()
 
-    @staticmethod
-    def get_user_by_id(id: int) -> UserInterface | None:
+    def get_user_by_id(self, id: int) -> UserInterface | None:
         return User.objects.get_user_by_id(id)
 
-    @staticmethod
-    def get_referrals_count(level: int, referral_id: int) -> int:
+    def get_referrals_count(self, level: int, referral_id: int) -> int:
         count = 0
         for i in range(level):
             field = "sponsor__" * i + "sponsor_id"
@@ -33,13 +28,11 @@ class UserRepository(UserRepositoryInterface):
 
         return count
 
-    @staticmethod
-    def get_referrals_by_level(sponsor_id: int, level: int):
+    def get_referrals_by_level(self, sponsor_id: int, level: int):
         query = "sponsor__" * (level - 1) + "sponsor_id"
         return User.objects.annotate(first_level_referrals=Count("sponsors")).filter(Q(**{query: sponsor_id}))
 
-    @staticmethod
-    def create_user(**kwargs) -> UserInterface:
+    def create_user(self, **kwargs) -> UserInterface:
         email = kwargs.get("email")
         phone = kwargs.get("phone")
 
@@ -58,8 +51,7 @@ class UserRepository(UserRepositoryInterface):
     def verify_password(self, user_id: int, password: str) -> bool:
         return self.get_user_by_id(user_id).verify_password(password)
 
-    @staticmethod
-    def update_or_create_user_messanger(**kwargs) -> None:
+    def update_or_create_user_messanger(self, **kwargs) -> None:
         UserMessanger.objects.update_or_create(user_id=kwargs.get("user_id"), defaults=kwargs)
 
     def update_user(self, **kwargs) -> None:

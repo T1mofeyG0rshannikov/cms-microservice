@@ -4,8 +4,7 @@ from infrastructure.persistence.models.system.email import Email
 
 
 class SystemRepository(SystemRepositoryInterface):
-    @staticmethod
-    def get_system_emails():
+    def get_system_emails(self) -> list[str]:
         return list(Email.objects.values_list("email", flat=True).all())
 
     def update_or_create_admin_code(self, email: str, code: int) -> int:

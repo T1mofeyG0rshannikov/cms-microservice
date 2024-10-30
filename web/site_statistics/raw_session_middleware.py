@@ -51,7 +51,7 @@ class RawSessionMiddleware:
             return self.get_response(request)
 
         path = request.get_full_path()
-        if "null" in path or "get-user-info" in path:
+        if "get-user-info" in path:
             return self.get_response(request)
 
         request_service = get_request_service(request)
@@ -109,7 +109,7 @@ class RawSessionMiddleware:
         reject_capcha_penalty = self.user_session_repository.get_reject_capcha_penalty()
 
         if session_data.show_capcha:
-            if not self.url_parser.is_source(path) and "submit-capcha" not in path and "null" not in path:
+            if not self.url_parser.is_source(path) and "submit-capcha" not in path:
                 session_data.ban_rate += reject_capcha_penalty
                 PenaltyLog.objects.create(
                     session_id=session_id,
