@@ -11,6 +11,15 @@ class GetCatalogPage:
     def __init__(self, page_adapter: PageAdapter) -> None:
         self.page_adapter = page_adapter
 
+    def __call__(self, slug: str):
+        page = CatalogPageTemplate.objects.prefetch_related("blocks").first()
+
+        page = self.set_catalog_block(page, slug)
+        page = self.set_catalog_cover(page, slug)
+        page = self.set_page_title(page, slug)
+
+        return page
+
     def set_catalog_block(self, page, slug: str):
         page = self.page_adapter(page)
         catalog = self.get_catalog_block(slug)
@@ -43,15 +52,6 @@ class GetCatalogPage:
         serialized_page.title = ProductType.objects.values("name").get(slug=slug)["name"]
 
         return serialized_page
-
-    def __call__(self, slug: str):
-        page = CatalogPageTemplate.objects.prefetch_related("blocks").first()
-
-        page = self.set_catalog_block(page, slug)
-        page = self.set_catalog_cover(page, slug)
-        page = self.set_page_title(page, slug)
-
-        return page
 
 
 def get_catalog_page(page_adapter: PageAdapter = get_page_adapter()) -> GetCatalogPage:

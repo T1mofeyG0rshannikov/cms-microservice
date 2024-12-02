@@ -18,7 +18,7 @@ class RequestService(RequestServiceInterface):
     def get_host(self) -> str:
         return self.request.get_host()
 
-    def get_all_headers(self) -> dict:
+    def get_all_headers(self) -> dict[str, str]:
         headers = {}
         for key, value in self.request.META.items():
             if "HTTP" in key:

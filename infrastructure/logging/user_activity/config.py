@@ -12,7 +12,6 @@ class UserActivitySettings:
         settings.STATIC_URL,
         settings.MEDIA_URL,
         "/styles/",
-        # get_admin_settings().admin_url,
         "set-token",
         "site_statistics/opened-product-popup",
         "site_statistics/opened-product-link",

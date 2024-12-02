@@ -159,3 +159,15 @@ class UserFont(BaseFont):
         verbose_name = "Бренд шрифт"
         verbose_name_plural = "Бренд шрифты"
         ordering = ["name"]
+
+
+class Trackers(OneInstanceModel):
+    common_metrics = models.CharField(max_length=10, verbose_name="Метрика: Общая")
+    main_domain_metrics = models.CharField(max_length=10, verbose_name="Метрика: Банкомаг")
+    partner_metrics = models.CharField(max_length=10, verbose_name="Метрика: Партнеры")
+    profile_metrics = models.CharField(max_length=10, verbose_name="Метрика: Кабинет")
+    
+    class Meta:
+        app_label = "settings"
+        verbose_name = "Трекеры"
+        verbose_name_plural = "Трекеры"

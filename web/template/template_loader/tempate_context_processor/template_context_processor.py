@@ -19,6 +19,7 @@ from infrastructure.persistence.repositories.idea_repository import get_idea_rep
 from infrastructure.persistence.repositories.product_repository import (
     get_product_repository,
 )
+from web.account.serializers import ReferralSerializer
 from web.catalog.serializers import ProductSerializer, ProductsSerializer
 from web.template.template_loader.tempate_context_processor.base_context_processor import (
     BaseContextProcessor,
@@ -69,7 +70,7 @@ class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInt
 
         user_id = request.GET.get("user_id")
 
-        context["user"] = self.referral_service.get_referral(user_id, request.user)
+        context["user"] = ReferralSerializer(self.referral_service.get_referral(user_id, request.user)).data
 
         return context
 
@@ -78,6 +79,9 @@ class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInt
         organization = request.GET.get("organization")
 
         context["organizations"] = self.products_repository.get_enabled_organizations(request.user.id)
+        
+        self.products_repository.get_enabled_products_to_create(request.user.id, organization)
+            
         context["products"] = ProductsSerializer(
             self.products_repository.get_enabled_products_to_create(request.user.id, organization), many=True
         ).data

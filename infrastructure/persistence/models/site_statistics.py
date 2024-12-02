@@ -84,7 +84,7 @@ class SessionModel(BaseSessionModel):
         verbose_name_plural = "Сессии"
 
     def __str__(self):
-        return f"{self.site} - {self.ip}"
+        return str(self.ban_rate)
 
 
 class UserActivity(BaseSessionModel):

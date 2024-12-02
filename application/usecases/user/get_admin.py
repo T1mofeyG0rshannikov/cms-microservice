@@ -13,7 +13,7 @@ class GetAdminUser:
         user2 = self.repository.get_user_by_phone(username)
 
         if not user1 and not user2:
-            raise UserDoesNotExist(UserErrors.incorrect_login.value)
+            raise UserDoesNotExist(UserErrors.incorrect_login)
 
         if user1:
             user = user1

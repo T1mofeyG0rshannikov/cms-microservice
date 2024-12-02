@@ -1,7 +1,7 @@
 from django.http import HttpRequest, HttpResponseRedirect, JsonResponse
 
-from application.common.url_parser import UrlParserInterface
-from application.services.domains.url_parser import get_url_parser
+from application.common.base_url_parser import UrlParserInterface
+from infrastructure.url_parser import get_url_parser
 from application.texts.errors import UserErrors
 from application.texts.success_messages import Messages
 from application.usecases.user.reset_password import (
@@ -135,7 +135,7 @@ class SendMailToResetPassword(FormView):
                 session_id=request.user_session_id,
             )
 
-            form.add_error("email", UserErrors.user_by_email_not_found.value)
+            form.add_error("email", UserErrors.user_by_email_not_found)
             return JsonResponse({"errors": form.errors}, status=400)
 
         self.email_service.send_mail_to_reset_password(user)
@@ -146,4 +146,4 @@ class SendMailToResetPassword(FormView):
             session_id=request.user_session_id,
         )
 
-        return JsonResponse({"message": Messages.sent_message_to_reset_password.value})
+        return JsonResponse({"message": Messages.sent_message_to_reset_password})

@@ -348,3 +348,10 @@ formatter = logging.Formatter("%(levelname)-8s %(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 """
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'bankomag_cache'),
+    }
+}

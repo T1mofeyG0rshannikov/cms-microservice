@@ -1,9 +1,9 @@
 from django.db.models import Q
 from django.http import HttpRequest, HttpResponseNotFound, HttpResponseRedirect
 
-from application.common.url_parser import UrlParserInterface
+from application.common.base_url_parser import UrlParserInterface
 from application.services.domains.service import get_domain_service
-from application.services.domains.url_parser import get_url_parser
+from infrastructure.url_parser import get_url_parser
 from domain.domains.service import DomainServiceInterface
 from infrastructure.admin.admin_settings import get_admin_settings
 from infrastructure.persistence.models.settings import Domain, SiteSettings

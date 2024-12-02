@@ -30,7 +30,7 @@ class ReferralsSerializer(serializers.ModelSerializer):
         ]
 
     def get_referrals(self, referral):
-        return f"{referral.first_level_referrals}({referral.referrals})"
+        return f"{referral.count_level_1}({referral.referrals})"
 
     def get_redirections(self, referral):
         return 0

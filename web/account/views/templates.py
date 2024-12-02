@@ -2,12 +2,14 @@ from django.contrib.auth import authenticate, login
 from django.http import HttpRequest, JsonResponse
 from django.shortcuts import render
 
-from application.common.url_parser import UrlParserInterface
-from application.services.domains.url_parser import get_url_parser
+from application.common.base_url_parser import UrlParserInterface
+from infrastructure.url_parser import get_url_parser
 from domain.materials.repository import DocumentRepositoryInterface
 from domain.user.exceptions import InvalidReferalLevel, InvalidSortedByField
 from domain.user.notifications.repository import NotificationRepositoryInterface
-from infrastructure.persistence.repositories.document_repository import get_document_repository
+from infrastructure.persistence.repositories.document_repository import (
+    get_document_repository,
+)
 from infrastructure.persistence.repositories.notification_repository import (
     get_notification_repository,
 )
@@ -136,7 +138,7 @@ class PageNotFound(SubdomainMixin):
 class DocumentPage(SettingsMixin):
     template_name = "account/manual.html"
     document_repository: DocumentRepositoryInterface = get_document_repository()
-    
+
     def dispatch(self, request: HttpRequest, slug: str, *args, **kwargs):
         document = self.document_repository.get_document(slug)
         if not document:

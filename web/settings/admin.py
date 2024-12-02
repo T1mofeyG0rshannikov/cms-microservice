@@ -10,6 +10,7 @@ from infrastructure.persistence.models.settings import (
     Messanger,
     SiteSettings,
     SocialNetwork,
+    Trackers,
     UserFont,
 )
 from web.account.admin import MessangerAdmin, UserFontAdmin
@@ -41,3 +42,4 @@ admin.site.register(Font, FontAdmin)
 admin.site.register(SocialNetwork, SocialNetworkAdmin)
 admin.site.register(Messanger, MessangerAdmin)
 admin.site.register(UserFont, UserFontAdmin)
+admin.site.register(Trackers)

@@ -3,6 +3,7 @@ from typing import Any
 from application.texts.errors import UserErrors
 from domain.user.exceptions import UserDoesNotExist
 from domain.user.repository import UserRepositoryInterface
+from domain.user.user import UserInterface
 from domain.user.validator import UserValidatorInterface
 from infrastructure.auth.jwt_processor_interface import JwtProcessorInterface
 
@@ -18,25 +19,25 @@ class Login:
         self.validator = validator
         self.jwt_processor = jwt_processor
 
-    def __call__(self, fields: dict[str, Any]):
+    def __call__(self, fields: dict[str, Any]) -> tuple[dict, UserInterface]:
         phone_or_email = fields.get("phone_or_email")
         password = fields.get("password")
 
         if self.validator.is_valid_phone(phone_or_email):
             user = self.repository.get_user_by_phone(phone_or_email)
             if user is None:
-                raise UserDoesNotExist(UserErrors.user_by_phone_not_found.value)
+                raise UserDoesNotExist(UserErrors.user_by_phone_not_found)
 
         elif self.validator.is_valid_email(phone_or_email):
             user = self.repository.get_user_by_email(phone_or_email)
             if user is None:
-                raise UserDoesNotExist(UserErrors.user_by_email_not_found.value)
+                raise UserDoesNotExist(UserErrors.user_by_email_not_found)
 
         else:
-            raise UserDoesNotExist(UserErrors.incorrect_login.value)
+            raise UserDoesNotExist(UserErrors.incorrect_login)
 
         if not self.repository.verify_password(user.id, password):
-            raise UserDoesNotExist(UserErrors.incorrect_password.value)
+            raise UserDoesNotExist(UserErrors.incorrect_password)
 
         access_token = self.jwt_processor.create_access_token(user.username, user.id)
 

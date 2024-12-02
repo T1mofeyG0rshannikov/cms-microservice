@@ -4,9 +4,7 @@ from django.db import models
 
 from application.services.domains.service import get_domain_service
 from infrastructure.persistence.managers.user_manager.user_manager import UserManager
-from infrastructure.persistence.managers.user_manager.user_manager_interface import (
-    UserManagerInterface,
-)
+
 from infrastructure.persistence.models.settings import Domain
 from infrastructure.persistence.models.site_tests import TestUserSet
 from infrastructure.persistence.models.user.site import Site
@@ -49,7 +47,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     staff = models.BooleanField(default=False)
 
-    objects: UserManagerInterface = UserManager(get_user_validator())
+    objects: UserManager = UserManager(get_user_validator())
 
     supersponsor = models.BooleanField(verbose_name="Главный спонсор", default=False)
 

@@ -1,5 +1,4 @@
 from typing import Protocol
-
 from domain.page_blocks.site_settings import SiteLogoInterface, SiteSettingsInterface
 
 

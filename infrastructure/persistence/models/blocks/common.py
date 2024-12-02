@@ -46,9 +46,9 @@ class Template(models.Model):
     def clean(self):
         super().clean()
         if not validate_html_filename(self.file):
-            raise ValidationError({"file": Errors.incorrect_file_name.value})
+            raise ValidationError({"file": Errors.incorrect_file_name})
         if not is_template_exists("blocks/" + self.file):
-            raise ValidationError({"file": Errors.template_doesnt_exist.value})
+            raise ValidationError({"file": Errors.template_doesnt_exist})
 
 
 class BaseBlock(models.Model):

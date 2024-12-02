@@ -14,11 +14,11 @@ class ValidResetPasswordToken:
         payload = self.jwt_processor.validate_token(token)
 
         if not payload:
-            raise InvalidJwtToken(Errors.wrong_reset_password_link.value)
+            raise InvalidJwtToken(Errors.wrong_reset_password_link)
 
         user = self.repository.get_user_by_id(payload["id"])
         if user is None:
-            raise InvalidJwtToken(Errors.wrong_reset_password_link.value)
+            raise InvalidJwtToken(Errors.wrong_reset_password_link)
 
         return user
 
@@ -28,11 +28,11 @@ class ResetPassword:
         self.jwt_processor = jwt_processor
         self.repository = repository
 
-    def __call__(self, token: str, new_password: str):
+    def __call__(self, token: str, new_password: str) -> tuple[UserInterface, dict]:
         payload = self.jwt_processor.validate_token(token)
 
         if not payload:
-            raise InvalidJwtToken(Errors.expired_set_password_token.value)
+            raise InvalidJwtToken(Errors.expired_set_password_token)
 
         user = self.repository.set_password(payload["id"], new_password)
 

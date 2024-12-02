@@ -5,9 +5,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.views.generic import View
 
-from application.common.url_parser import UrlParserInterface
+from application.common.base_url_parser import UrlParserInterface
 from application.services.domains.service import get_domain_service
-from application.services.domains.url_parser import get_url_parser
+from infrastructure.url_parser import get_url_parser
 from domain.domains.service import DomainServiceInterface
 from domain.user_sessions.repository import UserSessionRepositoryInterface
 from infrastructure.auth.jwt_processor import get_jwt_processor

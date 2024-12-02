@@ -9,7 +9,9 @@ from application.usecases.public.get_settings import (
 )
 from domain.domains.service import DomainServiceInterface
 from domain.materials.repository import DocumentRepositoryInterface
-from infrastructure.persistence.repositories.document_repository import get_document_repository
+from infrastructure.persistence.repositories.document_repository import (
+    get_document_repository,
+)
 
 
 class SettingsMixin(TemplateView):
@@ -35,8 +37,8 @@ class SettingsMixin(TemplateView):
         context["site_name"] = self.domain_service.get_site_name()
         context["partner_domain"] = self.domain_service.get_partners_domain_string()
 
-        context["privacy"] = self.document_repository.get_document(slug="privacypolicy").first()
-        context["terms"] = self.document_repository.get_document(slug="termsofservice").first()
+        context["privacy"] = self.document_repository.get_document("privacypolicy")
+        context["terms"] = self.document_repository.get_document("termsofservice")
         context["year"] = str(datetime.now().year)
 
         return context

@@ -1,30 +1,31 @@
 from django.core.exceptions import DisallowedHost
 from django.http import HttpRequest
 
-from domain.user_sessions.repository import UserSessionRepositoryInterface
-from infrastructure.persistence.models.site_statistics import PenaltyLog
+from application.usecases.user_activity.disallowed_host import AddDisallowedHostPenalty
 from infrastructure.persistence.repositories.user_session_repository import (
     get_user_session_repository,
 )
+from web.site_statistics.base_session_middleware import BaseSessionMiddleware
 
 
-class DisallowedHostMiddleware:
-    user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
-
-    def __init__(self, get_response):
+class DisallowedHostMiddleware(BaseSessionMiddleware):
+    add_disallowed_host_penalty = AddDisallowedHostPenalty(get_user_session_repository())
+    
+    def __init__(self, get_response) -> None:
         self.get_response = get_response
 
     def __call__(self, request: HttpRequest):
+        if request.searcher:
+            return self.get_response(request)
+
+        path = request.get_full_path()
+        if "get-user-info" in path:
+            return self.get_response(request)
+
         try:
-            host = request.get_host()
+            request.get_host()
         except DisallowedHost:
-            session_id = request.raw_session.id
-            disallowed_host_penalty = self.user_session_repository.get_disallowed_host_penalty()
-            self.user_session_repository.change_ban_rate(session_id, disallowed_host_penalty)
+            self.add_disallowed_host_penalty(request.raw_session.id)
 
-            PenaltyLog.objects.create(
-                session=request.raw_session,
-                text=f"Запрещенный домен",
-            )
-
+        request.raw_session = self.user_session_repository.get_raw_session(request.raw_session.id)
         return self.get_response(request)

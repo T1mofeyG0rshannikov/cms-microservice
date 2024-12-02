@@ -1,10 +1,12 @@
 from datetime import datetime, timedelta
+from typing import Iterable
 
 from django.db.models import Count, F
 from django.utils import timezone
 from django.utils.timezone import now
 
 from domain.user_sessions.repository import UserSessionRepositoryInterface
+from domain.user_sessions.session_filters import SessionFIltersHeader
 from infrastructure.persistence.models.site_statistics import (
     SessionAction,
     SessionFilters,
@@ -24,6 +26,13 @@ class UserSessionRepository(UserSessionRepositoryInterface):
             time=time,
             session_id=session_id,
         )
+        
+    def get_session_filter_headers(self) -> Iterable[SessionFIltersHeader]:
+        filters = SessionFilters.objects.first()
+        if filters:
+            return filters.headers.all()
+        
+        return []
 
     def create_session_action(
         self, adress: str, session_id: int, time: datetime, is_page: bool, is_source: bool
@@ -41,6 +50,9 @@ class UserSessionRepository(UserSessionRepositoryInterface):
 
     def get_session_filters(self):
         return SessionFilters.objects.first()
+    
+    def get_searchers(self) -> str:
+        return SessionFilters.objects.values_list("searchers").first()[0]
 
     def is_raw_session_exists_by_id(self, id: int) -> bool:
         return SessionModel.objects.filter(id=id).exists()
@@ -48,12 +60,11 @@ class UserSessionRepository(UserSessionRepositoryInterface):
     def is_user_session_exists_by_id(self, id: int) -> bool:
         return UserActivity.objects.filter(id=id).exists()
 
-    def create_raw_session(self, **kwargs):
+    def create_raw_session(self, **kwargs) -> int:
         return SessionModel.objects.create(**kwargs)
 
-    def update_raw_session(self, id, **kwargs):
+    def update_raw_session(self, id, **kwargs) -> None:
         SessionModel.objects.filter(id=id).update(**kwargs)
-        return SessionModel.objects.get(id=id)
 
     def is_searcher_exists_by_id(self, id: int) -> bool:
         return WebSearcher.objects.filter(id=id).exists()

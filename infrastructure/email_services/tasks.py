@@ -4,7 +4,7 @@ from web.core.celery import app
 
 
 @app.task()
-def send_email(subj: str, sender: str, emails: list[str], html_message: str):
+def send_email(subj: str, sender: str, emails: list[str], html_message: str) -> None:
     send_mail(
         subj,
         "",

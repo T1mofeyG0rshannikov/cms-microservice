@@ -2,7 +2,7 @@ from domain.user_sessions.repository import UserSessionRepositoryInterface
 
 
 class DetectSinglePageSession:
-    def __init__(self, user_session_repository: UserSessionRepositoryInterface):
+    def __init__(self, user_session_repository: UserSessionRepositoryInterface) -> None:
         self.user_session_repository = user_session_repository
 
     def __call__(self) -> None:

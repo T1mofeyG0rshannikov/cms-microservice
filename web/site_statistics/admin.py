@@ -100,6 +100,7 @@ class UserActivityAdmin(BaseSessionAdmin):
         "banks_count",
         "profile_actions_count",
         "last_action_tag",
+        "session"
     ]
 
     def user_tag(self, obj):

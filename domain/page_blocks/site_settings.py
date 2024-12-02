@@ -20,3 +20,5 @@ class SiteSettingsInterface:
     site_font: str = None
     icon: str = None
     site_font_size: str = None
+    owner: str = None
+    contact_info: str = None

@@ -1,8 +1,8 @@
 from django.http import HttpRequest, HttpResponse
 from django.views.generic import View
 
-from application.common.url_parser import UrlParserInterface
-from application.services.domains.url_parser import get_url_parser
+from application.common.base_url_parser import UrlParserInterface
+from infrastructure.url_parser import get_url_parser
 from domain.products.repository import ProductRepositoryInterface
 from infrastructure.persistence.repositories.product_repository import (
     get_product_repository,

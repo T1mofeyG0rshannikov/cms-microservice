@@ -1,6 +1,6 @@
 import re
 
-from application.common.url_parser import UrlParserInterface
+from application.common.base_url_parser import UrlParserInterface
 
 
 class UrlParser(UrlParserInterface):

@@ -1,7 +1,6 @@
 from typing import Any
 
 from application.services.request_service import RequestServiceInterface
-from domain.email.exceptions import CantSendMailError
 from domain.logging.admin import AdminLogRepositoryInterface
 from infrastructure.email_services.work_email_service.email_service import (
     get_work_email_service,
@@ -12,7 +11,6 @@ from infrastructure.email_services.work_email_service.email_service_interface im
 from infrastructure.persistence.repositories.admin_log_repository import (
     get_admin_log_repository,
 )
-from infrastructure.requests.service import get_request_service
 
 
 class AdminLoginLogger:

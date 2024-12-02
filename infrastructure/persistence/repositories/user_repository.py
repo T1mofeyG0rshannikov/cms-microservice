@@ -1,7 +1,7 @@
 from django.db import transaction
-from django.db.models import Count, Q
+from django.db.models import Count, Q, F, ExpressionWrapper, IntegerField
 
-from domain.referrals.referral import UserInterface
+from domain.referrals.referral import ReferralInterface, UserInterface
 from domain.user.repository import UserRepositoryInterface
 from infrastructure.persistence.models.account import UserMessanger
 from infrastructure.persistence.models.user.user import User
@@ -19,19 +19,7 @@ class UserRepository(UserRepositoryInterface):
 
     def get_user_by_id(self, id: int) -> UserInterface | None:
         return User.objects.get_user_by_id(id)
-
-    def get_referrals_count(self, level: int, referral_id: int) -> int:
-        count = 0
-        for i in range(level):
-            field = "sponsor__" * i + "sponsor_id"
-            count += User.objects.filter(Q(**{field: referral_id})).count()
-
-        return count
-
-    def get_referrals_by_level(self, sponsor_id: int, level: int):
-        query = "sponsor__" * (level - 1) + "sponsor_id"
-        return User.objects.annotate(first_level_referrals=Count("sponsors")).filter(Q(**{query: sponsor_id}))
-
+    
     def create_user(self, **kwargs) -> UserInterface:
         email = kwargs.get("email")
         phone = kwargs.get("phone")

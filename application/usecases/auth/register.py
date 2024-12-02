@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 from typing import Any
 
-from application.common.url_parser import UrlParserInterface
-from domain.domains.domain import DomainInterface, SiteInterface
+from application.common.base_url_parser import UrlParserInterface
 from domain.domains.repository import DomainRepositoryInterface
+from domain.domains.site import DomainInterface, SiteInterface
 from domain.user.exceptions import (
     UserWithEmailAlreadyExists,
     UserWithPhoneAlreadyExists,
@@ -31,22 +31,6 @@ class Register:
         self.url_parser = url_parser
         self.jwt_processor = jwt_processor
 
-    def get_domain_model_from_request(self, host):
-        domain = self.url_parser.get_domain_from_host(host)
-        return self.domain_repository.get_domain(domain)
-
-    def get_site_model(self, host):
-        subdomain = self.url_parser.get_subdomain_from_host(host)
-        return self.domain_repository.get_site(subdomain)
-
-    def get_user_from_site(self, site: SiteInterface, domain: DomainInterface) -> UserInterface:
-        if domain == self.domain_repository.get_domain_model():
-            return self.user_repository.get_supersponsor()
-
-        if site:
-            return site.user
-
-        return None
 
     def __call__(self, fields: dict[str, Any], host: str) -> TokenToSetPasswordResponse:
         phone = fields.get("phone")
@@ -75,3 +59,21 @@ class Register:
             return TokenToSetPasswordResponse(token_to_set_password=token_to_set_password)
 
         return None
+    
+    def get_domain_model_from_request(self, host: str) -> DomainInterface:
+        domain = self.url_parser.get_domain_from_host(host)
+        return self.domain_repository.get_domain(domain)
+
+    def get_site_model(self, host: str) -> SiteInterface:
+        subdomain = self.url_parser.get_subdomain_from_host(host)
+        return self.domain_repository.get_site(subdomain)
+
+    def get_user_from_site(self, site: SiteInterface, domain: DomainInterface) -> UserInterface:
+        if domain == self.domain_repository.get_domain_model():
+            return self.user_repository.get_supersponsor()
+
+        if site:
+            return site.user
+
+        return None
+

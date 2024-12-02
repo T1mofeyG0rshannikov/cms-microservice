@@ -3,8 +3,8 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
-from application.common.url_parser import UrlParserInterface
-from application.services.domains.url_parser import get_url_parser
+from application.common.base_url_parser import UrlParserInterface
+from infrastructure.url_parser import get_url_parser
 from application.usecases.user_products.delete_user_product import DeleteUserProduct
 from domain.products.repository import ProductRepositoryInterface
 from domain.user_sessions.repository import UserSessionRepositoryInterface
@@ -44,7 +44,7 @@ class DeleteUserProductView(View):
 
         self.delete_user_product_intercator(product)
 
-        product_name = self.product_repository.get_product_by_id(product).name
+        product_name = self.product_repository.get_product_name_by_user_products_id(product)
 
         self.user_session_repository.create_user_action(
             adress=adress,

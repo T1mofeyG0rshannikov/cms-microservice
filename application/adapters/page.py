@@ -22,13 +22,7 @@ class BlockAdapter:
     def __init__(self, repository: ProductRepositoryInterface, page_repository: PageRepositoryInterface):
         self.repository = repository
         self.page_repository = page_repository
-
-    def get_styles(self, block: BaseBlockInterface) -> BlockStyles:
-        if not block:
-            return False
-
-        return block.get_styles()
-
+        
     def __call__(self, blocks_name: str) -> PageBlockInterface:
         block = self.page_repository.get_page_block(blocks_name)
 
@@ -45,6 +39,12 @@ class BlockAdapter:
             block.template.file = "blocks/" + block.template.file
 
         return PageBlockInterface(content=block, styles=self.get_styles(block))
+
+    def get_styles(self, block: BaseBlockInterface) -> BlockStyles:
+        if not block:
+            return False
+
+        return block.get_styles()
 
 
 class PageAdapter:

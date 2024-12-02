@@ -3,7 +3,7 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.views.generic import View
 
-from application.services.domains.url_parser import get_url_parser
+from infrastructure.url_parser import get_url_parser
 from application.texts.errors import UserErrors
 from application.usecases.auth.login import Login
 from application.usecases.auth.register import Register
@@ -48,7 +48,7 @@ class RegisterUser(BaseUserView, FormView):
                 fields=form.cleaned_data, host=request.META.get("HTTP_ORIGIN")
             ).token_to_set_password
         except UserWithPhoneAlreadyExists:
-            form.add_error("phone", UserErrors.username_with_phone_alredy_exists.value)
+            form.add_error("phone", UserErrors.user_with_phone_alredy_exists)
 
             user_activity_text = (
                 f'''Ошибка регистрации в форме "{ancor}"'''
@@ -65,7 +65,7 @@ class RegisterUser(BaseUserView, FormView):
             return JsonResponse({"errors": form.errors}, status=400)
 
         except UserWithEmailAlreadyExists:
-            form.add_error("email", UserErrors.username_with_email_alredy_exists.value)
+            form.add_error("email", UserErrors.user_with_email_alredy_exists)
 
             user_activity_text = (
                 f'''Ошибка регистрации в форме "{ancor}"'''
@@ -98,7 +98,7 @@ class RegisterUser(BaseUserView, FormView):
 
             return JsonResponse({"token_to_set_password": token_to_set_password})
 
-        return JsonResponse({"errors": UserErrors.something_went_wrong.value}, status=400)
+        return JsonResponse({"errors": UserErrors.something_went_wrong}, status=400)
 
 
 class LoginView(BaseUserView, FormView):

@@ -7,6 +7,7 @@ from django.utils.timezone import now
 from domain.user_sessions.repository import UserSessionRepositoryInterface
 from infrastructure.logging.tasks import create_user_activity_logs
 from infrastructure.logging.user_activity.config import get_user_active_settings
+from infrastructure.logging.user_activity.create_json_logs import create_user_log
 from infrastructure.persistence.repositories.user_session_repository import (
     get_user_session_repository,
 )
@@ -14,44 +15,19 @@ from infrastructure.persistence.sessions.user_activity_service import (
     UserActivitySessionService,
 )
 from infrastructure.requests.service import RequestService
+from web.site_statistics.base_session_middleware import BaseSessionMiddleware
 
 
-def create_user_log(session_id, adress, text, time=now()):
-    return {"adress": adress, "time": time, "session_id": session_id, "text": text}
-
-
-class UserActivityMiddleware:
-    user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
+class UserActivityMiddleware(BaseSessionMiddleware):
     logs = []
     logs_array_length = 5
     cookie_name = settings.USER_ACTIVITY_COOKIE_NAME
 
-    def __init__(self, get_response):
+    def __init__(self, get_response) -> None:
         self.get_response = get_response
         self.exclude_urls = get_user_active_settings().exclude_urls
         self.enabled_adresses = get_user_active_settings().enable_adresses
         self.disable_user_session_urls_to_logg = get_user_active_settings().disable_user_session_urls_to_logg
-
-    def is_disable_url_to_log(self, path: str) -> bool:
-        for url in self.disable_user_session_urls_to_logg:
-            if url in path:
-                return True
-
-        return False
-
-    def is_enable_url_to_log(self, path: str) -> bool:
-        for url in self.exclude_urls:
-            if url in path:
-                return False
-
-        return True
-
-    def is_enable_adress_to_log(self, path: str) -> bool:
-        for enable_adress in self.enabled_adresses:
-            if enable_adress in path:
-                return True
-
-        return False
 
     def __call__(self, request: HttpRequest):
         if request.searcher:
@@ -65,12 +41,11 @@ class UserActivityMiddleware:
             return self.get_response(request)
 
         ban_limit = self.user_session_repository.get_ban_limit()
-        raw_session = self.user_session_repository.get_raw_session(request.raw_session.id)
+        raw_session = request.raw_session
 
         if raw_session.ban_rate < ban_limit:
             user_activity_service = UserActivitySessionService(RequestService(request), get_user_session_repository())
 
-            path = request.get_full_path()
             site = request.raw_session.site
             page_adress = site + path
 
@@ -89,6 +64,7 @@ class UserActivityMiddleware:
                     user_id=user_id,
                     device=request.user_agent.is_mobile,
                     utm_source=request.GET.get("utm_source"),
+                    session_id=raw_session.id
                 )
 
                 session_id = self.user_session_repository.create_user_session(**session_data.__dict__).id
@@ -103,12 +79,14 @@ class UserActivityMiddleware:
                         device=request.user_agent.is_mobile,
                         utm_source=request.GET.get("utm_source"),
                         auth=auth,
+                        session_id=raw_session.id
                     )
                 else:
                     session_data = user_activity_service.get_initial_data(
                         user_id=user_id,
                         device=request.user_agent.is_mobile,
                         utm_source=request.GET.get("utm_source"),
+                        session_id=raw_session.id
                     )
 
                 if not self.user_session_repository.is_user_session_exists_by_id(session_id):
@@ -146,3 +124,24 @@ class UserActivityMiddleware:
             response.delete_cookie(self.cookie_name)
 
         return response
+    
+    def is_disable_url_to_log(self, path: str) -> bool:
+        for url in self.disable_user_session_urls_to_logg:
+            if url in path:
+                return True
+
+        return False
+
+    def is_enable_url_to_log(self, path: str) -> bool:
+        for url in self.exclude_urls:
+            if url in path:
+                return False
+
+        return True
+
+    def is_enable_adress_to_log(self, path: str) -> bool:
+        for enable_adress in self.enabled_adresses:
+            if enable_adress in path:
+                return True
+
+        return False

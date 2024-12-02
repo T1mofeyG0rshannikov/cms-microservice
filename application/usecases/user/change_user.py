@@ -21,10 +21,10 @@ class ChangeUser:
         user_with_email = self.repository.get_user_by_email(email)
 
         if user_with_email != user and user_with_email and user_with_email.email_is_confirmed:
-            raise UserWithEmailAlreadyExists(UserErrors.username_with_email_alredy_exists.value)
+            raise UserWithEmailAlreadyExists(UserErrors.user_with_email_alredy_exists)
 
         elif user_with_phone != user and user_with_phone and user_with_phone.phone_is_confirmed:
-            raise UserWithPhoneAlreadyExists(UserErrors.username_with_phone_alredy_exists.value)
+            raise UserWithPhoneAlreadyExists(UserErrors.user_with_phone_alredy_exists)
 
         self.repository.update_user(
             id=user.id,

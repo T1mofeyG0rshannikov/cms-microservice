@@ -2,8 +2,8 @@ import json
 
 from django.http import HttpRequest, HttpResponse, JsonResponse
 
-from application.common.url_parser import UrlParserInterface
-from application.services.domains.url_parser import get_url_parser
+from application.common.base_url_parser import UrlParserInterface
+from infrastructure.url_parser import get_url_parser
 from application.usecases.site.change_site import ChangeSite
 from application.usecases.site.change_socials import ChangeSocials
 from application.usecases.user.change_user import ChangeUser
@@ -49,7 +49,7 @@ class ChangeSiteView(FormView, APIUserRequired):
     user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
     increment_session_profile_action = IncrementSessionCount(get_user_session_repository(), "profile_actions_count")
 
-    def form_valid(self, request: HttpRequest, form):
+    def form_valid(self, request: HttpRequest, form: ChangeSiteForm):
         user = request.user
         adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
         site = self.domain_repository.get_user_site(user.id)

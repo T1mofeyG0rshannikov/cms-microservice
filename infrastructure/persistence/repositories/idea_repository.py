@@ -28,11 +28,11 @@ class IdeaRepository(IdeaRepositoryInterface):
         except Idea.DoesNotExist:
             return None
 
-    def get_ideas(self, category=None, sorted_by=None, status=None, user=None) -> list[IdeaInterface]:
+    def get_ideas(self, category=None, sorted_by=None, status=None, user_id: int=None) -> list[IdeaInterface]:
         filters = Q()
 
-        if user:
-            filters &= Q(user=user)
+        if user_id:
+            filters &= Q(user_id=user_id)
 
         if category:
             filters &= Q(category=category)

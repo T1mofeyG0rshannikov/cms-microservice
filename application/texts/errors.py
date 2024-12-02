@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class Errors(str, Enum):
+class Errors(StrEnum):
     incorrect_file_name = "Неккоректное название файла"
     block_with_name_already_exist = "Уже есть блок, привязанный к этому имени"
     template_doesnt_exist = "Нет такого html файла"
@@ -11,11 +11,12 @@ class Errors(str, Enum):
     to_large_file = "Изображение не более 200Kb"
     wrong_image_format = "Используйте изображения в PNG или GIF формате"
     to_large_image_size = "Максимальный размер логотипа 500x200px"
+    disallowed_host = "Запрещенный домен"
 
 
-class UserErrors(str, Enum):
-    username_with_phone_alredy_exists = "Пользователь с таким телефоном уже существует"
-    username_with_email_alredy_exists = "Пользователь с такой почтой уже существует"
+class UserErrors(StrEnum):
+    user_with_phone_alredy_exists = "Пользователь с таким телефоном уже существует"
+    user_with_email_alredy_exists = "Пользователь с такой почтой уже существует"
     incorrect_phone = "Неверный номер телефона"
     incorrect_login = "Неверный логин"
     incorrect_password = "Неверный пароль"

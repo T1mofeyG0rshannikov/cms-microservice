@@ -12,6 +12,9 @@ class BaseBlockInterface:
     name: str
     template: TemplateInterface
     ancor: str | None
+    
+    def get_styles():
+        pass
 
 
 @dataclass

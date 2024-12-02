@@ -6,6 +6,7 @@ from domain.user.user import UserInterface
 
 @dataclass
 class IdeaInterface:
+    id: int
     user: UserInterface
     category: str
 
@@ -15,3 +16,5 @@ class IdeaInterface:
     title: str
     description: str
     admin_answer: str
+    
+    user_id: int

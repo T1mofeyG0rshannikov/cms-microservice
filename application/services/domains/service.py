@@ -1,6 +1,6 @@
-from application.common.url_parser import UrlParserInterface
-from application.services.domains.url_parser import get_url_parser
-from domain.domains.domain import SiteInterface
+from application.common.base_url_parser import UrlParserInterface
+from domain.domains.site import DomainInterface, SiteInterface
+from infrastructure.url_parser import get_url_parser
 from domain.domains.repository import DomainRepositoryInterface
 from domain.domains.service import DomainServiceInterface
 from domain.page_blocks.settings_repository import SettingsRepositoryInterface
@@ -19,7 +19,7 @@ class DomainService(DomainServiceInterface):
         repository: DomainRepositoryInterface,
         url_parser: UrlParserInterface,
         settings_repository: SettingsRepositoryInterface,
-    ):
+    ) -> None:
         self.repository = repository
         self.url_parser = url_parser
         self.settings_repository = settings_repository
@@ -54,13 +54,10 @@ class DomainService(DomainServiceInterface):
     def get_partners_domain_string(self) -> str:
         return self.repository.get_partners_domain_string()
 
-    def get_partner_domain_model(self):
+    def get_partner_domain_model(self) -> DomainInterface:
         return self.repository.get_partner_domain_model()
 
-    def get_domain_model_by_id(self, id: int):
-        return self.repository.get_domain_model_by_id(id)
-
-    def get_domain_model(self):
+    def get_domain_model(self) -> DomainInterface:
         return self.repository.get_domain_model()
 
     def get_register_on_site(self, user: UserInterface) -> str:

@@ -60,10 +60,10 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
         context = self.get_context(request)
 
         level = request.GET.get("level")
-        sorted_by = request.GET.get("sorted_by")
+        sorted_by = request.GET.get("sorted_by", "created_at")
 
         referrals = self.referral_service.get_referrals(level=level, user_id=request.user.id, sorted_by=sorted_by)
-
+        
         pagination = Pagination(request)
 
         referrals = pagination.paginate(referrals, "referrals", ReferralsSerializer)

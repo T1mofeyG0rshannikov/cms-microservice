@@ -9,6 +9,7 @@ class UserActivityDTO:
     start_time: datetime
     site: str
     device: bool
+    session_id: int
     banks_count: int = 0
     auth: str = None
     user_id: int = None

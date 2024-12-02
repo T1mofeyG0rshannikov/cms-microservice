@@ -14,14 +14,11 @@ class UserService(UserServiceInterface):
         user2 = self.repository.get_user_by_phone(login)
 
         if not user1 and not user2:
-            raise UserDoesNotExist(UserErrors.incorrect_login.value)
+            raise UserDoesNotExist(UserErrors.incorrect_login)
 
-        if user1:
-            user = user1
-        if user2:
-            user = user2
+        user = user1 if user1 else user2
 
         if not user.check_password(password):
-            raise IncorrectPassword("Неверный пароль")
+            raise IncorrectPassword(UserErrors.incorrect_password)
 
         return user

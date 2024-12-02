@@ -8,13 +8,13 @@ class UserActivitySessionService:
         self.request_service = request_service
         self.user_session_repository = user_session_repository
 
-    def get_initial_data(self, user_id, device, utm_source, auth=None):
+    def get_initial_data(self, session_id: int, user_id: int = None, device: str = None, utm_source: str = None, auth: str = None):
         ip = self.request_service.get_client_ip()
 
         if not auth:
             auth = "login" if user_id else None
 
-        user_session_data = UserActivityDTO(
+        return UserActivityDTO(
             ip=ip,
             start_time=now().isoformat(),
             site=self.request_service.get_host(),
@@ -22,6 +22,5 @@ class UserActivitySessionService:
             user_id=user_id,
             utm_source=utm_source,
             auth=auth,
+            session_id=session_id
         )
-
-        return user_session_data

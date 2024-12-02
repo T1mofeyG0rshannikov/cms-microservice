@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from domain.domains.domain import DomainInterface, SiteInterface
+from domain.domains.site import DomainInterface, SiteInterface
 
 
 @dataclass
@@ -8,6 +8,7 @@ class UserInterface:
     id: int
     username: str
     second_name: str
+    full_name: str
 
     phone: str
     phone_is_confirmed: bool
@@ -22,3 +23,7 @@ class UserInterface:
     register_on_domain: DomainInterface | None
 
     is_superuser: bool
+    profile_picture: str
+    
+    def check_password(self, password: str):
+        pass

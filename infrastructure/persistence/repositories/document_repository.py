@@ -1,4 +1,4 @@
-from domain.materials.document import DocumentInterface
+from domain.materials.document import DocumentInterface, DocumentPatternInterface
 from domain.materials.repository import DocumentRepositoryInterface
 from infrastructure.persistence.models.materials import Document, DocumentFormatPattern
 
@@ -10,7 +10,7 @@ class DocumentRepository(DocumentRepositoryInterface):
         except Document.DoesNotExist:
             return None
 
-    def get_document_patterns(self, document_slug: str):
+    def get_document_patterns(self, document_slug: str) -> list[DocumentPatternInterface]:
         return DocumentFormatPattern.objects.filter(document__slug=document_slug)
 
     def get_documents(self) -> list[DocumentInterface]:

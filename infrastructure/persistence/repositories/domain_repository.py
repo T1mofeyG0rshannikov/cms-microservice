@@ -1,13 +1,16 @@
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
-
-from domain.domains.domain import DomainInterface, SiteInterface
 from domain.domains.exceptions import SiteAdressExists
 from domain.domains.repository import DomainRepositoryInterface
+from domain.domains.site import DomainInterface, SiteInterface
 from infrastructure.persistence.models.settings import Domain
 from infrastructure.persistence.models.user.site import Site
 
 
 class DomainRepository(DomainRepositoryInterface):
+    @classmethod
+    def get_partners_domain_string(self) -> str:
+        return Domain.objects.values_list("domain").filter(is_partners=True).first()[0]
+
     def get_site(self, subdomain: str) -> SiteInterface:
         try:
             return Site.objects.get(subdomain__iexact=subdomain)
@@ -26,22 +29,12 @@ class DomainRepository(DomainRepositoryInterface):
         except (OperationalError, ProgrammingError):
             return None
 
-    @classmethod
-    def get_partners_domain_string(self) -> str:
-        return Domain.objects.values_list("domain").filter(is_partners=True).first()[0]
-
     def get_partner_domain_model(self) -> DomainInterface:
         return Domain.objects.filter(is_partners=True).first()
 
     def get_domain(self, domain: str) -> DomainInterface:
         if Domain.objects.filter(domain=domain).exists():
             return Domain.objects.get(domain=domain)
-
-    def get_domain_model_by_id(self, id: int) -> DomainInterface:
-        if Domain.objects.filter(id=id).exists():
-            return Domain.objects.get(id=id)
-
-        return None
 
     def get_domain_model(self) -> DomainInterface:
         try:

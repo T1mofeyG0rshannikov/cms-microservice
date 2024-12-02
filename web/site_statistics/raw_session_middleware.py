@@ -4,46 +4,21 @@ from django.conf import settings
 from django.http import HttpRequest
 from django.utils.timezone import now
 
-from application.common.url_parser import UrlParserInterface
-from application.services.domains.url_parser import get_url_parser
 from application.sessions.dto import RawSessionDTO
-from domain.user_sessions.repository import UserSessionRepositoryInterface
 from infrastructure.admin.admin_settings import get_admin_settings
 from infrastructure.logging.tasks import create_raw_logs
-from infrastructure.persistence.models.site_statistics import PenaltyLog, SessionAction
-from infrastructure.persistence.repositories.user_session_repository import (
-    get_user_session_repository,
-)
+from infrastructure.logging.user_activity.create_json_logs import create_raw_log
 from infrastructure.persistence.sessions.service import RawSessionService
 from infrastructure.requests.service import get_request_service
+from web.site_statistics.base_session_middleware import BaseSessionMiddleware
 
 
-def create_raw_log(
-    session_id: int, page_adress: str, path: str, time=now(), url_parser: UrlParserInterface = get_url_parser()
-) -> SessionAction:
-    is_page = None
-    is_source = None
-
-    is_page = False if url_parser.is_source(path) else True
-    is_source = not is_page
-
-    return {
-        "adress": page_adress,
-        "time": time,
-        "is_page": is_page,
-        "is_source": is_source,
-        "session_id": session_id,
-    }
-
-
-class RawSessionMiddleware:
-    url_parser: UrlParserInterface = get_url_parser()
-    user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
+class RawSessionMiddleware(BaseSessionMiddleware):
     logs_array_length = 100
     logs = []
     cookie_name = settings.RAW_SESSION_COOKIE_NAME
 
-    def __init__(self, get_response):
+    def __init__(self, get_response) -> None:
         self.get_response = get_response
 
     def __call__(self, request: HttpRequest):
@@ -59,7 +34,6 @@ class RawSessionMiddleware:
             request_service, self.user_session_repository, self.url_parser, get_admin_settings()
         )
 
-        path = request.get_full_path()
         site = request.get_host()
         page_adress = site + path
         expires = datetime.utcnow() + timedelta(days=365 * 10)
@@ -77,7 +51,6 @@ class RawSessionMiddleware:
             session_data = raw_session_service.check_headers(
                 RawSessionDTO.from_dict(session_db.__dict__),
                 request_service.get_all_headers(),
-                session_db,
             )
 
             self.user_session_repository.update_raw_session(
@@ -95,7 +68,6 @@ class RawSessionMiddleware:
             session_data = raw_session_service.check_headers(
                 RawSessionDTO.from_dict(session_db.__dict__),
                 request_service.get_all_headers(),
-                session_db,
             )
 
             self.user_session_repository.update_raw_session(
@@ -111,16 +83,7 @@ class RawSessionMiddleware:
         if session_data.show_capcha:
             if not self.url_parser.is_source(path) and "submit-capcha" not in path:
                 session_data.ban_rate += reject_capcha_penalty
-                PenaltyLog.objects.create(
-                    session_id=session_id,
-                    text=f"Отказ от капчи, {reject_capcha_penalty}, {path}",
-                )
-
-        self.user_session_repository.update_raw_session(
-            session_id,
-            hacking=session_data.hacking,
-            ban_rate=session_data.ban_rate,
-        )
+                self.penalty_logger(session_id, f"Отказ от капчи, {reject_capcha_penalty}, {path}")
 
         session_db = self.user_session_repository.get_raw_session(session_id)
 

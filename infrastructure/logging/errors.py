@@ -1,21 +1,12 @@
 from domain.logging.error import ErrorLogRepositoryInterface
-from infrastructure.email_services.work_email_service.context_processor.context_processor import (
-    get_work_email_context_processor,
-)
 from infrastructure.email_services.work_email_service.email_service import (
     get_work_email_service,
 )
 from infrastructure.email_services.work_email_service.email_service_interface import (
     WorkEmailServiceInterface,
 )
-from infrastructure.email_services.work_email_service.template_generator.template_generator import (
-    get_work_email_template_generator,
-)
 from infrastructure.persistence.repositories.errors_repository import (
     get_errors_repository,
-)
-from infrastructure.persistence.repositories.system_repository import (
-    get_system_repository,
 )
 
 

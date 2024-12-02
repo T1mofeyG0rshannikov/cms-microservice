@@ -12,7 +12,7 @@ class SearcherService:
         self.request_service = request_service
         self.user_session_repository = user_session_repository
 
-    def get_initial_searcher(self):
+    def get_initial_searcher(self) -> SearcherDTO:
         return SearcherDTO(
             ip=self.request_service.get_client_ip(),
             start_time=now().isoformat(),
@@ -22,7 +22,7 @@ class SearcherService:
 
     def is_searcher(self) -> bool:
         searchers = [
-            searcher.strip() for searcher in self.user_session_repository.get_session_filters().searchers.split(",")
+            searcher.strip() for searcher in self.user_session_repository.get_searchers().split(",")
         ]
         user_agent = self.request_service.get_all_headers()["HTTP_USER_AGENT"]
 

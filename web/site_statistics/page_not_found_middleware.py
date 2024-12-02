@@ -1,68 +1,57 @@
 from django.http import HttpRequest
 from rest_framework.renderers import JSONRenderer
 
-from application.common.url_parser import UrlParserInterface
-from application.services.domains.url_parser import get_url_parser
 from application.sessions.dto import RawSessionDTO
-from domain.user_sessions.repository import UserSessionRepositoryInterface
 from infrastructure.admin.admin_settings import get_admin_settings
-from infrastructure.persistence.models.site_statistics import PenaltyLog
-from infrastructure.persistence.repositories.user_session_repository import (
-    get_user_session_repository,
-)
 from infrastructure.persistence.sessions.service import RawSessionService
 from infrastructure.requests.service import get_request_service
+from web.site_statistics.base_session_middleware import BaseSessionMiddleware
 from web.site_statistics.views import CapchaView
 
 
-class PageNotFoundMiddleware:
-    user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
-    url_parser: UrlParserInterface = get_url_parser()
-
-    def __init__(self, get_response):
+class PageNotFoundMiddleware(BaseSessionMiddleware):
+    def __init__(self, get_response) -> None:
         self.get_response = get_response
 
     def __call__(self, request: HttpRequest):
+        response = self.get_response(request)
         if request.searcher:
-            return self.get_response(request)
+            return response
 
         path = request.get_full_path()
         if "get-user-info" in path:
-            return self.get_response(request)
+            return response
 
-        response = self.get_response(request)
         if response.status_code == 404 and not self.url_parser.is_source(request.path):
             session_id = request.raw_session.id
             page_not_found_penalty = self.user_session_repository.get_page_not_found_penalty()
             self.user_session_repository.change_ban_rate(session_id, page_not_found_penalty)
-            PenaltyLog.objects.create(
-                session_id=session_id,
-                text=f"Отказ от капчи, {page_not_found_penalty}, {path}",
-            )
+            self.penalty_logger(session_id, f"Отказ от капчи, {page_not_found_penalty}, {path}")
 
         request_service = get_request_service(request)
         raw_session_service = RawSessionService(
             request_service, self.user_session_repository, self.url_parser, get_admin_settings()
         )
 
-        path = request.get_full_path()
         raw_session = self.user_session_repository.get_raw_session(request.raw_session.id)
 
         site = request.get_host()
         host = site.split(":")[0]
         port = site.split(":")[1] if ":" in site else None
 
-        session_data = raw_session_service.filter_sessions(
+        raw_session = raw_session_service.filter_sessions(
             RawSessionDTO.from_dict(raw_session.__dict__),
             host,
             path,
             port,
-            request_service.get_all_headers(),
             raw_session,
         )
-
-        raw_session = session_data
-        path = request.get_full_path()
+        
+        self.user_session_repository.update_raw_session(
+            raw_session.id,
+            hacking=raw_session.hacking,
+            ban_rate=raw_session.ban_rate,
+        )
 
         if (
             raw_session.show_capcha

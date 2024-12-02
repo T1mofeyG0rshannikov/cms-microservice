@@ -1,8 +1,9 @@
+from domain.account.socials_repository import SocialsRepositoryInterface
 from domain.user.exceptions import SocialChannelAlreadyExists
 
 
 class ChangeSocials:
-    def __init__(self, repository):
+    def __init__(self, repository: SocialsRepositoryInterface) -> None:
         self.repository = repository
 
     def __call__(self, site_id: int, user_social_networks):

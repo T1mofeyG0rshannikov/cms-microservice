@@ -1,4 +1,5 @@
 {% load static %}
+{% load replace %}
 
 <div class="popup-background document-popup">
     <div class="description-popup popup">
@@ -8,7 +9,14 @@
         </div>
 
         <div class="text">
-            <a>{{ document.text|safe }}</a>
+            <a>
+                {% replace document.text '[SITENAME]' site.name as text %}
+                {% replace text '[SITEADRESS]' site.adress as text %}
+                {% replace text '[SITECREATED]' site.created_at as text %}
+                {% replace text '[SITEOWNER]' site.owner as text %}
+                {% replace text '[SITECONTACTINFO]' site.contact_info as text %}
+                {{ text|safe }}
+            </a>
         </div>
     </div>
 </div>

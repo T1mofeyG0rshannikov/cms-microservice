@@ -27,7 +27,7 @@
     <select name="sort_by" id="sort_by" class="no-border">
         <option value="created_at" {% if request.GET.sorted_by == "created_at" %}selected{% endif %}>Дата регистрации</option>
         <option value="username" {% if request.GET.sorted_by == "username" %}selected{% endif %}>Имя пользователя</option>
-        <option value="-first_level_referrals" {% if request.GET.sorted_by == "-first_level_referrals" %}selected{% endif %}>Рефералы</option>
+        <option value="-count_level_1" {% if request.GET.sorted_by == "-count_level_1" %}selected{% endif %}>Рефералы</option>
     </select>
 </div>
 

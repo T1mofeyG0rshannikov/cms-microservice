@@ -1,11 +1,9 @@
-from typing import Any
-
 from django.http import HttpRequest, JsonResponse
 from django.shortcuts import render
 from django.views import View
 
-from application.common.url_parser import UrlParserInterface
-from application.services.domains.url_parser import get_url_parser
+from application.common.base_url_parser import UrlParserInterface
+from infrastructure.url_parser import get_url_parser
 from domain.products.repository import ProductRepositoryInterface
 from domain.user_sessions.repository import UserSessionRepositoryInterface
 from infrastructure.persistence.models.blocks.catalog_block import CatalogBlock
@@ -33,7 +31,7 @@ from web.template.template_loader.template_loader_interface import (
 )
 
 
-def slug_router(request, slug):
+def slug_router(request: HttpRequest, slug: str):
     if Page.objects.filter(url=slug).exists():
         return ShowPage.as_view()(request, page_url=slug)
 
@@ -52,9 +50,6 @@ class BaseTemplateLoadView(View):
     def get(self, request: HttpRequest):
         template = self.get_content(request)
         return JsonResponse({"content": template})
-
-    def get_context(request: HttpRequest) -> dict[Any, Any]:
-        raise NotImplementedError()
 
 
 class GetChangeUserFormTemplate(BaseTemplateLoadView):

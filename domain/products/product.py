@@ -35,6 +35,7 @@ class ProductInterface:
 
 @dataclass
 class OfferInterface:
+    id: int
     name: str
     status: str
     product: ProductInterface

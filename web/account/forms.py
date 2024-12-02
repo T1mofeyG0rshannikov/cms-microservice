@@ -48,17 +48,17 @@ class ChangeSiteForm(forms.Form):
         logo = self.cleaned_data["logo"]
         if logo:
             if logo.size > 204800:
-                self.add_error("logo", Errors.to_large_file.value)
+                self.add_error("logo", Errors.to_large_file)
 
             file_extension = logo.name.split(".")[-1].lower()
             if file_extension not in ["png", "gif"]:
-                self.add_error("logo", Errors.wrong_image_format.value)
+                self.add_error("logo", Errors.wrong_image_format)
 
             try:
                 img = Image.open(logo)
                 width, height = img.size
                 if height > 200 or width > 500:
-                    self.add_error("logo", Errors.to_large_image_size.value)
+                    self.add_error("logo", Errors.to_large_image_size)
             except Exception:
                 pass
 

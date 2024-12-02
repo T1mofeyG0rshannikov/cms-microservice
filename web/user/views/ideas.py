@@ -23,12 +23,12 @@ class LikeView(APIUserRequired):
     add_like_interactor = AddLike(get_idea_repository())
     remove_like_interactor = RemoveLike(get_idea_repository())
 
-    def post(self, request):
+    def post(self, request: HttpRequest):
         user = request.user
         idea = self.request.GET.get("idea")
 
         try:
-            self.add_like_interactor(idea, user)
+            self.add_like_interactor(idea, user.id)
         except (CantAddLike, LikeAlreadyExists) as e:
             return JsonResponse({"message": str(e)}, status=400)
         except IdeaNotFound as e:
@@ -36,7 +36,7 @@ class LikeView(APIUserRequired):
 
         return HttpResponse(status=201)
 
-    def delete(self, request):
+    def delete(self, request: HttpRequest):
         user = request.user
         idea = self.request.GET.get("idea")
 

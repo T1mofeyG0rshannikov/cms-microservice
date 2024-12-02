@@ -11,7 +11,7 @@ from infrastructure.persistence.repositories.settings_repository import (
 
 
 class GetSettings:
-    def __init__(self, settings_repository: SettingsRepositoryInterface, domain_repository: DomainRepositoryInterface):
+    def __init__(self, settings_repository: SettingsRepositoryInterface, domain_repository: DomainRepositoryInterface) -> None:
         self.settings_repository = settings_repository
         self.domain_repository = domain_repository
 

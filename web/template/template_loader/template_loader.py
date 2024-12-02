@@ -89,32 +89,6 @@ class TemplateLoader(TemplateLoaderInterface):
             app_name="account", template_name="popups/delete-popup", request=request, context=context
         )
 
-    def load_document_popup(
-        self,
-        request: HttpRequest,
-        domain_service: DomainServiceInterface = get_domain_service(),
-        get_settings_interactor: GetSettings = get_get_settings_interactor(),
-        document_formatter: FormatDocument = get_format_document(),
-    ):
-        document_slug = request.GET.get("document")
-
-        document = document_formatter(document_slug)
-        if document_slug == "aboutcompany":
-            settings = get_settings_interactor(
-                domain=request.domain if hasattr(request, "domain") else None,
-                subdomain=request.subdomain if hasattr(request, "subdomain") else None,
-            )
-
-            site = domain_service.get_site_from_url(request.build_absolute_uri())
-
-            context = {"settings": settings, "document": document, "site": site}
-            template_name = "document-popup-with-header"
-        else:
-            context = {"document": document}
-            template_name = "document-popup"
-
-        return self.load_template(app_name="materials", template_name=template_name, request=request, context=context)
-
     def load_create_idea_form(self, request: HttpRequest):
         context = self.context_processor.get_create_idea_form(request)
 

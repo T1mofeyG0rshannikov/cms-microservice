@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Iterable
 
 from django.db.models import Count, Q
 
@@ -19,7 +19,7 @@ from infrastructure.persistence.models.user.product import UserOffer, UserProduc
 
 
 class ProductRepository(ProductRepositoryInterface):
-    def get_enabled_products_to_create(self, user_id: int, organization_id: int) -> list[ProductInterface]:
+    def get_enabled_products_to_create(self, user_id: int, organization_id: int) -> Iterable[ProductInterface]:
         products = (
             Product.objects.select_related("category", "organization")
             .prefetch_related("user_products", "offers")
@@ -28,8 +28,7 @@ class ProductRepository(ProductRepositoryInterface):
         )
 
         if organization_id:
-            organization = Organization.objects.get(id=organization_id)
-            products = products.filter(organization=organization)
+            products = products.filter(organization_id=organization_id)
 
         return products
 
@@ -60,7 +59,7 @@ class ProductRepository(ProductRepositoryInterface):
             .order_by("product__organization__name")
         )
 
-    def get_published_types(self) -> list[ProductTypeInterface]:
+    def get_published_types(self) -> Iterable[ProductTypeInterface]:
         return ProductType.objects.annotate(
             count=Count(
                 "products",
@@ -84,13 +83,16 @@ class ProductRepository(ProductRepositoryInterface):
 
     def get_product_by_id(self, id: int) -> ProductInterface:
         return Product.objects.get(id=id)
+    
+    def get_product_name_by_user_products_id(self, user_product_id: int) -> str:
+        return Product.objects.filter(user_products__id=user_product_id).values("name").first()["name"]
 
     def update_or_create_user_product(self, **kwargs) -> None:
         UserProduct.objects.update_or_create(
-            user=kwargs.get("user"), product_id=kwargs.get("product_id"), defaults=kwargs
+            user_id=kwargs.get("user_id"), product_id=kwargs.get("product_id"), defaults=kwargs
         )
 
-    def get_product_offers(self, product_id: int) -> list[OfferInterface]:
+    def get_product_offers(self, product_id: int) -> Iterable[OfferInterface]:
         return Offer.objects.filter(product_id=product_id)
 
     def update_or_create_user_offer(self, **kwargs) -> None:
@@ -101,10 +103,10 @@ class ProductRepository(ProductRepositoryInterface):
     def delete_user_product(self, product_id: int) -> None:
         UserProduct.objects.filter(id=product_id).update(deleted=True)
 
-    def get_unprivate_catalog_offers(self, product_type_slug: str) -> list[OfferInterface]:
+    def get_unprivate_catalog_offers(self, product_type_slug: str) -> Iterable[OfferInterface]:
         return self.get_catalog_offers(product_type_slug).filter(product__private=False)
 
-    def get_catalog_offers(self, product_type_slug: str) -> list[OfferInterface]:
+    def get_catalog_offers(self, product_type_slug: str) -> Iterable[OfferInterface]:
         return (
             self.get_offers()
             .prefetch_related("catalog_product")
