@@ -3,6 +3,7 @@ from rest_framework.renderers import JSONRenderer
 
 from application.sessions.dto import RawSessionDTO
 from infrastructure.admin.admin_settings import get_admin_settings
+from infrastructure.persistence.models.site_statistics import SessionModel
 from infrastructure.persistence.sessions.service import RawSessionService
 from infrastructure.requests.service import get_request_service
 from web.site_statistics.base_session_middleware import BaseSessionMiddleware
@@ -14,26 +15,31 @@ class PageNotFoundMiddleware(BaseSessionMiddleware):
         self.get_response = get_response
 
     def __call__(self, request: HttpRequest):
-        response = self.get_response(request)
         if request.searcher:
-            return response
+            return self.get_response(request)
 
         path = request.get_full_path()
         if "get-user-info" in path:
-            return response
+            return self.get_response(request)
+
+        response = self.get_response(request)
 
         if response.status_code == 404 and not self.url_parser.is_source(request.path):
             session_id = request.raw_session.id
             page_not_found_penalty = self.user_session_repository.get_page_not_found_penalty()
             self.user_session_repository.change_ban_rate(session_id, page_not_found_penalty)
-            self.penalty_logger(session_id, f"Отказ от капчи, {page_not_found_penalty}, {path}")
+            self.penalty_logger(session_id, f"Несуществующий адрес, {page_not_found_penalty}, {path}")
 
         request_service = get_request_service(request)
         raw_session_service = RawSessionService(
-            request_service, self.user_session_repository, self.url_parser, get_admin_settings()
+            request_service, self.user_session_repository, self.url_parser, self.penalty_logger, get_admin_settings()
         )
 
-        raw_session = self.user_session_repository.get_raw_session(request.raw_session.id)
+        try:
+            session_id = request.raw_session.id
+            raw_session = self.user_session_repository.get_raw_session(session_id)
+        except SessionModel.DoesNotExist:
+            return self.get_response(request)
 
         site = request.get_host()
         host = site.split(":")[0]
@@ -44,9 +50,9 @@ class PageNotFoundMiddleware(BaseSessionMiddleware):
             host,
             path,
             port,
-            raw_session,
+            raw_session.id,
         )
-        
+
         self.user_session_repository.update_raw_session(
             raw_session.id,
             hacking=raw_session.hacking,
@@ -55,7 +61,7 @@ class PageNotFoundMiddleware(BaseSessionMiddleware):
 
         if (
             raw_session.show_capcha
-            and (not self.url_parser.is_source(path) and not "submit-capcha" in path)
+            and (not self.url_parser.is_source(path) and "submit-capcha" not in path)
             and not raw_session.hacking
         ):
             response = CapchaView.as_view()(request)

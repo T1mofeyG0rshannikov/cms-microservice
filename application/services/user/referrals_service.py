@@ -1,13 +1,13 @@
-from typing import Iterable
+from collections.abc import Iterable
+
 from domain.referrals.referral import ReferralInterface, UserInterface
 from domain.referrals.repository import ReferralRepositoryInterface
 from domain.referrals.service import ReferralServiceInterface
-from domain.user.exceptions import (
-    UserDoesNotExist,
-    UserIsNotReferral,
-)
+from domain.user.exceptions import UserDoesNotExist, UserIsNotReferral
 from domain.user.validator import UserValidatorInterface
-from infrastructure.persistence.repositories.referral_repository import get_referral_repository
+from infrastructure.persistence.repositories.referral_repository import (
+    get_referral_repository,
+)
 from infrastructure.user.validator import get_user_validator
 
 
@@ -34,18 +34,17 @@ class ReferralService(ReferralServiceInterface):
         if not referral:
             raise UserDoesNotExist(f"no user with id '{user_id}'")
 
-       
         referral.level = self.get_referral_level(referral, user)
-        
+
         return referral
 
-    def get_referrals(self, user_id: int, level:int=None, sorted_by="created_at") -> Iterable[ReferralInterface]:
+    def get_referrals(self, user_id: int, level: int = None, sorted_by="created_at") -> Iterable[ReferralInterface]:
         if sorted_by:
             sorted_by = self.validator.validate_sorted_by(sorted_by)
 
         if level:
             level = self.validator.validate_referral_level(level)
-          
+
         return self.repository.get_referrals(user_id, self.total_referal_level, level, sorted_by)
 
 

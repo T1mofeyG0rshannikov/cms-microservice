@@ -28,7 +28,6 @@ class ShowCatalogPage(SubdomainMixin):
         context |= UserFormsView.get_context_data()
 
         page = self.get_catalog_page_interactor(slug=kwargs["products_slug"])
-
         context["page"] = PageSerializer(page).data
 
         user_is_authenticated = self.request.user.is_authenticated

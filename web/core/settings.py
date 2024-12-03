@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "web.materials",
     "web.system",
     "django_user_agents",
+    # 'debug_toolbar',
 ]
 
 
@@ -76,6 +77,9 @@ CHANNEL_LAYERS = {
 AUTH_USER_MODEL = "user.User"
 
 MIDDLEWARE = [
+    "django_hosts.middleware.HostsRequestMiddleware",
+    "django_hosts.middleware.HostsResponseMiddleware",
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "web.user.middleware.JwtAuthMiddleware",
@@ -91,10 +95,12 @@ MIDDLEWARE = [
     "web.site_statistics.user_activity_middleware.UserActivityMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django_hosts.middleware.HostsRequestMiddleware",
-    "django_hosts.middleware.HostsResponseMiddleware",
     "web.admin.middleware.AdminMiddleware",
     "web.site_tests.middleware.ExceptionLoggingMiddleware",
+]
+
+INTERNAL_IPS = [
+    "127.0.0.1",
 ]
 
 ROOT_URLCONF = "web.core.urls"
@@ -350,8 +356,8 @@ logger.addHandler(handler)
 """
 
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': os.path.join(BASE_DIR, 'bankomag_cache'),
+    "default": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": os.path.join(BASE_DIR, "bankomag_cache"),
     }
 }

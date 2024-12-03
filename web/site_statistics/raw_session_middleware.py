@@ -31,7 +31,7 @@ class RawSessionMiddleware(BaseSessionMiddleware):
 
         request_service = get_request_service(request)
         raw_session_service = RawSessionService(
-            request_service, self.user_session_repository, self.url_parser, get_admin_settings()
+            request_service, self.user_session_repository, self.url_parser, self.penalty_logger, get_admin_settings()
         )
 
         site = request.get_host()
@@ -75,7 +75,6 @@ class RawSessionMiddleware(BaseSessionMiddleware):
                 ban_rate=session_data.ban_rate,
             )
 
-        # print(cookie, session_id)
         session_data = self.user_session_repository.get_raw_session(session_id)
 
         reject_capcha_penalty = self.user_session_repository.get_reject_capcha_penalty()
@@ -88,6 +87,7 @@ class RawSessionMiddleware(BaseSessionMiddleware):
         session_db = self.user_session_repository.get_raw_session(session_id)
 
         request.raw_session = session_db
+
         response = self.get_response(request)
         response.set_cookie(self.cookie_name, f"{session_id}/{session_id}", expires=expires)
 

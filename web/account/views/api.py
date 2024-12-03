@@ -19,9 +19,7 @@ class GetReferals(APIUserRequired):
     def get(self, request: HttpRequest):
         level = self.request.GET.get("level")
         sorted_by = self.request.GET.get("sorted_by", "created_at")
-        if not sorted_by:
-            sorted_by = "created_at"
-        print(sorted_by)
+
         try:
             referrals = self.referral_service.get_referrals(
                 level=level, user_id=self.request.user.id, sorted_by=sorted_by

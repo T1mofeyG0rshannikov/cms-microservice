@@ -1,5 +1,5 @@
+from collections.abc import Iterable
 from datetime import datetime, timedelta
-from typing import Iterable
 
 from django.db.models import Count, F
 from django.utils import timezone
@@ -26,12 +26,12 @@ class UserSessionRepository(UserSessionRepositoryInterface):
             time=time,
             session_id=session_id,
         )
-        
+
     def get_session_filter_headers(self) -> Iterable[SessionFIltersHeader]:
         filters = SessionFilters.objects.first()
         if filters:
             return filters.headers.all()
-        
+
         return []
 
     def create_session_action(
@@ -50,9 +50,11 @@ class UserSessionRepository(UserSessionRepositoryInterface):
 
     def get_session_filters(self):
         return SessionFilters.objects.first()
-    
+
     def get_searchers(self) -> str:
-        return SessionFilters.objects.values_list("searchers").first()[0]
+        session_filters = SessionFilters.objects.values_list("searchers").first()
+        if session_filters:
+            return session_filters[0]
 
     def is_raw_session_exists_by_id(self, id: int) -> bool:
         return SessionModel.objects.filter(id=id).exists()

@@ -21,9 +21,12 @@ class SearcherService:
         )
 
     def is_searcher(self) -> bool:
-        searchers = [
-            searcher.strip() for searcher in self.user_session_repository.get_searchers().split(",")
-        ]
+        searchers = self.user_session_repository.get_searchers()
+        if searchers:
+            searchers = [searcher.strip() for searcher in self.user_session_repository.get_searchers().split(",")]
+        else:
+            searchers = []
+
         user_agent = self.request_service.get_all_headers()["HTTP_USER_AGENT"]
 
         for searcher in searchers:

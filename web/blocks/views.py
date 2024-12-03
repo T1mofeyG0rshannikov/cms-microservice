@@ -39,6 +39,7 @@ class IndexPage(SubdomainMixin):
 
         page = self.page_repository.get_page_by_url(url=None)
         page = page_adapter(page)
+
         page = PageSerializer(page).data
 
         context["page"] = page

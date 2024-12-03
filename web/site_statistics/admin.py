@@ -100,8 +100,16 @@ class UserActivityAdmin(BaseSessionAdmin):
         "banks_count",
         "profile_actions_count",
         "last_action_tag",
-        "session"
+        "session_tag",
     ]
+
+    def session_tag(self, obj):
+        if obj.session:
+            return redirect_to_change_page_tag(obj.session, obj.session.ban_rate)
+
+        return "-"
+
+    session_tag.short_description = "сессия"
 
     def user_tag(self, obj):
         if not obj.user:

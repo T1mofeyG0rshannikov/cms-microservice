@@ -4,7 +4,6 @@ from django.conf import settings
 from django.http import HttpRequest, HttpResponse
 from django.utils.timezone import now
 
-from domain.user_sessions.repository import UserSessionRepositoryInterface
 from infrastructure.logging.tasks import create_user_activity_logs
 from infrastructure.logging.user_activity.config import get_user_active_settings
 from infrastructure.logging.user_activity.create_json_logs import create_user_log
@@ -41,6 +40,9 @@ class UserActivityMiddleware(BaseSessionMiddleware):
             return self.get_response(request)
 
         ban_limit = self.user_session_repository.get_ban_limit()
+        if not ban_limit:
+            ban_limit = 10**10
+
         raw_session = request.raw_session
 
         if raw_session.ban_rate < ban_limit:
@@ -54,8 +56,6 @@ class UserActivityMiddleware(BaseSessionMiddleware):
             expires = datetime.utcnow() + timedelta(days=365 * 10)
 
             cookie = request.COOKIES.get(self.cookie_name)
-            # print(cookie, type(cookie), "user")
-            # cookie = None
 
             session_id = None
 
@@ -64,7 +64,7 @@ class UserActivityMiddleware(BaseSessionMiddleware):
                     user_id=user_id,
                     device=request.user_agent.is_mobile,
                     utm_source=request.GET.get("utm_source"),
-                    session_id=raw_session.id
+                    session_id=raw_session.id,
                 )
 
                 session_id = self.user_session_repository.create_user_session(**session_data.__dict__).id
@@ -79,14 +79,14 @@ class UserActivityMiddleware(BaseSessionMiddleware):
                         device=request.user_agent.is_mobile,
                         utm_source=request.GET.get("utm_source"),
                         auth=auth,
-                        session_id=raw_session.id
+                        session_id=raw_session.id,
                     )
                 else:
                     session_data = user_activity_service.get_initial_data(
                         user_id=user_id,
                         device=request.user_agent.is_mobile,
                         utm_source=request.GET.get("utm_source"),
-                        session_id=raw_session.id
+                        session_id=raw_session.id,
                     )
 
                 if not self.user_session_repository.is_user_session_exists_by_id(session_id):
@@ -105,7 +105,6 @@ class UserActivityMiddleware(BaseSessionMiddleware):
                 self.logs.append(create_user_log(session_id, page_adress, "Перешёл на страницу", time=now()))
 
             if len(self.logs) > self.logs_array_length:
-                print(self.logs, "USER LOOGSSS")
                 create_user_activity_logs.delay(self.logs)
                 self.logs.clear()
 
@@ -124,7 +123,7 @@ class UserActivityMiddleware(BaseSessionMiddleware):
             response.delete_cookie(self.cookie_name)
 
         return response
-    
+
     def is_disable_url_to_log(self, path: str) -> bool:
         for url in self.disable_user_session_urls_to_logg:
             if url in path:

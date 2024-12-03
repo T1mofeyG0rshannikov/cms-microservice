@@ -88,7 +88,7 @@ class SessionModel(BaseSessionModel):
 
 
 class UserActivity(BaseSessionModel):
-    session = models.ForeignKey(SessionModel, on_delete=models.SET_NULL, null=True)
+    session = models.ForeignKey(SessionModel, on_delete=models.CASCADE)
     banks_count = models.PositiveIntegerField(verbose_name="Банки", default=0)
     profile_actions_count = models.PositiveIntegerField(verbose_name="ЛК", default=0)
     auth = models.CharField(null=True, max_length=20)

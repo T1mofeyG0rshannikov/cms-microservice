@@ -12,6 +12,12 @@ class BlockSerializer(serializers.Serializer):
     def get_content(self, block: PageBlockInterface):
         return block.content
 
+    def get_styles(self, block: PageBlockInterface):
+        print(block.styles)
+        if block.styles:
+            return CustomStylesSerializer(block.styles).data
+        return None
+
 
 class PageSerializer(serializers.ModelSerializer):
     blocks = BlockSerializer(many=True)
