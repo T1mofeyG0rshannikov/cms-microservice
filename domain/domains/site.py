@@ -16,13 +16,12 @@ class SiteInterface:
     owner: str
     contact_info: str
     created_at: str
-    user: 'UserInterface'
 
     advertising_channel: str = None
     use_default_settings: bool = None
     is_active: bool = None
     subdomain: str = None
-    
+    user: "UserInterface" = None
 
     @property
     def adress(self) -> str:

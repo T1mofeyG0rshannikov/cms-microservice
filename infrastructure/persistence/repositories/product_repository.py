@@ -1,4 +1,5 @@
-from typing import Any, Iterable
+from collections.abc import Iterable
+from typing import Any
 
 from django.db.models import Count, Q
 
@@ -83,7 +84,7 @@ class ProductRepository(ProductRepositoryInterface):
 
     def get_product_by_id(self, id: int) -> ProductInterface:
         return Product.objects.get(id=id)
-    
+
     def get_product_name_by_user_products_id(self, user_product_id: int) -> str:
         return Product.objects.filter(user_products__id=user_product_id).values("name").first()["name"]
 
@@ -125,6 +126,9 @@ class ProductRepository(ProductRepositoryInterface):
 
     def user_product_exists(self, user_id: int, product_id: int) -> bool:
         return UserProduct.objects.filter(user_id=user_id, product_id=product_id).exists()
+
+    def get_product_type_name(self, slug: str) -> str:
+        return ProductType.objects.values("name").get(slug=slug)["name"]
 
 
 def get_product_repository() -> ProductRepositoryInterface:

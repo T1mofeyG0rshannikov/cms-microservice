@@ -3,7 +3,7 @@ from django.http import HttpRequest
 from application.services.domains.service import get_domain_service
 from application.services.user.referrals_service import get_referral_service
 from application.usecases.ideas.get_ideas import GetIdeas
-from domain.domains.service import DomainServiceInterface
+from domain.domains.domain_service import DomainServiceInterface
 from domain.products.repository import ProductRepositoryInterface
 from domain.referrals.service import ReferralServiceInterface
 from infrastructure.persistence.models.catalog.products import Product
@@ -79,9 +79,9 @@ class TemplateContextProcessor(BaseContextProcessor, TemplateContextProcessorInt
         organization = request.GET.get("organization")
 
         context["organizations"] = self.products_repository.get_enabled_organizations(request.user.id)
-        
+
         self.products_repository.get_enabled_products_to_create(request.user.id, organization)
-            
+
         context["products"] = ProductsSerializer(
             self.products_repository.get_enabled_products_to_create(request.user.id, organization), many=True
         ).data

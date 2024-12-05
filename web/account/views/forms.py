@@ -3,11 +3,11 @@ import json
 from django.http import HttpRequest, HttpResponse, JsonResponse
 
 from application.common.base_url_parser import UrlParserInterface
-from infrastructure.url_parser import get_url_parser
 from application.usecases.site.change_site import ChangeSite
 from application.usecases.site.change_socials import ChangeSocials
 from application.usecases.user.change_user import ChangeUser
 from application.usecases.user_products.add_user_product import AddUserProduct
+from domain.domains.domain_repository import DomainRepositoryInterface
 from domain.domains.exceptions import SiteAdressExists
 from domain.products.repository import ProductRepositoryInterface
 from domain.user.exceptions import (
@@ -31,6 +31,7 @@ from infrastructure.persistence.repositories.user_session_repository import (
     get_user_session_repository,
 )
 from infrastructure.persistence.sessions.add_session_action import IncrementSessionCount
+from infrastructure.url_parser import get_url_parser
 from web.account.forms import (
     AddUserProductForm,
     ChangeSiteForm,
@@ -43,7 +44,7 @@ from web.user.views.base_user_view import APIUserRequired
 
 class ChangeSiteView(FormView, APIUserRequired):
     form_class = ChangeSiteForm
-    domain_repository = get_domain_repository()
+    domain_repository: DomainRepositoryInterface = get_domain_repository()
     change_site_interactor = ChangeSite(domain_repository)
     url_parser: UrlParserInterface = get_url_parser()
     user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
@@ -78,7 +79,7 @@ class ChangeSocialsView(FormView, APIUserRequired):
     form_class = ChangeSocialsForm
     change_socials_interactor = ChangeSocials(get_socials_repository())
 
-    def form_valid(self, request, form):
+    def form_valid(self, request: HttpRequest, form: ChangeSocialsForm):
         try:
             user_social_networks = json.loads(form.cleaned_data.get("socials"))
             self.change_socials_interactor(request.user.site.id, user_social_networks)
@@ -95,7 +96,7 @@ class ChangeUserView(FormView, APIUserRequired):
     url_parser: UrlParserInterface = get_url_parser()
     increment_session_profile_action = IncrementSessionCount(get_user_session_repository(), "profile_actions_count")
 
-    def form_valid(self, request: HttpRequest, form):
+    def form_valid(self, request: HttpRequest, form: ChangeUserForm):
         adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
 
         try:
@@ -132,7 +133,7 @@ class AddUserProductView(FormView, APIUserRequired):
     url_parser: UrlParserInterface = get_url_parser()
     increment_session_profile_action = IncrementSessionCount(get_user_session_repository(), "profile_actions_count")
 
-    def form_valid(self, request: HttpRequest, form):
+    def form_valid(self, request: HttpRequest, form: AddUserProductForm):
         user = request.user
 
         try:

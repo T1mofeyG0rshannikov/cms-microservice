@@ -3,7 +3,6 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.views.generic import View
 
-from infrastructure.url_parser import get_url_parser
 from application.texts.errors import UserErrors
 from application.usecases.auth.login import Login
 from application.usecases.auth.register import Register
@@ -18,6 +17,7 @@ from infrastructure.persistence.repositories.domain_repository import (
     get_domain_repository,
 )
 from infrastructure.persistence.repositories.user_repository import get_user_repository
+from infrastructure.url_parser import get_url_parser
 from infrastructure.user.validator import get_user_validator
 from web.common.views import FormView
 from web.user.forms import LoginForm, RegistrationForm, ResetPasswordForm
@@ -38,7 +38,7 @@ class RegisterUser(BaseUserView, FormView):
 
         return context
 
-    def form_valid(self, request: HttpRequest, form) -> JsonResponse:
+    def form_valid(self, request: HttpRequest, form: RegistrationForm) -> JsonResponse:
         adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
         ancor = request.POST.get("ancor")
         is_popup = request.POST.get("is_popup", "false") != "false"

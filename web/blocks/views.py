@@ -6,7 +6,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
-from application.adapters.page import PageAdapter, get_page_adapter
+from application.adapters.page_adapter import PageAdapter, get_page_adapter
 from application.services.pages_service import get_page_service
 from domain.page_blocks.page_repository import PageRepositoryInterface
 from domain.page_blocks.page_service_interface import PageServiceInterface

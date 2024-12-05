@@ -3,16 +3,6 @@ from typing import Any
 from django.http import HttpRequest
 from django.template import loader
 
-from application.services.domains.service import get_domain_service
-from application.usecases.formatters.format_document import (
-    FormatDocument,
-    get_format_document,
-)
-from application.usecases.public.get_settings import (
-    GetSettings,
-    get_get_settings_interactor,
-)
-from domain.domains.service import DomainServiceInterface
 from web.blocks.template_exist import is_template_exists
 from web.template.template_loader.tempate_context_processor.template_context_processor import (
     get_template_context_processor,
@@ -25,11 +15,11 @@ from .template_loader_interface import TemplateLoaderInterface
 
 
 class TemplateLoader(TemplateLoaderInterface):
-    def __init__(self, context_processor: TemplateContextProcessorInterface):
+    def __init__(self, context_processor: TemplateContextProcessorInterface) -> None:
         self.context_processor = context_processor
 
     @staticmethod
-    def load_template(app_name: str, template_name: str, request=None, context: dict[Any, Any] = None):
+    def load_template(app_name: str, template_name: str, request: HttpRequest = None, context: dict[Any, Any] = None):
         if is_template_exists(f"{app_name}/{template_name}.html"):
             return loader.render_to_string(f"{app_name}/{template_name}.html", context, request, None)
         return None

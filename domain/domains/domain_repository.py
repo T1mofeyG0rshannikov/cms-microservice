@@ -1,4 +1,5 @@
-from typing import Protocol, Iterable
+from collections.abc import Iterable
+from typing import Protocol
 
 from domain.domains.site import DomainInterface, SiteInterface
 
@@ -31,9 +32,12 @@ class DomainRepositoryInterface(Protocol):
 
     def site_adress_exists(self, site_id: int, site_url: str) -> bool:
         raise NotImplementedError
-    
+
     def get_random_site(self) -> SiteInterface:
         raise NotImplementedError
-    
+
     def get_domain_sites(self, domain: str) -> Iterable[SiteInterface]:
+        raise NotImplementedError
+
+    def get_user_site(self, user_id: int) -> SiteInterface:
         raise NotImplementedError

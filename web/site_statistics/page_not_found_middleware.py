@@ -1,10 +1,10 @@
 from django.http import HttpRequest
 from rest_framework.renderers import JSONRenderer
 
-from application.sessions.dto import RawSessionDTO
+from application.sessions.raw_session_service import RawSessionService
+from domain.user_sessions.session import SessionInterface
 from infrastructure.admin.admin_settings import get_admin_settings
 from infrastructure.persistence.models.site_statistics import SessionModel
-from infrastructure.persistence.sessions.service import RawSessionService
 from infrastructure.requests.service import get_request_service
 from web.site_statistics.base_session_middleware import BaseSessionMiddleware
 from web.site_statistics.views import CapchaView
@@ -46,7 +46,7 @@ class PageNotFoundMiddleware(BaseSessionMiddleware):
         port = site.split(":")[1] if ":" in site else None
 
         raw_session = raw_session_service.filter_sessions(
-            RawSessionDTO.from_dict(raw_session.__dict__),
+            SessionInterface.from_dict(raw_session.__dict__),
             host,
             path,
             port,

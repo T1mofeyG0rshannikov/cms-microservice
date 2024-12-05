@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from application.common.base_url_parser import UrlParserInterface
-from domain.domains.repository import DomainRepositoryInterface
+from domain.domains.domain_repository import DomainRepositoryInterface
 from domain.domains.site import DomainInterface, SiteInterface
 from domain.user.exceptions import (
     UserWithEmailAlreadyExists,
@@ -31,7 +31,6 @@ class Register:
         self.url_parser = url_parser
         self.jwt_processor = jwt_processor
 
-
     def __call__(self, fields: dict[str, Any], host: str) -> TokenToSetPasswordResponse:
         phone = fields.get("phone")
         email = fields.get("email")
@@ -59,7 +58,7 @@ class Register:
             return TokenToSetPasswordResponse(token_to_set_password=token_to_set_password)
 
         return None
-    
+
     def get_domain_model_from_request(self, host: str) -> DomainInterface:
         domain = self.url_parser.get_domain_from_host(host)
         return self.domain_repository.get_domain(domain)
@@ -76,4 +75,3 @@ class Register:
             return site.user
 
         return None
-

@@ -1,11 +1,7 @@
 from django.db import models
-from django.db.models.signals import post_save
 from django.utils import timezone
 
 from infrastructure.persistence.models.settings import Domain, UserFont
-from web.notifications.create_user_notification import create_user_notification
-from web.notifications.error import CantSendNotification
-from web.notifications.send_message import send_message_to_user
 
 
 class Site(models.Model):
@@ -41,23 +37,23 @@ class Site(models.Model):
     def __str__(self):
         return self.subdomain
 
-    def activate(self):
+    def activate(self) -> None:
         self.is_active = True
         self.online_from = timezone.now()
         self.save()
 
-    def deactivate(self):
+    def deactivate(self) -> None:
         self.is_active = False
         self.save()
 
     @property
-    def logo_size(self):
+    def logo_size(self) -> str:
         width = int(self.logo_width)
 
         return f"{width}x{self.logo_height}px"
 
     @property
-    def logo_height(self):
+    def logo_height(self) -> int:
         coeff = self.logo.height / self.logo.width
 
         width = int(self.logo_width)
@@ -65,20 +61,5 @@ class Site(models.Model):
         return int(width * coeff)
 
     @property
-    def width_percent(self):
+    def width_percent(self) -> int:
         return int((int(self.logo_width) / 260) * 100)
-
-
-def site_created_handler(sender, instance, created, *args, **kwargs):
-    if created:
-        if instance.user:
-            if not instance.user.test:
-                user_alert = create_user_notification(instance.user, "SITECREATED")
-
-                try:
-                    send_message_to_user(instance.user.id, user_alert)
-                except CantSendNotification:
-                    pass
-
-
-post_save.connect(site_created_handler, sender=Site)

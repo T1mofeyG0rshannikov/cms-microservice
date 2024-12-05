@@ -1,5 +1,9 @@
 from typing import Protocol
-from domain.page_blocks.site_settings import SiteLogoInterface, SiteSettingsInterface
+
+from domain.page_blocks.entities.site_settings import (
+    SiteLogoInterface,
+    SiteSettingsInterface,
+)
 
 
 class SettingsRepositoryInterface(Protocol):

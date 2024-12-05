@@ -38,7 +38,6 @@ class BaseSessionModel(models.Model):
     start_time = models.DateTimeField(verbose_name="Дата")
     site = models.CharField(max_length=50, null=True, verbose_name="Сайт")
     device = models.BooleanField(default=False)
-    utm_source = models.CharField(max_length=500, null=True)
 
     class Meta:
         abstract = True
@@ -77,6 +76,7 @@ class SessionModel(BaseSessionModel):
     hacking = models.BooleanField(default=False)
     show_capcha = models.BooleanField(default=False)
     checked_single_page = models.BooleanField(default=False)
+    utm_source = models.CharField(max_length=500, null=True)
 
     class Meta:
         app_label = "site_statistics"

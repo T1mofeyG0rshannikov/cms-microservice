@@ -1,12 +1,16 @@
 from django.db import models
 
+from domain.user.notifications.trigger_enum import TriggerNames
 from infrastructure.persistence.models.base_formater_patterns import (
     BaseFormatterPattern,
 )
+from infrastructure.persistence.models.user.user import User
 
 
 class Trigger(models.Model):
-    name = models.CharField(verbose_name="триггер", max_length=100)
+    name = models.CharField(
+        verbose_name="триггер", choices=[(name.value, name.value) for name in TriggerNames], max_length=100
+    )
 
     class Meta:
         app_label = "notifications"
@@ -48,7 +52,7 @@ class NotificationFormatPattern(BaseFormatterPattern):
 
 class UserNotification(models.Model):
     notification = models.ForeignKey(Notification, on_delete=models.CASCADE, verbose_name="уведомление")
-    user = models.ForeignKey("user.User", on_delete=models.CASCADE, verbose_name="пользователь")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="пользователь")
 
     date_created = models.DateTimeField(auto_now_add=True, verbose_name="дата создания", null=True)
 

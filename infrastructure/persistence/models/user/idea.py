@@ -4,11 +4,12 @@ from ckeditor.fields import RichTextField
 from django.db import models
 
 from infrastructure.files.file_storage import OverwriteStorage
+from infrastructure.persistence.models.user.user import User
 
 
 class Idea(models.Model):
     user = models.ForeignKey(
-        "user.User", verbose_name="Пользователь", related_name="ideas", on_delete=models.SET_NULL, null=True
+        User, verbose_name="Пользователь", related_name="ideas", on_delete=models.SET_NULL, null=True
     )
 
     CATEGORIES = [
@@ -50,8 +51,8 @@ class Idea(models.Model):
 
 
 class Like(models.Model):
-    user = models.ForeignKey("user.User", on_delete=models.SET_NULL, null=True)
-    idea = models.ForeignKey("user.Idea", related_name="likes", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    idea = models.ForeignKey(Idea, related_name="likes", on_delete=models.CASCADE)
 
     class Meta:
         app_label = "user"

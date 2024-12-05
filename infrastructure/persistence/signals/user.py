@@ -1,31 +1,46 @@
 from django.db.models.signals import post_save, pre_save
 
+from application.usecases.notifications.create_notification import (
+    CreateUserNotification,
+)
 from domain.email.exceptions import CantSendMailError
 from domain.user.exceptions import (
     SingleSuperSponsorExistError,
     UserWithEmailAlreadyExists,
     UserWithPhoneAlreadyExists,
 )
+from domain.user.notifications.error import CantSendNotification
+from domain.user.notifications.trigger_enum import TriggerNames
+from domain.user.user import UserInterface
 from infrastructure.email_services.email_service.email_service import get_email_service
 from infrastructure.email_services.email_service.email_service_interface import (
     EmailServiceInterface,
 )
 from infrastructure.persistence.models.user.user import User
-from web.notifications.create_user_notification import create_user_notification
-from web.notifications.error import CantSendNotification
+from infrastructure.persistence.repositories.notification_repository import (
+    get_notification_repository,
+)
 from web.notifications.send_message import send_message_to_user
+from web.notifications.serializers import UserNotificationSerializer
 
 
 def user_created_handler(
-    sender, instance, created, *args, email_service: EmailServiceInterface = get_email_service(), **kwargs
-):
+    sender,
+    instance: UserInterface,
+    created,
+    *args,
+    email_service: EmailServiceInterface = get_email_service(),
+    create_user_notification=CreateUserNotification(get_notification_repository()),
+    **kwargs,
+) -> None:
     if created and not instance.test:
         try:
             email_service.send_mail_to_confirm_email(instance)
         except CantSendMailError:
             pass
 
-        user_alert = create_user_notification(instance, "SIGNEDUP")
+        user_alert = create_user_notification(instance, TriggerNames.signedup)
+        user_alert = UserNotificationSerializer(user_alert).data
 
         try:
             send_message_to_user(instance.id, user_alert)
@@ -33,13 +48,19 @@ def user_created_handler(
             pass
 
 
-def user_verified_email_handler(sender, instance, *args, **kwargs):
+def user_verified_email_handler(
+    sender,
+    instance: UserInterface,
+    *args,
+    create_user_notification=CreateUserNotification(get_notification_repository()),
+    **kwargs,
+) -> None:
     if instance.id is None:
         pass
     else:
         previous = User.objects.get_user_by_id(id=instance.id)
         if not previous.email_is_confirmed and instance.email_is_confirmed:
-            user_alert = create_user_notification(instance, "EMAILVERIFIED")
+            user_alert = create_user_notification(instance, TriggerNames.emailverified)
             try:
                 send_message_to_user(instance.id, user_alert)
             except CantSendNotification:
@@ -47,8 +68,8 @@ def user_verified_email_handler(sender, instance, *args, **kwargs):
 
 
 def user_change_email_handler(
-    sender, instance, *args, email_service: EmailServiceInterface = get_email_service(), **kwargs
-):
+    sender, instance: UserInterface, *args, email_service: EmailServiceInterface = get_email_service(), **kwargs
+) -> None:
     if instance.id is None:
         pass
     else:
@@ -61,7 +82,7 @@ def user_change_email_handler(
                 pass
 
 
-def check_existing_user(sender, instance, *args, **kwargs):
+def check_existing_user(sender, instance: UserInterface, *args, **kwargs) -> None:
     user_by_email = User.objects.get_user_by_email(instance.email)
     if user_by_email:
         if instance.pk != user_by_email.pk:
@@ -73,7 +94,7 @@ def check_existing_user(sender, instance, *args, **kwargs):
             raise UserWithPhoneAlreadyExists(f"user with phone '{instance.phone}' already exists")
 
 
-def check_supersponsor(sender, instance, *args, **kwargs):
+def check_supersponsor(sender, instance: UserInterface, *args, **kwargs) -> None:
     supersponsor = User.objects.filter(supersponsor=True).first()
     if supersponsor:
         if supersponsor.pk == instance.pk:

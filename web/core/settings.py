@@ -58,7 +58,7 @@ INSTALLED_APPS = [
     "web.materials",
     "web.system",
     "django_user_agents",
-    # 'debug_toolbar',
+    "debug_toolbar",
 ]
 
 
@@ -79,7 +79,7 @@ AUTH_USER_MODEL = "user.User"
 MIDDLEWARE = [
     "django_hosts.middleware.HostsRequestMiddleware",
     "django_hosts.middleware.HostsResponseMiddleware",
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "web.user.middleware.JwtAuthMiddleware",

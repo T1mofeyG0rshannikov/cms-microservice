@@ -5,6 +5,7 @@ from domain.domains.site import DomainInterface, SiteInterface
 
 @dataclass
 class UserInterface:
+    pk: int
     id: int
     username: str
     second_name: str
@@ -24,6 +25,6 @@ class UserInterface:
 
     is_superuser: bool
     profile_picture: str
-    
+
     def check_password(self, password: str):
         pass

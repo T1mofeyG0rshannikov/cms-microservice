@@ -84,3 +84,9 @@ class UserSessionRepositoryInterface(Protocol):
 
     def get_reject_capcha_penalty(self) -> int:
         raise NotImplementedError
+
+    def get_success_capcha_increase(self) -> int:
+        raise NotImplementedError
+
+    def increment_user_session_field(self, session_id: int, session_field_name: str) -> None:
+        raise NotImplementedError

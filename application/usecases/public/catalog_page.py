@@ -1,66 +1,65 @@
-from typing import Any
-
-from application.adapters.page import PageAdapter, get_page_adapter
-from domain.page_blocks.base_block import PageBlockInterface
-from infrastructure.persistence.models.blocks.blocks import Cover
-from infrastructure.persistence.models.blocks.catalog_block import (
-    AdditionalCatalogBlock,
-    CatalogBlock,
-    MainPageCatalogBlock,
-    PromoCatalog,
+from application.adapters.page_adapter import PageAdapter, get_page_adapter
+from domain.page_blocks.entities.base_block import (
+    CatalogBlockInterface,
+    PageBlockInterface,
 )
-from infrastructure.persistence.models.catalog.blocks import CatalogPageTemplate
-from infrastructure.persistence.models.catalog.product_type import ProductType
+from domain.page_blocks.entities.page import PageInterface
+from domain.page_blocks.page_repository import PageRepositoryInterface
+from domain.products.repository import ProductRepositoryInterface
+from infrastructure.persistence.repositories.page_repository import get_page_repository
 from infrastructure.persistence.repositories.product_repository import (
     get_product_repository,
 )
 
 
 class GetCatalogPage:
-    def __init__(self, page_adapter: PageAdapter) -> None:
+    def __init__(
+        self,
+        page_adapter: PageAdapter,
+        page_repository: PageRepositoryInterface,
+        product_repository: ProductRepositoryInterface,
+    ) -> None:
         self.page_adapter = page_adapter
+        self.page_repository = page_repository
+        self.product_repository = product_repository
 
-    def __call__(self, slug: str):
-        page = CatalogPageTemplate.objects.prefetch_related("blocks").first()
+    def __call__(self, slug: str) -> PageInterface:
+        page = self.page_repository.get_catalog_page_template()
+        page = self.page_adapter(page)
 
-        page = self.set_catalog_block(page, slug)
-        page = self.set_catalog_cover(page, slug)
+        catalog = self.get_catalog_block(slug)
+        page = self.set_catalog_block(page, catalog)
+
+        cover = self.get_catalog_cover(slug)
+        page = self.set_catalog_block(page, cover)
         page = self.set_page_title(page, slug)
 
         return page
 
-    def set_catalog_block(self, page, slug: str):
-        page = self.page_adapter(page)
-        catalog = self.get_catalog_block(slug)
+    def set_catalog_block(self, page: PageInterface, block: PageBlockInterface) -> PageInterface:
+        for ind, page_block in enumerate(page.blocks):
+            if isinstance(page_block.content, type(block.content)):
+                page.blocks[ind] = block
 
-        print(page)
-        print(catalog)
-        for ind, block in enumerate(page.blocks):
-            if isinstance(block.content, CatalogBlock):
-                page.blocks[ind] = catalog
-        print(page)
         return page
 
-    def get_catalog_block(self, slug: str) -> PageBlockInterface:
-        return self.page_adapter.block_adapter(CatalogBlock.objects.get(product_type__slug=slug))
+    def get_catalog_block(self, slug: str) -> CatalogBlockInterface:
+        return self.page_adapter.block_adapter(self.page_repository.get_catalog_block(slug))
 
     def get_catalog_cover(self, slug: str) -> PageBlockInterface:
-        return self.page_adapter.block_adapter(Cover.objects.get(producttype__slug=slug))
+        return self.page_adapter.block_adapter(self.page_repository.get_catalog_cover(slug))
 
-    def set_catalog_cover(self, serialized_page, slug: str):
-        cover = self.get_catalog_cover(slug)
+    def set_page_title(self, page: PageInterface, slug: str) -> PageInterface:
+        page.title = self.product_repository.get_product_type_name(slug)
 
-        for ind, block in enumerate(serialized_page.blocks):
-            if isinstance(block.content, Cover):
-                serialized_page.blocks[ind] = cover
-
-        return serialized_page
-
-    def set_page_title(self, serialized_page, slug: str):
-        serialized_page.title = ProductType.objects.values("name").get(slug=slug)["name"]
-
-        return serialized_page
+        return page
 
 
-def get_catalog_page(page_adapter: PageAdapter = get_page_adapter()) -> GetCatalogPage:
-    return GetCatalogPage(page_adapter=page_adapter)
+def get_catalog_page(
+    page_adapter: PageAdapter = get_page_adapter(),
+    page_repository: PageRepositoryInterface = get_page_repository(),
+    product_repository: ProductRepositoryInterface = get_product_repository(),
+) -> GetCatalogPage:
+    return GetCatalogPage(
+        page_adapter=page_adapter, page_repository=page_repository, product_repository=product_repository
+    )

@@ -4,7 +4,7 @@ import unidecode
 from russian_names import RussianNames
 
 from application.services.domains.service import get_domain_service
-from domain.domains.service import DomainServiceInterface
+from domain.domains.domain_service import DomainServiceInterface
 from domain.user.repository import UserRepositoryInterface
 from infrastructure.persistence.models.user.site import Site
 from infrastructure.persistence.repositories.user_repository import get_user_repository

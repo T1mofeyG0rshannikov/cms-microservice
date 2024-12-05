@@ -7,7 +7,7 @@ from application.usecases.public.get_settings import (
     GetSettings,
     get_get_settings_interactor,
 )
-from domain.domains.service import DomainServiceInterface
+from domain.domains.domain_service import DomainServiceInterface
 from domain.materials.repository import DocumentRepositoryInterface
 from infrastructure.persistence.repositories.document_repository import (
     get_document_repository,

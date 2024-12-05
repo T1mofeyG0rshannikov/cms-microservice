@@ -1,6 +1,7 @@
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
+
+from domain.domains.domain_repository import DomainRepositoryInterface
 from domain.domains.exceptions import SiteAdressExists
-from domain.domains.repository import DomainRepositoryInterface
 from domain.domains.site import DomainInterface, SiteInterface
 from infrastructure.persistence.models.settings import Domain
 from infrastructure.persistence.models.user.site import Site

@@ -25,7 +25,9 @@ function closeForm(form){
 }
 
 function closeUserNav(){
-    document.querySelector(".user-nav").style.display = "none";
+    if (document.querySelector(".user-nav")){
+        document.querySelector(".user-nav").style.display = "none";
+    }
 
     setTimeout(() => $(document.querySelector(".user-nav")).removeAttr("style"), 1000);
 }

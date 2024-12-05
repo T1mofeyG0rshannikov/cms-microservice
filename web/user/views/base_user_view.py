@@ -7,14 +7,16 @@ from django.views.generic import View
 
 from application.common.base_url_parser import UrlParserInterface
 from application.services.domains.service import get_domain_service
-from infrastructure.url_parser import get_url_parser
-from domain.domains.service import DomainServiceInterface
+from domain.domains.domain_service import DomainServiceInterface
+from domain.user.user import UserInterface
 from domain.user_sessions.repository import UserSessionRepositoryInterface
 from infrastructure.auth.jwt_processor import get_jwt_processor
 from infrastructure.auth.jwt_processor_interface import JwtProcessorInterface
 from infrastructure.persistence.repositories.user_session_repository import (
     get_user_session_repository,
 )
+from infrastructure.url_parser import get_url_parser
+from web.common.forms import FeedbackForm
 from web.domens.views.mixins import SubdomainMixin
 from web.user.forms import LoginForm, RegistrationForm, ResetPasswordForm
 
@@ -26,7 +28,7 @@ class BaseUserView(SubdomainMixin):
     url_parser: UrlParserInterface = get_url_parser()
     user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
 
-    def login(self, user) -> None:
+    def login(self, user: UserInterface) -> None:
         self.request.user = user
         user = authenticate(self.request)
         login(self.request, user)
@@ -63,12 +65,12 @@ class MyLoginRequiredMixin(LoginRequiredMixin):
 class UserFormsView:
     @classmethod
     def get_context_data(self) -> dict[str, Any]:
-        context = {
+        return {
             "login_form": LoginForm(),
             "register_form": RegistrationForm(),
             "reset_password_form": ResetPasswordForm(),
+            "feedback_form": FeedbackForm(),
         }
-        return context
 
 
 class APIUserRequired(View):

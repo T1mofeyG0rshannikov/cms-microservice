@@ -16,7 +16,7 @@ from web.user.views.base_user_view import APIUserRequired
 class GetReferals(APIUserRequired):
     referral_service: ReferralServiceInterface = get_referral_service()
 
-    def get(self, request: HttpRequest):
+    def get(self, request: HttpRequest) -> JsonResponse:
         level = self.request.GET.get("level")
         sorted_by = self.request.GET.get("sorted_by", "created_at")
 
@@ -29,13 +29,11 @@ class GetReferals(APIUserRequired):
 
         pagination = Pagination(request)
 
-        referrals = pagination.paginate(referrals, "referrals", ReferralsSerializer)
-
-        return JsonResponse(referrals)
+        return JsonResponse(pagination.paginate(referrals, "referrals", ReferralsSerializer))
 
 
 class GetReferral(View):
-    def get(self, request, user_id: int):
+    def get(self, request: HttpRequest, user_id: int):
         try:
             referral = User.objects.get(id=user_id)
         except User.DoesNotExist:

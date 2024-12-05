@@ -2,7 +2,7 @@ from django.http import HttpRequest, HttpResponseNotFound
 from rest_framework.renderers import JSONRenderer
 
 from application.services.domains.service import get_domain_service
-from domain.domains.service import DomainServiceInterface
+from domain.domains.domain_service import DomainServiceInterface
 from infrastructure.admin.admin_settings import get_admin_settings
 from web.admin.views import JoomlaAdminPage
 

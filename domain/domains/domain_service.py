@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from domain.domains.site import DomainInterface
+from domain.domains.site import DomainInterface, SiteInterface
 
 
 class DomainServiceInterface(Protocol):
@@ -23,4 +23,10 @@ class DomainServiceInterface(Protocol):
         raise NotImplementedError
 
     def get_site_name(self) -> str | None:
+        raise NotImplementedError
+
+    def get_site_from_url(self, url: str) -> SiteInterface:
+        raise NotImplementedError
+
+    def get_site_by_name(self, name: str) -> SiteInterface:
         raise NotImplementedError

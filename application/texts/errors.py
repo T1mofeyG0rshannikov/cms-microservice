@@ -12,6 +12,7 @@ class Errors(StrEnum):
     wrong_image_format = "Используйте изображения в PNG или GIF формате"
     to_large_image_size = "Максимальный размер логотипа 500x200px"
     disallowed_host = "Запрещенный домен"
+    something_went_wrong = "Что-то пошло не так, повторите попытку чуть позже"
 
 
 class UserErrors(StrEnum):

@@ -1,8 +1,7 @@
 from application.common.base_url_parser import UrlParserInterface
+from domain.domains.domain_repository import DomainRepositoryInterface
+from domain.domains.domain_service import DomainServiceInterface
 from domain.domains.site import DomainInterface, SiteInterface
-from infrastructure.url_parser import get_url_parser
-from domain.domains.repository import DomainRepositoryInterface
-from domain.domains.service import DomainServiceInterface
 from domain.page_blocks.settings_repository import SettingsRepositoryInterface
 from domain.referrals.referral import UserInterface
 from infrastructure.persistence.repositories.domain_repository import (
@@ -11,6 +10,7 @@ from infrastructure.persistence.repositories.domain_repository import (
 from infrastructure.persistence.repositories.settings_repository import (
     get_settings_repository,
 )
+from infrastructure.url_parser import get_url_parser
 
 
 class DomainService(DomainServiceInterface):
@@ -73,8 +73,7 @@ class DomainService(DomainServiceInterface):
         return self.repository.get_random_site()
 
     def get_domain_model_from_request(self, host: str):
-        domain = self.url_parser.get_domain_from_host(host)
-        return self.repository.get_domain(domain)
+        return self.repository.get_domain(self.url_parser.get_domain_from_host(host))
 
     def get_site_from_url(self, url: str) -> SiteInterface:
         subdomain = self.url_parser.get_subdomain_from_host(url)
@@ -88,6 +87,7 @@ class DomainService(DomainServiceInterface):
                     owner=site.owner,
                     contact_info=site.contact_info,
                     created_at=site.created_at.strftime("%d.%m.%Y"),
+                    user=site.user,
                 )
 
         domain = self.get_domain_model()

@@ -2,7 +2,8 @@ from django.http import HttpRequest, HttpResponse
 from django.views.generic import View
 
 from application.common.base_url_parser import UrlParserInterface
-from infrastructure.url_parser import get_url_parser
+from application.sessions.raw_session_service import get_raw_session_service
+from application.texts.user_session import UserActions
 from domain.products.repository import ProductRepositoryInterface
 from infrastructure.persistence.repositories.product_repository import (
     get_product_repository,
@@ -11,8 +12,8 @@ from infrastructure.persistence.repositories.user_session_repository import (
     get_user_session_repository,
 )
 from infrastructure.persistence.sessions.add_session_action import IncrementSessionCount
-from infrastructure.persistence.sessions.service import get_raw_session_service
 from infrastructure.requests.service import get_request_service
+from infrastructure.url_parser import get_url_parser
 from web.settings.views import SettingsMixin
 
 
@@ -79,7 +80,7 @@ class OpenedChangePasswordFormView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
 
-        self.increment_session_profile_action(request.user_session_id, adress, text="""Открыл изменение пароля""")
+        self.increment_session_profile_action(request.user_session_id, adress, text=UserActions.opened_password_change)
 
         return HttpResponse(status=201)
 
@@ -102,12 +103,13 @@ class OpenedUpdateProductFormView(View):
 
 
 class IncrementBanksCountView(View):
+    url_parser: UrlParserInterface = get_url_parser()
     increment_banks_count = IncrementSessionCount(get_user_session_repository(), "banks_count")
 
     def get(self, request: HttpRequest) -> HttpResponse:
         adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
 
-        self.increment_banks_count(request.user_session_id, adress, f"""Открыл описание продукта""")
+        self.increment_banks_count(request.user_session_id, adress, UserActions.opened_product_description)
 
         return HttpResponse(status=200)
 

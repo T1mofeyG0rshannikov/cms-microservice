@@ -2,14 +2,10 @@
 {% load replace %}
 
 
-<div class="popup-background document-popup">
+<div class="popup-background document-popup aboutcompany">
     <div class="description-popup popup">
         <div class="title">
-            <h3>{{ document.name }}</h3>
-            <img onclick="closeDocumentPopup()" class="cross" src="{% static 'blocks/images/cross-gray.png' %}" />
-        </div>
-
-        <div class="text">
+            <!--<h3>{{ document.name }}</h3>-->
             <div style="background-color: var(--main-color); display: inline-flex; padding: 15px;">
                 {% if settings.logo %}
                     <img class="logo"/>
@@ -19,7 +15,11 @@
                     </div>
                 {% endif %}
             </div>
+            <img onclick="closeDocumentPopup()" class="cross" src="{% static 'blocks/images/cross-gray.png' %}" />
+        </div>
 
+        <div class="text">
+            <h3>{{ document.name }}</h3>
             <a>
                 {% replace document.text '[SITENAME]' site.name as text %}
                 {% replace text '[SITEADRESS]' site.adress as text %}

@@ -1,15 +1,24 @@
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.forms import Form
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
+from infrastructure.email_services.work_email_service.email_service import (
+    get_work_email_service,
+)
+from infrastructure.email_services.work_email_service.email_service_interface import (
+    WorkEmailServiceInterface,
+)
 from infrastructure.security import get_link_encryptor
+from web.common.forms import FeedbackForm
+from web.domens.views.mixins import SubdomainMixin
 
 
 class RedirectToLink(View):
     link_encryptor = get_link_encryptor()
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> HttpResponse:
         tracker = self.request.GET.get("product")
         print(tracker)
         if tracker:
@@ -27,8 +36,27 @@ class FormView(View):
         form = self.get_form()
         if form.is_valid():
             return self.form_valid(request, form, *args, **kwargs)
-
+        print(form.errors)
         return JsonResponse({"errors": form.errors}, status=400)
 
-    def get_form(self):
+    def get_form(self) -> Form:
         return self.form_class(self.request.POST, self.request.FILES)
+
+
+class SendFeedbackView(SubdomainMixin, FormView):
+    email_service: WorkEmailServiceInterface = get_work_email_service()
+    form_class = FeedbackForm
+
+    def form_valid(self, request: HttpRequest, form: FeedbackForm) -> HttpResponse:
+        print(request.user)
+        self.email_service.send_feedback_email(
+            site_name=request.site_name,
+            site_domain=request.get_host(),
+            username=form.cleaned_data.get("username"),
+            phone=form.cleaned_data.get("phone"),
+            email=form.cleaned_data.get("email"),
+            message=form.cleaned_data.get("message"),
+            user_id=request.user.id if request.user.is_authenticated else None,
+        )
+
+        return HttpResponse(status=200)

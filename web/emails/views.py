@@ -3,6 +3,7 @@ import random
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.views.generic import View
 
+from application.texts.errors import Errors
 from application.usecases.user.get_admin import GetAdminUser
 from domain.email.exceptions import CantSendMailError
 from domain.email.repository import SystemRepositoryInterface
@@ -11,17 +12,11 @@ from infrastructure.email_services.email_service.email_service import get_email_
 from infrastructure.email_services.email_service.email_service_interface import (
     EmailServiceInterface,
 )
-from infrastructure.email_services.work_email_service.context_processor.context_processor import (
-    get_work_email_context_processor,
-)
 from infrastructure.email_services.work_email_service.email_service import (
     get_work_email_service,
 )
 from infrastructure.email_services.work_email_service.email_service_interface import (
     WorkEmailServiceInterface,
-)
-from infrastructure.email_services.work_email_service.template_generator.template_generator import (
-    get_work_email_template_generator,
 )
 from infrastructure.persistence.repositories.system_repository import (
     get_system_repository,
@@ -32,14 +27,14 @@ from infrastructure.persistence.repositories.user_repository import get_user_rep
 class SendConfirmEmail(View):
     email_service: EmailServiceInterface = get_email_service()
 
-    def get(self, request: HttpRequest):
+    def get(self, request: HttpRequest) -> HttpResponse:
         user = request.user
 
         if user:
             try:
                 self.email_service.send_mail_to_confirm_email(user)
             except CantSendMailError:
-                return JsonResponse({"error": "Что-то пошло не так, повторите попытку чуть позже"}, status=503)
+                return JsonResponse({"error": Errors.something_went_wrong}, status=503)
 
             return HttpResponse(status=200)
 
@@ -47,13 +42,12 @@ class SendConfirmEmail(View):
 
 
 class LoginCodeGenerator:
-    def __init__(self, repository: SystemRepositoryInterface):
+    def __init__(self, repository: SystemRepositoryInterface) -> None:
         self.repository = repository
 
     def generate_admin_login_code(self, email: str) -> int:
         code = random.randrange(100000, 1000000)
-        admin_code = self.repository.update_or_create_admin_code(email=email, code=code)
-        return admin_code
+        return self.repository.update_or_create_admin_code(email=email, code=code)
 
 
 class SendAdminAuthCode(View):
@@ -61,7 +55,7 @@ class SendAdminAuthCode(View):
     code_generator = LoginCodeGenerator(get_system_repository())
     get_admin_user_interactor = GetAdminUser(get_user_repository())
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> HttpResponse:
         email = request.GET.get("username")
         password = request.GET.get("password")
 
@@ -72,7 +66,7 @@ class SendAdminAuthCode(View):
 
             return HttpResponse(status=200)
         except CantSendMailError:
-            return JsonResponse({"error": "Что-то пошло не так, повторите попытку чуть позже"}, status=503)
+            return JsonResponse({"error": Errors.something_went_wrong}, status=503)
         except (UserDoesNotExist, IncorrectPassword) as e:
             return JsonResponse({"error": str(e)}, status=400)
 

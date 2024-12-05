@@ -4,12 +4,10 @@ from django.conf import settings
 from django.http import HttpRequest, HttpResponse
 from django.utils.timezone import now
 
+from domain.user_sessions.session import SessionInterface
 from infrastructure.logging.tasks import create_user_activity_logs
 from infrastructure.logging.user_activity.config import get_user_active_settings
 from infrastructure.logging.user_activity.create_json_logs import create_user_log
-from infrastructure.persistence.repositories.user_session_repository import (
-    get_user_session_repository,
-)
 from infrastructure.persistence.sessions.user_activity_service import (
     UserActivitySessionService,
 )
@@ -43,12 +41,12 @@ class UserActivityMiddleware(BaseSessionMiddleware):
         if not ban_limit:
             ban_limit = 10**10
 
-        raw_session = request.raw_session
+        raw_session: SessionInterface = request.raw_session
 
         if raw_session.ban_rate < ban_limit:
-            user_activity_service = UserActivitySessionService(RequestService(request), get_user_session_repository())
+            user_activity_service = UserActivitySessionService(RequestService(request))
 
-            site = request.raw_session.site
+            site = raw_session.site
             page_adress = site + path
 
             user_id = request.user.id if request.user.is_authenticated else None
@@ -63,7 +61,6 @@ class UserActivityMiddleware(BaseSessionMiddleware):
                 session_data = user_activity_service.get_initial_data(
                     user_id=user_id,
                     device=request.user_agent.is_mobile,
-                    utm_source=request.GET.get("utm_source"),
                     session_id=raw_session.id,
                 )
 
@@ -77,7 +74,6 @@ class UserActivityMiddleware(BaseSessionMiddleware):
                     session_data = user_activity_service.get_initial_data(
                         user_id=user_id,
                         device=request.user_agent.is_mobile,
-                        utm_source=request.GET.get("utm_source"),
                         auth=auth,
                         session_id=raw_session.id,
                     )
@@ -85,7 +81,6 @@ class UserActivityMiddleware(BaseSessionMiddleware):
                     session_data = user_activity_service.get_initial_data(
                         user_id=user_id,
                         device=request.user_agent.is_mobile,
-                        utm_source=request.GET.get("utm_source"),
                         session_id=raw_session.id,
                     )
 

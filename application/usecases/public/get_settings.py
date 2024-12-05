@@ -1,6 +1,9 @@
-from domain.domains.repository import DomainRepositoryInterface
+from domain.domains.domain_repository import DomainRepositoryInterface
+from domain.page_blocks.entities.site_settings import (
+    SiteLogoInterface,
+    SiteSettingsInterface,
+)
 from domain.page_blocks.settings_repository import SettingsRepositoryInterface
-from domain.page_blocks.site_settings import SiteLogoInterface, SiteSettingsInterface
 from infrastructure.persistence.models.user.site import Site
 from infrastructure.persistence.repositories.domain_repository import (
     get_domain_repository,
@@ -11,7 +14,9 @@ from infrastructure.persistence.repositories.settings_repository import (
 
 
 class GetSettings:
-    def __init__(self, settings_repository: SettingsRepositoryInterface, domain_repository: DomainRepositoryInterface) -> None:
+    def __init__(
+        self, settings_repository: SettingsRepositoryInterface, domain_repository: DomainRepositoryInterface
+    ) -> None:
         self.settings_repository = settings_repository
         self.domain_repository = domain_repository
 

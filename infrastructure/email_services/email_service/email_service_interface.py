@@ -8,10 +8,13 @@ class EmailServiceInterface(Protocol):
 
     @staticmethod
     def send_email(*args, **kwargs) -> None:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def send_mail_to_confirm_email(self, user: UserInterface) -> None:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def send_mail_to_reset_password(self, user: UserInterface) -> None:
-        raise NotImplementedError()
+        raise NotImplementedError
+
+    def send_mail_to_confirm_new_email(self, user: UserInterface) -> None:
+        raise NotImplementedError

@@ -4,7 +4,7 @@ from django.http import HttpRequest
 from application.services.domains.service import get_domain_service
 from application.services.user.referrals_service import get_referral_service
 from application.usecases.ideas.get_ideas import GetIdeas
-from domain.domains.service import DomainServiceInterface
+from domain.domains.domain_service import DomainServiceInterface
 from domain.materials.repository import DocumentRepositoryInterface
 from domain.products.repository import ProductRepositoryInterface
 from domain.referrals.service import ReferralServiceInterface
@@ -63,7 +63,7 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
         sorted_by = request.GET.get("sorted_by", "created_at")
 
         referrals = self.referral_service.get_referrals(level=level, user_id=request.user.id, sorted_by=sorted_by)
-        
+
         pagination = Pagination(request)
 
         referrals = pagination.paginate(referrals, "referrals", ReferralsSerializer)

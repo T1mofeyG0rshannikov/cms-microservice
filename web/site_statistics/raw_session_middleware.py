@@ -4,11 +4,11 @@ from django.conf import settings
 from django.http import HttpRequest
 from django.utils.timezone import now
 
-from application.sessions.dto import RawSessionDTO
+from application.sessions.raw_session_service import RawSessionService
+from domain.user_sessions.session import SessionInterface
 from infrastructure.admin.admin_settings import get_admin_settings
 from infrastructure.logging.tasks import create_raw_logs
 from infrastructure.logging.user_activity.create_json_logs import create_raw_log
-from infrastructure.persistence.sessions.service import RawSessionService
 from infrastructure.requests.service import get_request_service
 from web.site_statistics.base_session_middleware import BaseSessionMiddleware
 
@@ -49,7 +49,7 @@ class RawSessionMiddleware(BaseSessionMiddleware):
             session_id = session_db.id
 
             session_data = raw_session_service.check_headers(
-                RawSessionDTO.from_dict(session_db.__dict__),
+                SessionInterface.from_dict(session_db.__dict__),
                 request_service.get_all_headers(),
             )
 
@@ -66,7 +66,7 @@ class RawSessionMiddleware(BaseSessionMiddleware):
             session_id = session_db.id
 
             session_data = raw_session_service.check_headers(
-                RawSessionDTO.from_dict(session_db.__dict__),
+                SessionInterface.from_dict(session_db.__dict__),
                 request_service.get_all_headers(),
             )
 

@@ -8,19 +8,24 @@ from domain.user.validator import UserValidatorInterface
 from infrastructure.persistence.repositories.referral_repository import (
     get_referral_repository,
 )
+from infrastructure.user.referrals_config import ReferralConfig, get_referral_config
 from infrastructure.user.validator import get_user_validator
 
 
 class ReferralService(ReferralServiceInterface):
-    total_referal_level: int = 3
-
-    def __init__(self, validator: UserValidatorInterface, repository: ReferralRepositoryInterface) -> None:
+    def __init__(
+        self,
+        validator: UserValidatorInterface,
+        repository: ReferralRepositoryInterface,
+        referral_config: ReferralConfig,
+    ) -> None:
         self.validator = validator
         self.repository = repository
+        self.config = referral_config
 
     def get_referral_level(self, referral: ReferralInterface, user: UserInterface) -> int:
         sponsor = referral.sponsor
-        for i in range(self.total_referal_level):
+        for i in range(self.config.total_referral_level):
             if sponsor.id == user.id:
                 return i + 1
 
@@ -45,11 +50,12 @@ class ReferralService(ReferralServiceInterface):
         if level:
             level = self.validator.validate_referral_level(level)
 
-        return self.repository.get_referrals(user_id, self.total_referal_level, level, sorted_by)
+        return self.repository.get_referrals(user_id, self.config.total_referral_level, level, sorted_by)
 
 
 def get_referral_service(
     validator: UserValidatorInterface = get_user_validator(),
     repository: ReferralRepositoryInterface = get_referral_repository(),
+    config: ReferralConfig = get_referral_config(),
 ) -> ReferralServiceInterface:
-    return ReferralService(validator=validator, repository=repository)
+    return ReferralService(validator=validator, repository=repository, referral_config=config)

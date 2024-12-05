@@ -1,6 +1,9 @@
 {% load static %}
 {% load replace %}
 
+<div class="feedback-form-container form-container" style="display: none">
+    {% include "common/feedback_form.html" %}
+</div>
 
 <footer id="{{ block.ancor }}">
     <div class="inner">
@@ -8,6 +11,8 @@
             {% for item in block.menu_items.all %}
                 <a onclick="smoothScroll('{{ item.button_ref }}')">{{ item.button_text }}</a>
             {% endfor %}
+
+            <a onclick="openFormPopup(feedbackFormContainer)">Связаться с нами</a>
         </div>
 
         {% replace '<a class="ref" onclick="openDocumentPopup([PRIVACY.SLUG])">[PRIVACY.TITLE]</a>' '[PRIVACY.SLUG]' "'[PRIVACY.SLUG]'" as privacy_text %}{% replace privacy_text '[PRIVACY.SLUG]' privacy.slug as privacy_text %}{% replace privacy_text '[PRIVACY.TITLE]' privacy.title as privacy_text %}
