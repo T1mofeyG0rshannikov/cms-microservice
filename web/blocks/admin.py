@@ -2,6 +2,7 @@ from adminsortable2.admin import SortableAdminBase, SortableStackedInline
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
+from domain.products.repository import ProductRepositoryInterface
 from infrastructure.persistence.models.blocks.blocks import (
     ContentBlock,
     Cover,
@@ -87,7 +88,7 @@ class PageBlockInline(SortableStackedInline, BaseInline):
 
 class CatalogProductInline(SortableStackedInline, BaseInline):
     model = CatalogProduct
-    repository = get_product_repository()
+    repository: ProductRepositoryInterface = get_product_repository()
 
     def get_formset(self, request, obj=None, **kwargs):
         formset = super().get_formset(request, obj, **kwargs)

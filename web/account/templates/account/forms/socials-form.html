@@ -11,7 +11,7 @@
     <hr />
 
     <div id="socials">
-        {% for user_social in user.site.socials.all %}
+        {% for user_social in site.socials.all %}
             {% with forloop.counter as soc_count %}
                 {% if soc_count == 1 %}
                     <div class="field-container">
@@ -55,10 +55,10 @@
             {% endwith %}
         {% endfor %}
 
-        {% if user.site.socials.all|length < 4 %}
+        {% if site.socials.all|length < 4 %}
             <div class="field-container">
                 <div class="field social">
-                    {% if user.site.socials.all|length == 0 %}
+                    {% if site.socials.all|length == 0 %}
                         <p>Соцсеть</p>
                     {% endif %}
                     <select name="" id="">
@@ -70,7 +70,7 @@
                 </div>
 
                 <div class="field adress">
-                    {% if user.site.socials.all|length == 0 %}
+                    {% if site.socials.all|length == 0 %}
                         <p>Адрес</p>
                     {% endif %}
                     <input placeholder="Адрес канала" name="adress" />
@@ -83,7 +83,7 @@
             </div>
         {% endif %}
 
-        {% if user.site.socials.all|length == 0 %}
+        {% if site.socials.all|length == 0 %}
             <div class="field-container">
                 <div class="field social">
                     <select name="" id="">

@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Any
 
 from application.common.base_url_parser import UrlParserInterface
 from domain.domains.domain_repository import DomainRepositoryInterface
@@ -10,7 +9,13 @@ from domain.user.exceptions import (
 )
 from domain.user.repository import UserRepositoryInterface
 from domain.user.user import UserInterface
+from infrastructure.auth.jwt_processor import get_jwt_processor
 from infrastructure.auth.jwt_processor_interface import JwtProcessorInterface
+from infrastructure.persistence.repositories.domain_repository import (
+    get_domain_repository,
+)
+from infrastructure.persistence.repositories.user_repository import get_user_repository
+from infrastructure.url_parser import get_url_parser
 
 
 @dataclass
@@ -31,10 +36,7 @@ class Register:
         self.url_parser = url_parser
         self.jwt_processor = jwt_processor
 
-    def __call__(self, fields: dict[str, Any], host: str) -> TokenToSetPasswordResponse:
-        phone = fields.get("phone")
-        email = fields.get("email")
-
+    def __call__(self, phone: str, email: str, host: str) -> TokenToSetPasswordResponse:
         user_with_phone = self.user_repository.get_user_by_phone(phone)
         user_with_email = self.user_repository.get_user_by_email(email)
 
@@ -49,7 +51,7 @@ class Register:
         sponsor = self.get_user_from_site(site, domain)
 
         user = self.user_repository.create_user(
-            **fields, register_on_site=site, register_on_domain=domain, sponsor=sponsor
+            phone=phone, email=email, register_on_site=site, register_on_domain=domain, sponsor=sponsor
         )
 
         if user:
@@ -75,3 +77,12 @@ class Register:
             return site.user
 
         return None
+
+
+def get_register_interactor(
+    user_repository: UserRepositoryInterface = get_user_repository(),
+    domain_repository: DomainRepositoryInterface = get_domain_repository(),
+    jwt_processor: JwtProcessorInterface = get_jwt_processor(),
+    url_parser: UrlParserInterface = get_url_parser(),
+) -> Register:
+    return Register(user_repository, domain_repository, url_parser, jwt_processor)

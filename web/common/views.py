@@ -4,12 +4,13 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
+from application.email_services.work_email_service.email_service_interface import (
+    WorkEmailServiceInterface,
+)
 from infrastructure.email_services.work_email_service.email_service import (
     get_work_email_service,
 )
-from infrastructure.email_services.work_email_service.email_service_interface import (
-    WorkEmailServiceInterface,
-)
+from infrastructure.requests.request_interface import RequestInterface
 from infrastructure.security import get_link_encryptor
 from web.common.forms import FeedbackForm
 from web.domens.views.mixins import SubdomainMixin
@@ -20,10 +21,8 @@ class RedirectToLink(View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         tracker = self.request.GET.get("product")
-        print(tracker)
         if tracker:
             link = self.link_encryptor.decrypt(tracker)
-            print(link)
             if link:
                 return HttpResponseRedirect(link)
 
@@ -36,7 +35,7 @@ class FormView(View):
         form = self.get_form()
         if form.is_valid():
             return self.form_valid(request, form, *args, **kwargs)
-        print(form.errors)
+
         return JsonResponse({"errors": form.errors}, status=400)
 
     def get_form(self) -> Form:
@@ -47,8 +46,7 @@ class SendFeedbackView(SubdomainMixin, FormView):
     email_service: WorkEmailServiceInterface = get_work_email_service()
     form_class = FeedbackForm
 
-    def form_valid(self, request: HttpRequest, form: FeedbackForm) -> HttpResponse:
-        print(request.user)
+    def form_valid(self, request: RequestInterface, form: FeedbackForm) -> HttpResponse:
         self.email_service.send_feedback_email(
             site_name=request.site_name,
             site_domain=request.get_host(),

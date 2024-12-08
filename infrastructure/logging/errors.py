@@ -1,9 +1,9 @@
+from application.email_services.work_email_service.email_service_interface import (
+    WorkEmailServiceInterface,
+)
 from domain.logging.error import ErrorLogRepositoryInterface
 from infrastructure.email_services.work_email_service.email_service import (
     get_work_email_service,
-)
-from infrastructure.email_services.work_email_service.email_service_interface import (
-    WorkEmailServiceInterface,
 )
 from infrastructure.persistence.repositories.errors_repository import (
     get_errors_repository,

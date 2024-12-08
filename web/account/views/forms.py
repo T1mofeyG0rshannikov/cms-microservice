@@ -2,36 +2,38 @@ import json
 
 from django.http import HttpRequest, HttpResponse, JsonResponse
 
-from application.common.base_url_parser import UrlParserInterface
-from application.usecases.site.change_site import ChangeSite
-from application.usecases.site.change_socials import ChangeSocials
-from application.usecases.user.change_user import ChangeUser
-from application.usecases.user_products.add_user_product import AddUserProduct
-from domain.domains.domain_repository import DomainRepositoryInterface
+from application.sessions.add_session_action import (
+    IncrementSessionCount,
+    get_increment_session_count,
+)
+from application.texts.user_session import UserActions
+from application.usecases.site.change_site import ChangeSite, get_change_site_interactor
+from application.usecases.site.change_socials import (
+    ChangeSocials,
+    get_change_socials_interactor,
+)
+from application.usecases.user.change_user import ChangeUser, get_change_user_interactor
+from application.usecases.user_products.add_user_product import (
+    AddUserProduct,
+    get_add_product_interactor,
+)
 from domain.domains.exceptions import SiteAdressExists
 from domain.products.repository import ProductRepositoryInterface
 from domain.user.exceptions import (
+    LinkOrConnectedRequired,
     SocialChannelAlreadyExists,
     UserProductAlreadyExists,
     UserWithEmailAlreadyExists,
     UserWithPhoneAlreadyExists,
 )
-from domain.user_sessions.repository import UserSessionRepositoryInterface
-from infrastructure.persistence.repositories.domain_repository import (
-    get_domain_repository,
+from infrastructure.logging.user_activity.create_session_log import (
+    CreateUserSesssionLog,
+    get_create_user_session_log,
 )
 from infrastructure.persistence.repositories.product_repository import (
     get_product_repository,
 )
-from infrastructure.persistence.repositories.socials_repositry import (
-    get_socials_repository,
-)
-from infrastructure.persistence.repositories.user_repository import get_user_repository
-from infrastructure.persistence.repositories.user_session_repository import (
-    get_user_session_repository,
-)
-from infrastructure.persistence.sessions.add_session_action import IncrementSessionCount
-from infrastructure.url_parser import get_url_parser
+from infrastructure.requests.request_interface import RequestInterface
 from web.account.forms import (
     AddUserProductForm,
     ChangeSiteForm,
@@ -44,44 +46,39 @@ from web.user.views.base_user_view import APIUserRequired
 
 class ChangeSiteView(FormView, APIUserRequired):
     form_class = ChangeSiteForm
-    domain_repository: DomainRepositoryInterface = get_domain_repository()
-    change_site_interactor = ChangeSite(domain_repository)
-    url_parser: UrlParserInterface = get_url_parser()
-    user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
-    increment_session_profile_action = IncrementSessionCount(get_user_session_repository(), "profile_actions_count")
+    change_site_interactor: ChangeSite = get_change_site_interactor()
+    create_user_session_log: CreateUserSesssionLog = get_create_user_session_log()
+    increment_session_profile_action: IncrementSessionCount = get_increment_session_count("profile_actions_count")
 
-    def form_valid(self, request: HttpRequest, form: ChangeSiteForm):
+    def form_valid(self, request: HttpRequest, form: ChangeSiteForm) -> HttpResponse:
         user = request.user
-        adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
-        site = self.domain_repository.get_user_site(user.id)
-
-        if site:
-            user_activity_text = f'''Изменил партнерский сайт "{site.subdomain}"'''
-        else:
-            user_activity_text = f'''Добавил партнерский сайт "{site.subdomain}"'''
-
-        self.increment_session_profile_action(request.session)
-
-        self.user_session_repository.create_user_action(
-            adress=adress, text=user_activity_text, session_id=request.user_session_id
-        )
 
         try:
-            self.change_site_interactor(form.cleaned_data, user_id=user.id)
+            site, created = self.change_site_interactor(**form.cleaned_data, user_id=user.id)
         except SiteAdressExists as e:
-            form.add_error("site", str(e))
+            form.add_error("subdomain", str(e))
             return JsonResponse({"errors": form.errors}, status=400)
+
+        if created:
+            user_activity_text = f'''Добавил партнерский сайт "{site.subdomain}"'''
+        else:
+            user_activity_text = f'''Изменил партнерский сайт "{site.subdomain}"'''
+
+        self.increment_session_profile_action(request)
+
+        self.create_user_session_log(request=request, text=user_activity_text)
 
         return HttpResponse(status=200)
 
 
 class ChangeSocialsView(FormView, APIUserRequired):
     form_class = ChangeSocialsForm
-    change_socials_interactor = ChangeSocials(get_socials_repository())
+    change_socials_interactor: ChangeSocials = get_change_socials_interactor()
 
-    def form_valid(self, request: HttpRequest, form: ChangeSocialsForm):
+    def form_valid(self, request: RequestInterface, form: ChangeSocialsForm) -> HttpResponse:
         try:
             user_social_networks = json.loads(form.cleaned_data.get("socials"))
+            print(user_social_networks)
             self.change_socials_interactor(request.user.site.id, user_social_networks)
         except SocialChannelAlreadyExists as e:
             form.add_error("socials", str(e))
@@ -92,17 +89,16 @@ class ChangeSocialsView(FormView, APIUserRequired):
 
 class ChangeUserView(FormView, APIUserRequired):
     form_class = ChangeUserForm
-    change_user_interactor = ChangeUser(get_user_repository())
-    url_parser: UrlParserInterface = get_url_parser()
-    increment_session_profile_action = IncrementSessionCount(get_user_session_repository(), "profile_actions_count")
+    change_user_interactor: ChangeUser = get_change_user_interactor()
+    increment_session_profile_action: IncrementSessionCount = get_increment_session_count("profile_actions_count")
+    create_user_session_log: CreateUserSesssionLog = get_create_user_session_log()
 
-    def form_valid(self, request: HttpRequest, form: ChangeUserForm):
-        adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
-
+    def form_valid(self, request: HttpRequest, form: ChangeUserForm) -> HttpResponse:
         try:
-            email_changed = self.change_user_interactor(request.user, form.cleaned_data)
+            email_changed = self.change_user_interactor(request.user, **form.cleaned_data)
 
-            self.increment_session_profile_action(request.user_session_id, adress, text="Изменил данные профиля")
+            self.increment_session_profile_action(request=request, text=UserActions.changed_profile_data)
+            self.create_user_session_log(request=request, text=UserActions.changed_profile_data)
 
             if email_changed:
                 return JsonResponse(
@@ -128,30 +124,32 @@ class ChangeUserView(FormView, APIUserRequired):
 
 class AddUserProductView(FormView, APIUserRequired):
     form_class = AddUserProductForm
-    add_user_product_interactor = AddUserProduct(get_product_repository())
+    add_user_product_interactor: AddUserProduct = get_add_product_interactor()
     product_repository: ProductRepositoryInterface = get_product_repository()
-    url_parser: UrlParserInterface = get_url_parser()
-    increment_session_profile_action = IncrementSessionCount(get_user_session_repository(), "profile_actions_count")
+    increment_session_profile_action: IncrementSessionCount = get_increment_session_count("profile_actions_count")
+    create_user_session_log: CreateUserSesssionLog = get_create_user_session_log()
 
-    def form_valid(self, request: HttpRequest, form: AddUserProductForm):
+    def form_valid(self, request: HttpRequest, form: AddUserProductForm) -> HttpResponse:
         user = request.user
 
+        user_product_exists = self.product_repository.user_product_exists(
+            user_id=user.id, product_id=user_product.product_id
+        )
         try:
-            self.add_user_product_interactor(form.cleaned_data, user)
+            user_product, created = self.add_user_product_interactor(user_id=user.id, **form.cleaned_data)
         except UserProductAlreadyExists as e:
             return JsonResponse({"errors": str(e)}, status=400)
+        except LinkOrConnectedRequired as e:
+            form.add_error("link", str(e))
+            return JsonResponse({"errors": form.errors}, status=400)
 
-        adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
-
-        product_id = int(request.POST.get("product"))
-
-        product_name = self.product_repository.get_product_by_id(product_id).name
-        user_product_exists = self.product_repository.user_product_exists(user_id=user.id, product_id=product_id)
+        product_name = user_product.product.name
 
         user_activity_text = (
             f'''Изменил продукт "{product_name}"''' if user_product_exists else f'''Добавил продукт "{product_name}"'''
         )
 
-        self.increment_session_profile_action(request.user_session_id, adress, text=user_activity_text)
+        self.increment_session_profile_action(request=request)
+        self.create_user_session_log(request=request, text=user_activity_text)
 
         return HttpResponse(status=200)

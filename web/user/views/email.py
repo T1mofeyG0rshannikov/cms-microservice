@@ -1,23 +1,15 @@
 from django.http import HttpRequest, HttpResponseRedirect
 
-from application.common.base_url_parser import UrlParserInterface
-from infrastructure.url_parser import get_url_parser
 from application.texts.errors import Errors
 from domain.user.repository import UserRepositoryInterface
 from infrastructure.persistence.repositories.user_repository import get_user_repository
-from infrastructure.persistence.repositories.user_session_repository import (
-    get_user_session_repository,
-)
 from web.user.views.base_user_view import BaseUserView
 
 
 class ConfirmEmail(BaseUserView):
     user_repository: UserRepositoryInterface = get_user_repository()
-    user_session_repository = get_user_session_repository()
-    url_parser: UrlParserInterface = get_url_parser()
 
-    def get(self, request: HttpRequest, token):
-        adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
+    def get(self, request: HttpRequest, token: str) -> HttpResponseRedirect:
         payload = self.jwt_processor.validate_token(token)
 
         if not payload:
@@ -30,10 +22,9 @@ class ConfirmEmail(BaseUserView):
         user.confirm_email()
         self.login(user)
 
-        self.user_session_repository.create_user_action(
-            adress=adress,
+        self.create_user_session_log(
+            request=request,
             text=f"""Верифицировал емейл {user.email}""",
-            session_id=request.user_session_id,
         )
 
         if not user.password:
@@ -48,11 +39,8 @@ class ConfirmEmail(BaseUserView):
 
 class ConfirmNewEmail(BaseUserView):
     user_repository: UserRepositoryInterface = get_user_repository()
-    user_session_repository = get_user_session_repository()
-    url_parser: UrlParserInterface = get_url_parser()
 
     def get(self, request: HttpRequest, token) -> HttpResponseRedirect:
-        adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
         payload = self.jwt_processor.validate_token(token)
 
         if not payload:
@@ -65,10 +53,9 @@ class ConfirmNewEmail(BaseUserView):
         user.confirm_new_email()
         self.login(user)
 
-        self.user_session_repository.create_user_action(
-            adress=adress,
+        self.create_user_session_log(
+            request=request,
             text=f"""Верифицировал емейл {user.email}""",
-            session_id=request.user_session_id,
         )
 
         return HttpResponseRedirect(

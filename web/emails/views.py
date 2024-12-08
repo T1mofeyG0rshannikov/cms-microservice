@@ -1,27 +1,27 @@
-import random
-
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.views.generic import View
 
-from application.texts.errors import Errors
-from application.usecases.user.get_admin import GetAdminUser
-from domain.email.exceptions import CantSendMailError
-from domain.email.repository import SystemRepositoryInterface
-from domain.user.exceptions import IncorrectPassword, UserDoesNotExist
-from infrastructure.email_services.email_service.email_service import get_email_service
-from infrastructure.email_services.email_service.email_service_interface import (
+from application.email_services.user_email_service.email_service_interface import (
     EmailServiceInterface,
 )
+from application.email_services.work_email_service.email_service_interface import (
+    WorkEmailServiceInterface,
+)
+from application.texts.errors import Errors
+from application.usecases.user.get_admin import (
+    GetAdminUser,
+    get_get_admin_user_interactor,
+)
+from domain.email.exceptions import CantSendMailError
+from domain.user.exceptions import IncorrectPassword, UserDoesNotExist
+from infrastructure.email_services.admin_code_generator import (
+    LoginCodeGenerator,
+    get_login_code_generator,
+)
+from infrastructure.email_services.email_service.email_service import get_email_service
 from infrastructure.email_services.work_email_service.email_service import (
     get_work_email_service,
 )
-from infrastructure.email_services.work_email_service.email_service_interface import (
-    WorkEmailServiceInterface,
-)
-from infrastructure.persistence.repositories.system_repository import (
-    get_system_repository,
-)
-from infrastructure.persistence.repositories.user_repository import get_user_repository
 
 
 class SendConfirmEmail(View):
@@ -30,7 +30,7 @@ class SendConfirmEmail(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         user = request.user
 
-        if user:
+        if user.is_authenticated:
             try:
                 self.email_service.send_mail_to_confirm_email(user)
             except CantSendMailError:
@@ -41,19 +41,10 @@ class SendConfirmEmail(View):
         return HttpResponse(status=401)
 
 
-class LoginCodeGenerator:
-    def __init__(self, repository: SystemRepositoryInterface) -> None:
-        self.repository = repository
-
-    def generate_admin_login_code(self, email: str) -> int:
-        code = random.randrange(100000, 1000000)
-        return self.repository.update_or_create_admin_code(email=email, code=code)
-
-
 class SendAdminAuthCode(View):
     email_service: WorkEmailServiceInterface = get_work_email_service()
-    code_generator = LoginCodeGenerator(get_system_repository())
-    get_admin_user_interactor = GetAdminUser(get_user_repository())
+    code_generator: LoginCodeGenerator = get_login_code_generator()
+    get_admin_user_interactor: GetAdminUser = get_get_admin_user_interactor()
 
     def get(self, request: HttpRequest) -> HttpResponse:
         email = request.GET.get("username")

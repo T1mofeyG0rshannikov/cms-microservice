@@ -1,18 +1,26 @@
-from django.http import HttpRequest, JsonResponse
+from django.http import JsonResponse
 
-from application.usecases.formatters.format_document import FormatDocument, get_format_document
-from application.usecases.public.get_settings import GetSettings, get_get_settings_interactor
+from application.usecases.formatters.format_document import (
+    FormatDocument,
+    get_format_document,
+)
+from application.usecases.public.get_settings import (
+    GetSettings,
+    get_get_settings_interactor,
+)
+from infrastructure.requests.request_interface import RequestInterface
 from web.domens.views.mixins import SubdomainMixin
 from web.template.views.views import BaseTemplateLoadView
 
 
 class GetPopup(BaseTemplateLoadView, SubdomainMixin):
     def get(
-        self, 
-        request: HttpRequest, 
-        *args, 
+        self,
+        request: RequestInterface,
+        *args,
         get_settings_interactor: GetSettings = get_get_settings_interactor(),
-        document_formatter: FormatDocument = get_format_document(), **kwargs
+        document_formatter: FormatDocument = get_format_document(),
+        **kwargs
     ) -> JsonResponse:
         document_slug = request.GET.get("document")
 
@@ -29,7 +37,13 @@ class GetPopup(BaseTemplateLoadView, SubdomainMixin):
         )
 
         site = self.domain_service.get_site_from_url(request.build_absolute_uri())
-        
+
         context = {"document": document, "settings": settings, "site": site}
 
-        return JsonResponse({"content": self.template_loader.load_template(app_name="materials", template_name=template_name, request=request, context=context)})
+        return JsonResponse(
+            {
+                "content": self.template_loader.load_template(
+                    app_name="materials", template_name=template_name, request=request, context=context
+                )
+            }
+        )

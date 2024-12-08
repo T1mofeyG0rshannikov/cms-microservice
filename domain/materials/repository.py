@@ -1,4 +1,5 @@
-from typing import Iterable, Protocol
+from collections.abc import Iterable
+from typing import Protocol
 
 from domain.materials.document import DocumentInterface, DocumentPatternInterface
 
@@ -8,4 +9,7 @@ class DocumentRepositoryInterface(Protocol):
         raise NotImplementedError
 
     def get_document_patterns(self, document_slug: str) -> Iterable[DocumentPatternInterface]:
+        raise NotImplementedError
+
+    def get_documents(self) -> Iterable[DocumentInterface]:
         raise NotImplementedError

@@ -65,7 +65,6 @@ account
     /my/change-user - изменение информации о пользователе
     /my/change-password - смена пароля пользователя
     /my/get-referrals - список рефералов пользователя
-    /my/get-referral - информация о конкретном реферале
     /my/add-user-product - добавление пользовательского продукта
 
 blocks

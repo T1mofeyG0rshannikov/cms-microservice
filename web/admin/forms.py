@@ -7,19 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from application.usecases.user.get_admin import GetAdminUser
 from domain.user.exceptions import IncorrectPassword, UserDoesNotExist, UserNotAdmin
 from domain.user.validator import UserValidatorInterface
-from infrastructure.email_services.work_email_service.context_processor.context_processor import (
-    get_work_email_context_processor,
-)
-from infrastructure.email_services.work_email_service.email_service import (
-    get_work_email_service,
-)
-from infrastructure.email_services.work_email_service.template_generator.template_generator import (
-    get_work_email_template_generator,
-)
-from infrastructure.logging.admin import AdminLoginLogger, get_admin_logger
-from infrastructure.persistence.repositories.admin_log_repository import (
-    get_admin_log_repository,
-)
+from infrastructure.logging.admin import get_admin_logger
 from infrastructure.persistence.repositories.system_repository import (
     get_system_repository,
 )

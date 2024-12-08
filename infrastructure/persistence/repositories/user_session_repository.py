@@ -19,7 +19,10 @@ from infrastructure.persistence.models.site_statistics import (
 
 
 class UserSessionRepository(UserSessionRepositoryInterface):
-    def create_user_action(self, adress: str, text: str, session_id: int, time: datetime = now()) -> None:
+    def create_user_action(self, adress: str, text: str, session_id: int, time: datetime = None) -> None:
+        if time is None:
+            time = now()
+
         UserAction.objects.create(
             adress=adress,
             text=text,

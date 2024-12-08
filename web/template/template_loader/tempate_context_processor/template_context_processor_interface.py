@@ -23,9 +23,6 @@ class TemplateContextProcessorInterface(Protocol):
     def get_create_idea_form(self, request: HttpRequest) -> dict[Any, Any]:
         raise NotImplementedError
 
-    def get_delete_product_popup(self, request: HttpRequest) -> dict[Any, Any]:
-        raise NotImplementedError
-
     def get_choice_product_form(self, request: HttpRequest) -> dict[Any, Any]:
         raise NotImplementedError
 

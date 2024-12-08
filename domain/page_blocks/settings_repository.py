@@ -18,3 +18,15 @@ class SettingsRepositoryInterface(Protocol):
 
     def get_icon(self):
         raise NotImplementedError
+
+    def get_messangers(self):
+        raise NotImplementedError
+
+    def get_user_fonts(self):
+        raise NotImplementedError
+
+    def get_social_networks(self):
+        raise NotImplementedError
+
+    def get_partner_domains(self):
+        raise NotImplementedError

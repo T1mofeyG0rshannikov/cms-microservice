@@ -1,21 +1,24 @@
+from typing import Any
+
 from django.contrib.auth import authenticate, login
 from django.http import HttpRequest, JsonResponse
 from django.shortcuts import render
 
-from application.common.base_url_parser import UrlParserInterface
-from infrastructure.url_parser import get_url_parser
+from application.texts.user_session import UserActions
 from domain.materials.repository import DocumentRepositoryInterface
 from domain.user.exceptions import InvalidReferalLevel, InvalidSortedByField
 from domain.user.notifications.repository import NotificationRepositoryInterface
+from infrastructure.logging.user_activity.create_session_log import (
+    CreateUserSesssionLog,
+    get_create_user_session_log,
+)
 from infrastructure.persistence.repositories.document_repository import (
     get_document_repository,
 )
 from infrastructure.persistence.repositories.notification_repository import (
     get_notification_repository,
 )
-from infrastructure.persistence.repositories.user_session_repository import (
-    get_user_session_repository,
-)
+from infrastructure.requests.request_interface import RequestInterface
 from web.account.forms import ChangePasswordForm
 from web.common.views import FormView
 from web.domens.views.mixins import SubdomainMixin
@@ -84,12 +87,10 @@ class ManualsView(BaseProfileView):
 
 class ChangePasswordView(BaseUserView, FormView, APIUserRequired):
     form_class = ChangePasswordForm
-    user_session_repository = get_user_session_repository()
-    url_parser: UrlParserInterface = get_url_parser()
+    create_user_session_log: CreateUserSesssionLog = get_create_user_session_log()
 
-    def form_valid(self, request: HttpRequest, form):
+    def form_valid(self, request: HttpRequest, form: ChangePasswordForm) -> JsonResponse:
         user = request.user
-        adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
 
         if not user.check_password(form.cleaned_data.get("current_password")):
             form.add_error("current_password", "Неверный пароль")
@@ -103,7 +104,6 @@ class ChangePasswordView(BaseUserView, FormView, APIUserRequired):
             return JsonResponse({"errors": form.errors}, status=400)
 
         user.set_password(password)
-        user.save()
 
         request.user = user
         user = authenticate(request)
@@ -111,7 +111,7 @@ class ChangePasswordView(BaseUserView, FormView, APIUserRequired):
 
         access_token = self.jwt_processor.create_access_token(user.username, user.id)
 
-        self.user_session_repository.create_user_action(adress=adress, text=f"""Изменил пароль""")
+        self.create_user_session_log(request=request, text=UserActions.changed_password)
 
         return JsonResponse({"access_token": access_token}, status=200)
 
@@ -119,7 +119,7 @@ class ChangePasswordView(BaseUserView, FormView, APIUserRequired):
 class Profile(BaseProfileView, BaseUserView):
     template_name = "account/profile.html"
 
-    def dispath(self, request: HttpRequest, *args, **kwargs):
+    def dispath(self, request: RequestInterface, *args, **kwargs):
         if request.user.is_authenticated():
             return super().dispatch(request, *args, **kwargs)
         if request.user_from_header:
@@ -146,9 +146,9 @@ class DocumentPage(SettingsMixin):
 
         return super().dispatch(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context["document"] = self.document_repository.get_document(self.kwargs.get("slug"))
+        context["document"] = self.document_repository.get_document(kwargs.get("slug"))
 
         return context
 
@@ -157,7 +157,7 @@ class UserProductsView(BaseProfileView):
     template_name = "account/products.html"
     template_context_processor: ProfileTemplateContextProcessorInterface = get_profile_template_context_processor()
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context |= self.template_context_processor.get_products_template_context(self.request)
 
@@ -168,7 +168,7 @@ class IdeasView(BaseProfileView):
     template_name = "account/ideas.html"
     template_context_processor: ProfileTemplateContextProcessorInterface = get_profile_template_context_processor()
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context |= self.template_context_processor.get_ideas_template_context(self.request)
 

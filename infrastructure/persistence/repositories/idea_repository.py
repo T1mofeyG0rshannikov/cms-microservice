@@ -1,15 +1,17 @@
-from typing import Any
+from collections.abc import Iterable
 
-from django.db.models import Count, Q
+from django.db.models import Count, F, Q, Value
+from django.db.models.functions import Length, Reverse, StrIndex, Substr
 
+from domain.common.screen import ScreenInterface
 from domain.user.idea import IdeaInterface
 from domain.user.idea_repository import IdeaRepositoryInterface
 from infrastructure.persistence.models.user.idea import Idea, IdeaScreen, Like
 
 
 class IdeaRepository(IdeaRepositoryInterface):
-    def update_idea(self, id: int, fields: dict[str, str]) -> None:
-        Idea.objects.filter(id=id).update(**fields)
+    def update_idea(self, id: int, **kwargs) -> None:
+        Idea.objects.filter(id=id).update(**kwargs)
 
     def create_idea(self, fields: dict[str, str], screens) -> IdeaInterface:
         idea = Idea.objects.create(**fields)
@@ -28,7 +30,7 @@ class IdeaRepository(IdeaRepositoryInterface):
         except Idea.DoesNotExist:
             return None
 
-    def get_ideas(self, category=None, sorted_by=None, status=None, user_id: int=None) -> list[IdeaInterface]:
+    def get_ideas(self, category=None, sorted_by=None, status=None, user_id: int = None) -> Iterable[IdeaInterface]:
         filters = Q()
 
         if user_id:
@@ -51,19 +53,27 @@ class IdeaRepository(IdeaRepositoryInterface):
             .order_by(sorted_by)
         )
 
-    def get_screens(self, idea_id: int) -> list[IdeaInterface]:
+    def get_screens(self, idea_id: int) -> Iterable[ScreenInterface]:
         return IdeaScreen.objects.filter(idea_id=idea_id)
 
     def get_screen_names(self, idea_id: int) -> list[str]:
-        return self.get_screens(idea_id).values_list("screen", flat=True)
+        return (
+            IdeaScreen.objects.filter(idea_id=idea_id)
+            .annotate(
+                length=Length("screen"),
+                file_name=Substr("screen", F("length") - StrIndex(Reverse(F("screen")), Value("/")) + 2, F("length")),
+            )
+            .values_list("file_name", flat=True)
+        )
 
     def delete_screens(self, idea_id: int, old_screens: list[str]) -> None:
-        for screen in IdeaScreen.objects.filter(idea_id=idea_id):
-            if screen.screen.name.split("/")[-1] not in old_screens:
-                screen.delete()
+        IdeaScreen.objects.filter(idea_id=idea_id).annotate(
+            length=Length("screen"),
+            file_name=Substr("screen", F("length") - StrIndex(Reverse(F("screen")), Value("/")) + 2, F("length")),
+        ).exclude(file_name__in=old_screens).delete()
 
-    def create_screen(self, fields: dict[str, Any]) -> None:
-        IdeaScreen.objects.create(**fields)
+    def create_screen(self, **kwargs) -> None:
+        IdeaScreen.objects.create(**kwargs)
 
     def like_exists(self, user_id: int, idea_id: int) -> bool:
         return Like.objects.filter(user_id=user_id, idea_id=idea_id).exists()

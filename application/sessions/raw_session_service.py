@@ -23,7 +23,7 @@ class RawSessionService(RawSessionServiceInterface):
         url_parser: UrlParserInterface,
         penalty_logger: AddPenaltyLog,
         admin_settings,
-    ):
+    ) -> None:
         self.request_service = request_service
         self.user_session_repository = user_session_repository
         self.url_parser = url_parser

@@ -5,12 +5,16 @@ from django.db.models import Count, Q
 
 from domain.products.product import (
     OfferInterface,
+    ProductCategoryInterface,
     ProductInterface,
     ProductTypeInterface,
 )
 from domain.products.repository import ProductRepositoryInterface
 from domain.user.product import UserProductInterface
-from infrastructure.persistence.models.catalog.product_type import ProductType
+from infrastructure.persistence.models.catalog.product_type import (
+    ProductCategory,
+    ProductType,
+)
 from infrastructure.persistence.models.catalog.products import (
     Offer,
     Organization,
@@ -83,15 +87,20 @@ class ProductRepository(ProductRepositoryInterface):
         )
 
     def get_product_by_id(self, id: int) -> ProductInterface:
-        return Product.objects.get(id=id)
+        try:
+            return Product.objects.get(id=id)
+        except Product.DoesNotExist:
+            return None
 
     def get_product_name_by_user_products_id(self, user_product_id: int) -> str:
         return Product.objects.filter(user_products__id=user_product_id).values("name").first()["name"]
 
-    def update_or_create_user_product(self, **kwargs) -> None:
-        UserProduct.objects.update_or_create(
+    def update_or_create_user_product(self, **kwargs) -> tuple[UserProductInterface, bool]:
+        product, created = UserProduct.objects.update_or_create(
             user_id=kwargs.get("user_id"), product_id=kwargs.get("product_id"), defaults=kwargs
         )
+
+        return product, created
 
     def get_product_offers(self, product_id: int) -> Iterable[OfferInterface]:
         return Offer.objects.filter(product_id=product_id)
@@ -125,10 +134,25 @@ class ProductRepository(ProductRepositoryInterface):
         return self.get_catalog_offers(product_type_slug)[product_index].product.name
 
     def user_product_exists(self, user_id: int, product_id: int) -> bool:
-        return UserProduct.objects.filter(user_id=user_id, product_id=product_id).exists()
+        return UserProduct.objects.filter(user_id=user_id, product_id=product_id, deleted=False).exists()
+
+    def get_user_product(self, user_id: int, product_id: int):
+        return UserProduct.objects.get(user_id=user_id, product_id=product_id)
 
     def get_product_type_name(self, slug: str) -> str:
         return ProductType.objects.values("name").get(slug=slug)["name"]
+
+    def get_product_categories(self, user_id: int) -> Iterable[ProductCategoryInterface]:
+        return ProductCategory.objects.annotate(
+            count=Count("products", filter=Q(products__user_products__user_id=user_id))
+        ).filter(count__gte=1)
+
+    def get_product_for_popup(self, product_id: int) -> ProductInterface:
+        return (
+            Product.objects.select_related("organization")
+            .values("partner_description", "organization__partner_program")
+            .get(id=product_id)
+        )
 
 
 def get_product_repository() -> ProductRepositoryInterface:

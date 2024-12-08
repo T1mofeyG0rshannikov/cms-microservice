@@ -13,7 +13,6 @@ class BlockSerializer(serializers.Serializer):
         return block.content
 
     def get_styles(self, block: PageBlockInterface):
-        print(block.styles)
         if block.styles:
             return CustomStylesSerializer(block.styles).data
         return None

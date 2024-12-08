@@ -4,7 +4,7 @@ from application.services.request_service import RequestServiceInterface
 
 
 class RequestService(RequestServiceInterface):
-    def __init__(self, request: HttpRequest):
+    def __init__(self, request: HttpRequest) -> None:
         self.request = request
 
     def get_all_headers_to_string(self) -> str:

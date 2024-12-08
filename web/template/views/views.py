@@ -2,19 +2,22 @@ from django.http import HttpRequest, JsonResponse
 from django.shortcuts import render
 from django.views import View
 
-from application.common.base_url_parser import UrlParserInterface
-from infrastructure.url_parser import get_url_parser
+from application.sessions.add_session_action import (
+    IncrementSessionCount,
+    get_increment_session_count,
+)
+from application.texts.user_session import UserActions
 from domain.products.repository import ProductRepositoryInterface
-from domain.user_sessions.repository import UserSessionRepositoryInterface
+from infrastructure.logging.user_activity.create_session_log import (
+    CreateUserSesssionLog,
+    get_create_user_session_log,
+)
 from infrastructure.persistence.models.blocks.catalog_block import CatalogBlock
 from infrastructure.persistence.models.blocks.common import Page
 from infrastructure.persistence.repositories.product_repository import (
     get_product_repository,
 )
-from infrastructure.persistence.repositories.user_session_repository import (
-    get_user_session_repository,
-)
-from infrastructure.persistence.sessions.add_session_action import IncrementSessionCount
+from infrastructure.requests.request_interface import RequestInterface
 from web.account.views.templates import Profile
 from web.blocks.views import ShowPage
 from web.catalog.views import ShowCatalogPage
@@ -47,33 +50,29 @@ def slug_router(request: HttpRequest, slug: str):
 class BaseTemplateLoadView(View):
     template_loader: TemplateLoaderInterface = get_template_loader()
 
-    def get(self, request: HttpRequest):
+    def get(self, request: HttpRequest) -> JsonResponse:
         template = self.get_content(request)
         return JsonResponse({"content": template})
 
 
 class GetChangeUserFormTemplate(BaseTemplateLoadView):
-    url_parser: UrlParserInterface = get_url_parser()
-    increment_session_profile_action = IncrementSessionCount(get_user_session_repository(), "profile_actions_count")
+    increment_session_profile_action: IncrementSessionCount = get_increment_session_count("profile_actions_count")
+    create_user_session_log: CreateUserSesssionLog = get_create_user_session_log()
 
     def get_content(self, request: HttpRequest):
-        adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
-
-        self.increment_session_profile_action(request.user_session_id, adress, text=f"""Открыл данные профиля""")
+        self.increment_session_profile_action(request=request)
+        self.create_user_session_log(request=request, text=UserActions.opened_profile_data)
 
         return self.template_loader.load_change_user_form(request)
 
 
 class GetChangeSiteFormTemplate(BaseTemplateLoadView):
-    url_parser: UrlParserInterface = get_url_parser()
-    increment_session_profile_action = IncrementSessionCount(get_user_session_repository(), "profile_actions_count")
+    increment_session_profile_action: IncrementSessionCount = get_increment_session_count("profile_actions_count")
+    create_user_session_log: CreateUserSesssionLog = get_create_user_session_log()
 
     def get_content(self, request: HttpRequest):
-        adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
-
-        self.increment_session_profile_action(
-            request.user_session_id, adress, text="Открыл настройку партнерского сайта"
-        )
+        self.increment_session_profile_action(request=request)
+        self.create_user_session_log(request=request, text=UserActions.opened_site_settings)
 
         return self.template_loader.load_change_site_form(request)
 
@@ -91,9 +90,8 @@ class PageNotFound(SubdomainMixin):
 
 
 class BaseProfileTemplateView(View):
-    url_parser: UrlParserInterface = get_url_parser()
-    user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
     template_loader: ProfileTemplateLoaderInterface = get_profile_template_loader()
+    create_user_session_log: CreateUserSesssionLog = get_create_user_session_log()
 
     def get(self, request: HttpRequest):
         try:
@@ -101,11 +99,9 @@ class BaseProfileTemplateView(View):
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=400)
 
-        adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
-        self.user_session_repository.create_user_action(
-            adress=adress,
+        self.create_user_session_log(
+            request=request,
             text="Перешёл на страницу",
-            session_id=request.user_session_id,
         )
 
         return JsonResponse(template)
@@ -145,16 +141,10 @@ class UserProductsTemplate(BaseProfileTemplateView):
 
 
 class GetChoiceProductForm(BaseTemplateLoadView):
-    url_parser: UrlParserInterface = get_url_parser()
-    user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
+    create_user_session_log: CreateUserSesssionLog = get_create_user_session_log()
 
-    def get_content(self, request):
-        adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
-        self.user_session_repository.create_user_action(
-            adress=adress,
-            text="Открыл список продуктов",
-            session_id=request.user_session_id,
-        )
+    def get_content(self, request: RequestInterface):
+        self.create_user_session_log(request=request, text=UserActions.opened_products_list)
 
         return self.template_loader.load_choice_product_form(request)
 
@@ -165,22 +155,15 @@ class GetCreateUserProductForm(BaseTemplateLoadView):
 
 
 class GetProductDescriptionPopup(BaseTemplateLoadView):
-    url_parser: UrlParserInterface = get_url_parser()
-    user_session_repository: UserSessionRepositoryInterface = get_user_session_repository()
     product_repository: ProductRepositoryInterface = get_product_repository()
+    create_user_session_log: CreateUserSesssionLog = get_create_user_session_log()
 
     def get_content(self, request: HttpRequest):
-        adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
-
         product = int(request.GET.get("product"))
 
         product_name = self.product_repository.get_product_by_id(product)
 
-        self.user_session_repository.create_user_action(
-            adress=adress,
-            text=f'''Открыл описание продукта "{product_name}"''',
-            session_id=request.user_session_id,
-        )
+        self.create_user_session_log(request=request, text=f'''Открыл описание продукта "{product_name}"''')
 
         return self.template_loader.load_product_description_popup(request)
 

@@ -4,7 +4,6 @@ from django.db import models
 
 from application.services.domains.service import get_domain_service
 from infrastructure.persistence.managers.user_manager.user_manager import UserManager
-
 from infrastructure.persistence.models.settings import Domain
 from infrastructure.persistence.models.site_tests import TestUserSet
 from infrastructure.persistence.models.user.site import Site
@@ -80,6 +79,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self) -> str:
         return self.full_name
+
+    def set_password(self, new_password: str) -> None:
+        super().set_password(new_password)
+        self.save()
 
     def verify_password(self, raw_password: str) -> bool:
         return check_password(raw_password, self.password)

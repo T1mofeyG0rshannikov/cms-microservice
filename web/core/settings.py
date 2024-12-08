@@ -361,3 +361,22 @@ CACHES = {
         "LOCATION": os.path.join(BASE_DIR, "bankomag_cache"),
     }
 }
+
+
+MIGRATION_MODULES = {
+    "user": "infrastructure.persistence.migrations.user",
+    "admin": "infrastructure.persistence.migrations.admin",
+    "blocks": "infrastructure.persistence.migrations.blocks",
+    "site_statistics": "infrastructure.persistence.migrations.site_statistics",
+    "catalog": "infrastructure.persistence.migrations.catalog",
+    "common": "infrastructure.persistence.migrations.common",
+    "account": "infrastructure.persistence.migrations.account",
+    "settings": "infrastructure.persistence.migrations.settings",
+    "styles": "infrastructure.persistence.migrations.styles",
+    "notifications": "infrastructure.persistence.migrations.notifications",
+    "site_tests": "infrastructure.persistence.migrations.site_tests",
+    "domens": "infrastructure.persistence.migrations.domens",
+    "emails": "infrastructure.persistence.migrations.emails",
+    "materials": "infrastructure.persistence.migrations.materials",
+    "system": "infrastructure.persistence.migrations.system",
+}

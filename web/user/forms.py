@@ -1,5 +1,4 @@
 from django import forms
-from django.utils.translation import gettext_lazy as _
 
 from application.texts.errors import UserErrors
 from domain.user.validator import UserValidatorInterface
@@ -13,7 +12,7 @@ class RegistrationForm(forms.Form):
 
     validator: UserValidatorInterface = get_user_validator()
 
-    def clean_phone(self):
+    def clean_phone(self) -> str:
         phone = self.cleaned_data["phone"]
         phone = self.validator.get_raw_phone(phone)
 
@@ -31,7 +30,7 @@ class LoginForm(forms.Form):
 
     validator: UserValidatorInterface = get_user_validator()
 
-    def clean_phone_or_email(self):
+    def clean_phone_or_email(self) -> str:
         phone_or_email = self.cleaned_data["phone_or_email"]
         phone_or_email = self.validator.validate_phone_or_email(phone_or_email)
 

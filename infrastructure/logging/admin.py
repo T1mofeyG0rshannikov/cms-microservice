@@ -1,12 +1,13 @@
 from typing import Any
 
+from application.email_services.work_email_service.email_service_interface import (
+    WorkEmailServiceInterface,
+)
 from application.services.request_service import RequestServiceInterface
 from domain.logging.admin import AdminLogRepositoryInterface
+from domain.user.user import UserInterface
 from infrastructure.email_services.work_email_service.email_service import (
     get_work_email_service,
-)
-from infrastructure.email_services.work_email_service.email_service_interface import (
-    WorkEmailServiceInterface,
 )
 from infrastructure.persistence.repositories.admin_log_repository import (
     get_admin_log_repository,
@@ -38,12 +39,14 @@ class AdminLoginLogger:
 
         self.email_service.send_success_admin_login_message(ip=ip_address, **fields, time=log.date)
 
-    def fake_admin_panel(self, fields: dict[str, Any]) -> None:
+    def fake_admin_panel(self, user: UserInterface, **kwargs) -> None:
         ip_address = self.request_service.get_client_ip()
+        print(user)
+        print(kwargs)
 
-        log = self.repository.create_logg_fake_admin(ip_address, **fields)
+        log = self.repository.create_logg_fake_admin(ip=ip_address, user=user, **kwargs)
 
-        self.email_service.send_fake_admin_login_message(ip=ip_address, **fields, time=log.date)
+        self.email_service.send_fake_admin_login_message(**kwargs, ip=ip_address, user=user, time=log.date)
 
 
 def get_admin_logger(

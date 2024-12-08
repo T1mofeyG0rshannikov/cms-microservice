@@ -19,9 +19,9 @@ class JoomlaAdminPage(TemplateView):
     def post(self, request: HttpRequest):
         password = request.POST.get("passwd")
 
-        self.logger.fake_admin_panel(
-            {"username": request.POST.get("username"), "user": request.user, "password": password}
-        )
+        user = request.user if request.user.is_authenticated else None
+
+        self.logger.fake_admin_panel(username=request.POST.get("username"), user=user, password=password)
 
         error_message = (
             "Empty password not allowed"

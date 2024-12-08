@@ -1,5 +1,8 @@
 from django.db.models.signals import post_save, pre_save
 
+from application.email_services.user_email_service.email_service_interface import (
+    EmailServiceInterface,
+)
 from application.usecases.notifications.create_notification import (
     CreateUserNotification,
 )
@@ -13,9 +16,6 @@ from domain.user.notifications.error import CantSendNotification
 from domain.user.notifications.trigger_enum import TriggerNames
 from domain.user.user import UserInterface
 from infrastructure.email_services.email_service.email_service import get_email_service
-from infrastructure.email_services.email_service.email_service_interface import (
-    EmailServiceInterface,
-)
 from infrastructure.persistence.models.user.user import User
 from infrastructure.persistence.repositories.notification_repository import (
     get_notification_repository,

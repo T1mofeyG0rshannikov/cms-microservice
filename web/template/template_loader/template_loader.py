@@ -19,7 +19,7 @@ class TemplateLoader(TemplateLoaderInterface):
         self.context_processor = context_processor
 
     @staticmethod
-    def load_template(app_name: str, template_name: str, request: HttpRequest = None, context: dict[Any, Any] = None):
+    def load_template(app_name: str, template_name: str, request: HttpRequest = None, context: dict[str, Any] = None):
         if is_template_exists(f"{app_name}/{template_name}.html"):
             return loader.render_to_string(f"{app_name}/{template_name}.html", context, request, None)
         return None
@@ -73,10 +73,11 @@ class TemplateLoader(TemplateLoaderInterface):
         )
 
     def load_delete_product_popup(self, request: HttpRequest):
-        context = self.context_processor.get_delete_product_popup(request)
-
         return self.load_template(
-            app_name="account", template_name="popups/delete-popup", request=request, context=context
+            app_name="account",
+            template_name="popups/delete-popup",
+            request=request,
+            context={"product_id": request.GET.get("product")},
         )
 
     def load_create_idea_form(self, request: HttpRequest):

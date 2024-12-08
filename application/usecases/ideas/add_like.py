@@ -1,5 +1,6 @@
 from domain.user.exceptions import CantAddLike, IdeaNotFound, LikeAlreadyExists
 from domain.user.idea_repository import IdeaRepositoryInterface
+from infrastructure.persistence.repositories.idea_repository import get_idea_repository
 
 
 class AddLike:
@@ -21,3 +22,7 @@ class AddLike:
             raise LikeAlreadyExists("You already had liked this idea")
 
         self.repository.create_like(user_id, idea.id)
+
+
+def get_add_like_interactor(idea_repository: IdeaRepositoryInterface = get_idea_repository()) -> AddLike:
+    return AddLike(idea_repository)

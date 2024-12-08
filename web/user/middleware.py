@@ -1,3 +1,5 @@
+from django.http import HttpRequest
+
 from domain.user.repository import UserRepositoryInterface
 from infrastructure.auth.jwt_processor import get_jwt_processor
 from infrastructure.auth.jwt_processor_interface import JwtProcessorInterface
@@ -8,10 +10,10 @@ class JwtAuthMiddleware:
     jwt_processor: JwtProcessorInterface = get_jwt_processor()
     repository: UserRepositoryInterface = get_user_repository()
 
-    def __init__(self, get_response):
+    def __init__(self, get_response) -> None:
         self.get_response = get_response
 
-    def __call__(self, request):
+    def __call__(self, request: HttpRequest):
         token = request.headers.get("Authorization")
 
         payload = self.jwt_processor.validate_token(token)

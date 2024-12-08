@@ -48,7 +48,7 @@ class UserOffer(models.Model):
 
 def create_user_product_handler(sender, instance, *args, **kwargs):
     if not instance.id:
-        if UserProduct.objects.filter(user=instance.user, product=instance.product).exists():
+        if UserProduct.objects.filter(user=instance.user, product=instance.product, deleted=False).exists():
             raise UserProductAlreadyExists(f'Вы уже добавили себе продукт "{instance.product}"')
 
 

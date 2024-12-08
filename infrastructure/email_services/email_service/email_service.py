@@ -1,15 +1,15 @@
 from django.conf import settings
 
-from domain.referrals.referral import UserInterface
-from infrastructure.email_services.base_email_service import BaseEmailService
-from infrastructure.email_services.email_service.email_service_interface import (
+from application.email_services.user_email_service.email_service_interface import (
     EmailServiceInterface,
 )
-from infrastructure.email_services.email_service.template_generator.template_generator import (
-    get_email_template_generator,
-)
-from infrastructure.email_services.email_service.template_generator.template_generator_interface import (
+from application.email_services.user_email_service.template_generator_interface import (
     EmailTemplateGeneratorInterface,
+)
+from domain.referrals.referral import UserInterface
+from infrastructure.email_services.base_email_service import BaseEmailService
+from infrastructure.email_services.email_service.template_generator import (
+    get_email_template_generator,
 )
 
 

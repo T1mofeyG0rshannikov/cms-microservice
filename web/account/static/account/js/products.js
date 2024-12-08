@@ -128,7 +128,7 @@ function onSubmitCreateUserProductForm(element, event, product){
         data.append('screen', element.querySelector("#file").files[0]);
     }
 
-    data.append('product', product)
+    data.append('product_id', product)
     data.append('connected_with_link', element.querySelector("input[name=connected_with_link]").checked);
 
    const token = getToken();

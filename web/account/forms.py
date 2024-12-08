@@ -7,22 +7,22 @@ from infrastructure.user.validator import get_user_validator
 
 
 class ChangeSiteForm(forms.Form):
-    site = forms.CharField(max_length=50)
+    subdomain = forms.CharField(max_length=50)
     name = forms.CharField(max_length=50)
-    font = forms.IntegerField()
+    font_id = forms.IntegerField()
     font_size = forms.IntegerField()
     logo = forms.FileField(required=False)
     logo_size = forms.IntegerField(required=False)
     owner = forms.CharField(max_length=200)
     contact_info = forms.CharField(max_length=200)
-    domain = forms.IntegerField()
+    domain_id = forms.IntegerField()
     delete_logo = forms.CharField(max_length=10)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["site"].error_messages = {"required": "Укажите адрес своего сайта"}
+        self.fields["subdomain"].error_messages = {"required": "Укажите адрес своего сайта"}
         self.fields["name"].error_messages = {"required": "Укажите название своего сайта"}
-        self.fields["font"].error_messages = {"required": "Это поле обязательное"}
+        self.fields["font_id"].error_messages = {"required": "Это поле обязательное"}
         self.fields["font_size"].error_messages = {"required": "Это поле обязательное"}
         self.fields["owner"].error_messages = {"required": "Укажите свое имя или название организации"}
         self.fields["contact_info"].error_messages = {"required": "Укажите свой емейл, телефон или другой способ связи"}
@@ -127,7 +127,7 @@ class ChangeSocialsForm(forms.Form):
 
 
 class AddUserProductForm(forms.Form):
-    product = forms.IntegerField(required=False)
+    product_id = forms.IntegerField(required=False)
     link = forms.CharField(required=False)
     comment = forms.CharField(required=False)
     connected_with_link = forms.CharField(required=False)
@@ -136,12 +136,3 @@ class AddUserProductForm(forms.Form):
     profit = forms.DateField(required=False)
 
     screen = forms.ImageField(required=False)
-
-    def clean(self, *args, **kwargs):
-        link = self.cleaned_data.get("link")
-        connected = self.cleaned_data.get("connected")
-
-        if not link and not connected:
-            self.add_error("link", "Укажите вашу партнерскую ссылку или дату оформления продукта")
-
-        super().clean(*args, **kwargs)

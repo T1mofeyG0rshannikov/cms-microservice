@@ -13,6 +13,7 @@ class Errors(StrEnum):
     to_large_image_size = "Максимальный размер логотипа 500x200px"
     disallowed_host = "Запрещенный домен"
     something_went_wrong = "Что-то пошло не так, повторите попытку чуть позже"
+    to_large_file_1mb = "Изображение должно быть не более 1Mb"
 
 
 class UserErrors(StrEnum):
@@ -27,3 +28,4 @@ class UserErrors(StrEnum):
     you_already_have_your_own_website = "вы уже имеете свой сайт"
     something_went_wrong = "что-то пошло не так, попробуйте позже"
     user_does_not_exist = "пользователь не найден"
+    insufficient_permissions = "Недостаточно прав"

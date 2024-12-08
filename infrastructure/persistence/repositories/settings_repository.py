@@ -1,9 +1,16 @@
+from collections.abc import Iterable
+
+from domain.domains.site import DomainInterface
 from domain.page_blocks.settings_repository import SettingsRepositoryInterface
 from infrastructure.persistence.models.settings import (
+    Domain,
     FormLogo,
     Icon,
     Logo,
+    Messanger,
     SiteSettings,
+    SocialNetwork,
+    UserFont,
 )
 
 
@@ -19,6 +26,18 @@ class SettingsRepository(SettingsRepositoryInterface):
 
     def get_icon(self):
         return Icon.objects.first()
+
+    def get_messangers(self):
+        return Messanger.objects.select_related("social_network").all()
+
+    def get_user_fonts(self):
+        return UserFont.objects.all()
+
+    def get_social_networks(self):
+        return SocialNetwork.objects.all()
+
+    def get_partner_domains(self) -> Iterable[DomainInterface]:
+        return Domain.objects.values("domain", "id").filter(is_partners=True)
 
 
 def get_settings_repository() -> SettingsRepositoryInterface:

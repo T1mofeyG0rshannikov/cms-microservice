@@ -1,24 +1,28 @@
+from typing import Any
+
 from django.http import HttpRequest, HttpResponseRedirect, JsonResponse
 
-from application.common.base_url_parser import UrlParserInterface
-from infrastructure.url_parser import get_url_parser
+from application.email_services.user_email_service.email_service_interface import (
+    EmailServiceInterface,
+)
 from application.texts.errors import UserErrors
 from application.texts.success_messages import Messages
+from application.texts.user_session import UserActions
 from application.usecases.user.reset_password import (
     ResetPassword,
     ValidResetPasswordToken,
+    get_reset_password_interactor,
+    get_valid_reset_pass_token_interactor,
 )
 from domain.user.exceptions import InvalidJwtToken
 from domain.user.repository import UserRepositoryInterface
-from infrastructure.auth.jwt_processor import get_jwt_processor
 from infrastructure.email_services.email_service.email_service import get_email_service
-from infrastructure.email_services.email_service.email_service_interface import (
-    EmailServiceInterface,
+from infrastructure.logging.user_activity.create_session_log import (
+    CreateUserSesssionLog,
+    get_create_user_session_log,
 )
 from infrastructure.persistence.repositories.user_repository import get_user_repository
-from infrastructure.persistence.repositories.user_session_repository import (
-    get_user_session_repository,
-)
+from infrastructure.requests.request_interface import RequestInterface
 from web.common.views import FormView
 from web.user.forms import ResetPasswordForm, SetPasswordForm
 from web.user.views.base_user_view import BaseUserView
@@ -27,10 +31,10 @@ from web.user.views.base_user_view import BaseUserView
 class ResetPasswordView(BaseUserView, FormView):
     template_name = "user/set-password.html"
     form_class = SetPasswordForm
-    valid_reset_password_token_interactor = ValidResetPasswordToken(get_jwt_processor(), get_user_repository())
-    reset_password_interactor = ResetPassword(get_jwt_processor(), get_user_repository())
+    valid_reset_password_token_interactor: ValidResetPasswordToken = get_valid_reset_pass_token_interactor()
+    reset_password_interactor: ResetPassword = get_reset_password_interactor()
 
-    def get(self, request, token):
+    def get(self, request: HttpRequest, token: str):
         try:
             user = self.valid_reset_password_token_interactor(token)
             self.login(user)
@@ -39,14 +43,14 @@ class ResetPasswordView(BaseUserView, FormView):
 
         return super().get(request, token)
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["form"] = SetPasswordForm()
-        context["token"] = self.kwargs.get("token")
+        context["token"] = kwargs.get("token")
 
         return context
 
-    def form_valid(self, request, form, token):
+    def form_valid(self, request: HttpRequest, form: SetPasswordForm, token: str) -> JsonResponse:
         try:
             user, access_token = self.reset_password_interactor(token, form.cleaned_data.get("password"))
             self.login(user)
@@ -65,10 +69,8 @@ class ResetPasswordView(BaseUserView, FormView):
 class SetPassword(BaseUserView, FormView):
     template_name = "user/set-password.html"
     form_class = SetPasswordForm
-    user_session_repository = get_user_session_repository()
-    url_parser: UrlParserInterface = get_url_parser()
 
-    def get(self, request):
+    def get(self, request: HttpRequest):
         if request.user is None:
             return HttpResponseRedirect(self.login_url)
 
@@ -77,28 +79,24 @@ class SetPassword(BaseUserView, FormView):
 
         return super().get(request)
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["form"] = SetPasswordForm()
 
         return context
 
-    def form_valid(self, request: HttpRequest, form):
-        adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
+    def form_valid(self, request: RequestInterface, form: SetPasswordForm) -> JsonResponse:
         password = form.cleaned_data.get("password")
 
         user = request.user
         user.set_password(password)
-        user.save()
-
         self.login(user)
 
         access_token = self.jwt_processor.create_access_token(user.username, user.id)
 
-        self.user_session_repository.create_user_action(
-            adress=adress,
-            text=f"""Установил пароль""",
-            session_id=request.user_session_id,
+        self.create_user_session_log(
+            request=request,
+            text=UserActions.set_password,
         )
 
         return JsonResponse(
@@ -113,26 +111,23 @@ class SendMailToResetPassword(FormView):
     email_service: EmailServiceInterface = get_email_service()
     form_class = ResetPasswordForm
     user_repository: UserRepositoryInterface = get_user_repository()
-    user_session_repository = get_user_session_repository()
-    url_parser: UrlParserInterface = get_url_parser()
+    create_user_session_log: CreateUserSesssionLog = get_create_user_session_log()
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["reset_password_form"] = ResetPasswordForm()
 
         return context
 
-    def form_valid(self, request: HttpRequest, form):
+    def form_valid(self, request: RequestInterface, form: ResetPasswordForm) -> JsonResponse:
         email = form.cleaned_data.get("email")
-        adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
 
         user = self.user_repository.get_user_by_email(email)
 
         if user is None:
-            self.user_session_repository.create_user_action(
-                adress=adress,
+            self.create_user_session_log(
+                request=request,
                 text=f'''Ошибка восстановления пароля "{email}"''',
-                session_id=request.user_session_id,
             )
 
             form.add_error("email", UserErrors.user_by_email_not_found)
@@ -140,10 +135,9 @@ class SendMailToResetPassword(FormView):
 
         self.email_service.send_mail_to_reset_password(user)
 
-        self.user_session_repository.create_user_action(
-            adress=adress,
+        self.create_user_session_log(
+            request=request,
             text=f'''Восстановление пароля "{email}"''',
-            session_id=request.user_session_id,
         )
 
         return JsonResponse({"message": Messages.sent_message_to_reset_password})

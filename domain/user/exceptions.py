@@ -30,6 +30,10 @@ class UserProductAlreadyExists(Exception):
     pass
 
 
+class LinkOrConnectedRequired(Exception):
+    pass
+
+
 class CantAddLike(Exception):
     pass
 

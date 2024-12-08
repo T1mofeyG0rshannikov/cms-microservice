@@ -30,3 +30,6 @@ class DomainServiceInterface(Protocol):
 
     def get_site_by_name(self, name: str) -> SiteInterface:
         raise NotImplementedError
+
+    def get_random_site(self) -> SiteInterface:
+        raise NotImplementedError

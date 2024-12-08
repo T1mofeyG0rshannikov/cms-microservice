@@ -1,8 +1,7 @@
 from django.db import transaction
-from django.db.models import Count, Q, F, ExpressionWrapper, IntegerField
 
-from domain.referrals.referral import ReferralInterface, UserInterface
 from domain.user.repository import UserRepositoryInterface
+from domain.user.user import UserInterface
 from infrastructure.persistence.models.account import UserMessanger
 from infrastructure.persistence.models.user.user import User
 
@@ -19,11 +18,8 @@ class UserRepository(UserRepositoryInterface):
 
     def get_user_by_id(self, id: int) -> UserInterface | None:
         return User.objects.get_user_by_id(id)
-    
-    def create_user(self, **kwargs) -> UserInterface:
-        email = kwargs.get("email")
-        phone = kwargs.get("phone")
 
+    def create_user(self, email: str, phone: str, **kwargs) -> UserInterface:
         try:
             with transaction.atomic():
                 User.objects.filter(email=email).update(email=None)
@@ -57,12 +53,10 @@ class UserRepository(UserRepositoryInterface):
     def change_user_email(self, user_id: int, email: str) -> None:
         user = self.get_user_by_id(user_id)
         user.change_email(email)
-        user.save()
 
     def set_password(self, user_id: int, new_password: str) -> UserInterface:
         user = self.get_user_by_id(user_id)
         user.set_password(new_password)
-        user.save()
 
         return user
 

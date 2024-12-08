@@ -10,6 +10,7 @@ class DomainInterface:
 
 @dataclass
 class SiteInterface:
+    id: int
     domain: DomainInterface
 
     name: str
@@ -28,3 +29,9 @@ class SiteInterface:
         if self.subdomain:
             return f"{self.subdomain}.{self.domain.domain}"
         return self.domain.domain
+
+    def activate(self) -> None:
+        pass
+
+    def deactivate(self) -> None:
+        pass

@@ -12,20 +12,20 @@
     <hr />
 
     <div class="field-container">
-        <div class="field" id="site">
+        <div class="field" id="subdomain">
             <p>Адрес сайта</p>
             <div style="display: flex; align-items: center;">
                 <div>
-                    <input name="site" value="{% if user.site.subdomain %}{{ user.site.subdomain }}{% endif %}" placeholder="Придумайте адрес" />
+                    <input name="subdomain" value="{% if site.subdomain %}{{ site.subdomain }}{% endif %}" placeholder="Придумайте адрес" />
                 </div>
                 <a style="margin: 0px;">{{ partner_domain }}</a>
             </div>
         </div>
 
-        <div class="field" id="site">
+        <div class="field" id="domain_id">
             <div style="display: flex; align-items: center;">
                 <div>
-                    <select name="domain">
+                    <select name="domain_id">
                         {% for domain_model in domains %}
                             <option value="{{ domain_model.id }}">{{ domain_model.domain }}</option>
                         {% endfor %}
@@ -41,14 +41,14 @@
     <div class="field-container">
         <div class="field" id="name">
             <p>Название сайта</p>
-            <input placeholder="Придумайте название" name="name" value="{% if user.site.name %}{{ user.site.name }}{% endif %}" />
+            <input placeholder="Придумайте название" name="name" value="{% if site.name %}{{ site.name }}{% endif %}" />
         </div>
 
-        <div class="field" id="font">
+        <div class="field" id="font_id">
             <p>Шрифт</p>
-            <select name="font" id="font">
+            <select name="font_id" id="font_id">
                 {% for font in fonts %}
-                    <option value="{{ font.id }}" {% if user.site.font.id == font.id %}selected{% endif %}>{{ font.name }}</option>
+                    <option value="{{ font.id }}" {% if site.font.id == font.id %}selected{% endif %}>{{ font.name }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -56,20 +56,20 @@
         <div class="field" id="font_size">
             <p>Размер</p>
             <select name="font_size" id="font_size">
-                {% if user.site.font_size %}
-                    <option {% if user.site.font_size == 6 %}selected{% endif %} value="6">6</option>
-                    <option {% if user.site.font_size == 8 %}selected{% endif %} value="8">8</option>
-                    <option {% if user.site.font_size == 9 %}selected{% endif %} value="9">9</option>
-                    <option {% if user.site.font_size == 10 %}selected{% endif %} value="10">10</option>
-                    <option {% if user.site.font_size == 12 %}selected{% endif %} value="12">12</option>
-                    <option {% if user.site.font_size == 14 %}selected{% endif %} value="14">14</option>
-                    <option {% if user.site.font_size == 18 %}selected{% endif %} value="18">18</option>
-                    <option {% if user.site.font_size == 24 %}selected{% endif %} value="24">24</option>
-                    <option {% if user.site.font_size == 30 %}selected{% endif %} value="30">30</option>
-                    <option {% if user.site.font_size == 36 %}selected{% endif %} value="36">36</option>
-                    <option {% if user.site.font_size == 48 %}selected{% endif %} value="48">48</option>
-                    <option {% if user.site.font_size == 60 %}selected{% endif %} value="60">60</option>
-                    <option {% if user.site.font_size == 72 %}selected{% endif %} value="72">72</option>
+                {% if site.font_size %}
+                    <option {% if site.font_size == 6 %}selected{% endif %} value="6">6</option>
+                    <option {% if site.font_size == 8 %}selected{% endif %} value="8">8</option>
+                    <option {% if site.font_size == 9 %}selected{% endif %} value="9">9</option>
+                    <option {% if site.font_size == 10 %}selected{% endif %} value="10">10</option>
+                    <option {% if site.font_size == 12 %}selected{% endif %} value="12">12</option>
+                    <option {% if site.font_size == 14 %}selected{% endif %} value="14">14</option>
+                    <option {% if site.font_size == 18 %}selected{% endif %} value="18">18</option>
+                    <option {% if site.font_size == 24 %}selected{% endif %} value="24">24</option>
+                    <option {% if site.font_size == 30 %}selected{% endif %} value="30">30</option>
+                    <option {% if site.font_size == 36 %}selected{% endif %} value="36">36</option>
+                    <option {% if site.font_size == 48 %}selected{% endif %} value="48">48</option>
+                    <option {% if site.font_size == 60 %}selected{% endif %} value="60">60</option>
+                    <option {% if site.font_size == 72 %}selected{% endif %} value="72">72</option>
                 {% else %}
                     <option {% if default_user_size == 6 %}selected{% endif %} value="6">6</option>
                     <option {% if default_user_size == 8 %}selected{% endif %} value="8">8</option>
@@ -96,8 +96,8 @@
             <p>Логотип</p>
             <div id="logo" class="logo">
                 <img
-                    src="{% if user.site.logo %}{{ user.site.logo.url }}{% else %}{% static 'account/images/baselogo.png' %}{% endif %}"
-                    style="{% if user.site.logo %}width: {{ user.site.logo_width }}; {% endif %}"
+                    src="{% if site.logo %}{{ site.logo.url }}{% else %}{% static 'account/images/baselogo.png' %}{% endif %}"
+                    style="{% if site.logo %}width: {{ site.logo_width }}; {% endif %}"
                 />
                 <input name="file" type="file" accept="image/*" id="file" />
             </div>
@@ -105,7 +105,7 @@
 
         <div class="field" id="logo_size">
             <p>Размер</p>
-            <input name="logo_size" min="0" max="100" value="{% if user.site.logo %}{{ user.site.width_percent }}{% else %}100{% endif %}" type="range" />
+            <input name="logo_size" min="0" max="100" value="{% if site.logo %}{{ site.width_percent }}{% else %}100{% endif %}" type="range" />
         </div>
 
         <div class="field">
@@ -125,7 +125,7 @@
     <div class="field-container">
         <div class="field" style="width: 100%; margin-right: 10px;" id="owner">
             <p>Владелец</p>
-            <input placeholder="ФИО или название организации" name="owner" value="{% if user.site.owner %}{{ user.site.owner }}{% endif %}" style="width: 100%"/>
+            <input placeholder="ФИО или название организации" name="owner" value="{% if site.owner %}{{ site.owner }}{% endif %}" style="width: 100%"/>
         </div>
 
         {% include "common/context_help.html" with text='Согласно ФЗ №347 ваше имя или название организации должно быть размещено в контактах сайта' %}
@@ -134,7 +134,7 @@
     <div class="field-container" style="margin-bottom: 15px;">
         <div class="field" style="width: 100%; margin-right: 10px;" id="contact_info">
             <p>Контактная информация</p>
-            <input name="contact_info" style="width: 100%" value="{% if user.site.contact_info %}{{ user.site.contact_info }}{% endif %}" placeholder="Контактные данные на сайт" />
+            <input name="contact_info" style="width: 100%" value="{% if site.contact_info %}{{ site.contact_info }}{% endif %}" placeholder="Контактные данные на сайт" />
         </div>
 
         {% include "common/context_help.html" with text='Ваш емейл, телефон или другой способ связи, который видят посетители сайта' %}

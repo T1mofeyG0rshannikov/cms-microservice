@@ -1,5 +1,3 @@
-from typing import Any
-
 from application.texts.errors import UserErrors
 from domain.referrals.referral import UserInterface
 from domain.user.exceptions import (
@@ -7,16 +5,24 @@ from domain.user.exceptions import (
     UserWithPhoneAlreadyExists,
 )
 from domain.user.repository import UserRepositoryInterface
+from infrastructure.persistence.repositories.user_repository import get_user_repository
 
 
 class ChangeUser:
-    def __init__(self, repository: UserRepositoryInterface):
+    def __init__(self, repository: UserRepositoryInterface) -> None:
         self.repository = repository
 
-    def __call__(self, user: UserInterface, fields: dict[str, Any]) -> bool:
-        phone = fields.get("phone")
-        email = fields.get("email")
-
+    def __call__(
+        self,
+        user: UserInterface,
+        phone: str,
+        email: str,
+        username: str,
+        second_name: str,
+        profile_picture: str,
+        social_network: str = None,
+        adress: str = None,
+    ) -> bool:
         user_with_phone = self.repository.get_user_by_phone(phone)
         user_with_email = self.repository.get_user_by_email(email)
 
@@ -28,16 +34,13 @@ class ChangeUser:
 
         self.repository.update_user(
             id=user.id,
-            username=fields.get("username"),
-            second_name=fields.get("second_name"),
+            username=username,
+            second_name=second_name,
             phone=phone,
-            profile_picture=fields.get("profile_picture"),
+            profile_picture=profile_picture,
         )
 
-        if fields.get("social_network"):
-            social_network = fields.get("social_network")
-            adress = fields.get("adress")
-
+        if social_network:
             self.repository.update_or_create_user_messanger(user_id=user.id, messanger_id=social_network, adress=adress)
 
         if user.email_is_confirmed and email != user.email:
@@ -48,3 +51,7 @@ class ChangeUser:
         self.repository.change_user_email(user.id, email)
 
         return False
+
+
+def get_change_user_interactor(repository: UserRepositoryInterface = get_user_repository()) -> ChangeUser:
+    return ChangeUser(repository)

@@ -4,13 +4,11 @@ from django.conf import settings
 from django.http import HttpRequest, HttpResponse
 from django.utils.timezone import now
 
+from application.sessions.user_activity_service import UserActivitySessionService
 from domain.user_sessions.session import SessionInterface
 from infrastructure.logging.tasks import create_user_activity_logs
 from infrastructure.logging.user_activity.config import get_user_active_settings
 from infrastructure.logging.user_activity.create_json_logs import create_user_log
-from infrastructure.persistence.sessions.user_activity_service import (
-    UserActivitySessionService,
-)
 from infrastructure.requests.service import RequestService
 from web.site_statistics.base_session_middleware import BaseSessionMiddleware
 

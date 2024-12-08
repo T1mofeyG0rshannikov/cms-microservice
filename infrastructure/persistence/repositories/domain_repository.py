@@ -1,3 +1,5 @@
+from collections.abc import Iterable
+
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
 from domain.domains.domain_repository import DomainRepositoryInterface
@@ -44,12 +46,12 @@ class DomainRepository(DomainRepositoryInterface):
         except (OperationalError, ProgrammingError):
             return None
 
-    def update_or_create_user_site(self, **kwargs) -> SiteInterface:
+    def update_or_create_user_site(self, **kwargs) -> tuple[SiteInterface, bool]:
         fields = kwargs
         user_id = fields.get("user_id")
 
         try:
-            site, _ = Site.objects.update_or_create(
+            site, created = Site.objects.update_or_create(
                 user_id=user_id,
                 defaults={
                     "subdomain": fields["subdomain"],
@@ -73,7 +75,7 @@ class DomainRepository(DomainRepositoryInterface):
 
             site.save()
 
-            return site
+            return site, created
         except IntegrityError:
             raise SiteAdressExists("Такой адрес уже существует")
 
@@ -83,8 +85,11 @@ class DomainRepository(DomainRepositoryInterface):
     def get_user_site(self, user_id: int) -> SiteInterface:
         return Site.objects.filter(user_id=user_id).first()
 
-    def get_domain_sites(self, domain: str) -> list[SiteInterface]:
+    def get_domain_sites(self, domain: str) -> Iterable[SiteInterface]:
         return Site.objects.all() if domain == "localhost" else Site.objects.filter(domain__domain=domain)
+
+    def get_all_sites(self) -> Iterable[SiteInterface]:
+        return Site.objects.all()
 
 
 def get_domain_repository() -> DomainRepositoryInterface:
