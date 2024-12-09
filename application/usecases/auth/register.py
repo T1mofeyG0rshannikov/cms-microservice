@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from application.common.base_url_parser import UrlParserInterface
+from application.texts.errors import UserErrorsMessages
 from domain.domains.domain_repository import DomainRepositoryInterface
 from domain.domains.site import DomainInterface, SiteInterface
 from domain.user.exceptions import (
@@ -15,7 +15,8 @@ from infrastructure.persistence.repositories.domain_repository import (
     get_domain_repository,
 )
 from infrastructure.persistence.repositories.user_repository import get_user_repository
-from infrastructure.url_parser import get_url_parser
+from infrastructure.url_parser.base_url_parser import UrlParserInterface
+from infrastructure.url_parser.url_parser import get_url_parser
 
 
 @dataclass
@@ -41,10 +42,10 @@ class Register:
         user_with_email = self.user_repository.get_user_by_email(email)
 
         if user_with_email is not None and user_with_email.email_is_confirmed:
-            raise UserWithEmailAlreadyExists()
+            raise UserWithEmailAlreadyExists(UserErrorsMessages.user_with_email_alredy_exists)
 
         elif user_with_phone is not None and user_with_phone.phone_is_confirmed:
-            raise UserWithPhoneAlreadyExists()
+            raise UserWithPhoneAlreadyExists(UserErrorsMessages.user_with_phone_alredy_exists)
 
         domain = self.get_domain_model_from_request(host)
         site = self.get_site_model(host)

@@ -1,4 +1,4 @@
-from application.texts.errors import UserErrors
+from application.texts.errors import UserErrorsMessages
 from domain.user.exceptions import UserDoesNotExist
 from domain.user.repository import UserRepositoryInterface
 from domain.user.user import UserInterface
@@ -24,18 +24,18 @@ class Login:
         if self.validator.is_valid_phone(phone_or_email):
             user = self.repository.get_user_by_phone(phone_or_email)
             if user is None:
-                raise UserDoesNotExist(UserErrors.user_by_phone_not_found)
+                raise UserDoesNotExist(UserErrorsMessages.user_by_phone_not_found)
 
         elif self.validator.is_valid_email(phone_or_email):
             user = self.repository.get_user_by_email(phone_or_email)
             if user is None:
-                raise UserDoesNotExist(UserErrors.user_by_email_not_found)
+                raise UserDoesNotExist(UserErrorsMessages.user_by_email_not_found)
 
         else:
-            raise UserDoesNotExist(UserErrors.incorrect_login)
+            raise UserDoesNotExist(UserErrorsMessages.incorrect_login)
 
         if not self.repository.verify_password(user.id, password):
-            raise UserDoesNotExist(UserErrors.incorrect_password)
+            raise UserDoesNotExist(UserErrorsMessages.incorrect_password)
 
         access_token = self.jwt_processor.create_access_token(user.username, user.id)
 

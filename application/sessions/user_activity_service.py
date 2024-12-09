@@ -1,6 +1,6 @@
 from django.utils.timezone import now
 
-from application.services.request_service import RequestServiceInterface
+from application.services.request_service_interface import RequestServiceInterface
 from application.sessions.dto import UserSessionDB
 
 

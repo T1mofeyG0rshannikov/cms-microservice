@@ -3,7 +3,7 @@ from typing import Any
 from application.email_services.work_email_service.email_service_interface import (
     WorkEmailServiceInterface,
 )
-from application.services.request_service import RequestServiceInterface
+from application.services.request_service_interface import RequestServiceInterface
 from domain.logging.admin import AdminLogRepositoryInterface
 from domain.user.user import UserInterface
 from infrastructure.email_services.work_email_service.email_service import (

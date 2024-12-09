@@ -10,6 +10,6 @@ class RequestServiceInterface(Protocol):
 
     def get_all_headers(self) -> dict[str, str]:
         raise NotImplementedError
-    
+
     def get_host(self) -> str:
         raise NotImplementedError

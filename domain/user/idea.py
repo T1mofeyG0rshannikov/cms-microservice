@@ -1,6 +1,8 @@
+from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import datetime
 
+from domain.common.screen import ScreenInterface
 from domain.user.user import UserInterface
 
 
@@ -16,5 +18,6 @@ class IdeaInterface:
     title: str
     description: str
     admin_answer: str
-    
+
     user_id: int
+    screens = Iterable[ScreenInterface]

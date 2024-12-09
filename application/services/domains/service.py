@@ -1,4 +1,3 @@
-from application.common.base_url_parser import UrlParserInterface
 from domain.domains.domain_repository import DomainRepositoryInterface
 from domain.domains.domain_service import DomainServiceInterface
 from domain.domains.site import DomainInterface, SiteInterface
@@ -10,7 +9,8 @@ from infrastructure.persistence.repositories.domain_repository import (
 from infrastructure.persistence.repositories.settings_repository import (
     get_settings_repository,
 )
-from infrastructure.url_parser import get_url_parser
+from infrastructure.url_parser.base_url_parser import UrlParserInterface
+from infrastructure.url_parser.url_parser import get_url_parser
 
 
 class DomainService(DomainServiceInterface):
@@ -68,9 +68,6 @@ class DomainService(DomainServiceInterface):
             return ".".join([str(user.register_on_site), str(user.register_on_domain)])
 
         return ""
-
-    def get_random_site(self) -> SiteInterface:
-        return self.repository.get_random_site()
 
     def get_domain_model_from_request(self, host: str):
         return self.repository.get_domain(self.url_parser.get_domain_from_host(host))

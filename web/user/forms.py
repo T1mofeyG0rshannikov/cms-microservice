@@ -1,6 +1,6 @@
 from django import forms
 
-from application.texts.errors import UserErrors
+from application.texts.errors import UserErrorsMessages
 from domain.user.validator import UserValidatorInterface
 from infrastructure.user.validator import get_user_validator
 
@@ -17,7 +17,7 @@ class RegistrationForm(forms.Form):
         phone = self.validator.get_raw_phone(phone)
 
         if not self.validator.is_valid_phone(phone):
-            self.add_error("phone", UserErrors.incorrect_phone)
+            self.add_error("phone", UserErrorsMessages.incorrect_phone)
 
         return phone
 
@@ -35,7 +35,7 @@ class LoginForm(forms.Form):
         phone_or_email = self.validator.validate_phone_or_email(phone_or_email)
 
         if phone_or_email is None:
-            self.add_error("phone_or_email", UserErrors.incorrect_login)
+            self.add_error("phone_or_email", UserErrorsMessages.incorrect_login)
 
         return phone_or_email
 

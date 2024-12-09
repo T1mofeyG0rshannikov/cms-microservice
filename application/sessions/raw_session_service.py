@@ -1,7 +1,6 @@
 from django.utils.timezone import now
 
-from application.common.base_url_parser import UrlParserInterface
-from application.services.request_service import RequestServiceInterface
+from application.services.request_service_interface import RequestServiceInterface
 from application.sessions.dto import RawSessionDB
 from application.usecases.user_activity.add_penalty import AddPenaltyLog
 from domain.user_sessions.header_contain_enum import HeaderContainEnum
@@ -12,7 +11,8 @@ from infrastructure.admin.admin_settings import get_admin_settings
 from infrastructure.persistence.repositories.user_session_repository import (
     get_user_session_repository,
 )
-from infrastructure.url_parser import get_url_parser
+from infrastructure.url_parser.base_url_parser import UrlParserInterface
+from infrastructure.url_parser.url_parser import get_url_parser
 
 
 class RawSessionService(RawSessionServiceInterface):

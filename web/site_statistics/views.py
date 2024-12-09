@@ -1,7 +1,6 @@
 from django.http import HttpRequest, HttpResponse
 from django.views.generic import View
 
-from application.common.base_url_parser import UrlParserInterface
 from application.sessions.add_session_action import (
     IncrementSessionCount,
     get_increment_session_count,
@@ -18,7 +17,8 @@ from infrastructure.persistence.repositories.product_repository import (
 )
 from infrastructure.requests.request_interface import RequestInterface
 from infrastructure.requests.service import get_request_service
-from infrastructure.url_parser import get_url_parser
+from infrastructure.url_parser.base_url_parser import UrlParserInterface
+from infrastructure.url_parser.url_parser import get_url_parser
 from web.settings.views import SettingsMixin
 
 

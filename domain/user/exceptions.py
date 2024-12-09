@@ -60,3 +60,7 @@ class UserNotAdmin(Exception):
 
 class IncorrectPassword(Exception):
     pass
+
+
+class InvalidPassword(Exception):
+    pass

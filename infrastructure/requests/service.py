@@ -1,6 +1,6 @@
 from django.http import HttpRequest
 
-from application.services.request_service import RequestServiceInterface
+from application.services.request_service_interface import RequestServiceInterface
 
 
 class RequestService(RequestServiceInterface):

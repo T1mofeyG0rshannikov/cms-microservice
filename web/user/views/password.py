@@ -5,7 +5,7 @@ from django.http import HttpRequest, HttpResponseRedirect, JsonResponse
 from application.email_services.user_email_service.email_service_interface import (
     EmailServiceInterface,
 )
-from application.texts.errors import UserErrors
+from application.texts.errors import UserErrorsMessages
 from application.texts.success_messages import Messages
 from application.texts.user_session import UserActions
 from application.usecases.user.reset_password import (
@@ -130,7 +130,7 @@ class SendMailToResetPassword(FormView):
                 text=f'''Ошибка восстановления пароля "{email}"''',
             )
 
-            form.add_error("email", UserErrors.user_by_email_not_found)
+            form.add_error("email", UserErrorsMessages.user_by_email_not_found)
             return JsonResponse({"errors": form.errors}, status=400)
 
         self.email_service.send_mail_to_reset_password(user)

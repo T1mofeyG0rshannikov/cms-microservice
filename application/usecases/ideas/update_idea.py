@@ -1,4 +1,5 @@
-from typing import Iterable
+from collections.abc import Iterable
+
 from domain.common.screen import ScreenInterface
 from domain.user.idea_repository import IdeaRepositoryInterface
 from infrastructure.persistence.repositories.idea_repository import get_idea_repository

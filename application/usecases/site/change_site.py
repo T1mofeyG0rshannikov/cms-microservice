@@ -1,13 +1,16 @@
 from domain.domains.domain_repository import DomainRepositoryInterface
 from domain.domains.site import SiteInterface
+from domain.domains.site_validator import SiteValidatorInterface
 from infrastructure.persistence.repositories.domain_repository import (
     get_domain_repository,
 )
+from infrastructure.user.site_validator import get_site_validator
 
 
 class ChangeSite:
-    def __init__(self, repository: DomainRepositoryInterface) -> None:
+    def __init__(self, repository: DomainRepositoryInterface, validator: SiteValidatorInterface) -> None:
         self.repository = repository
+        self.validator = validator
 
     def __call__(
         self,
@@ -23,6 +26,10 @@ class ChangeSite:
         contact_info: str,
         font_size: int,
     ) -> tuple[SiteInterface, bool]:
+        name = self.validator.valid_name(name)
+        subdomain = self.validator.valid_site(subdomain)
+        logo = self.validator.valid_logo(logo)
+
         if delete_logo == "true":
             logo = None
 
@@ -40,5 +47,8 @@ class ChangeSite:
         )
 
 
-def get_change_site_interactor(repository: DomainRepositoryInterface = get_domain_repository()) -> ChangeSite:
-    return ChangeSite(repository)
+def get_change_site_interactor(
+    repository: DomainRepositoryInterface = get_domain_repository(),
+    validator: SiteValidatorInterface = get_site_validator(),
+) -> ChangeSite:
+    return ChangeSite(repository, validator)

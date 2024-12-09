@@ -1,6 +1,6 @@
 import re
 
-from application.common.base_url_parser import UrlParserInterface
+from infrastructure.url_parser.base_url_parser import UrlParserInterface
 
 
 class UrlParser(UrlParserInterface):
@@ -13,41 +13,23 @@ class UrlParser(UrlParserInterface):
 
     @staticmethod
     def is_source(path: str) -> bool:
-        if ".png" in path:
-            return True
-
-        if ".jpg" in path:
-            return True
-
-        if ".js" in path:
-            return True
-
-        if ".css" in path:
-            return True
-
-        if ".scss" in path:
-            return True
-
-        if ".webp" in path:
-            return True
-
-        if ".WEBP" in path:
-            return True
-
-        if ".ico" in path:
-            return True
-
-        if ".jpeg" in path:
-            return True
-
-        if "styles" in path:
-            return True
-
-        if "static" in path:
-            return True
-
-        if "media" in path:
-            return True
+        static_patterns = [
+            ".png",
+            ".jpg",
+            ".js",
+            ".css",
+            ".scss",
+            ".webp",
+            ".WEBP",
+            ".ico",
+            ".jpeg",
+            "styles",
+            "static",
+            "media",
+        ]
+        for static_pattern in static_patterns:
+            if static_pattern in path:
+                return True
 
         return False
 

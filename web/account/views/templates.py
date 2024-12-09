@@ -5,13 +5,18 @@ from django.http import HttpRequest, JsonResponse
 from django.shortcuts import render
 
 from application.texts.user_session import UserActions
-from domain.materials.repository import DocumentRepositoryInterface
-from domain.user.exceptions import InvalidReferalLevel, InvalidSortedByField
-from domain.user.notifications.repository import NotificationRepositoryInterface
-from infrastructure.logging.user_activity.create_session_log import (
-    CreateUserSesssionLog,
-    get_create_user_session_log,
+from application.usecases.user.change_password import (
+    ChangePassword,
+    get_change_password_interactor,
 )
+from domain.materials.repository import DocumentRepositoryInterface
+from domain.user.exceptions import (
+    IncorrectPassword,
+    InvalidPassword,
+    InvalidReferalLevel,
+    InvalidSortedByField,
+)
+from domain.user.notifications.repository import NotificationRepositoryInterface
 from infrastructure.persistence.repositories.document_repository import (
     get_document_repository,
 )
@@ -87,29 +92,23 @@ class ManualsView(BaseProfileView):
 
 class ChangePasswordView(BaseUserView, FormView, APIUserRequired):
     form_class = ChangePasswordForm
-    create_user_session_log: CreateUserSesssionLog = get_create_user_session_log()
+    change_password_inteactor: ChangePassword = get_change_password_interactor()
 
     def form_valid(self, request: HttpRequest, form: ChangePasswordForm) -> JsonResponse:
-        user = request.user
-
-        if not user.check_password(form.cleaned_data.get("current_password")):
-            form.add_error("current_password", "Неверный пароль")
+        try:
+            change_pass_response = self.change_password_inteactor(**form.cleaned_data, user=request.user)
+            user = change_pass_response.user
+            access_token = change_pass_response.access_token
+        except IncorrectPassword as e:
+            form.add_error("current_password", str(e))
             return JsonResponse({"errors": form.errors}, status=400)
-
-        password = form.cleaned_data.get("password")
-        repeat_password = form.cleaned_data.get("repeat_password")
-
-        if password != repeat_password:
-            form.add_error("password", "Пароли не совпадают")
+        except InvalidPassword as e:
+            form.add_error("password", str(e))
             return JsonResponse({"errors": form.errors}, status=400)
-
-        user.set_password(password)
 
         request.user = user
         user = authenticate(request)
         login(request, user)
-
-        access_token = self.jwt_processor.create_access_token(user.username, user.id)
 
         self.create_user_session_log(request=request, text=UserActions.changed_password)
 

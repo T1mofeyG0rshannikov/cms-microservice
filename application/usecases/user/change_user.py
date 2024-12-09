@@ -1,4 +1,6 @@
-from application.texts.errors import UserErrors
+from dataclasses import dataclass
+
+from application.texts.errors import UserErrorsMessages
 from domain.referrals.referral import UserInterface
 from domain.user.exceptions import (
     UserWithEmailAlreadyExists,
@@ -6,6 +8,11 @@ from domain.user.exceptions import (
 )
 from domain.user.repository import UserRepositoryInterface
 from infrastructure.persistence.repositories.user_repository import get_user_repository
+
+
+@dataclass
+class ChangeUserDTO:
+    changed_email: bool
 
 
 class ChangeUser:
@@ -22,15 +29,15 @@ class ChangeUser:
         profile_picture: str,
         social_network: str = None,
         adress: str = None,
-    ) -> bool:
+    ) -> ChangeUserDTO:
         user_with_phone = self.repository.get_user_by_phone(phone)
         user_with_email = self.repository.get_user_by_email(email)
 
         if user_with_email != user and user_with_email and user_with_email.email_is_confirmed:
-            raise UserWithEmailAlreadyExists(UserErrors.user_with_email_alredy_exists)
+            raise UserWithEmailAlreadyExists(UserErrorsMessages.user_with_email_alredy_exists)
 
         elif user_with_phone != user and user_with_phone and user_with_phone.phone_is_confirmed:
-            raise UserWithPhoneAlreadyExists(UserErrors.user_with_phone_alredy_exists)
+            raise UserWithPhoneAlreadyExists(UserErrorsMessages.user_with_phone_alredy_exists)
 
         self.repository.update_user(
             id=user.id,
@@ -46,11 +53,11 @@ class ChangeUser:
         if user.email_is_confirmed and email != user.email:
             self.repository.change_user_email(user.id, email)
 
-            return True
+            return ChangeUserDTO(changed_email=True)
 
         self.repository.change_user_email(user.id, email)
 
-        return False
+        return ChangeUserDTO(changed_email=False)
 
 
 def get_change_user_interactor(repository: UserRepositoryInterface = get_user_repository()) -> ChangeUser:

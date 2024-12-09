@@ -1,7 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
 
-from application.texts.errors import Errors
+from application.texts.errors import ErrorsMessages
 from infrastructure.persistence.models.common import BasePageBlock, BlockRelationship
 from web.blocks.template_exist import is_template_exists
 from web.blocks.validators import validate_html_filename
@@ -46,9 +46,9 @@ class Template(models.Model):
     def clean(self):
         super().clean()
         if not validate_html_filename(self.file):
-            raise ValidationError({"file": Errors.incorrect_file_name})
+            raise ValidationError({"file": ErrorsMessages.incorrect_file_name})
         if not is_template_exists("blocks/" + self.file):
-            raise ValidationError({"file": Errors.template_doesnt_exist})
+            raise ValidationError({"file": ErrorsMessages.template_doesnt_exist})
 
 
 class BaseBlock(models.Model):

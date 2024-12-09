@@ -1,6 +1,6 @@
 from django.http import HttpRequest, HttpResponseRedirect
 
-from application.texts.errors import Errors
+from application.texts.errors import ErrorsMessages
 from domain.user.repository import UserRepositoryInterface
 from infrastructure.persistence.repositories.user_repository import get_user_repository
 from web.user.views.base_user_view import BaseUserView
@@ -13,11 +13,11 @@ class ConfirmEmail(BaseUserView):
         payload = self.jwt_processor.validate_token(token)
 
         if not payload:
-            return HttpResponseRedirect(f"/?error={Errors.wrong_confirm_email_link}")
+            return HttpResponseRedirect(f"/?error={ErrorsMessages.wrong_confirm_email_link}")
 
         user = self.user_repository.get_user_by_id(payload["user_id"])
         if user is None:
-            return HttpResponseRedirect(f"/?error={Errors.wrong_confirm_email_link}")
+            return HttpResponseRedirect(f"/?error={ErrorsMessages.wrong_confirm_email_link}")
 
         user.confirm_email()
         self.login(user)
@@ -44,11 +44,11 @@ class ConfirmNewEmail(BaseUserView):
         payload = self.jwt_processor.validate_token(token)
 
         if not payload:
-            return HttpResponseRedirect(f"/?error={Errors.wrong_confirm_email_link}")
+            return HttpResponseRedirect(f"/?error={ErrorsMessages.wrong_confirm_email_link}")
 
         user = self.user_repository.get_user_by_id(payload["user_id"])
         if user is None:
-            return HttpResponseRedirect(f"/?error={Errors.wrong_confirm_email_link}")
+            return HttpResponseRedirect(f"/?error={ErrorsMessages.wrong_confirm_email_link}")
 
         user.confirm_new_email()
         self.login(user)

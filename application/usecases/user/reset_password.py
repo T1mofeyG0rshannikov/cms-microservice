@@ -1,4 +1,4 @@
-from application.texts.errors import Errors
+from application.texts.errors import ErrorsMessages
 from domain.referrals.referral import UserInterface
 from domain.user.exceptions import InvalidJwtToken
 from domain.user.repository import UserRepositoryInterface
@@ -16,11 +16,11 @@ class ValidResetPasswordToken:
         payload = self.jwt_processor.validate_token(token)
 
         if not payload:
-            raise InvalidJwtToken(Errors.wrong_reset_password_link)
+            raise InvalidJwtToken(ErrorsMessages.wrong_reset_password_link)
 
         user = self.repository.get_user_by_id(payload["id"])
         if user is None:
-            raise InvalidJwtToken(Errors.wrong_reset_password_link)
+            raise InvalidJwtToken(ErrorsMessages.wrong_reset_password_link)
 
         return user
 
@@ -34,7 +34,7 @@ class ResetPassword:
         payload = self.jwt_processor.validate_token(token)
 
         if not payload:
-            raise InvalidJwtToken(Errors.expired_set_password_token)
+            raise InvalidJwtToken(ErrorsMessages.expired_set_password_token)
 
         user = self.repository.set_password(payload["id"], new_password)
 

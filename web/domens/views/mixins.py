@@ -1,13 +1,13 @@
 from django.db.models import Q
 from django.http import HttpRequest, HttpResponseNotFound, HttpResponseRedirect
 
-from application.common.base_url_parser import UrlParserInterface
 from application.services.domains.service import get_domain_service
 from domain.domains.domain_service import DomainServiceInterface
 from infrastructure.admin.admin_settings import get_admin_settings
 from infrastructure.persistence.models.settings import Domain, SiteSettings
 from infrastructure.persistence.models.user.site import Site
-from infrastructure.url_parser import get_url_parser
+from infrastructure.url_parser.base_url_parser import UrlParserInterface
+from infrastructure.url_parser.url_parser import get_url_parser
 from web.domens.views.views import PartnerIndexPage
 from web.settings.views import SettingsMixin
 from web.template.views.base_page_not_found import BaseNotFoundPage

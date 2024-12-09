@@ -2,7 +2,7 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
-from application.texts.errors import Errors
+from application.texts.errors import ErrorsMessages
 from application.usecases.ideas.add_idea import AddIdea, get_add_idea_interactor
 from application.usecases.ideas.add_like import AddLike, get_add_like_interactor
 from application.usecases.ideas.delete_idea import (
@@ -65,7 +65,7 @@ class AddIdeaView(APIUserRequired, FormView):
     def form_valid(self, request: HttpRequest, form: AddIdeaForm) -> HttpResponse:
         screens = request.FILES.getlist("screens")
 
-        errors = valid_screens_size(screens, 1_048_576, Errors.to_large_file_1mb)
+        errors = valid_screens_size(screens, 1_048_576, ErrorsMessages.to_large_file_1mb)
 
         if errors:
             return JsonResponse({"errors": errors}, status=400)
@@ -86,7 +86,7 @@ class UpdateIdeaView(APIUserRequired, FormView):
         screens = request.FILES.getlist("screens")
         old_screens = request.POST.get("screensSrc").split(",")
 
-        errors = valid_screens_size(screens, 1_048_576, Errors.to_large_file_1mb)
+        errors = valid_screens_size(screens, 1_048_576, ErrorsMessages.to_large_file_1mb)
 
         if errors:
             return JsonResponse({"errors": errors}, status=400)

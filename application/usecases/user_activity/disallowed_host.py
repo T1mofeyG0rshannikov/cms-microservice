@@ -1,9 +1,9 @@
-from application.texts.errors import Errors
+from application.texts.errors import ErrorsMessages
 from domain.user_sessions.repository import UserSessionRepositoryInterface
-from infrastructure.persistence.models.site_statistics import PenaltyLog
+from web.site_statistics.base_session_middleware import BaseSessionMiddleware
 
 
-class AddDisallowedHostPenalty:
+class AddDisallowedHostPenalty(BaseSessionMiddleware):
     def __init__(self, repository: UserSessionRepositoryInterface) -> None:
         self.repository = repository
 
@@ -11,7 +11,7 @@ class AddDisallowedHostPenalty:
         disallowed_host_penalty = self.repository.get_disallowed_host_penalty()
         self.repository.change_ban_rate(session_id, disallowed_host_penalty)
 
-        PenaltyLog.objects.create(
+        self.penalty_logger(
             session_id=session_id,
-            text=Errors.disallowed_host,
+            text=ErrorsMessages.disallowed_host,
         )

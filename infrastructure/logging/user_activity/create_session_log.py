@@ -1,10 +1,10 @@
-from application.common.base_url_parser import UrlParserInterface
 from infrastructure.persistence.repositories.user_session_repository import (
     UserSessionRepository,
     get_user_session_repository,
 )
 from infrastructure.requests.request_interface import RequestInterface
-from infrastructure.url_parser import get_url_parser
+from infrastructure.url_parser.base_url_parser import UrlParserInterface
+from infrastructure.url_parser.url_parser import get_url_parser
 
 
 class CreateUserSesssionLog:

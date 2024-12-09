@@ -1,6 +1,6 @@
 from django import forms
 
-from application.texts.errors import UserErrors
+from application.texts.errors import UserErrorsMessages
 from domain.user.validator import UserValidatorInterface
 from infrastructure.user.validator import get_user_validator
 
@@ -18,6 +18,6 @@ class FeedbackForm(forms.Form):
         phone = self.validator.get_raw_phone(phone)
 
         if not self.validator.is_valid_phone(phone):
-            self.add_error("phone", UserErrors.incorrect_phone)
+            self.add_error("phone", UserErrorsMessages.incorrect_phone)
 
         return phone

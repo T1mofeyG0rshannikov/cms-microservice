@@ -1,8 +1,10 @@
-from application.common.base_url_parser import UrlParserInterface
 from application.usecases.user_activity.add_penalty import AddPenaltyLog
 from domain.user_sessions.repository import UserSessionRepositoryInterface
-from infrastructure.persistence.repositories.user_session_repository import get_user_session_repository
-from infrastructure.url_parser import get_url_parser
+from infrastructure.persistence.repositories.user_session_repository import (
+    get_user_session_repository,
+)
+from infrastructure.url_parser.base_url_parser import UrlParserInterface
+from infrastructure.url_parser.url_parser import get_url_parser
 
 
 class BaseSessionMiddleware:

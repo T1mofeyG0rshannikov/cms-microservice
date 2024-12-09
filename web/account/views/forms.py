@@ -17,7 +17,12 @@ from application.usecases.user_products.add_user_product import (
     AddUserProduct,
     get_add_product_interactor,
 )
-from domain.domains.exceptions import SiteAdressExists
+from domain.common.exceptons import InvalidFileExtension, ToLagreFile, ToLargeImageSize
+from domain.domains.exceptions import (
+    InvalidSiteAddress,
+    InvalidSiteName,
+    SiteAdressExists,
+)
 from domain.products.repository import ProductRepositoryInterface
 from domain.user.exceptions import (
     LinkOrConnectedRequired,
@@ -55,8 +60,14 @@ class ChangeSiteView(FormView, APIUserRequired):
 
         try:
             site, created = self.change_site_interactor(**form.cleaned_data, user_id=user.id)
-        except SiteAdressExists as e:
+        except (SiteAdressExists, InvalidSiteAddress) as e:
             form.add_error("subdomain", str(e))
+            return JsonResponse({"errors": form.errors}, status=400)
+        except InvalidSiteName as e:
+            form.add_error("name", str(e))
+            return JsonResponse({"errors": form.errors}, status=400)
+        except (ToLagreFile, ToLargeImageSize, InvalidFileExtension) as e:
+            form.add_error("name", str(e))
             return JsonResponse({"errors": form.errors}, status=400)
 
         if created:
@@ -95,7 +106,7 @@ class ChangeUserView(FormView, APIUserRequired):
 
     def form_valid(self, request: HttpRequest, form: ChangeUserForm) -> HttpResponse:
         try:
-            email_changed = self.change_user_interactor(request.user, **form.cleaned_data)
+            email_changed = self.change_user_interactor(request.user, **form.cleaned_data).changed_email
 
             self.increment_session_profile_action(request=request, text=UserActions.changed_profile_data)
             self.create_user_session_log(request=request, text=UserActions.changed_profile_data)

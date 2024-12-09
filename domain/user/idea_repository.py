@@ -1,6 +1,5 @@
-from typing import Any, Protocol
-
 from collections.abc import Iterable
+from typing import Any, Protocol
 
 from domain.user.idea import IdeaInterface
 

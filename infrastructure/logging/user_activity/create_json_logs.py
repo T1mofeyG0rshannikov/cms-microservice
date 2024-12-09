@@ -1,8 +1,9 @@
 from typing import Any
+
 from django.utils.timezone import now
 
-from application.common.base_url_parser import UrlParserInterface
-from infrastructure.url_parser import get_url_parser
+from infrastructure.url_parser.base_url_parser import UrlParserInterface
+from infrastructure.url_parser.url_parser import get_url_parser
 
 
 def create_raw_log(
@@ -21,7 +22,7 @@ def create_raw_log(
         "is_source": is_source,
         "session_id": session_id,
     }
-    
+
 
 def create_user_log(session_id: int, adress: str, text: str, time=now()) -> dict[str, Any]:
     return {"adress": adress, "time": time, "session_id": session_id, "text": text}

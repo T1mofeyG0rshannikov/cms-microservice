@@ -2,6 +2,7 @@ from collections.abc import Iterable
 
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
+from application.texts.errors import SiteErrorsMessages
 from domain.domains.domain_repository import DomainRepositoryInterface
 from domain.domains.exceptions import SiteAdressExists
 from domain.domains.site import DomainInterface, SiteInterface
@@ -77,7 +78,7 @@ class DomainRepository(DomainRepositoryInterface):
 
             return site, created
         except IntegrityError:
-            raise SiteAdressExists("Такой адрес уже существует")
+            raise SiteAdressExists(SiteErrorsMessages.address_already_exists)
 
     def site_adress_exists(self, site_id: int, site_url: str) -> bool:
         return Site.objects.get(id=site_id).subdomain != site_url and Site.objects.filter(subdomain=site_url).exists()

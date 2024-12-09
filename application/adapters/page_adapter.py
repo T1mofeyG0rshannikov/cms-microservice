@@ -1,4 +1,4 @@
-from application.adapters.page_block import BlockAdapter, get_block_adapter
+from application.adapters.page_block_adapter import BlockAdapter, get_block_adapter
 from domain.page_blocks.entities.page import PageInterface
 from domain.page_blocks.page_repository import PageRepositoryInterface
 from infrastructure.persistence.models.blocks.common import Page

@@ -7,7 +7,7 @@ from application.email_services.user_email_service.email_service_interface impor
 from application.email_services.work_email_service.email_service_interface import (
     WorkEmailServiceInterface,
 )
-from application.texts.errors import Errors
+from application.texts.errors import ErrorsMessages
 from application.usecases.user.get_admin import (
     GetAdminUser,
     get_get_admin_user_interactor,
@@ -34,7 +34,7 @@ class SendConfirmEmail(View):
             try:
                 self.email_service.send_mail_to_confirm_email(user)
             except CantSendMailError:
-                return JsonResponse({"error": Errors.something_went_wrong}, status=503)
+                return JsonResponse({"error": ErrorsMessages.something_went_wrong}, status=503)
 
             return HttpResponse(status=200)
 
@@ -57,7 +57,7 @@ class SendAdminAuthCode(View):
 
             return HttpResponse(status=200)
         except CantSendMailError:
-            return JsonResponse({"error": Errors.something_went_wrong}, status=503)
+            return JsonResponse({"error": ErrorsMessages.something_went_wrong}, status=503)
         except (UserDoesNotExist, IncorrectPassword) as e:
             return JsonResponse({"error": str(e)}, status=400)
 

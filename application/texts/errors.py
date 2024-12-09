@@ -1,7 +1,7 @@
 from enum import StrEnum
 
 
-class Errors(StrEnum):
+class ErrorsMessages(StrEnum):
     incorrect_file_name = "Неккоректное название файла"
     block_with_name_already_exist = "Уже есть блок, привязанный к этому имени"
     template_doesnt_exist = "Нет такого html файла"
@@ -16,7 +16,7 @@ class Errors(StrEnum):
     to_large_file_1mb = "Изображение должно быть не более 1Mb"
 
 
-class UserErrors(StrEnum):
+class UserErrorsMessages(StrEnum):
     user_with_phone_alredy_exists = "Пользователь с таким телефоном уже существует"
     user_with_email_alredy_exists = "Пользователь с такой почтой уже существует"
     incorrect_phone = "Неверный номер телефона"
@@ -29,3 +29,12 @@ class UserErrors(StrEnum):
     something_went_wrong = "что-то пошло не так, попробуйте позже"
     user_does_not_exist = "пользователь не найден"
     insufficient_permissions = "Недостаточно прав"
+    to_short_password = "Минимум 6 латинских букв и цифр"
+    passwords_dont_match = "Пароли не совпадают"
+
+
+class SiteErrorsMessages(StrEnum):
+    address_already_exists = "Такой адрес уже существует"
+    invalid_site_name = "Название от 4 до 16 символов"
+    to_short_address = "Длина адреса не менее 4 символов"
+    invalid_literal = "Можно использовать только латинские буквы и цифры"
