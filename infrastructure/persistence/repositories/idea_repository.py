@@ -13,8 +13,8 @@ class IdeaRepository(IdeaRepositoryInterface):
     def update_idea(self, id: int, **kwargs) -> None:
         Idea.objects.filter(id=id).update(**kwargs)
 
-    def create_idea(self, fields: dict[str, str], screens) -> IdeaInterface:
-        idea = Idea.objects.create(**fields)
+    def create_idea(self, screens: Iterable[ScreenInterface], **kwargs) -> IdeaInterface:
+        idea = Idea.objects.create(**kwargs)
 
         for screen in screens:
             IdeaScreen.objects.create(screen=screen, idea=idea)

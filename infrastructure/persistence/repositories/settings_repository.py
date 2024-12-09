@@ -1,6 +1,7 @@
 from collections.abc import Iterable
 
-from domain.domains.site import DomainInterface
+from domain.account.socials_repository import SocialsRepositoryInterface
+from domain.domains.entities.site import DomainInterface
 from domain.page_blocks.settings_repository import SettingsRepositoryInterface
 from infrastructure.persistence.models.settings import (
     Domain,
@@ -33,7 +34,7 @@ class SettingsRepository(SettingsRepositoryInterface):
     def get_user_fonts(self):
         return UserFont.objects.all()
 
-    def get_social_networks(self):
+    def get_social_networks(self) -> Iterable[SocialsRepositoryInterface]:
         return SocialNetwork.objects.all()
 
     def get_partner_domains(self) -> Iterable[DomainInterface]:

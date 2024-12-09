@@ -6,6 +6,7 @@ from django.utils import timezone
 from django.utils.timezone import now
 
 from domain.user_sessions.repository import UserSessionRepositoryInterface
+from domain.user_sessions.session import UserSessionInterface
 from domain.user_sessions.session_filters import SessionFIltersHeader
 from infrastructure.persistence.models.site_statistics import (
     SessionAction,
@@ -48,7 +49,7 @@ class UserSessionRepository(UserSessionRepositoryInterface):
             session_id=session_id,
         )
 
-    def create_user_session(self, **kwargs) -> None:
+    def create_user_session(self, **kwargs) -> UserSessionInterface:
         return UserActivity.objects.create(**kwargs)
 
     def get_session_filters(self):

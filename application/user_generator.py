@@ -6,7 +6,7 @@ from russian_names import RussianNames
 from application.services.domains.service import get_domain_service
 from domain.domains.domain_repository import DomainRepositoryInterface
 from domain.domains.domain_service import DomainServiceInterface
-from domain.domains.site import DomainInterface, SiteInterface
+from domain.domains.entities.site import DomainInterface, SiteInterface
 from domain.tests.test_user_set import TestUserSetInterface
 from domain.user.repository import UserRepositoryInterface
 from domain.user.user import UserInterface

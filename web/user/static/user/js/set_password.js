@@ -90,7 +90,7 @@ function submitSetPasswordForm(element, event, domain, token){
         method: "POST",
         headers: {
             'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': data.get("csrfmiddlewaretoken")
         },
         body: data
     }).then(response => {

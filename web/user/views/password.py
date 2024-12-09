@@ -1,6 +1,7 @@
 from typing import Any
 
 from django.http import HttpRequest, HttpResponseRedirect, JsonResponse
+from django.shortcuts import render
 
 from application.email_services.user_email_service.email_service_interface import (
     EmailServiceInterface,
@@ -29,33 +30,26 @@ from web.user.views.base_user_view import BaseUserView
 
 
 class ResetPasswordView(BaseUserView, FormView):
-    template_name = "user/set-password.html"
     form_class = SetPasswordForm
     valid_reset_password_token_interactor: ValidResetPasswordToken = get_valid_reset_pass_token_interactor()
     reset_password_interactor: ResetPassword = get_reset_password_interactor()
 
-    def get(self, request: HttpRequest, token: str):
+    def get(self, request: HttpRequest, *args, token: str, **kwargs):
         try:
             user = self.valid_reset_password_token_interactor(token)
             self.login(user)
         except InvalidJwtToken as e:
             return HttpResponseRedirect(f"/?error={str(e)}")
 
-        return super().get(request, token)
+        context = super().get_context_data()
+        context |= {"form": SetPasswordForm(), "token": token}
 
-    def get_context_data(self, **kwargs) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        context["form"] = SetPasswordForm()
-        context["token"] = kwargs.get("token")
-
-        return context
+        return render(request, "user/set-password.html", context)
 
     def form_valid(self, request: HttpRequest, form: SetPasswordForm, token: str) -> JsonResponse:
         try:
             user, access_token = self.reset_password_interactor(token, form.cleaned_data.get("password"))
             self.login(user)
-
-            access_token = self.jwt_processor.create_access_token(user.username, user.id)
 
             return JsonResponse(
                 {

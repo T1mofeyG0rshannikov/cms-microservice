@@ -33,11 +33,10 @@ class LikeView(APIUserRequired):
     remove_like_interactor: RemoveLike = get_remove_like_interactor()
 
     def post(self, request: HttpRequest) -> HttpResponse:
-        user = request.user
         idea = self.request.GET.get("idea")
 
         try:
-            self.add_like_interactor(idea, user.id)
+            self.add_like_interactor(idea, request.user.id)
         except (CantAddLike, LikeAlreadyExists) as e:
             return JsonResponse({"message": str(e)}, status=400)
         except IdeaNotFound as e:
@@ -46,11 +45,10 @@ class LikeView(APIUserRequired):
         return HttpResponse(status=201)
 
     def delete(self, request: HttpRequest) -> HttpResponse:
-        user = request.user
         idea = self.request.GET.get("idea")
 
         try:
-            self.remove_like_interactor(idea, user)
+            self.remove_like_interactor(idea, request.user.id)
         except IdeaNotFound as e:
             return JsonResponse({"message": str(e)}, status=404)
 
@@ -65,12 +63,10 @@ class AddIdeaView(APIUserRequired, FormView):
     def form_valid(self, request: HttpRequest, form: AddIdeaForm) -> HttpResponse:
         screens = request.FILES.getlist("screens")
 
-        errors = valid_screens_size(screens, 1_048_576, ErrorsMessages.to_large_file_1mb)
+        errors = self.add_idea_interactor(**form.cleaned_data, user=request.user, screens=screens).errors
 
         if errors:
             return JsonResponse({"errors": errors}, status=400)
-
-        self.add_idea_interactor({**form.cleaned_data, "user": request.user}, screens)
 
         return HttpResponse(status=201)
 

@@ -1,5 +1,5 @@
 from domain.domains.domain_repository import DomainRepositoryInterface
-from domain.domains.site import SiteInterface
+from domain.domains.entities.site import SiteInterface
 from domain.domains.site_validator import SiteValidatorInterface
 from infrastructure.persistence.repositories.domain_repository import (
     get_domain_repository,

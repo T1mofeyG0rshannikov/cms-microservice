@@ -16,16 +16,7 @@ from infrastructure.requests.request_interface import RequestInterface
 
 class IsUserAuth(View):
     def get(self, request: RequestInterface) -> HttpResponse:
-        user = request.user
-        user_from_header = request.user_from_header
-
-        auth = None
-        if user.is_authenticated:
-            auth = True
-        if user_from_header:
-            auth = True
-
-        status = 200 if auth else 401
+        status = 200 if (request.user.is_authenticated or request.user_from_header) else 401
         return HttpResponse(status=status)
 
 
@@ -37,7 +28,7 @@ class DeleteUserProductView(View):
     def delete(self, request: RequestInterface) -> HttpResponse:
         product = request.GET.get("product")
 
-        product_name = self.delete_user_product_intercator(product)
+        product_name = self.delete_user_product_intercator(product).product_name
 
         self.create_user_session_log(
             request=request,

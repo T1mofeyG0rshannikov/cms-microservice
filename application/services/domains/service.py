@@ -1,6 +1,6 @@
 from domain.domains.domain_repository import DomainRepositoryInterface
 from domain.domains.domain_service import DomainServiceInterface
-from domain.domains.site import DomainInterface, SiteInterface
+from domain.domains.entities.site import DomainInterface, SiteInterface
 from domain.page_blocks.settings_repository import SettingsRepositoryInterface
 from domain.referrals.referral import UserInterface
 from infrastructure.persistence.repositories.domain_repository import (

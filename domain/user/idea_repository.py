@@ -1,6 +1,7 @@
 from collections.abc import Iterable
 from typing import Any, Protocol
 
+from domain.common.screen import ScreenInterface
 from domain.user.idea import IdeaInterface
 
 
@@ -35,7 +36,7 @@ class IdeaRepositoryInterface(Protocol):
     def like_exists(self, user_id: int, idea_id: int) -> bool:
         raise NotImplementedError
 
-    def create_idea(self, fields: dict[str, Any], screens) -> None:
+    def create_idea(self, screens: Iterable[ScreenInterface], **kwargs) -> None:
         raise NotImplementedError
 
     def delete_screens(self, idea_id: int, old_screens: list[str]) -> None:

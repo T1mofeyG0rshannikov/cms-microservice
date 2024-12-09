@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from domain.domains.site import DomainInterface, SiteInterface
+from domain.domains.entities.site import DomainInterface, SiteInterface
 
 
 @dataclass

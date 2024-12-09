@@ -1,7 +1,7 @@
 from collections.abc import Iterable
 from typing import Protocol
 
-from domain.domains.site import DomainInterface, SiteInterface
+from domain.domains.entities.site import DomainInterface, SiteInterface
 
 
 class DomainRepositoryInterface(Protocol):
@@ -28,9 +28,6 @@ class DomainRepositoryInterface(Protocol):
         raise NotImplementedError
 
     def update_or_create_user_site(self, **kwargs) -> SiteInterface:
-        raise NotImplementedError
-
-    def site_adress_exists(self, site_id: int, site_url: str) -> bool:
         raise NotImplementedError
 
     def get_domain_sites(self, domain: str) -> Iterable[SiteInterface]:

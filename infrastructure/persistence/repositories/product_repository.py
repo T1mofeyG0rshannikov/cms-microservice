@@ -48,7 +48,7 @@ class ProductRepository(ProductRepositoryInterface):
             .order_by("name")
         )
 
-    def filter_user_products(self, category_id: int, user_id: int) -> list[UserProductInterface]:
+    def filter_user_products(self, category_id: int, user_id: int) -> Iterable[UserProductInterface]:
         filters = Q(user_id=user_id, deleted=False)
 
         if category_id:
@@ -125,7 +125,7 @@ class ProductRepository(ProductRepositoryInterface):
             .order_by("catalog_product__my_order")
         )
 
-    def get_offers(self) -> list[OfferInterface]:
+    def get_offers(self) -> Iterable[OfferInterface]:
         return Offer.objects.filter(
             status="Опубликовано", product__status="Опубликовано", types__type__status="Опубликовано"
         ).annotate(count=Count("id"))

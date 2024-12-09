@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from application.texts.errors import UserErrorsMessages
 from domain.domains.domain_repository import DomainRepositoryInterface
-from domain.domains.site import DomainInterface, SiteInterface
+from domain.domains.entities.site import DomainInterface, SiteInterface
 from domain.user.exceptions import (
     UserWithEmailAlreadyExists,
     UserWithPhoneAlreadyExists,

@@ -1,5 +1,5 @@
 from collections.abc import Iterable
-from typing import Any, Protocol
+from typing import Protocol
 
 from domain.user_sessions.session import SessionInterface, UserSessionInterface
 from domain.user_sessions.session_filters import SessionFIltersHeader
@@ -7,16 +7,16 @@ from infrastructure.persistence.models.site_statistics import SessionFilters
 
 
 class UserSessionRepositoryInterface(Protocol):
-    def create_searcher_log(self, fields: dict[str, Any]) -> None:
+    def create_searcher_log(self, **kwargs) -> None:
         raise NotImplementedError
 
-    def create_user_session(self, fields: dict[str, Any]) -> UserSessionInterface:
+    def create_user_session(self, **kwargs) -> UserSessionInterface:
         raise NotImplementedError
 
     def is_user_session_exists_by_id(self, user_session_id: int) -> bool:
         raise NotImplementedError
 
-    def update_user_session(self, session_id: int, fields: dict[str, Any]) -> None:
+    def update_user_session(self, session_id: int, **kwargs) -> None:
         raise NotImplementedError
 
     def create_user_action(self, adress: str, text: str, session_id: int) -> None:
@@ -25,16 +25,10 @@ class UserSessionRepositoryInterface(Protocol):
     def delete_user_session(self, session_id: int) -> None:
         raise NotImplementedError
 
-    def create_raw_session(self, fields: dict[str, Any]) -> SessionInterface:
+    def create_raw_session(self, **kwargs) -> SessionInterface:
         raise NotImplementedError
 
     def is_raw_session_exists_by_id(self, session_id: int) -> bool:
-        raise NotImplementedError
-
-    def update_or_create_user_session(self, session_data: dict[str, Any]) -> None:
-        raise NotImplementedError
-
-    def get_or_create_user_session(self, session_data: dict[str, Any]) -> UserSessionInterface:
         raise NotImplementedError
 
     def get_searchers(self) -> str:
@@ -61,7 +55,7 @@ class UserSessionRepositoryInterface(Protocol):
     def change_ban_rate(self, session_id: int, penalty: int) -> None:
         raise NotImplementedError
 
-    def create_searcher(self, fields: dict[str, Any]) -> UserSessionInterface:
+    def create_searcher(self, **kwargs) -> UserSessionInterface:
         raise NotImplementedError
 
     def is_searcher_exists_by_id(self, session_id: int) -> bool:
@@ -73,7 +67,7 @@ class UserSessionRepositoryInterface(Protocol):
     def get_raw_session(self, session_id: int) -> SessionInterface:
         raise NotImplementedError
 
-    def update_raw_session(self, session_id: int, fields: dict[str, Any]) -> None:
+    def update_raw_session(self, session_id: int, **kwargs) -> None:
         raise NotImplementedError
 
     def get_session_filters(self) -> SessionFilters:

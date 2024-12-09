@@ -26,7 +26,7 @@ class ProductRepositoryInterface(Protocol):
     def get_proudct_types_for_additional_catalog(self, block_id: int) -> Iterable[ProductTypeInterface]:
         raise NotImplementedError
 
-    def get_offers(self) -> list[OfferInterface]:
+    def get_offers(self) -> Iterable[OfferInterface]:
         raise NotImplementedError
 
     def get_product_offers(self, product_id: int) -> Iterable[OfferInterface]:

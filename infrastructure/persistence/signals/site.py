@@ -3,7 +3,7 @@ from django.db.models.signals import post_save
 from application.usecases.notifications.create_notification import (
     CreateUserNotification,
 )
-from domain.domains.site import SiteInterface
+from domain.domains.entities.site import SiteInterface
 from domain.user.notifications.error import CantSendNotification
 from domain.user.notifications.trigger_enum import TriggerNames
 from infrastructure.persistence.models.user.site import Site
