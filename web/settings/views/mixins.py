@@ -1,22 +1,30 @@
 from django.db.models import Q
 from django.http import HttpRequest, HttpResponseNotFound, HttpResponseRedirect
 
-from application.services.domains.service import get_domain_service
-from domain.domains.domain_service import DomainServiceInterface
+from application.services.site_service import get_domain_service
+from domain.domains.domain_repository import DomainRepositoryInterface
+from domain.user.sites.site_repository import SiteRepositoryInterface
+from domain.user.sites.site_service import SiteServiceInterface
 from infrastructure.admin.admin_settings import get_admin_settings
 from infrastructure.persistence.models.settings import Domain, SiteSettings
 from infrastructure.persistence.models.user.site import Site
+from infrastructure.persistence.repositories.domain_repository import (
+    get_domain_repository,
+)
+from infrastructure.persistence.repositories.site_repository import get_site_repository
 from infrastructure.url_parser.base_url_parser import UrlParserInterface
 from infrastructure.url_parser.url_parser import get_url_parser
-from web.domens.views.views import PartnerIndexPage
-from web.settings.views import SettingsMixin
+from web.settings.views.settings_mixin import SettingsMixin
+from web.settings.views.views import PartnerIndexPage
 from web.template.views.base_page_not_found import BaseNotFoundPage
 
 
 class SubdomainMixin(SettingsMixin):
-    domain_service: DomainServiceInterface = get_domain_service()
+    domain_service: SiteServiceInterface = get_domain_service()
     url_parser: UrlParserInterface = get_url_parser()
     admin_settings = get_admin_settings()
+    domain_repository: DomainRepositoryInterface = get_domain_repository()
+    site_repository: SiteRepositoryInterface = get_site_repository()
 
     def dispatch(self, request: HttpRequest, *args, **kwargs):
         subdomain = self.url_parser.get_subdomain_from_host(request.get_host())
@@ -37,7 +45,7 @@ class SubdomainMixin(SettingsMixin):
             return BaseNotFoundPage.as_view()(request)
 
         if Domain.objects.filter(is_partners=True).exists():
-            partner_domain = self.domain_service.get_partners_domain_string()
+            partner_domain = self.domain_repository.get_partners_domain_string()
 
             if domain == partner_domain and subdomain == "":
                 if request.build_absolute_uri().endswith(partner_domain) or request.build_absolute_uri().endswith(
@@ -53,9 +61,9 @@ class SubdomainMixin(SettingsMixin):
         request.domain = domain
         request.subdomain = subdomain
 
-        site_name = self.domain_service.get_site_name()
+        site_name = self.domain_repository.get_site_name()
         if subdomain:
-            site = self.domain_service.get_site_by_name(subdomain)
+            site = self.site_repository.get(subdomain)
             if site:
                 site_name = site.name
 

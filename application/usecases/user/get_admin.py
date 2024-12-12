@@ -6,12 +6,12 @@ from infrastructure.persistence.repositories.user_repository import get_user_rep
 
 
 class GetAdminUser:
-    def __init__(self, repository: UserRepositoryInterface) -> None:
-        self.repository = repository
+    def __init__(self, user_repository: UserRepositoryInterface) -> None:
+        self.user_repository = user_repository
 
     def __call__(self, username: str, password: str) -> UserInterface:
-        user1 = self.repository.get_user_by_email(username)
-        user2 = self.repository.get_user_by_phone(username)
+        user1 = self.user_repository.get(email=username)
+        user2 = self.user_repository.get(phone=username)
 
         if not user1 and not user2:
             raise UserDoesNotExist(UserErrorsMessages.incorrect_login)

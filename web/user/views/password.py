@@ -116,7 +116,7 @@ class SendMailToResetPassword(FormView):
     def form_valid(self, request: RequestInterface, form: ResetPasswordForm) -> JsonResponse:
         email = form.cleaned_data.get("email")
 
-        user = self.user_repository.get_user_by_email(email)
+        user = self.user_repository.get(email=email)
 
         if user is None:
             self.create_user_session_log(

@@ -8,7 +8,7 @@ class AddLike:
         self.repository = repository
 
     def __call__(self, idea_id: int, user_id: int) -> None:
-        idea = self.repository.get_idea(idea_id)
+        idea = self.repository.get(idea_id)
 
         if not idea:
             raise IdeaNotFound(f'No idea with id "{idea_id}"')

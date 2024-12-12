@@ -64,3 +64,7 @@ class IncorrectPassword(Exception):
 
 class InvalidPassword(Exception):
     pass
+
+
+class InvalidConfirmPhoneCode(Exception):
+    pass

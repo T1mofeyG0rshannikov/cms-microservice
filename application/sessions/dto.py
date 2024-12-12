@@ -1,4 +1,3 @@
-import inspect
 from dataclasses import dataclass
 from datetime import datetime
 
@@ -13,10 +12,6 @@ class RawSessionDB:
     hacking: bool = False
     headers: str = None
     ban_rate: int = 0
-
-    @classmethod
-    def from_dict(cls, env: dict):
-        return cls(**{k: v for k, v in env.items() if k in inspect.signature(cls).parameters})
 
 
 @dataclass

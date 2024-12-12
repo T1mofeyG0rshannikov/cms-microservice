@@ -29,4 +29,4 @@ class GetAllUserNotifications(generics.ListAPIView):
     def get_queryset(self, notification_repository: NotificationRepositoryInterface = get_notification_repository()):
         user_id = self.request.query_params.get("user_id")
 
-        return notification_repository.get_user_notifications(user_id=user_id)
+        return notification_repository.get_notifications(user_id=user_id)

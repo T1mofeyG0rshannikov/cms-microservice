@@ -7,14 +7,6 @@ from domain.user.user import UserInterface
 
 
 class WorkEmailContextProcessor(WorkEmailContextProcessorInterface):
-    def try_login_in_admin(self, **kwargs) -> dict[str, Any]:
-        return {
-            "ip": kwargs.get("ip"),
-            "time": kwargs.get("time"),
-            "login": kwargs.get("login"),
-            "error": kwargs.get("error"),
-        }
-
     def login_in_fake_admin(self, user: UserInterface, **kwargs) -> dict[str, Any]:
         if user:
             email = user.email

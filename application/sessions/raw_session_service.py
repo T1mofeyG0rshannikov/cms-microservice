@@ -5,9 +5,15 @@ from application.sessions.dto import RawSessionDB
 from application.usecases.user_activity.add_penalty import AddPenaltyLog
 from domain.user_sessions.header_contain_enum import HeaderContainEnum
 from domain.user_sessions.raw_session_service import RawSessionServiceInterface
+from domain.user_sessions.repositories.raw_session_repository import (
+    RawSessionRepositoryInterface,
+)
 from domain.user_sessions.repository import UserSessionRepositoryInterface
 from domain.user_sessions.session import SessionInterface
-from infrastructure.admin.admin_settings import get_admin_settings
+from infrastructure.admin.admin_settings import AdminSettings, get_admin_settings
+from infrastructure.persistence.repositories.raw_session_repository import (
+    get_raw_session_repository,
+)
 from infrastructure.persistence.repositories.user_session_repository import (
     get_user_session_repository,
 )
@@ -20,12 +26,14 @@ class RawSessionService(RawSessionServiceInterface):
         self,
         request_service: RequestServiceInterface,
         user_session_repository: UserSessionRepositoryInterface,
+        raw_session_repository: RawSessionRepositoryInterface,
         url_parser: UrlParserInterface,
         penalty_logger: AddPenaltyLog,
-        admin_settings,
+        admin_settings: AdminSettings,
     ) -> None:
         self.request_service = request_service
         self.user_session_repository = user_session_repository
+        self.raw_session_repository = raw_session_repository
         self.url_parser = url_parser
         self.penalty_logger = penalty_logger
         self.admin_settings = admin_settings
@@ -39,7 +47,8 @@ class RawSessionService(RawSessionServiceInterface):
             headers=self.request_service.get_all_headers_to_string(),
         )
 
-    def check_headers(self, session_data: SessionInterface, headers: dict[str, str]) -> SessionInterface:
+    def check_headers(self, session_data: SessionInterface) -> SessionInterface:
+        headers = self.request_service.get_all_headers()
         session_filter_headers = self.user_session_repository.get_session_filter_headers()
 
         for session_filter_header in session_filter_headers:
@@ -169,8 +178,8 @@ class RawSessionService(RawSessionServiceInterface):
 
     def success_capcha(self, session_id: int) -> None:
         increase_value = -self.user_session_repository.get_success_capcha_increase()
-        self.user_session_repository.change_ban_rate(session_id, increase_value)
-        self.user_session_repository.update_raw_session(session_id, show_capcha=False)
+        self.raw_session_repository.change_ban_rate(session_id, increase_value)
+        self.raw_session_repository.update(session_id, show_capcha=False)
 
         self.penalty_logger(session_id, text=f"Успешная капча, {-increase_value}")
 
@@ -178,12 +187,16 @@ class RawSessionService(RawSessionServiceInterface):
 def get_raw_session_service(
     request_service: RequestServiceInterface,
     user_session_repository: UserSessionRepositoryInterface = get_user_session_repository(),
+    raw_session_repository: RawSessionRepositoryInterface = get_raw_session_repository(),
     url_parser: UrlParserInterface = get_url_parser(),
-    admin_settings=get_admin_settings(),
+    penalty_logger=AddPenaltyLog(),
+    admin_settings: AdminSettings = get_admin_settings(),
 ) -> RawSessionServiceInterface:
     return RawSessionService(
         request_service=request_service,
         user_session_repository=user_session_repository,
+        raw_session_repository=raw_session_repository,
         url_parser=url_parser,
+        penalty_logger=penalty_logger,
         admin_settings=admin_settings,
     )

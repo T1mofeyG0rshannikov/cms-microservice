@@ -13,8 +13,9 @@ from domain.page_blocks.page_service_interface import PageServiceInterface
 from infrastructure.files.files import find_class_in_directory
 from infrastructure.persistence.models.settings import SiteSettings
 from infrastructure.persistence.repositories.page_repository import get_page_repository
+from infrastructure.requests.request_interface import RequestInterface
 from web.blocks.serializers import PageSerializer
-from web.domens.views.mixins import SubdomainMixin
+from web.settings.views.mixins import SubdomainMixin
 from web.user.views.base_user_view import UserFormsView
 
 
@@ -22,22 +23,22 @@ class IndexPage(SubdomainMixin):
     template_name = "blocks/page.html"
     page_repository: PageRepositoryInterface = get_page_repository()
 
-    def get(self, *args, **kwargs):
-        partner_domain = self.domain_service.get_partners_domain_string()
+    def get(self, request: RequestInterface, *args, **kwargs):
+        partner_domain = self.domain_repository.get_partners_domain_string()
 
-        if self.request.domain == partner_domain and SiteSettings.objects.first().disable_partners_sites:
+        if request.domain == partner_domain and SiteSettings.objects.first().disable_partners_sites:
             return HttpResponse("<h1>Привет :)</h1>")
 
-        if not self.page_repository.get_page_by_url(None):
+        if not self.page_repository.get(url=None):
             return HttpResponseNotFound()
 
-        return super().get(*args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, page_adapter=get_page_adapter(), **kwargs):
         context = super().get_context_data(**kwargs)
         context |= UserFormsView.get_context_data()
 
-        page = self.page_repository.get_page_by_url(url=None)
+        page = self.page_repository.get(url=None)
         page = page_adapter(page)
 
         page = PageSerializer(page).data
@@ -52,6 +53,7 @@ class ShowPage(SubdomainMixin):
 
     def get_context_data(
         self,
+        page_url: str,
         page_repository: PageRepositoryInterface = get_page_repository(),
         page_adapter: PageAdapter = get_page_adapter(),
         **kwargs,
@@ -59,7 +61,7 @@ class ShowPage(SubdomainMixin):
         context = super().get_context_data(**kwargs)
         context |= UserFormsView.get_context_data()
 
-        page = page_repository.get_page_by_url(url=kwargs["page_url"])
+        page = page_repository.get(url=page_url)
         page = page_adapter(page)
         page = PageSerializer(page).data
 

@@ -6,14 +6,14 @@ from infrastructure.persistence.repositories.idea_repository import get_idea_rep
 
 class DeleteIdea:
     def __init__(self, repository: IdeaRepositoryInterface):
-        self.repository = repository
+        self.idea_repository = repository
 
     def __call__(self, idea_id: int, user: UserInterface) -> None:
-        idea = self.repository.get_idea(idea_id)
+        idea = self.idea_repository.get(idea_id)
         if user != idea.user:
             raise IdeaNotFound(f'No idea with id "{idea_id}" written by {user}')
 
-        self.repository.delete_idea(idea.id)
+        self.idea_repository.delete(idea.id)
 
 
 def get_delete_idea_interactor(idea_repository: IdeaRepositoryInterface = get_idea_repository()) -> DeleteIdea:

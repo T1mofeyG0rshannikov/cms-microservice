@@ -5,7 +5,7 @@ from domain.referrals.referral import ReferralInterface
 
 
 class ReferralRepositoryInterface(Protocol):
-    def get_referral_by_id(self, id: int) -> ReferralInterface | None:
+    def get(self, id: int) -> ReferralInterface | None:
         raise NotImplementedError
 
     def get_referrals(

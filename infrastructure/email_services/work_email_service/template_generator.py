@@ -24,14 +24,10 @@ class WorkEmailTemplateGenerator(WorkEmailTemplateGeneratorInterface):
         return loader.render_to_string(f"{app_name}/{template_name}", context, request=None, using=None)
 
     def generate_success_login_in_admin_template(self, **kwargs) -> str:
-        context = self.context_processor.try_login_in_admin(**kwargs)
-
-        return self.generate_template("success_login_in_admin.html", context)
+        return self.generate_template("success_login_in_admin.html", context=kwargs)
 
     def generate_cant_login_in_admin_template(self, **kwargs) -> str:
-        context = self.context_processor.try_login_in_admin(**kwargs)
-
-        return self.generate_template("error_login_in_admin.html", context)
+        return self.generate_template("error_login_in_admin.html", context=kwargs)
 
     def generate_login_in_fake_admin(self, **kwargs) -> str:
         context = self.context_processor.login_in_fake_admin(**kwargs)

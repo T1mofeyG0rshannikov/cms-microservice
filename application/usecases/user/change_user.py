@@ -16,8 +16,8 @@ class ChangeUserDTO:
 
 
 class ChangeUser:
-    def __init__(self, repository: UserRepositoryInterface) -> None:
-        self.repository = repository
+    def __init__(self, user_repository: UserRepositoryInterface) -> None:
+        self.user_repository = user_repository
 
     def __call__(
         self,
@@ -30,8 +30,8 @@ class ChangeUser:
         social_network: str = None,
         adress: str = None,
     ) -> ChangeUserDTO:
-        user_with_phone = self.repository.get_user_by_phone(phone)
-        user_with_email = self.repository.get_user_by_email(email)
+        user_with_phone = self.user_repository.get(phone=phone)
+        user_with_email = self.user_repository.get(email=email)
 
         if user_with_email != user and user_with_email and user_with_email.email_is_confirmed:
             raise UserWithEmailAlreadyExists(UserErrorsMessages.user_with_email_alredy_exists)
@@ -39,7 +39,7 @@ class ChangeUser:
         elif user_with_phone != user and user_with_phone and user_with_phone.phone_is_confirmed:
             raise UserWithPhoneAlreadyExists(UserErrorsMessages.user_with_phone_alredy_exists)
 
-        self.repository.update_user(
+        self.user_repository.update(
             id=user.id,
             username=username,
             second_name=second_name,
@@ -48,14 +48,14 @@ class ChangeUser:
         )
 
         if social_network:
-            self.repository.update_or_create_user_messanger(user_id=user.id, messanger_id=social_network, adress=adress)
+            self.user_repository.update_or_create_messanger(user_id=user.id, messanger_id=social_network, adress=adress)
 
         if user.email_is_confirmed and email != user.email:
-            self.repository.change_user_email(user.id, email)
+            self.user_repository.change_email(user.id, email)
 
             return ChangeUserDTO(changed_email=True)
 
-        self.repository.change_user_email(user.id, email)
+        self.user_repository.change_email(user.id, email)
 
         return ChangeUserDTO(changed_email=False)
 

@@ -2,18 +2,24 @@ from typing import Any
 
 from django.http import HttpRequest
 
-from application.services.domains.service import get_domain_service
 from application.services.user.referrals_service import get_referral_service
 from application.usecases.ideas.get_ideas import GetIdeas, get_get_ideas_interactor
-from domain.domains.domain_service import DomainServiceInterface
+from domain.domains.domain_repository import DomainRepositoryInterface
 from domain.materials.repository import DocumentRepositoryInterface
 from domain.products.repository import ProductRepositoryInterface
 from domain.referrals.service import ReferralServiceInterface
+from domain.user.user_product_repository import UserProductRepositoryInterface
 from infrastructure.persistence.repositories.document_repository import (
     get_document_repository,
 )
+from infrastructure.persistence.repositories.domain_repository import (
+    get_domain_repository,
+)
 from infrastructure.persistence.repositories.product_repository import (
     get_product_repository,
+)
+from infrastructure.persistence.repositories.user_product_repository import (
+    get_user_product_repository,
 )
 from web.account.serializers import ReferralsSerializer
 from web.common.pagination import Pagination
@@ -31,17 +37,19 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
         self,
         referral_service: ReferralServiceInterface,
         product_repository: ProductRepositoryInterface,
-        domain_service: DomainServiceInterface,
+        user_product_repository: UserProductRepositoryInterface,
+        domain_repository: DomainRepositoryInterface,
         get_ideas_interactor: GetIdeas,
     ):
+        self.domain_repository = domain_repository
         self.referral_service = referral_service
         self.product_repository = product_repository
-        self.domain_service = domain_service
+        self.user_product_repository = user_product_repository
         self.get_ideas_interactor = get_ideas_interactor
 
     def get_context(self, request: HttpRequest):
         context = super().get_context(request)
-        context["site_name"] = self.domain_service.get_site_name()
+        context["site_name"] = self.domain_repository.get_site_name()
 
         return context
 
@@ -71,7 +79,7 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
         self, request: HttpRequest, document_repository: DocumentRepositoryInterface = get_document_repository()
     ):
         context = self.get_context(request)
-        context["manuals"] = document_repository.get_documents()
+        context["manuals"] = document_repository.all()
 
         return context
 
@@ -96,7 +104,7 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
 
         product_category = request.GET.get("product_category")
 
-        products = self.product_repository.filter_user_products(category_id=product_category, user_id=request.user.id)
+        products = self.user_product_repository.filter(category_id=product_category, user_id=request.user.id)
 
         pagination = Pagination(request)
 
@@ -109,12 +117,14 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
 def get_profile_template_context_processor(
     referral_service: ReferralServiceInterface = get_referral_service(),
     product_repository: ProductRepositoryInterface = get_product_repository(),
-    domain_service: DomainServiceInterface = get_domain_service(),
+    domain_repositrory: DomainRepositoryInterface = get_domain_repository(),
+    user_product_repository: UserProductRepositoryInterface = get_user_product_repository(),
     get_ideas_interactor: GetIdeas = get_get_ideas_interactor(),
 ) -> ProfileTemplateContextProcessorInterface:
     return ProfileTemplateContextProcessor(
         referral_service=referral_service,
         product_repository=product_repository,
-        domain_service=domain_service,
+        domain_repository=domain_repositrory,
+        user_product_repository=user_product_repository,
         get_ideas_interactor=get_ideas_interactor,
     )

@@ -58,7 +58,7 @@ def user_verified_email_handler(
     if instance.id is None:
         pass
     else:
-        previous = User.objects.get_user_by_id(id=instance.id)
+        previous = User.objects.get(id=instance.id)
         if not previous.email_is_confirmed and instance.email_is_confirmed:
             user_alert = create_user_notification(instance, TriggerNames.emailverified)
             try:
@@ -73,7 +73,7 @@ def user_change_email_handler(
     if instance.id is None:
         pass
     else:
-        previous = User.objects.get_user_by_id(id=instance.id)
+        previous = User.objects.get(id=instance.id)
 
         if (not previous.new_email and instance.new_email) or (previous.email != instance.email):
             try:
@@ -83,12 +83,12 @@ def user_change_email_handler(
 
 
 def check_existing_user(sender, instance: UserInterface, *args, **kwargs) -> None:
-    user_by_email = User.objects.get_user_by_email(instance.email)
+    user_by_email = User.objects.get(email=instance.email)
     if user_by_email:
         if instance.pk != user_by_email.pk:
             raise UserWithEmailAlreadyExists(f"user with email '{instance.email}' already exists")
 
-    user_by_phone = User.objects.get_user_by_phone(instance.phone)
+    user_by_phone = User.objects.get(phone=instance.phone)
     if user_by_phone:
         if instance.pk != user_by_phone.pk:
             raise UserWithPhoneAlreadyExists(f"user with phone '{instance.phone}' already exists")

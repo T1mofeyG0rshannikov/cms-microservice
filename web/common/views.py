@@ -13,7 +13,7 @@ from infrastructure.email_services.work_email_service.email_service import (
 from infrastructure.requests.request_interface import RequestInterface
 from infrastructure.security import get_link_encryptor
 from web.common.forms import FeedbackForm
-from web.domens.views.mixins import SubdomainMixin
+from web.settings.views.mixins import SubdomainMixin
 
 
 class RedirectToLink(View):

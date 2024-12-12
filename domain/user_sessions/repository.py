@@ -1,9 +1,11 @@
 from collections.abc import Iterable
 from typing import Protocol
 
-from domain.user_sessions.session import SessionInterface, UserSessionInterface
-from domain.user_sessions.session_filters import SessionFIltersHeader
-from infrastructure.persistence.models.site_statistics import SessionFilters
+from domain.user_sessions.session import UserSessionInterface
+from domain.user_sessions.session_filters import (
+    SessionFIltersHeader,
+    SessionFiltersInterface,
+)
 
 
 class UserSessionRepositoryInterface(Protocol):
@@ -25,19 +27,10 @@ class UserSessionRepositoryInterface(Protocol):
     def delete_user_session(self, session_id: int) -> None:
         raise NotImplementedError
 
-    def create_raw_session(self, **kwargs) -> SessionInterface:
-        raise NotImplementedError
-
-    def is_raw_session_exists_by_id(self, session_id: int) -> bool:
-        raise NotImplementedError
-
     def get_searchers(self) -> str:
         raise NotImplementedError
 
     def get_no_cookie_penalty(self) -> int:
-        raise NotImplementedError
-
-    def add_penalty_to_single_page_session(self, penalty: int) -> None:
         raise NotImplementedError
 
     def get_ban_limit(self) -> int:
@@ -46,13 +39,7 @@ class UserSessionRepositoryInterface(Protocol):
     def delete_hacking_visitors(self) -> None:
         raise NotImplementedError
 
-    def bulk_create_raw_session_logs(self, logs) -> None:
-        raise NotImplementedError
-
     def get_disallowed_host_penalty(self) -> int:
-        raise NotImplementedError
-
-    def change_ban_rate(self, session_id: int, penalty: int) -> None:
         raise NotImplementedError
 
     def create_searcher(self, **kwargs) -> UserSessionInterface:
@@ -64,13 +51,7 @@ class UserSessionRepositoryInterface(Protocol):
     def get_page_not_found_penalty(self) -> int:
         raise NotImplementedError
 
-    def get_raw_session(self, session_id: int) -> SessionInterface:
-        raise NotImplementedError
-
-    def update_raw_session(self, session_id: int, **kwargs) -> None:
-        raise NotImplementedError
-
-    def get_session_filters(self) -> SessionFilters:
+    def get_session_filters(self) -> SessionFiltersInterface:
         raise NotImplementedError
 
     def get_session_filter_headers(self) -> Iterable[SessionFIltersHeader]:

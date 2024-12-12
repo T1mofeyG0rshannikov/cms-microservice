@@ -5,8 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.views.generic import View
 
-from application.services.domains.service import get_domain_service
-from domain.domains.domain_service import DomainServiceInterface
+from domain.domains.domain_repository import DomainRepositoryInterface
 from domain.user.user import UserInterface
 from infrastructure.auth.jwt_processor import get_jwt_processor
 from infrastructure.auth.jwt_processor_interface import JwtProcessorInterface
@@ -14,8 +13,11 @@ from infrastructure.logging.user_activity.create_session_log import (
     CreateUserSesssionLog,
     get_create_user_session_log,
 )
+from infrastructure.persistence.repositories.domain_repository import (
+    get_domain_repository,
+)
 from web.common.forms import FeedbackForm
-from web.domens.views.mixins import SubdomainMixin
+from web.settings.views.mixins import SubdomainMixin
 from web.user.forms import LoginForm, RegistrationForm, ResetPasswordForm
 
 
@@ -34,7 +36,7 @@ class BaseUserView(SubdomainMixin):
 class MyLoginRequiredMixin(LoginRequiredMixin):
     login_url = "/user/login"
     set_password_url = "/user/password"
-    domain_service: DomainServiceInterface = get_domain_service()
+    domain_repository: DomainRepositoryInterface = get_domain_repository()
 
     def dispatch(self, request: HttpRequest, *args, **kwargs):
         if not request.user.is_authenticated:
@@ -45,8 +47,8 @@ class MyLoginRequiredMixin(LoginRequiredMixin):
 
         path = request.build_absolute_uri()
 
-        partner_domain_string = self.domain_service.get_partners_domain_string()
-        domain_string = self.domain_service.get_domain_string()
+        partner_domain_string = self.domain_repository.get_partners_domain_string()
+        domain_string = self.domain_repository.get_domain_string()
 
         if partner_domain_string in path:
             path = path.replace(request.get_host(), domain_string)

@@ -6,7 +6,8 @@ from django.contrib import admin
 from django.utils.html import mark_safe
 from dotenv import load_dotenv
 
-from application.services.domains.service import get_domain_service
+from application.services.site_service import get_domain_service
+from domain.user.sites.site_service import SiteServiceInterface
 from infrastructure.persistence.models.user.idea import Idea, IdeaScreen
 from infrastructure.persistence.models.user.product import UserProduct
 from infrastructure.persistence.models.user.roles import Roles, SuperUserRole
@@ -22,8 +23,7 @@ class UserAdmin(admin.ModelAdmin):
     list_display = ["username", "phone", "email", "register_on", "email_is_confirmed"]
     exclude = ["password", "staff", "is_superuser"]
 
-    def register_on(self, obj):
-        domain_service = get_domain_service()
+    def register_on(self, obj, domain_service: SiteServiceInterface = get_domain_service()):
         return domain_service.get_register_on_site(obj)
 
     register_on.short_description = "зарегистрирован на"

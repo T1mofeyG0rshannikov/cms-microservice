@@ -9,7 +9,7 @@ from application.usecases.public.get_settings import (
     get_get_settings_interactor,
 )
 from infrastructure.requests.request_interface import RequestInterface
-from web.domens.views.mixins import SubdomainMixin
+from web.settings.views.mixins import SubdomainMixin
 from web.template.views.views import BaseTemplateLoadView
 
 

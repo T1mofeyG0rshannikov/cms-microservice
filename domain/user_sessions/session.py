@@ -1,4 +1,3 @@
-import inspect
 from dataclasses import dataclass
 from datetime import datetime
 
@@ -20,10 +19,6 @@ class SessionInterface:
     user_id: int = None
     hacking: bool = False
     headers: str = None
-
-    @classmethod
-    def from_dict(cls, env: dict):
-        return cls(**{k: v for k, v in env.items() if k in inspect.signature(cls).parameters})
 
 
 @dataclass

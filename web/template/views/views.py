@@ -21,7 +21,7 @@ from infrastructure.requests.request_interface import RequestInterface
 from web.account.views.templates import Profile
 from web.blocks.views import ShowPage
 from web.catalog.views import ShowCatalogPage
-from web.domens.views.mixins import SubdomainMixin
+from web.settings.views.mixins import SubdomainMixin
 from web.template.profile_template_loader.profile_template_loader import (
     get_profile_template_loader,
 )
@@ -161,7 +161,7 @@ class GetProductDescriptionPopup(BaseTemplateLoadView):
     def get_content(self, request: HttpRequest):
         product = int(request.GET.get("product"))
 
-        product_name = self.product_repository.get_product_by_id(product)
+        product_name = self.product_repository.get(id=product)
 
         self.create_user_session_log(request=request, text=f'''Открыл описание продукта "{product_name}"''')
 

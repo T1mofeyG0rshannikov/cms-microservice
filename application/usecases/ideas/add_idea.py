@@ -1,5 +1,5 @@
-from dataclasses import dataclass
 from collections.abc import Iterable
+from dataclasses import dataclass
 
 from application.texts.errors import ErrorsMessages
 from domain.common.screen import ScreenInterface
@@ -23,7 +23,7 @@ class AddIdea:
         if errors:
             return AddIdeaResponse(errors=errors)
 
-        self.repository.create_idea(**kwargs, screens=screens)
+        self.repository.create(**kwargs, screens=screens)
         return AddIdeaResponse()
 
 

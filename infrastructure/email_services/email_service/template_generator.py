@@ -38,14 +38,10 @@ class EmailTemplateGenerator(EmailTemplateGeneratorInterface):
         return self.generate_template("reset_password.html", context)
 
     def generate_success_login_in_admin_template(self, **kwargs) -> str:
-        context = self.context_processor.try_login_in_admin(**kwargs)
-
-        return self.generate_template("success_login_in_admin.html", context)
+        return self.generate_template("success_login_in_admin.html", context=kwargs)
 
     def generate_cant_login_in_admin_template(self, **kwargs) -> str:
-        context = self.context_processor.try_login_in_admin(**kwargs)
-
-        return self.generate_template("error_login_in_admin.html", context)
+        return self.generate_template("error_login_in_admin.html", context=kwargs)
 
 
 def get_email_template_generator(

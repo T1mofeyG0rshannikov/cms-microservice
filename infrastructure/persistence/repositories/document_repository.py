@@ -6,7 +6,7 @@ from infrastructure.persistence.models.materials import Document, DocumentFormat
 
 
 class DocumentRepository(DocumentRepositoryInterface):
-    def get_document(self, document_slug: str) -> DocumentInterface:
+    def get(self, document_slug: str) -> DocumentInterface:
         try:
             return Document.objects.get(slug=document_slug)
         except Document.DoesNotExist:
@@ -15,7 +15,7 @@ class DocumentRepository(DocumentRepositoryInterface):
     def get_document_patterns(self, document_slug: str) -> Iterable[DocumentPatternInterface]:
         return DocumentFormatPattern.objects.filter(document__slug=document_slug)
 
-    def get_documents(self) -> Iterable[DocumentInterface]:
+    def all(self) -> Iterable[DocumentInterface]:
         return Document.objects.values("title", "slug").all()
 
 

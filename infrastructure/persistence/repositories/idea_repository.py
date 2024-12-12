@@ -10,10 +10,10 @@ from infrastructure.persistence.models.user.idea import Idea, IdeaScreen, Like
 
 
 class IdeaRepository(IdeaRepositoryInterface):
-    def update_idea(self, id: int, **kwargs) -> None:
+    def update(self, id: int, **kwargs) -> None:
         Idea.objects.filter(id=id).update(**kwargs)
 
-    def create_idea(self, screens: Iterable[ScreenInterface], **kwargs) -> IdeaInterface:
+    def create(self, screens: Iterable[ScreenInterface], **kwargs) -> IdeaInterface:
         idea = Idea.objects.create(**kwargs)
 
         for screen in screens:
@@ -21,10 +21,10 @@ class IdeaRepository(IdeaRepositoryInterface):
 
         return idea
 
-    def delete_idea(self, id: int) -> None:
-        Idea.objects.filter(id=id).delete()
+    def delete(self, id: int) -> None:
+        Idea.objects.get(id=id).delete()
 
-    def get_idea(self, id: int) -> IdeaInterface:
+    def get(self, id: int) -> IdeaInterface:
         try:
             return Idea.objects.get(id=id)
         except Idea.DoesNotExist:

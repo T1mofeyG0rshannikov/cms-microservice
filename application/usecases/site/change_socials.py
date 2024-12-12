@@ -13,7 +13,7 @@ class ChangeSocials:
         if len({social_network["social"] for social_network in user_social_networks}) < len(user_social_networks):
             raise SocialChannelAlreadyExists("Вы можете указать только один канал для каждой соц. сети")
 
-        self.repository.delete_user_social(site_id)
+        self.repository.delete(site_id)
 
         if user_social_networks:
             for user_social_network in user_social_networks:

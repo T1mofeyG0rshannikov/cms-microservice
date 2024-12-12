@@ -31,6 +31,7 @@ class UserErrorsMessages(StrEnum):
     insufficient_permissions = "Недостаточно прав"
     to_short_password = "Минимум 6 латинских букв и цифр"
     passwords_dont_match = "Пароли не совпадают"
+    wrong_code = "Неверный код"
 
 
 class SiteErrorsMessages(StrEnum):

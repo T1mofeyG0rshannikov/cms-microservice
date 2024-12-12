@@ -1,6 +1,6 @@
 from django.urls import path
 
-from web.domens.views.views import ActivateSite, StopSite
+from web.settings.views.views import ActivateSite, StopSite
 
 urlpatterns = [
     path("stop", StopSite.as_view()),

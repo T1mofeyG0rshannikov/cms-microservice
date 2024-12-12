@@ -1,5 +1,5 @@
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Iterable
 
 from domain.user_sessions.header_contain_enum import HeaderContainEnum
 
@@ -11,6 +11,7 @@ class SessionFIltersHeader:
     content: str
     header: str
 
+
 @dataclass
-class SessionFilters:
+class SessionFiltersInterface:
     headers: Iterable[SessionFIltersHeader]

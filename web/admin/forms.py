@@ -85,12 +85,12 @@ class CustomAuthenticationAdminForm(AuthenticationForm):
         except (UserDoesNotExist, UserNotAdmin, IncorrectPassword) as e:
             self.add_error("username", str(e))
             if self.logging:
-                self.logger.error(self.cleaned_data, str(e))
+                self.logger.error(str(e), **self.cleaned_data)
             return self.cleaned_data
 
         if self.code_submit and not check_code(user.email, code):
             if self.logging:
-                self.logger.error(self.cleaned_data, "неправильный код")
+                self.logger.error("неправильный код", **self.cleaned_data)
 
             self.add_error("code", "неправильный код")
             return self.cleaned_data
@@ -100,6 +100,6 @@ class CustomAuthenticationAdminForm(AuthenticationForm):
         user = authenticate(request)
         delete_login_code(username)
         if self.logging:
-            self.logger.success({"username": username})
+            self.logger.success(username=username)
 
         return

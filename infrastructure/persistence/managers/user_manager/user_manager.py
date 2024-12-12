@@ -1,55 +1,21 @@
 from django.contrib.auth.models import BaseUserManager
 
-from domain.user.user import UserInterface
 from domain.user.validator import UserValidatorInterface
-from infrastructure.persistence.managers.user_manager.user_manager_interface import (
-    UserManagerInterface,
-)
 
 
-class UserManager(BaseUserManager, UserManagerInterface):
+class UserManager(BaseUserManager):
     def __init__(self, validator: UserValidatorInterface):
         super().__init__()
         self.validator = validator
 
     def get_by_natural_key(self, username):
         if self.validator.is_valid_phone(username):
-            return self.get_user_by_phone(username)
+            return self.get(phone=username)
 
         elif self.validator.is_valid_email(username):
-            return self.get_user_by_email(username)
+            return self.get(email=username)
 
         elif isinstance(username, str):
             return self.model.objects.filter(username=username).first()
 
         return super().get_by_natural_key(username)
-
-    def get_user_by_id(self, id: int) -> UserInterface:
-        try:
-            return self.get(id=id)
-        except self.model.DoesNotExist:
-            return None
-
-    def get_user_by_email(self, email: str) -> UserInterface:
-        try:
-            if email:
-                return self.get(**{"email": email})
-            return None
-        except self.model.DoesNotExist:
-            return None
-
-    def get_user_by_phone(self, phone: str) -> UserInterface:
-        try:
-            if phone:
-                return self.get(**{"phone": phone})
-            return None
-        except self.model.DoesNotExist:
-            return None
-
-    def create_user(self, username: str, phone: str, email: str, **extra_fields) -> UserInterface:
-        return self.model.objects.create(username=username, email=email, phone=phone, **extra_fields)
-
-    def create_superuser(self, username: str, phone: str, email: str, **extra_fields) -> UserInterface:
-        extra_fields.setdefault("staff", True)
-        extra_fields.setdefault("is_superuser", True)
-        return self.create_user(username, phone, email, **extra_fields)

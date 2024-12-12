@@ -26,9 +26,9 @@ from infrastructure.persistence.repositories.notification_repository import (
 from infrastructure.requests.request_interface import RequestInterface
 from web.account.forms import ChangePasswordForm
 from web.common.views import FormView
-from web.domens.views.mixins import SubdomainMixin
 from web.notifications.serializers import UserNotificationSerializer
-from web.settings.views import SettingsMixin
+from web.settings.views.mixins import SubdomainMixin
+from web.settings.views.settings_mixin import SettingsMixin
 from web.template.profile_template_loader.context_processor.context_processor import (
     get_profile_template_context_processor,
 )
@@ -50,7 +50,7 @@ class BaseProfileView(MyLoginRequiredMixin, SubdomainMixin):
         context = super().get_context_data(**kwargs)
 
         context["notifications"] = UserNotificationSerializer(
-            self.notifications_repository.get_user_notifications(user_id=self.request.user.id),
+            self.notifications_repository.get_notifications(user_id=self.request.user.id),
             context={"user": self.request.user},
             many=True,
         ).data
@@ -139,15 +139,15 @@ class DocumentPage(SettingsMixin):
     document_repository: DocumentRepositoryInterface = get_document_repository()
 
     def dispatch(self, request: HttpRequest, slug: str, *args, **kwargs):
-        document = self.document_repository.get_document(slug)
+        document = self.document_repository.get(slug)
         if not document:
             return PageNotFound.as_view()(request)
 
         return super().dispatch(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs) -> dict[str, Any]:
+    def get_context_data(self, slug: str, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context["document"] = self.document_repository.get_document(kwargs.get("slug"))
+        context["document"] = self.document_repository.get(slug)
 
         return context
 

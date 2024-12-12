@@ -3,8 +3,8 @@ from PIL import Image
 from application.texts.errors import ErrorsMessages, SiteErrorsMessages
 from domain.common.exceptons import InvalidFileExtension, ToLagreFile, ToLargeImageSize
 from domain.common.screen import FileInterface
-from domain.domains.exceptions import InvalidSiteAddress, InvalidSiteName
-from domain.domains.site_validator import SiteValidatorInterface
+from domain.user.sites.exceptions import InvalidSiteAddress, InvalidSiteName
+from domain.user.sites.site_validator import SiteValidatorInterface
 
 
 class SiteValidator(SiteValidatorInterface):

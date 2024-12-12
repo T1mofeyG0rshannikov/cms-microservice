@@ -1,6 +1,8 @@
 from rest_framework import serializers
 
-from application.services.domains.service import get_domain_service
+from infrastructure.persistence.repositories.domain_repository import (
+    get_domain_repository,
+)
 
 
 class EmailLogoSerializer(serializers.Serializer):
@@ -8,5 +10,5 @@ class EmailLogoSerializer(serializers.Serializer):
     width = serializers.CharField()
     height = serializers.CharField()
 
-    def get_image(self, obj, domain_service=get_domain_service()):
-        return f"https://{domain_service.get_domain_string()}" + obj.image.url
+    def get_image(self, obj, domain_repository=get_domain_repository()):
+        return f"https://{domain_repository.get_domain_string()}" + obj.image.url

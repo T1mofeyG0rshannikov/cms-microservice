@@ -13,16 +13,16 @@ from infrastructure.persistence.models.notifications import (
 
 
 class NotificationRepository(NotificationRepositoryInterface):
-    def get_notification(self, notification_id: int) -> NotificationInterface:
+    def get(self, notification_id: int) -> NotificationInterface:
         return Notification.objects.get(id=notification_id)
 
-    def get_notification_patterns(self, notification_id: int) -> Iterable[NotificationPatternInterface]:
+    def get_patterns(self, notification_id: int) -> Iterable[NotificationPatternInterface]:
         return NotificationFormatPattern.objects.filter(notification_id=notification_id)
 
-    def get_user_notifications(self, user_id: int) -> Iterable[NotificationInterface]:
+    def get_notifications(self, user_id: int) -> Iterable[NotificationInterface]:
         return UserNotification.objects.filter(user_id=user_id)
 
-    def create_user_notification(self, user_id: int, alert_id: int) -> NotificationInterface:
+    def create(self, user_id: int, alert_id: int) -> NotificationInterface:
         return UserNotification.objects.create(user_id=user_id, notification_id=alert_id)
 
     def delete_user_notification(self, notification_id: int) -> None:

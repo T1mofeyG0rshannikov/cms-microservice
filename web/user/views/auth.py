@@ -116,12 +116,12 @@ class LoginView(BaseUserView, FormView):
 
 class SetToken(BaseUserView):
     template_name = "user/set-token.html"
-    repository: UserRepositoryInterface = get_user_repository()
+    user_repository: UserRepositoryInterface = get_user_repository()
 
     def get(self, request: HttpRequest, token: str) -> HttpResponse:
         payload = self.jwt_processor.validate_token(token)
         if payload:
-            user = self.repository.get_user_by_id(payload["id"])
+            user = self.user_repository.get(id=payload["id"])
             self.login(user)
 
             return render(request, "user/set-token.html", {"token": token})

@@ -24,7 +24,7 @@ class ProfileTemplateLoader(BaseTemplateLoader, ProfileTemplateLoaderInterface):
         return super().load_template(self.app_name, self.template_folder + "/" + template_name, request, context)
 
     def get_title(self, page_title: str) -> str:
-        return f"{page_title} | {self.context_processor.domain_service.get_site_name()}"
+        return f"{page_title} | {self.context_processor.domain_repository.get_site_name()}"
 
     def load_profile_template(self, request: HttpRequest):
         context = self.context_processor.get_profile_template_context(request)

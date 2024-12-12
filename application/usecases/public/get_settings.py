@@ -1,24 +1,22 @@
-from domain.domains.domain_repository import DomainRepositoryInterface
 from domain.page_blocks.entities.site_settings import (
     SiteLogoInterface,
     SiteSettingsInterface,
 )
 from domain.page_blocks.settings_repository import SettingsRepositoryInterface
+from domain.user.sites.site_repository import SiteRepositoryInterface
 from infrastructure.persistence.models.user.site import Site
-from infrastructure.persistence.repositories.domain_repository import (
-    get_domain_repository,
-)
 from infrastructure.persistence.repositories.settings_repository import (
     get_settings_repository,
 )
+from infrastructure.persistence.repositories.site_repository import get_site_repository
 
 
 class GetSettings:
     def __init__(
-        self, settings_repository: SettingsRepositoryInterface, domain_repository: DomainRepositoryInterface
+        self, settings_repository: SettingsRepositoryInterface, site_repository: SiteRepositoryInterface
     ) -> None:
         self.settings_repository = settings_repository
-        self.domain_repository = domain_repository
+        self.site_repository = site_repository
 
     def __call__(self, domain: str = None, subdomain: str = None) -> dict:
         settings_model = self.settings_repository.get_settings()
@@ -51,7 +49,7 @@ class GetSettings:
         )
 
         if domain:
-            sites = self.domain_repository.get_domain_sites(domain)
+            sites = self.site_repository.get_domain_sites(domain)
             sites = Site.objects.all() if domain == "localhost" else Site.objects.filter(domain__domain=domain)
 
             if sites.filter(subdomain=subdomain).exists():
@@ -81,7 +79,7 @@ class GetSettings:
 
 
 def get_get_settings_interactor(
-    domain_repository: DomainRepositoryInterface = get_domain_repository(),
+    site_repository: SiteRepositoryInterface = get_site_repository(),
     settings_repository: SettingsRepositoryInterface = get_settings_repository(),
 ) -> GetSettings:
-    return GetSettings(domain_repository=domain_repository, settings_repository=settings_repository)
+    return GetSettings(site_repository=site_repository, settings_repository=settings_repository)

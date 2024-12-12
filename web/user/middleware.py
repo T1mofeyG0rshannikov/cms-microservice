@@ -8,7 +8,7 @@ from infrastructure.persistence.repositories.user_repository import get_user_rep
 
 class JwtAuthMiddleware:
     jwt_processor: JwtProcessorInterface = get_jwt_processor()
-    repository: UserRepositoryInterface = get_user_repository()
+    user_repository: UserRepositoryInterface = get_user_repository()
 
     def __init__(self, get_response) -> None:
         self.get_response = get_response
@@ -19,7 +19,7 @@ class JwtAuthMiddleware:
         payload = self.jwt_processor.validate_token(token)
 
         if payload:
-            user = self.repository.get_user_by_id(payload["id"])
+            user = self.user_repository.get(id=payload["id"])
         else:
             user = None
 

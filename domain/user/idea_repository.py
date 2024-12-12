@@ -6,7 +6,7 @@ from domain.user.idea import IdeaInterface
 
 
 class IdeaRepositoryInterface(Protocol):
-    def delete_idea(self, id: int) -> None:
+    def delete(self, id: int) -> None:
         raise NotImplementedError
 
     def create_like(self, user_id: int, idea_id: int) -> None:
@@ -15,10 +15,10 @@ class IdeaRepositoryInterface(Protocol):
     def get_ideas(self, category=None, sorted_by=None, status=None, user_id: int = None) -> Iterable[IdeaInterface]:
         raise NotImplementedError
 
-    def get_idea(self, id: int) -> IdeaInterface:
+    def get(self, id: int) -> IdeaInterface:
         raise NotImplementedError
 
-    def update_idea(self, idea_id: int, **kwargs) -> None:
+    def update(self, idea_id: int, **kwargs) -> None:
         raise NotImplementedError
 
     def get_screens(self, idea_id: int):
@@ -36,7 +36,7 @@ class IdeaRepositoryInterface(Protocol):
     def like_exists(self, user_id: int, idea_id: int) -> bool:
         raise NotImplementedError
 
-    def create_idea(self, screens: Iterable[ScreenInterface], **kwargs) -> None:
+    def create(self, screens: Iterable[ScreenInterface], **kwargs) -> None:
         raise NotImplementedError
 
     def delete_screens(self, idea_id: int, old_screens: list[str]) -> None:

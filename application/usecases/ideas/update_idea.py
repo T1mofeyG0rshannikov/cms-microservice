@@ -13,7 +13,7 @@ class UpdateIdea:
         self.repository.delete_screens(idea_id, old_screens)
         self.create_screens(idea_id, screens)
 
-        self.repository.update_idea(idea_id, **kwargs)
+        self.repository.update(idea_id, **kwargs)
 
     def create_screens(self, idea_id: int, screens: Iterable[ScreenInterface]) -> None:
         current_screens = self.repository.get_screen_names(idea_id)

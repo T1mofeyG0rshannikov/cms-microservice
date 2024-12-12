@@ -5,15 +5,15 @@ from infrastructure.persistence.repositories.notification_repository import (
 
 
 class FormatNotification:
-    def __init__(self, repository: NotificationRepositoryInterface) -> None:
-        self.repository = repository
+    def __init__(self, notification_repository: NotificationRepositoryInterface) -> None:
+        self.notification_repository = notification_repository
 
     def __call__(self, notification_id: int) -> str:
-        notification = self.repository.get_notification(notification_id)
+        notification = self.notification_repository.get(notification_id)
 
         notification_text = notification.message
 
-        patterns = self.repository.get_notification_patterns(notification_id)
+        patterns = self.notification_repository.get_patterns(notification_id)
 
         for pattern in patterns:
             if pattern.method:
@@ -36,4 +36,4 @@ class FormatNotification:
 def get_format_notification(
     notifications_repository: NotificationRepositoryInterface = get_notification_repository(),
 ) -> FormatNotification:
-    return FormatNotification(repository=notifications_repository)
+    return FormatNotification(notification_repository=notifications_repository)

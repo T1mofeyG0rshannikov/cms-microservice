@@ -1,7 +1,7 @@
 from collections.abc import Iterable
 
 from domain.account.socials_repository import SocialsRepositoryInterface
-from domain.domains.entities.site import DomainInterface
+from domain.domains.domain import DomainInterface
 from domain.page_blocks.settings_repository import SettingsRepositoryInterface
 from infrastructure.persistence.models.settings import (
     Domain,

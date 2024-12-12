@@ -1,9 +1,11 @@
 from application.email_services.user_email_service.link_generator_interface import (
     LinkGeneratorInterface,
 )
-from application.services.domains.service import get_domain_service
 from infrastructure.auth.jwt_processor import get_jwt_processor
 from infrastructure.auth.jwt_processor_interface import JwtProcessorInterface
+from infrastructure.persistence.repositories.domain_repository import (
+    get_domain_repository,
+)
 
 
 class LinkGenerator(LinkGeneratorInterface):
@@ -27,6 +29,6 @@ class LinkGenerator(LinkGeneratorInterface):
 
 
 def get_link_generator(
-    jwt_processor: JwtProcessorInterface = get_jwt_processor(), host: str = get_domain_service().get_domain_string()
+    jwt_processor: JwtProcessorInterface = get_jwt_processor(), host: str = get_domain_repository().get_domain_string()
 ) -> LinkGeneratorInterface:
     return LinkGenerator(jwt_processor, host)

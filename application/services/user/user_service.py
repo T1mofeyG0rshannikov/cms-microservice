@@ -6,12 +6,12 @@ from domain.user.user import UserInterface
 
 
 class UserService(UserServiceInterface):
-    def __init__(self, repository: UserRepositoryInterface) -> None:
-        self.repository = repository
+    def __init__(self, user_repository: UserRepositoryInterface) -> None:
+        self.user_repository = user_repository
 
     def get_user(self, login: str, password: str) -> UserInterface:
-        user1 = self.repository.get_user_by_email(login)
-        user2 = self.repository.get_user_by_phone(login)
+        user1 = self.user_repository.get(email=login)
+        user2 = self.user_repository.get(phone=login)
 
         if not user1 and not user2:
             raise UserDoesNotExist(UserErrorsMessages.incorrect_login)

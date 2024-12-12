@@ -2,7 +2,6 @@ from django.http import HttpRequest
 from rest_framework.renderers import JSONRenderer
 
 from application.sessions.raw_session_service import RawSessionService
-from domain.user_sessions.session import SessionInterface
 from infrastructure.admin.admin_settings import get_admin_settings
 from infrastructure.persistence.models.site_statistics import SessionModel
 from infrastructure.requests.service import get_request_service
@@ -27,17 +26,22 @@ class PageNotFoundMiddleware(BaseSessionMiddleware):
         if response.status_code == 404 and not self.url_parser.is_source(request.path):
             session_id = request.raw_session.id
             page_not_found_penalty = self.user_session_repository.get_page_not_found_penalty()
-            self.user_session_repository.change_ban_rate(session_id, page_not_found_penalty)
+            self.raw_session_repository.change_ban_rate(session_id, page_not_found_penalty)
             self.penalty_logger(session_id, f"Несуществующий адрес, {page_not_found_penalty}, {path}")
 
         request_service = get_request_service(request)
         raw_session_service = RawSessionService(
-            request_service, self.user_session_repository, self.url_parser, self.penalty_logger, get_admin_settings()
+            request_service,
+            self.user_session_repository,
+            self.raw_session_repository,
+            self.url_parser,
+            self.penalty_logger,
+            get_admin_settings(),
         )
 
         try:
             session_id = request.raw_session.id
-            raw_session = self.user_session_repository.get_raw_session(session_id)
+            raw_session = self.raw_session_repository.get(session_id)
         except SessionModel.DoesNotExist:
             return self.get_response(request)
 
@@ -46,14 +50,14 @@ class PageNotFoundMiddleware(BaseSessionMiddleware):
         port = site.split(":")[1] if ":" in site else None
 
         raw_session = raw_session_service.filter_sessions(
-            SessionInterface.from_dict(raw_session.__dict__),
+            raw_session,
             host,
             path,
             port,
             raw_session.id,
         )
 
-        self.user_session_repository.update_raw_session(
+        self.raw_session_repository.update(
             raw_session.id,
             hacking=raw_session.hacking,
             ban_rate=raw_session.ban_rate,
@@ -73,7 +77,7 @@ class PageNotFoundMiddleware(BaseSessionMiddleware):
             except:
                 pass
 
-            self.user_session_repository.update_raw_session(request.raw_session.id, show_capcha=True)
+            self.raw_session_repository.update(request.raw_session.id, show_capcha=True)
 
             return response
 

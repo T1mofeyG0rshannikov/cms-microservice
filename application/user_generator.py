@@ -3,13 +3,17 @@ import random
 import unidecode
 from russian_names import RussianNames
 
-from application.services.domains.service import get_domain_service
+from domain.domains.domain import DomainInterface
 from domain.domains.domain_repository import DomainRepositoryInterface
-from domain.domains.domain_service import DomainServiceInterface
-from domain.domains.entities.site import DomainInterface, SiteInterface
 from domain.tests.test_user_set import TestUserSetInterface
 from domain.user.repository import UserRepositoryInterface
+from domain.user.sites.site import SiteInterface
+from domain.user.sites.site_repository import SiteRepositoryInterface
 from domain.user.user import UserInterface
+from infrastructure.persistence.repositories.domain_repository import (
+    get_domain_repository,
+)
+from infrastructure.persistence.repositories.site_repository import get_site_repository
 from infrastructure.persistence.repositories.user_repository import get_user_repository
 
 
@@ -20,13 +24,15 @@ class UserGeneratorInterface:
 class UserGenerator(UserGeneratorInterface):
     def __init__(
         self,
+        site_repository: SiteRepositoryInterface,
         domain_repository: DomainRepositoryInterface,
         test_user_set: TestUserSetInterface,
-        repository: UserRepositoryInterface,
+        user_repository: UserRepositoryInterface,
     ) -> None:
+        self.site_repository = site_repository
         self.domain_repository = domain_repository
         self.test_user_set = test_user_set
-        self.repository = repository
+        self.user_repository = user_repository
 
     @staticmethod
     def generate_email(user_slug: str) -> str:
@@ -47,7 +53,7 @@ class UserGenerator(UserGeneratorInterface):
         rn = RussianNames(count=count, patronymic=False, transliterate=False)
 
         partner_domain = self.domain_repository.get_partner_domain_model()
-        sites = list(self.domain_repository.get_all_sites())
+        sites = list(self.site_repository.all())
 
         for user in rn:
             name, second_name = user.split(" ")
@@ -61,7 +67,7 @@ class UserGenerator(UserGeneratorInterface):
     def create_test_site(self, user: UserInterface, partner_domain: DomainInterface) -> SiteInterface:
         subdomain = self.ger_user_english_slug(user.username, user.second_name)
 
-        self.domain_repository.update_or_create_user_site(
+        self.site_repository.update_or_create(
             domain=partner_domain,
             subdomain=subdomain,
             is_active=True,
@@ -79,7 +85,7 @@ class UserGenerator(UserGeneratorInterface):
         phone = self.generate_phone()
 
         try:
-            user = self.repository.create_user(
+            user = self.user_repository.create(
                 username=name,
                 second_name=second_name,
                 email=email,
@@ -100,7 +106,13 @@ class UserGenerator(UserGeneratorInterface):
 
 def get_user_generator(
     test_user_set,
-    domain_service: DomainServiceInterface = get_domain_service(),
+    domain_repository: DomainRepositoryInterface = get_domain_repository(),
+    site_repository: SiteRepositoryInterface = get_site_repository(),
     repository: UserRepositoryInterface = get_user_repository(),
 ) -> UserGeneratorInterface:
-    return UserGenerator(test_user_set=test_user_set, domain_service=domain_service, repository=repository)
+    return UserGenerator(
+        test_user_set=test_user_set,
+        domain_repository=domain_repository,
+        repository=repository,
+        site_repository=site_repository,
+    )

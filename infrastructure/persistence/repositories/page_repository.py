@@ -1,6 +1,6 @@
 from collections.abc import Iterable
 
-from django.db.models import Case, When
+from django.db.models import Case, Q, When
 
 from domain.page_blocks.entities.base_block import (
     CatalogBlockInterface,
@@ -24,12 +24,15 @@ class PageRepository(PageRepositoryInterface):
     def get_catalog_block(self, slug: str) -> CatalogBlockInterface:
         return CatalogBlock.objects.get(product_type__slug=slug)
 
-    def get_page_by_id(self, id: int) -> PageInterface:
-        return Page.objects.get(id=id)
+    def get(self, id: int = None, url: str = None) -> PageInterface:
+        query = Q()
+        if id:
+            query &= Q(id=id)
+        else:
+            query &= Q(url=url)
 
-    def get_page_by_url(self, url: str) -> PageInterface:
         try:
-            return Page.objects.get(url=url)
+            return Page.objects.get(query)
         except Page.DoesNotExist:
             return None
 
@@ -65,7 +68,7 @@ class PageRepository(PageRepositoryInterface):
         return block_models
 
     def clone_page(self, page_id: int) -> None:
-        page = self.get_page_by_id(page_id)
+        page = self.get(id=page_id)
         blocks = page.blocks.all()
         print(blocks)
 

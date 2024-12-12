@@ -15,7 +15,7 @@ class ConfirmEmail(BaseUserView):
         if not payload:
             return HttpResponseRedirect(f"/?error={ErrorsMessages.wrong_confirm_email_link}")
 
-        user = self.user_repository.get_user_by_id(payload["user_id"])
+        user = self.user_repository.get(id=payload["user_id"])
         if user is None:
             return HttpResponseRedirect(f"/?error={ErrorsMessages.wrong_confirm_email_link}")
 
@@ -46,7 +46,7 @@ class ConfirmNewEmail(BaseUserView):
         if not payload:
             return HttpResponseRedirect(f"/?error={ErrorsMessages.wrong_confirm_email_link}")
 
-        user = self.user_repository.get_user_by_id(payload["user_id"])
+        user = self.user_repository.get(id=payload["user_id"])
         if user is None:
             return HttpResponseRedirect(f"/?error={ErrorsMessages.wrong_confirm_email_link}")
 

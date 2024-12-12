@@ -10,7 +10,7 @@ class FormatDocument:
         self.repository = repository
 
     def __call__(self, document_slug: str) -> DocumentInterface:
-        document = self.repository.get_document(document_slug)
+        document = self.repository.get(document_slug)
 
         document_text = document.text
 

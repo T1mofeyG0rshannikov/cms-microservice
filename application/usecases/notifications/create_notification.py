@@ -4,8 +4,8 @@ from infrastructure.persistence.models.notifications import Notification
 
 class CreateUserNotification:
     def __init__(self, repository: NotificationRepositoryInterface) -> None:
-        self.repository = repository
+        self.notification_repository = repository
 
     def __call__(self, user_id: int, trigger_name: str):
         alert = Notification.objects.get(trigger__name=trigger_name)
-        return self.repository.create_user_notification(user_id=user_id, notification_id=alert.id)
+        return self.notification_repository.create(user_id=user_id, notification_id=alert.id)

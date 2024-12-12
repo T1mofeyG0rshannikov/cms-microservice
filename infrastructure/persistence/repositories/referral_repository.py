@@ -17,8 +17,8 @@ from infrastructure.persistence.models.user.user import User
 
 
 class ReferralRepository(ReferralRepositoryInterface):
-    def get_referral_by_id(self, id: int) -> ReferralInterface | None:
-        return User.objects.get_user_by_id(id)
+    def get(self, id: int) -> ReferralInterface:
+        return User.objects.get(id=id)
 
     def get_referrals(
         self, sponsor_id: int, total_levels_count: int, level: int = None, sorted_by: str = None

@@ -8,9 +8,9 @@ from infrastructure.persistence.repositories.user_repository import get_user_rep
 
 
 class ValidResetPasswordToken:
-    def __init__(self, jwt_processor: JwtProcessorInterface, repository: UserRepositoryInterface) -> None:
+    def __init__(self, jwt_processor: JwtProcessorInterface, user_repository: UserRepositoryInterface) -> None:
         self.jwt_processor = jwt_processor
-        self.repository = repository
+        self.user_repository = user_repository
 
     def __call__(self, token: str) -> UserInterface:
         payload = self.jwt_processor.validate_token(token)
@@ -18,7 +18,7 @@ class ValidResetPasswordToken:
         if not payload:
             raise InvalidJwtToken(ErrorsMessages.wrong_reset_password_link)
 
-        user = self.repository.get_user_by_id(payload["id"])
+        user = self.user_repository.get(id=payload["id"])
         if user is None:
             raise InvalidJwtToken(ErrorsMessages.wrong_reset_password_link)
 
@@ -26,9 +26,9 @@ class ValidResetPasswordToken:
 
 
 class ResetPassword:
-    def __init__(self, jwt_processor: JwtProcessorInterface, repository: UserRepositoryInterface) -> None:
+    def __init__(self, jwt_processor: JwtProcessorInterface, user_repository: UserRepositoryInterface) -> None:
         self.jwt_processor = jwt_processor
-        self.repository = repository
+        self.user_repository = user_repository
 
     def __call__(self, token: str, new_password: str) -> tuple[UserInterface, dict]:
         payload = self.jwt_processor.validate_token(token)
@@ -36,7 +36,7 @@ class ResetPassword:
         if not payload:
             raise InvalidJwtToken(ErrorsMessages.expired_set_password_token)
 
-        user = self.repository.set_password(payload["id"], new_password)
+        user = self.user_repository.set_password(payload["id"], new_password)
 
         access_token = self.jwt_processor.create_access_token(user.username, user.id)
 

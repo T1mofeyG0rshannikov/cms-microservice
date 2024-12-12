@@ -15,10 +15,7 @@ class PageRepositoryInterface(Protocol):
     def get_catalog_cover(self, slug: str) -> BaseBlockInterface:
         raise NotImplementedError
 
-    def get_page_by_id(self, id: int) -> PageInterface:
-        raise NotImplementedError
-
-    def get_page_by_url(self, url: str) -> PageInterface:
+    def get(self, id: int = None, url: str = None) -> PageInterface:
         raise NotImplementedError
 
     def get_page_blocks(self, page: PageInterface) -> Iterable[BaseBlockInterface]:

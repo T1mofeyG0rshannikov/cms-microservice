@@ -18,12 +18,6 @@ from application.usecases.user_products.add_user_product import (
     get_add_product_interactor,
 )
 from domain.common.exceptons import InvalidFileExtension, ToLagreFile, ToLargeImageSize
-from domain.domains.exceptions import (
-    InvalidSiteAddress,
-    InvalidSiteName,
-    SiteAdressExists,
-)
-from domain.products.repository import ProductRepositoryInterface
 from domain.user.exceptions import (
     LinkOrConnectedRequired,
     SocialChannelAlreadyExists,
@@ -31,12 +25,18 @@ from domain.user.exceptions import (
     UserWithEmailAlreadyExists,
     UserWithPhoneAlreadyExists,
 )
+from domain.user.sites.exceptions import (
+    InvalidSiteAddress,
+    InvalidSiteName,
+    SiteAdressExists,
+)
+from domain.user.user_product_repository import UserProductRepositoryInterface
 from infrastructure.logging.user_activity.create_session_log import (
     CreateUserSesssionLog,
     get_create_user_session_log,
 )
-from infrastructure.persistence.repositories.product_repository import (
-    get_product_repository,
+from infrastructure.persistence.repositories.user_product_repository import (
+    get_user_product_repository,
 )
 from infrastructure.requests.request_interface import RequestInterface
 from web.account.forms import (
@@ -136,16 +136,13 @@ class ChangeUserView(FormView, APIUserRequired):
 class AddUserProductView(FormView, APIUserRequired):
     form_class = AddUserProductForm
     add_user_product_interactor: AddUserProduct = get_add_product_interactor()
-    product_repository: ProductRepositoryInterface = get_product_repository()
+    user_product_repository: UserProductRepositoryInterface = get_user_product_repository()
     increment_session_profile_action: IncrementSessionCount = get_increment_session_count("profile_actions_count")
     create_user_session_log: CreateUserSesssionLog = get_create_user_session_log()
 
     def form_valid(self, request: HttpRequest, form: AddUserProductForm) -> HttpResponse:
         user = request.user
 
-        user_product_exists = self.product_repository.user_product_exists(
-            user_id=user.id, product_id=user_product.product_id
-        )
         try:
             user_product, created = self.add_user_product_interactor(user_id=user.id, **form.cleaned_data)
         except UserProductAlreadyExists as e:
@@ -155,6 +152,7 @@ class AddUserProductView(FormView, APIUserRequired):
             return JsonResponse({"errors": form.errors}, status=400)
 
         product_name = user_product.product.name
+        user_product_exists = self.user_product_repository.exists(user_id=user.id, product_id=user_product.product_id)
 
         user_activity_text = (
             f'''Изменил продукт "{product_name}"''' if user_product_exists else f'''Добавил продукт "{product_name}"'''

@@ -46,15 +46,6 @@ class EmailContextProcessor(EmailContextProcessorInterface):
 
         return context
 
-    def try_login_in_admin(self, **kwargs) -> dict[str, Any]:
-        context = {}
-        context["ip"] = kwargs.get("ip")
-        context["time"] = kwargs.get("time")
-        context["login"] = kwargs.get("login")
-        context["error"] = kwargs.get("error")
-
-        return context
-
 
 def get_email_context_processor(
     link_generator: LinkGeneratorInterface = get_link_generator(),

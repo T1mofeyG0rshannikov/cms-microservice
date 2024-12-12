@@ -3,14 +3,21 @@ from datetime import datetime
 from domain.products.repository import ProductRepositoryInterface
 from domain.user.exceptions import LinkOrConnectedRequired
 from domain.user.product import UserProductInterface
+from domain.user.user_product_repository import UserProductRepositoryInterface
 from infrastructure.persistence.repositories.product_repository import (
     get_product_repository,
+)
+from infrastructure.persistence.repositories.user_product_repository import (
+    get_user_product_repository,
 )
 
 
 class AddUserProduct:
-    def __init__(self, repository: ProductRepositoryInterface) -> None:
-        self.repository = repository
+    def __init__(
+        self, product_repository: ProductRepositoryInterface, user_product_repository: UserProductRepositoryInterface
+    ) -> None:
+        self.product_repository = product_repository
+        self.user_product_repository = user_product_repository
 
     def __call__(
         self,
@@ -28,11 +35,11 @@ class AddUserProduct:
             raise LinkOrConnectedRequired("Укажите вашу партнерскую ссылку или дату оформления продукта")
 
         if link:
-            offers = self.repository.get_product_offers(product_id)
+            offers = self.product_repository.get_product_offers(product_id)
             for offer in offers:
-                self.repository.update_or_create_user_offer(offer_id=offer.id, user_id=user_id, link=link)
+                self.user_product_repository.update_or_create_user_offer(offer_id=offer.id, user_id=user_id, link=link)
 
-        return self.repository.update_or_create_user_product(
+        return self.user_product_repository.update_or_create(
             comment=comment,
             connected=connected,
             profit=profit,
@@ -45,5 +52,8 @@ class AddUserProduct:
         )
 
 
-def get_add_product_interactor(repository: ProductRepositoryInterface = get_product_repository()) -> AddUserProduct:
-    return AddUserProduct(repository)
+def get_add_product_interactor(
+    repository: ProductRepositoryInterface = get_product_repository(),
+    user_product_repository: UserProductRepositoryInterface = get_user_product_repository(),
+) -> AddUserProduct:
+    return AddUserProduct(repository, user_product_repository)

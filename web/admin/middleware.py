@@ -1,14 +1,16 @@
 from django.http import HttpRequest, HttpResponseNotFound
 from rest_framework.renderers import JSONRenderer
 
-from application.services.domains.service import get_domain_service
-from domain.domains.domain_service import DomainServiceInterface
+from domain.domains.domain_repository import DomainRepositoryInterface
 from infrastructure.admin.admin_settings import get_admin_settings
+from infrastructure.persistence.repositories.domain_repository import (
+    get_domain_repository,
+)
 from web.admin.views import JoomlaAdminPage
 
 
 class AdminMiddleware:
-    domain_service: DomainServiceInterface = get_domain_service()
+    domain_repository: DomainRepositoryInterface = get_domain_repository()
 
     def __init__(self, get_response):
         self.get_response = get_response
@@ -28,7 +30,7 @@ class AdminMiddleware:
                 return HttpResponseNotFound()
 
         if request.path.startswith("/admin/"):
-            domain = self.domain_service.get_domain_string()
+            domain = self.domain_repository.get_domain_string()
 
             if domain in request.get_host() or "127.0.0.1" in request.get_host():
                 response = JoomlaAdminPage.as_view()(request)

@@ -16,11 +16,11 @@ class ReferralService(ReferralServiceInterface):
     def __init__(
         self,
         validator: UserValidatorInterface,
-        repository: ReferralRepositoryInterface,
+        referral_repository: ReferralRepositoryInterface,
         referral_config: ReferralConfig,
     ) -> None:
         self.validator = validator
-        self.repository = repository
+        self.referral_repository = referral_repository
         self.config = referral_config
 
     def get_referral_level(self, referral: ReferralInterface, user: UserInterface) -> int:
@@ -34,7 +34,7 @@ class ReferralService(ReferralServiceInterface):
         raise UserIsNotReferral(f"user '{user.full_name}' is not '{referral.full_name}'`s sponsor")
 
     def get_referral(self, user_id: int, user: UserInterface) -> ReferralInterface:
-        referral = self.repository.get_referral_by_id(user_id)
+        referral = self.referral_repository.get(id=user_id)
 
         if not referral:
             raise UserDoesNotExist(f"no user with id '{user_id}'")
@@ -50,7 +50,7 @@ class ReferralService(ReferralServiceInterface):
         if level:
             level = self.validator.validate_referral_level(level)
 
-        return self.repository.get_referrals(user_id, self.config.total_referral_level, level, sorted_by)
+        return self.referral_repository.get_referrals(user_id, self.config.total_referral_level, level, sorted_by)
 
 
 def get_referral_service(
@@ -58,4 +58,4 @@ def get_referral_service(
     repository: ReferralRepositoryInterface = get_referral_repository(),
     config: ReferralConfig = get_referral_config(),
 ) -> ReferralServiceInterface:
-    return ReferralService(validator=validator, repository=repository, referral_config=config)
+    return ReferralService(validator=validator, referral_repository=repository, referral_config=config)

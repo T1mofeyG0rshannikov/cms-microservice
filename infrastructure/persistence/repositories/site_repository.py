@@ -1,0 +1,68 @@
+from collections.abc import Iterable
+
+from django.db.models import Q
+from django.db.utils import IntegrityError
+
+from application.texts.errors import SiteErrorsMessages
+from domain.user.sites.exceptions import SiteAdressExists
+from domain.user.sites.site import SiteInterface
+from domain.user.sites.site_repository import SiteRepositoryInterface
+from infrastructure.persistence.models.user.site import Site
+
+
+class SiteRepository(SiteRepositoryInterface):
+    def get(self, subdomain: str = None, user_id: int = None, domain: str = None) -> SiteInterface:
+        query = Q()
+        if subdomain:
+            query &= Q(subdomain__iexact=subdomain)
+        if user_id:
+            query &= Q(user_id=user_id)
+        if domain:
+            query &= Q(domain__domain=domain)
+
+        try:
+            return Site.objects.get(query)
+        except Site.DoesNotExist:
+            return None
+
+    def update_or_create(self, user_id: int, **kwargs) -> tuple[SiteInterface, bool]:
+        fields = kwargs
+
+        try:
+            site, created = Site.objects.update_or_create(
+                user_id=user_id,
+                defaults={
+                    "subdomain": fields["subdomain"],
+                    "name": fields["name"],
+                    "owner": fields["owner"],
+                    "contact_info": fields["contact_info"],
+                    "font_id": fields["font_id"],
+                    "font_size": fields["font_size"],
+                    "domain_id": fields["domain_id"],
+                    "logo_width": fields["logo_width"],
+                    "user_id": user_id,
+                },
+            )
+
+            logo = fields.get("logo", None)
+            if logo:
+                site.logo = logo
+
+            if fields.get("delete_logo") == "true":
+                site.logo = None
+
+            site.save()
+
+            return site, created
+        except IntegrityError:
+            raise SiteAdressExists(SiteErrorsMessages.address_already_exists)
+
+    def get_domain_sites(self, domain: str) -> Iterable[SiteInterface]:
+        return Site.objects.all() if domain == "localhost" else Site.objects.filter(domain__domain=domain)
+
+    def all(self) -> Iterable[SiteInterface]:
+        return Site.objects.all()
+
+
+def get_site_repository() -> SiteRepositoryInterface:
+    return SiteRepository()
