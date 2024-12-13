@@ -1,5 +1,6 @@
 from django.urls import path
 
+from web.settings.views.views import ActivateSite, StopSite
 from web.user.views.auth import LoginView, Logout, RegisterUser, SetToken
 from web.user.views.email import ConfirmEmail, ConfirmNewEmail
 from web.user.views.ideas import (
@@ -14,7 +15,12 @@ from web.user.views.password import (
     SendMailToResetPassword,
     SetPassword,
 )
-from web.user.views.views import DeleteUserProductView, IsUserAuth
+from web.user.views.views import (
+    DeleteUserProductView,
+    IsUserAuth,
+    SendConfirmPhoneView,
+    SubmitPhoneView,
+)
 
 urlpatterns = [
     path("register", RegisterUser.as_view()),
@@ -33,4 +39,8 @@ urlpatterns = [
     path("delete-idea", DeleteIdeaView.as_view()),
     path("ideas", GetIdeasView.as_view()),
     path("like", LikeView.as_view()),
+    path("send-confirm-phone", SendConfirmPhoneView.as_view()),
+    path("confirm-phone", SubmitPhoneView.as_view()),
+    path("stop-site", StopSite.as_view()),
+    path("activate-site", ActivateSite.as_view()),
 ]

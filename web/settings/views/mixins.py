@@ -3,7 +3,6 @@ from django.http import HttpRequest, HttpResponseNotFound, HttpResponseRedirect
 
 from application.services.site_service import get_domain_service
 from domain.domains.domain_repository import DomainRepositoryInterface
-from domain.user.sites.site_repository import SiteRepositoryInterface
 from domain.user.sites.site_service import SiteServiceInterface
 from infrastructure.admin.admin_settings import get_admin_settings
 from infrastructure.persistence.models.settings import Domain, SiteSettings
@@ -11,7 +10,6 @@ from infrastructure.persistence.models.user.site import Site
 from infrastructure.persistence.repositories.domain_repository import (
     get_domain_repository,
 )
-from infrastructure.persistence.repositories.site_repository import get_site_repository
 from infrastructure.url_parser.base_url_parser import UrlParserInterface
 from infrastructure.url_parser.url_parser import get_url_parser
 from web.settings.views.settings_mixin import SettingsMixin
@@ -24,7 +22,6 @@ class SubdomainMixin(SettingsMixin):
     url_parser: UrlParserInterface = get_url_parser()
     admin_settings = get_admin_settings()
     domain_repository: DomainRepositoryInterface = get_domain_repository()
-    site_repository: SiteRepositoryInterface = get_site_repository()
 
     def dispatch(self, request: HttpRequest, *args, **kwargs):
         subdomain = self.url_parser.get_subdomain_from_host(request.get_host())
@@ -60,13 +57,5 @@ class SubdomainMixin(SettingsMixin):
 
         request.domain = domain
         request.subdomain = subdomain
-
-        site_name = self.domain_repository.get_site_name()
-        if subdomain:
-            site = self.site_repository.get(subdomain)
-            if site:
-                site_name = site.name
-
-        request.site_name = site_name
 
         return super().dispatch(request, *args, **kwargs)

@@ -17,9 +17,9 @@
 
         {% replace '<a class="ref" onclick="openDocumentPopup([PRIVACY.SLUG])">[PRIVACY.TITLE]</a>' '[PRIVACY.SLUG]' "'[PRIVACY.SLUG]'" as privacy_text %}{% replace privacy_text '[PRIVACY.SLUG]' privacy.slug as privacy_text %}{% replace privacy_text '[PRIVACY.TITLE]' privacy.title as privacy_text %}
         {% replace '<a class="ref" onclick="openDocumentPopup([TERMS.SLUG])">[TERMS.TITLE]</a>' '[TERMS.SLUG]' "'[TERMS.SLUG]'" as terms_text %}{% replace terms_text '[TERMS.SLUG]' terms.slug as terms_text %}{% replace terms_text '[TERMS.TITLE]' terms.title as terms_text %}
-        {% with text=block.text1 %}{% replace text '[YEAR]' year as text %}{% replace text '[TERMS]' terms_text as text %}{% replace text '[PRIVACY]' privacy_text as text %}{% replace text '[SITEDOMAIN]' request.get_host as text %}{% replace text '[SITENAME]' request.site_name as text %}{{ text|safe }}{% endwith %}
-        {% with text=block.text2 %}{% replace text '[TERMS]' terms_text as text %}{% replace text '[PRIVACY]' privacy_text as text %}{% replace text '[SITEDOMAIN]' request.get_host as text %}{% replace text '[SITENAME]' request.site_name as text %}{{ text|safe }}{% endwith %}
-        {% with text=block.text3 %}{% replace text '[TERMS]' terms_text as text %}{% replace text '[PRIVACY]' privacy_text as text %}{% replace text '[SITEDOMAIN]' request.get_host as text %}{% replace text '[SITENAME]' request.site_name as text %}{{ text|safe }}{% endwith %}
+        {% with text=block.text1 %}{% replace text '[YEAR]' year as text %}{% replace text '[TERMS]' terms_text as text %}{% replace text '[PRIVACY]' privacy_text as text %}{% replace text '[SITEDOMAIN]' request.get_host as text %}{% replace text '[SITENAME]' site_name as text %}{{ text|safe }}{% endwith %}
+        {% with text=block.text2 %}{% replace text '[TERMS]' terms_text as text %}{% replace text '[PRIVACY]' privacy_text as text %}{% replace text '[SITEDOMAIN]' request.get_host as text %}{% replace text '[SITENAME]' site_name as text %}{{ text|safe }}{% endwith %}
+        {% with text=block.text3 %}{% replace text '[TERMS]' terms_text as text %}{% replace text '[PRIVACY]' privacy_text as text %}{% replace text '[SITEDOMAIN]' request.get_host as text %}{% replace text '[SITENAME]' site_name as text %}{{ text|safe }}{% endwith %}
     </div>
 
     <style>

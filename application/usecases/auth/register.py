@@ -73,11 +73,14 @@ class Register:
 
     def get_site_model(self, host: str) -> SiteInterface:
         subdomain = self.url_parser.get_subdomain_from_host(host)
+        if not subdomain:
+            return None
+
         return self.site_repository.get(subdomain=subdomain)
 
     def get_user_from_site(self, site: SiteInterface, domain: DomainInterface) -> UserInterface:
-        if domain == self.domain_repository.get_domain_model():
-            return self.user_repository.get_supersponsor()
+        if domain == self.domain_repository.get_domain(is_partners=False):
+            return self.user_repository.get(supersponsor=True)
 
         if site:
             return site.user

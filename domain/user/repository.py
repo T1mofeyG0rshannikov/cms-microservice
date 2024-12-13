@@ -1,4 +1,4 @@
-from typing import Any, Protocol
+from typing import Protocol
 
 from domain.user.user import UserInterface
 
@@ -7,13 +7,10 @@ class UserRepositoryInterface(Protocol):
     def get(self, id: int = None, phone: str = None, email: str = None) -> UserInterface | None:
         raise NotImplementedError
 
-    def get_supersponsor(self) -> UserInterface:
-        raise NotImplementedError
-
     def verify_password(self, user_id: int, password: str) -> bool:
         raise NotImplementedError
 
-    def create(self, fields: dict[str, Any]) -> UserInterface | None:
+    def create(self, email: str, phone: str) -> UserInterface | None:
         raise NotImplementedError
 
     def set_password(self, user_id: int, password: str) -> UserInterface:

@@ -8,8 +8,9 @@ class SMSService(SMSServiceInterface):
     def __init__(self, config: SMSAeroConfig) -> None:
         self.config = config
 
-    def confirm_phone_code(self, site_name: str, phone: str, code: str) -> None:
+    def confirm_phone_code(self, site_name: str, phone: int, code: str) -> None:
         api = SmsAero(self.config.sms_email, self.config.sms_api_key)
+
         return api.send_sms(phone, f"""{site_name}. Код для подтверждения телефона: {code}""")
 
 

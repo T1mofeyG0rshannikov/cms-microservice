@@ -16,7 +16,6 @@ from infrastructure.persistence.models.user.user import User
 from infrastructure.persistence.repositories.user_repository import get_user_repository
 from web.admin.admin import redirect_to_change_page_tag
 from web.common.admin import BaseInline
-from web.domens.admin import SiteAdmin
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -186,6 +185,10 @@ class IdeaAdmin(admin.ModelAdmin):
             ),
         )
         return fieldsets
+
+
+class SiteAdmin(admin.ModelAdmin):
+    exclude = ["online_from"]
 
 
 admin.site.register(User, UserAdmin)

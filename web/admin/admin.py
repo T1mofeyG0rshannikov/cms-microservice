@@ -1,7 +1,7 @@
-from django.utils.safestring import mark_safe
-from django.db import models
 from django.contrib import admin
 from django.contrib.admin import AdminSite
+from django.db import models
+from django.utils.safestring import mark_safe
 
 from infrastructure.admin.admin_settings import get_admin_settings
 from web.admin.forms import CustomAuthenticationAdminForm
@@ -24,7 +24,6 @@ class MyAdminSite(AdminSite):
             "settings",
             "notifications",
             "account",
-            "domens",
             "common",
             "styles",
             "site_tests",

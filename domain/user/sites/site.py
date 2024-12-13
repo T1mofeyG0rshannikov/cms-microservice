@@ -5,7 +5,6 @@ from domain.domains.domain import DomainInterface
 
 @dataclass
 class SiteInterface:
-    id: int
     domain: DomainInterface
 
     name: str
@@ -18,6 +17,7 @@ class SiteInterface:
     is_active: bool = None
     subdomain: str = None
     user: "UserInterface" = None
+    id: int = None
 
     @property
     def adress(self) -> str:

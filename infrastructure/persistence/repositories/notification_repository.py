@@ -22,8 +22,8 @@ class NotificationRepository(NotificationRepositoryInterface):
     def get_notifications(self, user_id: int) -> Iterable[NotificationInterface]:
         return UserNotification.objects.filter(user_id=user_id)
 
-    def create(self, user_id: int, alert_id: int) -> NotificationInterface:
-        return UserNotification.objects.create(user_id=user_id, notification_id=alert_id)
+    def create(self, user_id: int, notification_id: int) -> NotificationInterface:
+        return UserNotification.objects.create(user_id=user_id, notification_id=notification_id)
 
     def delete_user_notification(self, notification_id: int) -> None:
         UserNotification.objects.filter(id=notification_id).delete()

@@ -2,6 +2,10 @@ from application.texts.errors import UserErrorsMessages
 from domain.email.repository import SystemRepositoryInterface
 from domain.user.exceptions import InvalidConfirmPhoneCode
 from domain.user.repository import UserRepositoryInterface
+from infrastructure.persistence.repositories.system_repository import (
+    get_system_repository,
+)
+from infrastructure.persistence.repositories.user_repository import get_user_repository
 
 
 class ConfirmUserPhone:
@@ -21,6 +25,7 @@ class ConfirmUserPhone:
 
 
 def get_confirm_phone_interactor(
-    system_repository: SystemRepositoryInterface, user_repository: UserRepositoryInterface
+    system_repository: SystemRepositoryInterface = get_system_repository(),
+    user_repository: UserRepositoryInterface = get_user_repository(),
 ) -> ConfirmUserPhone:
     return ConfirmUserPhone(system_repository=system_repository, user_repository=user_repository)

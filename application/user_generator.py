@@ -52,7 +52,7 @@ class UserGenerator(UserGeneratorInterface):
     def create_test_users(self, count: int) -> None:
         rn = RussianNames(count=count, patronymic=False, transliterate=False)
 
-        partner_domain = self.domain_repository.get_partner_domain_model()
+        partner_domain = self.domain_repository.get_domain(is_partners=True)
         sites = list(self.site_repository.all())
 
         for user in rn:
@@ -113,6 +113,6 @@ def get_user_generator(
     return UserGenerator(
         test_user_set=test_user_set,
         domain_repository=domain_repository,
-        repository=repository,
+        user_repository=repository,
         site_repository=site_repository,
     )

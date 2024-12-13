@@ -42,7 +42,7 @@ class SiteService(SiteServiceInterface):
         return False
 
     def get_register_on_site(self, user: UserInterface) -> str:
-        if user.register_on_domain == self.domain_repository.get_domain_model():
+        if user.register_on_domain == self.domain_repository.get_domain(is_partners=False):
             return str(user.register_on_domain)
 
         if user.register_on_site:
@@ -65,7 +65,7 @@ class SiteService(SiteServiceInterface):
                     user=site.user,
                 )
 
-        domain = self.domain_repository.get_domain_model()
+        domain = self.domain_repository.get_domain(is_partners=False)
         settings = self.settings_repository.get_settings()
 
         return SiteInterface(

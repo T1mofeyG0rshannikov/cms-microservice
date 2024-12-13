@@ -29,16 +29,18 @@ class SendConfirmPhoneCode:
 
         site_name = self.domain_repository.get_domain_string()
 
-        self.sms_service.confirm_phone_code(site_name, phone, code)
+        phone_for_api = int(phone[1::])
+
+        self.sms_service.confirm_phone_code(site_name, phone_for_api, code)
 
     @staticmethod
-    def generate_code(length: int = 6) -> str:
+    def generate_code(length: int = 4) -> str:
         code = str(randrange(0, 10**length))
         code = "0" * (length - len(code)) + code
         return code
 
 
-def get_confirm_phone_interactor(
+def get_send_confirm_phone_interactor(
     system_repository: SystemRepositoryInterface = get_system_repository(),
     domain_repository: DomainRepositoryInterface = get_domain_repository(),
     sms_service: SMSServiceInterface = get_sms_service(),

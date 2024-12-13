@@ -20,6 +20,7 @@ from infrastructure.persistence.models.user.user import User
 from infrastructure.persistence.repositories.notification_repository import (
     get_notification_repository,
 )
+from infrastructure.persistence.repositories.user_repository import get_user_repository
 from web.notifications.send_message import send_message_to_user
 from web.notifications.serializers import UserNotificationSerializer
 
@@ -39,7 +40,8 @@ def user_created_handler(
         except CantSendMailError:
             pass
 
-        user_alert = create_user_notification(instance, TriggerNames.signedup)
+        user_alert = create_user_notification(instance.id, TriggerNames.signedup)
+
         user_alert = UserNotificationSerializer(user_alert).data
 
         try:
@@ -60,7 +62,7 @@ def user_verified_email_handler(
     else:
         previous = User.objects.get(id=instance.id)
         if not previous.email_is_confirmed and instance.email_is_confirmed:
-            user_alert = create_user_notification(instance, TriggerNames.emailverified)
+            user_alert = create_user_notification(instance.id, TriggerNames.emailverified)
             try:
                 send_message_to_user(instance.id, user_alert)
             except CantSendNotification:
@@ -82,13 +84,15 @@ def user_change_email_handler(
                 pass
 
 
-def check_existing_user(sender, instance: UserInterface, *args, **kwargs) -> None:
-    user_by_email = User.objects.get(email=instance.email)
+def check_existing_user(
+    sender, instance: UserInterface, *args, user_repository=get_user_repository(), **kwargs
+) -> None:
+    user_by_email = user_repository.get(email=instance.email)
     if user_by_email:
         if instance.pk != user_by_email.pk:
             raise UserWithEmailAlreadyExists(f"user with email '{instance.email}' already exists")
 
-    user_by_phone = User.objects.get(phone=instance.phone)
+    user_by_phone = user_repository.get(phone=instance.phone)
     if user_by_phone:
         if instance.pk != user_by_phone.pk:
             raise UserWithPhoneAlreadyExists(f"user with phone '{instance.phone}' already exists")

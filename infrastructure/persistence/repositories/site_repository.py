@@ -25,30 +25,28 @@ class SiteRepository(SiteRepositoryInterface):
         except Site.DoesNotExist:
             return None
 
-    def update_or_create(self, user_id: int, **kwargs) -> tuple[SiteInterface, bool]:
-        fields = kwargs
-
+    def update_or_create(self, user_id: int, subdomain: str, owner: str = None, **kwargs) -> tuple[SiteInterface, bool]:
         try:
             site, created = Site.objects.update_or_create(
                 user_id=user_id,
                 defaults={
-                    "subdomain": fields["subdomain"],
-                    "name": fields["name"],
-                    "owner": fields["owner"],
-                    "contact_info": fields["contact_info"],
-                    "font_id": fields["font_id"],
-                    "font_size": fields["font_size"],
-                    "domain_id": fields["domain_id"],
-                    "logo_width": fields["logo_width"],
+                    "subdomain": subdomain,
+                    "name": kwargs.get("name"),
+                    "owner": owner,
+                    "contact_info": kwargs.get("contact_info"),
+                    "font_id": kwargs.get("font_id"),
+                    "font_size": kwargs.get("font_size"),
+                    "domain_id": kwargs.get("domain_id"),
+                    "logo_width": kwargs.get("logo_width"),
                     "user_id": user_id,
                 },
             )
 
-            logo = fields.get("logo", None)
+            logo = kwargs.get("logo")
             if logo:
                 site.logo = logo
 
-            if fields.get("delete_logo") == "true":
+            if kwargs.get("delete_logo") == "true":
                 site.logo = None
 
             site.save()

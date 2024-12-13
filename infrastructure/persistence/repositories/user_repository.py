@@ -9,7 +9,7 @@ from infrastructure.persistence.models.user.user import User
 
 
 class UserRepository(UserRepositoryInterface):
-    def get(self, phone: str = None, email: str = None, id: int = None) -> UserInterface:
+    def get(self, phone: str = None, email: str = None, id: int = None, supersponsor: bool = None) -> UserInterface:
         query = Q()
         if phone:
             query &= Q(phone=phone)
@@ -17,14 +17,13 @@ class UserRepository(UserRepositoryInterface):
             query &= Q(email=email)
         if id:
             query &= Q(id=id)
+        if supersponsor:
+            query &= Q(supersponsor=supersponsor)
 
         try:
-            return User.objects.get(query)
+            return User.objects.filter(query).first()
         except User.DoesNotExist:
             return None
-
-    def get_supersponsor(self) -> UserInterface:
-        return User.objects.filter(supersponsor=True).first()
 
     def create(self, email: str, phone: str, **kwargs) -> UserInterface:
         try:
@@ -32,11 +31,11 @@ class UserRepository(UserRepositoryInterface):
                 User.objects.filter(email=email).update(email=None)
                 User.objects.filter(phone=phone).update(phone=None)
 
-                user = User.objects.create(**kwargs)
+                user = User.objects.create(email=email, phone=phone, **kwargs)
 
                 return user
         except Exception as e:
-            print(e)
+            print(e, "error_while create user")
             return None
 
     def verify_password(self, user_id: int, password: str) -> bool:

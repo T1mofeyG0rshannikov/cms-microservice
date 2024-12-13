@@ -89,7 +89,7 @@ class ChangeSocialsView(FormView, APIUserRequired):
     def form_valid(self, request: RequestInterface, form: ChangeSocialsForm) -> HttpResponse:
         try:
             user_social_networks = json.loads(form.cleaned_data.get("socials"))
-            print(user_social_networks)
+
             self.change_socials_interactor(request.user.site.id, user_social_networks)
         except SocialChannelAlreadyExists as e:
             form.add_error("socials", str(e))

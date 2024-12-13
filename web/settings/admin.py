@@ -15,7 +15,6 @@ from infrastructure.persistence.models.settings import (
 )
 from web.account.admin import MessangerAdmin, UserFontAdmin
 from web.common.admin import SocialNetworkAdmin
-from web.domens.admin import DomainAdmin
 from web.styles.admin import FontAdmin, GlobalStylesAdmin
 
 
@@ -33,6 +32,10 @@ class IconInline(admin.StackedInline):
 
 class SettingsAdmin(admin.ModelAdmin):
     inlines = [LogoInline, FormLogoInline, IconInline]
+
+
+class DomainAdmin(admin.ModelAdmin):
+    pass
 
 
 admin.site.register(Domain, DomainAdmin)

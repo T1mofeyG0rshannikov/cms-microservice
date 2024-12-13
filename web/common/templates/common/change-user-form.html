@@ -34,7 +34,10 @@
 
     <div class="field-container">
         <div class="field" style="width: 100%;" id="phone">
-            <p>Телефон</p>
+            <div class="email-title">
+                <p>Телефон</p>
+                {% if user.phone_is_confirmed %}{% else %}<a style="cursor: pointer;" onclick="sendConfirmPhone(this)" >Подтвердите телефон</a>{% endif %}
+            </div>
             <div class="checkmark-container">
                 <input placeholder="Ваш телефон" name="phone" value="{% if user.phone %}{{ user.phone }}{% endif %}" />
 

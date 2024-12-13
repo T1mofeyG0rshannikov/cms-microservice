@@ -9,7 +9,6 @@ urlpatterns = [
     path("user/", include("web.user.urls")),
     path("email/", include("web.emails.urls")),
     path("", include("web.admin.urls")),
-    path("domain/", include("web.domens.urls")),
     path("notifications/", include("web.notifications.urls")),
     path("materials/", include("web.materials.urls")),
     path("site_statistics/", include("web.site_statistics.urls")),
