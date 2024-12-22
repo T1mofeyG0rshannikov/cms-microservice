@@ -116,8 +116,8 @@ class CapchaView(SettingsMixin):
 
 class SubmitCapcha(View):
     def post(self, request: RequestInterface) -> HttpResponse:
-        if request.raw_session_id:
-            session_id = request.raw_session_id
+        if request.raw_session:
+            session_id = request.raw_session.id
 
             raw_session_service = get_raw_session_service(get_request_service(request))
             raw_session_service.success_capcha(session_id)

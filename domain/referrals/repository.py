@@ -8,7 +8,7 @@ class ReferralRepositoryInterface(Protocol):
     def get(self, id: int) -> ReferralInterface | None:
         raise NotImplementedError
 
-    def get_referrals(
+    def filter(
         self, user_id: int, total_referal_level: int, level: int = None, sorted_by: str = None
     ) -> Iterable[ReferralInterface]:
         raise NotImplementedError

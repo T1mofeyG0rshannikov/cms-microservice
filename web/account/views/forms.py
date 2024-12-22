@@ -55,19 +55,22 @@ class ChangeSiteView(FormView, APIUserRequired):
     create_user_session_log: CreateUserSesssionLog = get_create_user_session_log()
     increment_session_profile_action: IncrementSessionCount = get_increment_session_count("profile_actions_count")
 
+    error_mapping = {
+        SiteAdressExists: "subdomain",
+        InvalidSiteAddress: "subdomain",
+        InvalidSiteName: "name",
+        ToLagreFile: "logo",
+        ToLargeImageSize: "logo",
+        InvalidFileExtension: "logo",
+    }
+
     def form_valid(self, request: HttpRequest, form: ChangeSiteForm) -> HttpResponse:
         user = request.user
 
         try:
             site, created = self.change_site_interactor(**form.cleaned_data, user_id=user.id)
-        except (SiteAdressExists, InvalidSiteAddress) as e:
-            form.add_error("subdomain", str(e))
-            return JsonResponse({"errors": form.errors}, status=400)
-        except InvalidSiteName as e:
-            form.add_error("name", str(e))
-            return JsonResponse({"errors": form.errors}, status=400)
-        except (ToLagreFile, ToLargeImageSize, InvalidFileExtension) as e:
-            form.add_error("name", str(e))
+        except tuple(self.error_mapping) as e:
+            self.add_form_error(form, e)
             return JsonResponse({"errors": form.errors}, status=400)
 
         if created:

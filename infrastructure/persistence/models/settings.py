@@ -110,6 +110,15 @@ class Domain(models.Model):
         verbose_name_plural = "домены"
 
 
+class LandingDomain(models.Model):
+    domain = models.CharField(max_length=50, verbose_name="домен")
+
+    class Meta:
+        app_label = "settings"
+        verbose_name = "домен для лендинга"
+        verbose_name_plural = "домены для лендинга"
+
+
 class GlobalStyles(OneInstanceModel):
     class Meta:
         app_label = "settings"
@@ -166,7 +175,7 @@ class Trackers(OneInstanceModel):
     main_domain_metrics = models.CharField(max_length=10, verbose_name="Метрика: Банкомаг")
     partner_metrics = models.CharField(max_length=10, verbose_name="Метрика: Партнеры")
     profile_metrics = models.CharField(max_length=10, verbose_name="Метрика: Кабинет")
-    
+
     class Meta:
         app_label = "settings"
         verbose_name = "Трекеры"

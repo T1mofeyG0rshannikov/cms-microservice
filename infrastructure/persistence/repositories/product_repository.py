@@ -105,15 +105,6 @@ class ProductRepository(ProductRepositoryInterface):
         except Product.DoesNotExist:
             return None
 
-    """def get_product_by_id(self, id: int) -> ProductInterface:
-        try:
-            return Product.objects.get(id=id)
-        except Product.DoesNotExist:
-            return None
-
-    def get_product_name_by_user_products_id(self, user_product_id: int) -> str:
-        return Product.objects.get(user_products__id=user_product_id).name"""
-
     def get_product_offers(self, product_id: int) -> Iterable[OfferInterface]:
         return Offer.objects.filter(product_id=product_id)
 

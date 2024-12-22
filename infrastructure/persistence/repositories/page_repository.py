@@ -12,10 +12,8 @@ from infrastructure.files.files import find_class_in_directory
 from infrastructure.persistence.models.blocks.blocks import Cover
 from infrastructure.persistence.models.blocks.catalog_block import CatalogBlock
 from infrastructure.persistence.models.blocks.common import BaseBlock, Block, Page
+from infrastructure.persistence.models.blocks.landings import Landing, LandingBlock
 from infrastructure.persistence.models.catalog.blocks import Block as CatalogPageBlock
-from infrastructure.persistence.models.catalog.blocks import (
-    BlockRelationship as CatalogBlockRelationship,
-)
 from infrastructure.persistence.models.catalog.blocks import CatalogPageTemplate
 from infrastructure.persistence.models.common import BlockRelationship
 
@@ -39,15 +37,17 @@ class PageRepository(PageRepositoryInterface):
     def get_page_blocks(self, page_model) -> Iterable[BaseBlock]:
         if isinstance(page_model, Page):
             block_class = Block
-            block_relation_class = BlockRelationship
 
         elif isinstance(page_model, CatalogPageTemplate):
             block_class = CatalogPageBlock
-            block_relation_class = CatalogBlockRelationship
+
+        elif isinstance(page_model, Landing):
+            block_class = LandingBlock
 
         block_names = block_class.objects.filter(page=page_model).order_by("my_order").values_list("name", flat=True)
+
         blocks = (
-            block_relation_class.objects.filter(id__in=block_names)
+            BlockRelationship.objects.filter(id__in=block_names)
             .order_by(Case(*[When(id=id, then=pos) for pos, id in enumerate(block_names)]))
             .values("block_name", "block")
         )

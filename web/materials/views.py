@@ -43,7 +43,7 @@ class GetPopup(BaseTemplateLoadView, SubdomainMixin):
         return JsonResponse(
             {
                 "content": self.template_loader.load_template(
-                    app_name="materials", template_name=template_name, request=request, context=context
+                    app_name="materials", template_name=template_name, context=context
                 )
             }
         )

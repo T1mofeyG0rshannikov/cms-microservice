@@ -108,7 +108,7 @@ class TemplateContextProcessor(TemplateContextProcessorInterface):
         return {"idea": idea_repository.get(idea_id)}
 
 
-def get_template_context_processor(
+def get_context_processor(
     products_repository: ProductRepositoryInterface = get_product_repository(),
     user_products_repository: UserProductRepositoryInterface = get_user_product_repository(),
     domain_repositroy: DomainRepositoryInterface = get_domain_repository(),

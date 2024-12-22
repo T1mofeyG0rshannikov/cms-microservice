@@ -4,17 +4,23 @@ from django.http import HttpRequest
 
 
 class ProfileTemplateContextProcessorInterface(Protocol):
-    def get_profile_template_context(self, request: HttpRequest):
+    def get_profile_context(self, request: HttpRequest):
         raise NotImplementedError
 
-    def get_site_template_context(self, request: HttpRequest):
+    def get_site_context(self, request: HttpRequest):
         raise NotImplementedError
 
-    def get_refs_template_context(self, request: HttpRequest):
+    def get_refs_context(self, request: HttpRequest):
         raise NotImplementedError
 
-    def get_manuals_template_context(self, request: HttpRequest):
+    def get_manuals_context(self, request: HttpRequest):
         raise NotImplementedError
 
-    def get_products_template_context(self, request: HttpRequest):
+    def get_products_context(self, request: HttpRequest):
+        raise NotImplementedError
+
+    def get_ideas_context(self, request: HttpRequest):
+        raise NotImplementedError
+
+    def get_messanger_context(self, request: HttpRequest):
         raise NotImplementedError

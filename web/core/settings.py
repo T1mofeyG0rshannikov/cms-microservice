@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "web.materials",
     "web.system",
+    "web.messanger",
     "django_user_agents",
     "debug_toolbar",
 ]
@@ -377,4 +378,5 @@ MIGRATION_MODULES = {
     "emails": "infrastructure.persistence.migrations.emails",
     "materials": "infrastructure.persistence.migrations.materials",
     "system": "infrastructure.persistence.migrations.system",
+    "messanger": "infrastructure.persistence.migrations.messanger",
 }

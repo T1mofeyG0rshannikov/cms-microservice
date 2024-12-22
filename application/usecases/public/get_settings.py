@@ -4,7 +4,6 @@ from domain.page_blocks.entities.site_settings import (
 )
 from domain.page_blocks.settings_repository import SettingsRepositoryInterface
 from domain.user.sites.site_repository import SiteRepositoryInterface
-from infrastructure.persistence.models.user.site import Site
 from infrastructure.persistence.repositories.settings_repository import (
     get_settings_repository,
 )
@@ -49,12 +48,12 @@ class GetSettings:
         )
 
         if domain:
-            sites = self.site_repository.get_domain_sites(domain)
-            sites = Site.objects.all() if domain == "localhost" else Site.objects.filter(domain__domain=domain)
+            if domain == "localhost":
+                site = self.site_repository.get(subdomain=subdomain)
+            else:
+                site = self.site_repository.get(domain=domain, subdomain=subdomain)
 
-            if sites.filter(subdomain=subdomain).exists():
-                site = sites.get(subdomain=subdomain)
-
+            if site:
                 if site.use_default_settings:
                     return settings
 

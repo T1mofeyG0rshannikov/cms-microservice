@@ -2,6 +2,7 @@ from typing import Any
 
 from django.http import HttpRequest
 
+from application.services.messanger_service import get_messanger_service
 from application.services.user.referrals_service import get_referral_service
 from application.usecases.ideas.get_ideas import GetIdeas, get_get_ideas_interactor
 from domain.domains.domain_repository import DomainRepositoryInterface
@@ -23,6 +24,8 @@ from infrastructure.persistence.repositories.user_product_repository import (
 )
 from web.account.serializers import ReferralsSerializer
 from web.common.pagination import Pagination
+from web.messanger.get_context import get_chat_body_context
+from web.messanger.serializers import ChatInterlocutorSerializer, MesageSerializer
 from web.template.profile_template_loader.context_processor.context_processor_interface import (
     ProfileTemplateContextProcessorInterface,
 )
@@ -53,13 +56,13 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
 
         return context
 
-    def get_profile_template_context(self, request: HttpRequest):
+    def get_profile_context(self, request: HttpRequest):
         return self.get_context(request)
 
-    def get_site_template_context(self, request: HttpRequest):
+    def get_site_context(self, request: HttpRequest):
         return self.get_context(request)
 
-    def get_refs_template_context(self, request: HttpRequest):
+    def get_refs_context(self, request: HttpRequest):
         context = self.get_context(request)
 
         level = request.GET.get("level")
@@ -75,7 +78,7 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
 
         return context
 
-    def get_manuals_template_context(
+    def get_manuals_context(
         self, request: HttpRequest, document_repository: DocumentRepositoryInterface = get_document_repository()
     ):
         context = self.get_context(request)
@@ -83,7 +86,7 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
 
         return context
 
-    def get_ideas_template_context(self, request: HttpRequest) -> dict[str, Any]:
+    def get_ideas_context(self, request: HttpRequest) -> dict[str, Any]:
         context = self.get_context(request)
         filter = request.GET.get("filter")
         sorted_by = request.GET.get("sorted_by")
@@ -97,7 +100,7 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
 
         return context
 
-    def get_products_template_context(self, request: HttpRequest):
+    def get_products_context(self, request: HttpRequest):
         context = self.get_context(request)
 
         context["product_categories"] = self.product_repository.get_product_categories(request.user.id)
@@ -113,8 +116,31 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
 
         return context
 
+    def get_messanger_context(self, request: HttpRequest, messanger_service=get_messanger_service()):
+        context = self.get_context(request)
+        user = request.user
+        chats = messanger_service.get_chats(user)
+        serialized_chats = []
 
-def get_profile_template_context_processor(
+        for chat in chats:
+            serialized_chats.append(
+                {
+                    "chatuser": ChatInterlocutorSerializer(chat["chat_user"]).data,
+                    "message": MesageSerializer(chat["message"]).data,
+                }
+            )
+
+        chat_id = request.GET.get("chat_id")
+        if chat_id:
+            context |= get_chat_body_context(request)
+
+        print(serialized_chats)
+
+        context["chats"] = serialized_chats
+        return context
+
+
+def get_profile_context_processor(
     referral_service: ReferralServiceInterface = get_referral_service(),
     product_repository: ProductRepositoryInterface = get_product_repository(),
     domain_repositrory: DomainRepositoryInterface = get_domain_repository(),

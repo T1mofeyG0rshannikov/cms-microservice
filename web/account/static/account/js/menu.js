@@ -1,7 +1,11 @@
 const content = document.querySelector("#content");
 const nav = document.querySelector("header");
+const menu = document.querySelector(".menu");
+
 
 content.style.minHeight = `calc(100% - ${nav.getBoundingClientRect().height}px)`;
+menu.style.maxHeight = `calc(100vh - ${nav.getBoundingClientRect().height}px)`
+
 
 const menuUrls = [
     "/my/",
@@ -14,6 +18,7 @@ const menuUrls = [
     "/my/stat",
     "/my/manuals",
     "/my/si",
+    "/my/messanger"
 ]
 
 function activeMenuItem(url){

@@ -37,6 +37,7 @@ from infrastructure.persistence.models.blocks.common import (
     Page,
     Template,
 )
+from infrastructure.persistence.models.blocks.landings import Landing, LandingBlock
 from infrastructure.persistence.repositories.product_repository import (
     get_product_repository,
 )
@@ -84,6 +85,10 @@ class StageInline(BaseInline):
 
 class PageBlockInline(SortableStackedInline, BaseInline):
     model = Block
+
+
+class LandingBlockInline(SortableStackedInline, BaseInline):
+    model = LandingBlock
 
 
 class CatalogProductInline(SortableStackedInline, BaseInline):
@@ -198,7 +203,14 @@ class PageAdmin(SortableAdminBase, admin.ModelAdmin):
     clone_button.short_description = ""
 
 
+class LandingAdmin(SortableAdminBase, admin.ModelAdmin):
+    list_display = ["url", "logo", "name"]
+
+    inlines = [LandingBlockInline]
+
+
 admin.site.register(Page, PageAdmin)
+admin.site.register(Landing, LandingAdmin)
 admin.site.register(Footer, FooterAdmin)
 admin.site.register(Navbar, NavbarAdmin)
 admin.site.register(Cover, CoverAdmin)

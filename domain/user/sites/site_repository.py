@@ -8,9 +8,6 @@ class SiteRepositoryInterface(Protocol):
     def update_or_create(self, **kwargs) -> SiteInterface:
         raise NotImplementedError
 
-    def get_domain_sites(self, domain: str) -> Iterable[SiteInterface]:
-        raise NotImplementedError
-
     def get(self, subdomain: str = None, user_id: int = None, domain: str = None) -> SiteInterface:
         raise NotImplementedError
 

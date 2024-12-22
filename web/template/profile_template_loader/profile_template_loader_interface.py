@@ -13,10 +13,13 @@ class ProfileTemplateLoaderResponse:
 class ProfileTemplateLoaderInterface(Protocol):
     app_name: str
 
-    def load_template(self, template_name: str, request=None, context=None) -> str | None:
+    def load_template(self, template_name: str, context=None) -> str | None:
         raise NotImplementedError
 
     def get_title(self, page_title: str) -> str:
+        raise NotImplementedError
+
+    def load_messanger_template(self, request: HttpRequest) -> ProfileTemplateLoaderResponse:
         raise NotImplementedError
 
     def load_profile_template(self, request: HttpRequest) -> ProfileTemplateLoaderResponse:

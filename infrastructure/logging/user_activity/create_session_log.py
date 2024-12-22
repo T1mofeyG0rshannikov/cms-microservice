@@ -13,7 +13,11 @@ class CreateUserSesssionLog:
         self.url_parser = url_parser
 
     def __call__(self, request: RequestInterface, text: str) -> None:
-        adress = self.url_parser.remove_protocol(request.META.get("HTTP_REFERER"))
+        path = request.META.get("HTTP_REFERER")
+        if not path:
+            path = request.build_absolute_uri()
+
+        adress = self.url_parser.remove_protocol(path)
 
         self.repository.create_user_action(
             adress=adress,

@@ -50,7 +50,7 @@ class ReferralService(ReferralServiceInterface):
         if level:
             level = self.validator.validate_referral_level(level)
 
-        return self.referral_repository.get_referrals(user_id, self.config.total_referral_level, level, sorted_by)
+        return self.referral_repository.filter(user_id, self.config.total_referral_level, level, sorted_by)
 
 
 def get_referral_service(

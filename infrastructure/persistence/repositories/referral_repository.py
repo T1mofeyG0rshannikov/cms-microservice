@@ -17,10 +17,19 @@ from infrastructure.persistence.models.user.user import User
 
 
 class ReferralRepository(ReferralRepositoryInterface):
-    def get(self, id: int) -> ReferralInterface:
-        return User.objects.get(id=id)
+    def get(self, id: int = None, sponsors_id: int = None) -> ReferralInterface:
+        query = Q()
+        if id:
+            query &= Q(id=id)
+        elif sponsors_id:
+            query &= Q(sponsors__id=sponsors_id)
 
-    def get_referrals(
+        try:
+            return User.objects.get(query)
+        except User.DoesNotExist:
+            return None
+
+    def filter(
         self, sponsor_id: int, total_levels_count: int, level: int = None, sorted_by: str = None
     ) -> Iterable[ReferralInterface]:
         levels = (level - 1, level) if level else (0, total_levels_count)

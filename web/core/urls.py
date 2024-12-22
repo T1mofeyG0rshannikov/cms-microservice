@@ -17,6 +17,7 @@ urlpatterns = [
     path("", include("web.catalog.urls")),
     path("", include("web.blocks.urls")),
     path("", include("web.template.urls")),
+    path("messanger/", include("web.messanger.urls")),
     path("__debug__/", include("debug_toolbar.urls")),
 ]
 

@@ -1,10 +1,11 @@
 from django.contrib.auth.models import BaseUserManager
 
 from domain.user.validator import UserValidatorInterface
+from infrastructure.user.validator import get_user_validator
 
 
 class UserManager(BaseUserManager):
-    def __init__(self, validator: UserValidatorInterface):
+    def __init__(self, validator: UserValidatorInterface = get_user_validator()):
         super().__init__()
         self.validator = validator
 

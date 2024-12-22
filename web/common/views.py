@@ -41,6 +41,12 @@ class FormView(View):
     def get_form(self) -> Form:
         return self.form_class(self.request.POST, self.request.FILES)
 
+    def add_form_error(self, form: Form, exception):
+        """Функция для добавления ошибки в форму на основании исключения."""
+        error_field = self.error_mapping.get(type(exception))
+        if error_field:
+            form.add_error(error_field, str(exception))
+
 
 class SendFeedbackView(SubdomainMixin, FormView):
     email_service: WorkEmailServiceInterface = get_work_email_service()

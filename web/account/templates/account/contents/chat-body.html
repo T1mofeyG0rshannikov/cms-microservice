@@ -1,0 +1,36 @@
+{% load static %}
+
+<div class="title">
+    <p>{{ interlocutor.username }} {% if interlocutor.second_name %}{{ interlocutor.second_name }}{% endif %}</p>
+    <span>был(а) {{ interlocutor.last_login }}</span>
+</div>
+
+<div class="messages">
+    {% for message in messages %}
+        <div class="message-container {% if message.user_id == interlocutor.id %}left{% endif %}">
+            <div class="message">
+                <a>{{ message.text }}</a>
+
+                <div class="message-bottom">
+                    <span>{{ message.time }}</span>
+                    {% if message.user_id != interlocutor.id %}
+                        <span class="ticks">
+                            {% if message.readen %}
+                            <img class="tick" src="{% static 'account/images/chat-tick.png' %}" />
+                            <img class="tick" src="{% static 'account/images/chat-tick.png' %}" />
+                            {% else %}
+                            <img class="tick" src="{% static 'account/images/chat-tick.png' %}" />
+                            <img class="tick" src="{% static 'account/images/chat-tick.png' %}" />
+                            {% endif %}
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<div class="bottom">
+    <textarea name="message" id="message" placeholder="Написать сообщение"></textarea>
+    <button disabled onclick="sendMessage()" >Отправить сообщение</button>
+</div>

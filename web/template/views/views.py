@@ -125,6 +125,11 @@ class IdeasTemplate(BaseProfileTemplateView):
         return self.template_loader.load_ideas_template(request)
 
 
+class MessangerTemplate(BaseProfileTemplateView):
+    def get_template(self, request: HttpRequest) -> str:
+        return self.template_loader.load_messanger_template(request)
+
+
 class ManualsTemplate(BaseProfileTemplateView):
     def get_template(self, request: HttpRequest) -> str:
         return self.template_loader.load_manuals_template(request)
@@ -181,3 +186,8 @@ class GetReferralPopupTemplate(BaseTemplateLoadView):
 class GetCreateIdeaForm(BaseTemplateLoadView):
     def get_content(self, request: HttpRequest):
         return self.template_loader.load_create_idea_form(request)
+
+
+class GetChatBody(BaseTemplateLoadView):
+    def get_content(self, request: RequestInterface):
+        return self.template_loader.load_chat_body(request)

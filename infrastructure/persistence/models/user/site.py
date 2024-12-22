@@ -20,7 +20,7 @@ class Site(models.Model):
 
     online_from = models.DateField(verbose_name="онлайн с", default=timezone.now)
 
-    name = models.CharField(verbose_name="Название сайта", max_length=50, null=True)
+    name = models.CharField(verbose_name="Название сайта", max_length=50)
     font = models.ForeignKey(UserFont, on_delete=models.SET_NULL, null=True, verbose_name="шрифт")
     font_size = models.PositiveIntegerField(verbose_name="размер шрифта", null=True)
 

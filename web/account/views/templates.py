@@ -10,6 +10,7 @@ from application.usecases.user.change_password import (
     get_change_password_interactor,
 )
 from domain.materials.repository import DocumentRepositoryInterface
+from domain.messanger.repository import MessangerRepositoryInterface
 from domain.user.exceptions import (
     IncorrectPassword,
     InvalidPassword,
@@ -19,6 +20,9 @@ from domain.user.exceptions import (
 from domain.user.notifications.repository import NotificationRepositoryInterface
 from infrastructure.persistence.repositories.document_repository import (
     get_document_repository,
+)
+from infrastructure.persistence.repositories.messanger_repositroy import (
+    get_messanger_repository,
 )
 from infrastructure.persistence.repositories.notification_repository import (
     get_notification_repository,
@@ -30,7 +34,7 @@ from web.notifications.serializers import UserNotificationSerializer
 from web.settings.views.mixins import SubdomainMixin
 from web.settings.views.settings_mixin import SettingsMixin
 from web.template.profile_template_loader.context_processor.context_processor import (
-    get_profile_template_context_processor,
+    get_profile_context_processor,
 )
 from web.template.profile_template_loader.context_processor.context_processor_interface import (
     ProfileTemplateContextProcessorInterface,
@@ -43,17 +47,21 @@ from web.user.views.base_user_view import (
 
 
 class BaseProfileView(MyLoginRequiredMixin, SubdomainMixin):
-    template_context_processor: ProfileTemplateContextProcessorInterface = get_profile_template_context_processor()
+    context_processor: ProfileTemplateContextProcessorInterface = get_profile_context_processor()
     notifications_repository: NotificationRepositoryInterface = get_notification_repository()
+    messanger_repository: MessangerRepositoryInterface = get_messanger_repository()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        user = self.request.user
 
         context["notifications"] = UserNotificationSerializer(
-            self.notifications_repository.get_notifications(user_id=self.request.user.id),
-            context={"user": self.request.user},
+            self.notifications_repository.get_notifications(user_id=user.id),
+            context={"user": user},
             many=True,
         ).data
+
+        context["unreaden_messages_count"] = self.messanger_repository.count_unreadable(user_id=user.id)
 
         return context
 
@@ -62,18 +70,17 @@ class SiteView(BaseProfileView):
     template_name = "account/site.html"
 
     def get_context_data(self, **kwargs):
-        return self.template_context_processor.get_site_template_context(self.request)
+        return self.context_processor.get_site_context(self.request)
 
 
 class RefsView(BaseProfileView):
     template_name = "account/refs.html"
-    template_context_processor: ProfileTemplateContextProcessorInterface = get_profile_template_context_processor()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         try:
-            page_context = self.template_context_processor.get_refs_template_context(self.request)
+            page_context = self.context_processor.get_refs_context(self.request)
             context |= page_context
 
         except (InvalidSortedByField, InvalidReferalLevel):
@@ -84,10 +91,9 @@ class RefsView(BaseProfileView):
 
 class ManualsView(BaseProfileView):
     template_name = "account/manuals.html"
-    template_context_processor: ProfileTemplateContextProcessorInterface = get_profile_template_context_processor()
 
     def get_context_data(self, **kwargs):
-        return self.template_context_processor.get_manuals_template_context(self.request)
+        return self.context_processor.get_manuals_context(self.request)
 
 
 class ChangePasswordView(BaseUserView, FormView, APIUserRequired):
@@ -154,21 +160,29 @@ class DocumentPage(SettingsMixin):
 
 class UserProductsView(BaseProfileView):
     template_name = "account/products.html"
-    template_context_processor: ProfileTemplateContextProcessorInterface = get_profile_template_context_processor()
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context |= self.template_context_processor.get_products_template_context(self.request)
+        context |= self.context_processor.get_products_context(self.request)
 
         return context
 
 
 class IdeasView(BaseProfileView):
     template_name = "account/ideas.html"
-    template_context_processor: ProfileTemplateContextProcessorInterface = get_profile_template_context_processor()
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context |= self.template_context_processor.get_ideas_template_context(self.request)
+        context |= self.context_processor.get_ideas_context(self.request)
+
+        return context
+
+
+class MessangerView(BaseProfileView):
+    template_name = "account/messanger.html"
+
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context |= self.context_processor.get_messanger_context(self.request)
 
         return context
