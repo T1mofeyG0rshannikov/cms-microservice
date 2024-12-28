@@ -5,10 +5,10 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.views.generic import View
 
-from application.texts.errors import UserErrorsMessages
 from application.usecases.auth.login import Login, get_login_interactor
 from application.usecases.auth.register import Register, get_register_interactor
 from domain.user.exceptions import (
+    UserCreatingError,
     UserDoesNotExist,
     UserWithEmailAlreadyExists,
     UserWithPhoneAlreadyExists,
@@ -44,6 +44,9 @@ class RegisterUser(BaseUserView, FormView):
                 phone=form.cleaned_data.get("phone"),
                 host=request.META.get("HTTP_ORIGIN"),
             ).token_to_set_password
+        except UserCreatingError as e:
+            return JsonResponse({"errors": str(e)}, status=400)
+
         except UserWithPhoneAlreadyExists as e:
             form.add_error("phone", str(e))
 
@@ -67,18 +70,15 @@ class RegisterUser(BaseUserView, FormView):
 
             return JsonResponse({"errors": form.errors}, status=400)
 
-        if token_to_set_password:
-            user_activity_text = (
-                f'''Регистрация в форме "{ancor}"'''
-                if not is_popup
-                else f'''Регистрация в попапе "{form.cleaned_data.get("username")}", "{form.cleaned_data.get("email")}", "{form.cleaned_data.get("phone")}"'''
-            )
+        user_activity_text = (
+            f'''Регистрация в форме "{ancor}"'''
+            if not is_popup
+            else f'''Регистрация в попапе "{form.cleaned_data.get("username")}", "{form.cleaned_data.get("email")}", "{form.cleaned_data.get("phone")}"'''
+        )
 
-            self.create_user_session_log(request, user_activity_text)
+        self.create_user_session_log(request, user_activity_text)
 
-            return JsonResponse({"token_to_set_password": token_to_set_password})
-
-        return JsonResponse({"errors": UserErrorsMessages.something_went_wrong}, status=400)
+        return JsonResponse({"token_to_set_password": token_to_set_password})
 
 
 class LoginView(BaseUserView, FormView):
@@ -122,7 +122,8 @@ class SetToken(BaseUserView):
         payload = self.jwt_processor.validate_token(token)
         if payload:
             user = self.user_repository.get(id=payload["id"])
-            self.login(user)
+            if user:
+                self.login(user)
 
             return render(request, "user/set-token.html", {"token": token})
 

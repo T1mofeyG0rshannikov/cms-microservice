@@ -1,7 +1,7 @@
 from domain.domains.domain_repository import DomainRepositoryInterface
 from domain.page_blocks.settings_repository import SettingsRepositoryInterface
 from domain.referrals.referral import UserInterface
-from domain.user.sites.site import SiteInterface
+from domain.user.entities import SiteInterface
 from domain.user.sites.site_repository import SiteRepositoryInterface
 from domain.user.sites.site_service import SiteServiceInterface
 from infrastructure.persistence.repositories.domain_repository import (
@@ -57,11 +57,12 @@ class SiteService(SiteServiceInterface):
             site = self.site_repository.get(subdomain=subdomain)
             if site:
                 return SiteInterface(
+                    id=site.id,
                     name=site.name,
                     domain=site.domain,
                     owner=site.owner,
                     contact_info=site.contact_info,
-                    created_at=site.created_at.strftime("%d.%m.%Y"),
+                    created_at=site.created_at,
                     user=site.user,
                 )
 
@@ -69,15 +70,16 @@ class SiteService(SiteServiceInterface):
         settings = self.settings_repository.get_settings()
 
         return SiteInterface(
+            id=1,
             name=domain.name,
             domain=domain,
             owner=settings.owner,
             contact_info=settings.contact_info,
-            created_at=settings.created_at.strftime("%d.%m.%Y"),
+            created_at=settings.created_at,
         )
 
 
-def get_domain_service(
+def get_site_service(
     domain_repository: DomainRepositoryInterface = get_domain_repository(),
     site_repository: SiteRepositoryInterface = get_site_repository(),
     url_parser: UrlParserInterface = get_url_parser(),

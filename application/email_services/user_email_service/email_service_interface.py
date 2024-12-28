@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from domain.user.user import UserInterface
+from domain.user.entities import UserInterface
 
 
 class EmailServiceInterface(Protocol):

@@ -3,7 +3,7 @@ from rest_framework import serializers
 from infrastructure.persistence.models.user.idea import Idea, Like
 from infrastructure.persistence.models.user.product import UserOffer, UserProduct
 from web.catalog.serializers import ProductsSerializer
-from web.common.serializers import DateFieldDot
+from web.common.serializers import DateFieldDot, ImageField
 
 
 class UserProductsSerializer(serializers.ModelSerializer):
@@ -101,3 +101,13 @@ class IdeasSerializer(serializers.ModelSerializer):
 
     def get_likes_count(self, idea):
         return idea.likes_count
+
+
+class UserSerializer(serializers.ModelSerializer):
+    profile_picture = ImageField()
+    second_name = serializers.SerializerMethodField()
+
+    def get_second_name(self, user):
+        if user.second_name:
+            return user.second_name
+        return ""

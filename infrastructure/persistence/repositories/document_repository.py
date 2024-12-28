@@ -6,7 +6,7 @@ from infrastructure.persistence.models.materials import Document, DocumentFormat
 
 
 class DocumentRepository(DocumentRepositoryInterface):
-    def get(self, document_slug: str) -> DocumentInterface:
+    def get(self, document_slug: str) -> DocumentInterface | None:
         try:
             return Document.objects.get(slug=document_slug)
         except Document.DoesNotExist:

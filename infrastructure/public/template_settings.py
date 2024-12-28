@@ -1,14 +1,15 @@
-import os
 from functools import lru_cache
 
-from dotenv import load_dotenv
+from pydantic import Extra
 from pydantic_settings import BaseSettings
-
-load_dotenv()
 
 
 class TemplateSettings(BaseSettings):
-    blocks_templates_folder: str = os.getenv("BLOCKS_TEMPLATES_FOLDER")
+    blocks_templates_folder: str
+
+    class Config:
+        env_file = ".env"
+        extra = Extra.allow
 
 
 @lru_cache

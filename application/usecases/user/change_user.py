@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from application.texts.errors import UserErrorsMessages
+from domain.common.screen import FileInterface
 from domain.referrals.referral import UserInterface
 from domain.user.exceptions import (
     UserWithEmailAlreadyExists,
@@ -26,9 +27,9 @@ class ChangeUser:
         email: str,
         username: str,
         second_name: str,
-        profile_picture: str,
-        social_network: str = None,
-        adress: str = None,
+        profile_picture: FileInterface | None = None,
+        social_network: int | None = None,
+        adress: str | None = None,
     ) -> ChangeUserDTO:
         user_with_phone = self.user_repository.get(phone=phone)
         user_with_email = self.user_repository.get(email=email)
@@ -39,15 +40,18 @@ class ChangeUser:
         elif user_with_phone != user and user_with_phone and user_with_phone.phone_is_confirmed:
             raise UserWithPhoneAlreadyExists(UserErrorsMessages.user_with_phone_alredy_exists)
 
+        phone_is_confirmed = False if phone != user.phone else user.phone_is_confirmed
+
         self.user_repository.update(
             id=user.id,
             username=username,
             second_name=second_name,
             phone=phone,
+            phone_is_confirmed=phone_is_confirmed,
             profile_picture=profile_picture,
         )
 
-        if social_network:
+        if social_network and adress:
             self.user_repository.update_or_create_messanger(user_id=user.id, messanger_id=social_network, adress=adress)
 
         if user.email_is_confirmed and email != user.email:

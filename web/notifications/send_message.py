@@ -1,6 +1,6 @@
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from redis.exceptions import ConnectionError
+from redis.exceptions import ConnectionError  # type: ignore
 
 from domain.user.notifications.error import CantSendNotification
 

@@ -14,7 +14,6 @@ from domain.user.exceptions import (
 )
 from domain.user.notifications.error import CantSendNotification
 from domain.user.notifications.trigger_enum import TriggerNames
-from domain.user.user import UserInterface
 from infrastructure.email_services.email_service.email_service import get_email_service
 from infrastructure.persistence.models.user.user import User
 from infrastructure.persistence.repositories.notification_repository import (
@@ -27,7 +26,7 @@ from web.notifications.serializers import UserNotificationSerializer
 
 def user_created_handler(
     sender,
-    instance: UserInterface,
+    instance: User,
     created,
     *args,
     email_service: EmailServiceInterface = get_email_service(),
@@ -52,7 +51,7 @@ def user_created_handler(
 
 def user_verified_email_handler(
     sender,
-    instance: UserInterface,
+    instance: User,
     *args,
     create_user_notification=CreateUserNotification(get_notification_repository()),
     **kwargs,
@@ -70,7 +69,7 @@ def user_verified_email_handler(
 
 
 def user_change_email_handler(
-    sender, instance: UserInterface, *args, email_service: EmailServiceInterface = get_email_service(), **kwargs
+    sender, instance: User, *args, email_service: EmailServiceInterface = get_email_service(), **kwargs
 ) -> None:
     if instance.id is None:
         pass
@@ -84,9 +83,7 @@ def user_change_email_handler(
                 pass
 
 
-def check_existing_user(
-    sender, instance: UserInterface, *args, user_repository=get_user_repository(), **kwargs
-) -> None:
+def check_existing_user(sender, instance: User, *args, user_repository=get_user_repository(), **kwargs) -> None:
     user_by_email = user_repository.get(email=instance.email)
     if user_by_email:
         if instance.pk != user_by_email.pk:
@@ -98,7 +95,7 @@ def check_existing_user(
             raise UserWithPhoneAlreadyExists(f"user with phone '{instance.phone}' already exists")
 
 
-def check_supersponsor(sender, instance: UserInterface, *args, **kwargs) -> None:
+def check_supersponsor(sender, instance: User, *args, **kwargs) -> None:
     supersponsor = User.objects.filter(supersponsor=True).first()
     if supersponsor:
         if supersponsor.pk == instance.pk:

@@ -1,6 +1,6 @@
 from django.http import HttpRequest, JsonResponse
 
-from application.usecases.public.catalog_page import GetCatalogPage, get_catalog_page
+from domain.page_blocks.entities.page import PageInterface
 from domain.products.repository import ProductRepositoryInterface
 from domain.user.user_product_repository import UserProductRepositoryInterface
 from infrastructure.persistence.models.catalog.product_type import ProductType
@@ -14,32 +14,26 @@ from infrastructure.persistence.repositories.product_repository import (
 from infrastructure.persistence.repositories.user_product_repository import (
     get_user_product_repository,
 )
-from web.blocks.serializers import PageSerializer
+from web.blocks.views import BasePageView
 from web.catalog.serializers import CatalogProductSerializer, ProductsSerializer
 from web.common.pagination import Pagination
-from web.settings.views.mixins import SubdomainMixin
 from web.user.serializers import UserProductsSerializer
-from web.user.views.base_user_view import APIUserRequired, UserFormsView
+from web.user.views.base_user_view import APIUserRequired
 
 
-class ShowCatalogPage(SubdomainMixin):
-    template_name = "blocks/page.html"
+class ShowCatalogPageView(BasePageView):
     product_repository: ProductRepositoryInterface = get_product_repository()
-    get_catalog_page_interactor: GetCatalogPage = get_catalog_page()
 
-    def get_context_data(self, products_slug: str, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context |= UserFormsView.get_context_data()
-
-        page = self.get_catalog_page_interactor(slug=products_slug)
-        context["page"] = PageSerializer(page).data
-
+    def get_context_data(self, page: PageInterface, **kwargs):
+        context = super().get_context_data(page=page, **kwargs)
         user_is_authenticated = self.request.user.is_authenticated
+
+        products_slug = self.request.path[1::]
 
         if user_is_authenticated:
             products = self.product_repository.get_catalog_offers(products_slug)
         else:
-            products = self.product_repository.get_unprivate_catalog_offers(products_slug)
+            products = self.product_repository.get_catalog_offers(products_slug, private=False)
 
         product_type = ProductType.objects.get(slug=products_slug)
 
@@ -57,7 +51,9 @@ class GetProducts(APIUserRequired):
 
         try:
             products = ProductsSerializer(
-                products_repository.filter_enabled_products(organization_id=organization, user_id=request.user.id),
+                products_repository.get_enabled_products_to_create(
+                    organization_id=organization, user_id=request.user.id
+                ),
                 many=True,
             ).data
         except Organization.DoesNotExist:
@@ -74,9 +70,11 @@ class GetUserProducts(APIUserRequired):
     ) -> JsonResponse:
         product_category = request.GET.get("category")
 
-        products = user_product_repository.filter(category_id=product_category, user_id=request.user.id)
-
         pagination = Pagination(request)
-        products = pagination.paginate(products, "products", UserProductsSerializer)
+        products = pagination.paginate(
+            user_product_repository.filter(category_id=product_category, user_id=request.user.id),
+            "products",
+            UserProductsSerializer,
+        )
 
         return JsonResponse(products)

@@ -1,6 +1,6 @@
 from domain.messanger.repository import MessangerRepositoryInterface
+from domain.referrals.referral import ReferralInterface
 from domain.referrals.repository import ReferralRepositoryInterface
-from domain.user.user import UserInterface
 from infrastructure.persistence.repositories.messanger_repositroy import (
     get_messanger_repository,
 )
@@ -16,19 +16,21 @@ class MessangerService:
         self.referral_repository = referral_repository
         self.messanger_repository = messanger_repository
 
-    def get_chats(self, user: UserInterface):
+    def get_chats(self, user: ReferralInterface):
         referral = self.referral_repository.get(sponsors_id=user.id)
-        chats = self.messanger_repository.get_chats(user.id)
-        referral_chat_user = self.messanger_repository.get_referral_chat(user.id, referral.id)
-        chatuserss = [
-            referral_chat_user,
-            *[chatuser for chatuser in self.messanger_repository.get_last_chatted_with(user, chats)],
-        ]
-        chats, last_messages = self.messanger_repository.get_messages(chats, user.id)
 
-        chats = []
-        for i in range(len(last_messages)):
-            chats.append({"chat_user": chatuserss[i], "message": last_messages[i]})
+        chats = self.messanger_repository.get_chats(user.id)
+        if referral:
+            referral_chat_user = self.messanger_repository.get_referral_chat(user.id, referral.id)
+            chatuserss = [
+                referral_chat_user,
+                *[chatuser for chatuser in self.messanger_repository.get_last_chatted_with(user)],
+            ]
+            chats, last_messages = self.messanger_repository.get_messages(user.id)
+
+            chats = []
+            for i in range(len(last_messages)):
+                chats.append({"chat_user": chatuserss[i], "message": last_messages[i]})
 
         return chats
 

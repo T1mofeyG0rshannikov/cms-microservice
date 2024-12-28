@@ -2,6 +2,8 @@ from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 
+from application.services.site_service import get_site_service
+from domain.user.sites.site_service import SiteServiceInterface
 from infrastructure.persistence.managers.user_manager.user_manager import UserManager
 from infrastructure.persistence.models.settings import Domain
 from infrastructure.persistence.models.site_tests import TestUserSet
@@ -78,6 +80,10 @@ class User(AbstractBaseUser, PermissionsMixin):
             full_name += " " + self.second_name
 
         return full_name
+
+    @property
+    def register_on(self, site_service: SiteServiceInterface = get_site_service()):
+        return site_service.get_register_on_site(self)
 
     def __str__(self) -> str:
         return self.full_name

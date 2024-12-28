@@ -5,4 +5,4 @@ from dataclasses import dataclass
 class DomainInterface:
     domain: str
     is_partners: bool
-    name: str = None
+    name: str | None = None

@@ -1,4 +1,4 @@
-from django.http import HttpRequest, JsonResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views import View
 
@@ -7,26 +7,28 @@ from application.sessions.add_session_action import (
     get_increment_session_count,
 )
 from application.texts.user_session import UserActions
+from application.usecases.public.catalog_page import GetCatalogPage, get_catalog_page
+from domain.page_blocks.page_repository import PageRepositoryInterface
 from domain.products.repository import ProductRepositoryInterface
 from infrastructure.logging.user_activity.create_session_log import (
     CreateUserSesssionLog,
     get_create_user_session_log,
 )
-from infrastructure.persistence.models.blocks.catalog_block import CatalogBlock
-from infrastructure.persistence.models.blocks.common import Page
+from infrastructure.persistence.repositories.page_repository import get_page_repository
 from infrastructure.persistence.repositories.product_repository import (
     get_product_repository,
 )
 from infrastructure.requests.request_interface import RequestInterface
 from web.account.views.templates import Profile
-from web.blocks.views import ShowPage
-from web.catalog.views import ShowCatalogPage
-from web.settings.views.mixins import SubdomainMixin
+from web.blocks.views import BasePageView
+from web.catalog.views import ShowCatalogPageView
+from web.settings.views.settings_mixin import SettingsMixin
 from web.template.profile_template_loader.profile_template_loader import (
     get_profile_template_loader,
 )
 from web.template.profile_template_loader.profile_template_loader_interface import (
     ProfileTemplateLoaderInterface,
+    ProfileTemplateLoaderResponse,
 )
 from web.template.template_loader.template_loader import get_template_loader
 from web.template.template_loader.template_loader_interface import (
@@ -34,12 +36,19 @@ from web.template.template_loader.template_loader_interface import (
 )
 
 
-def slug_router(request: HttpRequest, slug: str):
-    if Page.objects.filter(url=slug).exists():
-        return ShowPage.as_view()(request, page_url=slug)
+def slug_router(
+    request: HttpRequest,
+    slug: str,
+    page_repository: PageRepositoryInterface = get_page_repository(),
+    get_catalog_page: GetCatalogPage = get_catalog_page(),
+) -> HttpResponse:
+    page = page_repository.get(url=slug)
+    if page:
+        return BasePageView.as_view()(request, page=page)
 
-    if CatalogBlock.objects.filter(product_type__slug=slug).exists():
-        return ShowCatalogPage.as_view()(request, products_slug=slug)
+    page = get_catalog_page(slug=slug)
+    if page:
+        return ShowCatalogPageView.as_view()(request, page=page, products_slug=slug)
 
     if slug == "my":
         return Profile.as_view()(request)
@@ -82,7 +91,7 @@ class GetChangeSocialsFormTemplate(BaseTemplateLoadView):
         return self.template_loader.load_change_socials_form(request)
 
 
-class PageNotFound(SubdomainMixin):
+class PageNotFound(SettingsMixin):
     template_name = "common/404.html"
 
     def get(self, request, *args, **kwargs):
@@ -111,37 +120,37 @@ class BaseProfileTemplateView(View):
 
 
 class ProfileTemplate(BaseProfileTemplateView):
-    def get_template(self, request: HttpRequest) -> str:
+    def get_template(self, request: HttpRequest) -> ProfileTemplateLoaderResponse:
         return self.template_loader.load_profile_template(request)
 
 
 class RefsTemplate(BaseProfileTemplateView):
-    def get_template(self, request: HttpRequest) -> str:
+    def get_template(self, request: HttpRequest) -> ProfileTemplateLoaderResponse:
         return self.template_loader.load_refs_template(request)
 
 
 class IdeasTemplate(BaseProfileTemplateView):
-    def get_template(self, request: HttpRequest) -> str:
+    def get_template(self, request: HttpRequest) -> ProfileTemplateLoaderResponse:
         return self.template_loader.load_ideas_template(request)
 
 
 class MessangerTemplate(BaseProfileTemplateView):
-    def get_template(self, request: HttpRequest) -> str:
+    def get_template(self, request: HttpRequest) -> ProfileTemplateLoaderResponse:
         return self.template_loader.load_messanger_template(request)
 
 
 class ManualsTemplate(BaseProfileTemplateView):
-    def get_template(self, request: HttpRequest) -> str:
+    def get_template(self, request: HttpRequest) -> ProfileTemplateLoaderResponse:
         return self.template_loader.load_manuals_template(request)
 
 
 class SiteTemplate(BaseProfileTemplateView):
-    def get_template(self, request: HttpRequest) -> str:
+    def get_template(self, request: HttpRequest) -> ProfileTemplateLoaderResponse:
         return self.template_loader.load_site_template(request)
 
 
 class UserProductsTemplate(BaseProfileTemplateView):
-    def get_template(self, request: HttpRequest) -> str:
+    def get_template(self, request: HttpRequest) -> ProfileTemplateLoaderResponse:
         return self.template_loader.load_products_template(request)
 
 

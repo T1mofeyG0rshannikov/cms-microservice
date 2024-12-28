@@ -8,7 +8,7 @@ from application.email_services.user_email_service.context_processor_interface i
 from application.email_services.user_email_service.template_generator_interface import (
     EmailTemplateGeneratorInterface,
 )
-from domain.user.user import UserInterface
+from domain.user.entities import UserInterface
 from infrastructure.email_services.email_service.context_processor import (
     get_email_context_processor,
 )

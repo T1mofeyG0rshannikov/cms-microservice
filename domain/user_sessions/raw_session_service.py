@@ -8,7 +8,7 @@ class RawSessionServiceInterface(Protocol):
         raise NotImplementedError
 
     def filter_sessions(
-        self, session_data: SessionInterface, host: str, page_adress: str, port: str
+        self, session_data: SessionInterface, host: str, path: str, port: str, session_id: int
     ) -> SessionInterface:
         raise NotImplementedError
 

@@ -21,9 +21,9 @@ class SearcherService:
         )
 
     def is_searcher(self) -> bool:
-        searchers = self.user_session_repository.get_searchers()
-        if searchers:
-            searchers = [searcher.strip() for searcher in self.user_session_repository.get_searchers().split(",")]
+        searchers_db = self.user_session_repository.get_searchers()
+        if searchers_db:
+            searchers = [searcher.strip() for searcher in searchers_db.split(",")]
         else:
             searchers = []
 

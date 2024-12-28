@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 
+from application.services.site_service import get_site_service
 from application.usecases.formatters.format_document import (
     FormatDocument,
     get_format_document,
@@ -8,12 +9,15 @@ from application.usecases.public.get_settings import (
     GetSettings,
     get_get_settings_interactor,
 )
+from domain.user.sites.site_service import SiteServiceInterface
 from infrastructure.requests.request_interface import RequestInterface
-from web.settings.views.mixins import SubdomainMixin
+from web.settings.views.settings_mixin import SettingsMixin
 from web.template.views.views import BaseTemplateLoadView
 
 
-class GetPopup(BaseTemplateLoadView, SubdomainMixin):
+class GetPopup(BaseTemplateLoadView, SettingsMixin):
+    site_service: SiteServiceInterface = get_site_service()
+
     def get(
         self,
         request: RequestInterface,
@@ -32,11 +36,11 @@ class GetPopup(BaseTemplateLoadView, SubdomainMixin):
             template_name = "document-popup"
 
         settings = get_settings_interactor(
-            domain=request.domain if hasattr(request, "domain") else None,
-            subdomain=request.subdomain if hasattr(request, "subdomain") else None,
+            domain=request.domain,
+            subdomain=request.subdomain,
         )
 
-        site = self.domain_service.get_site_from_url(request.build_absolute_uri())
+        site = self.site_service.get_site_from_url(request.build_absolute_uri())
 
         context = {"document": document, "settings": settings, "site": site}
 

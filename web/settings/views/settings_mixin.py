@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any
 
 from django.views.generic import TemplateView
 
@@ -14,6 +15,7 @@ from infrastructure.persistence.repositories.document_repository import (
 from infrastructure.persistence.repositories.domain_repository import (
     get_domain_repository,
 )
+from infrastructure.requests.request_interface import RequestInterface
 
 
 class SettingsMixin(TemplateView):
@@ -21,20 +23,19 @@ class SettingsMixin(TemplateView):
     get_settings_interactor: GetSettings = get_get_settings_interactor()
     document_repository: DocumentRepositoryInterface = get_document_repository()
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
+    def get_settings_context_data(self):
+        request: RequestInterface = self.request
+        context = {}
         domain = self.domain_repository.get_domain_string()
 
-        if hasattr(self.request, "domain"):
-            if self.request.domain == "localhost":
-                domain = "localhost:8000"
+        if request.domain == "localhost":
+            domain = "localhost:8000"
 
         context["domain"] = domain
 
         context["settings"] = self.get_settings_interactor(
-            domain=self.request.domain if hasattr(self.request, "domain") else None,
-            subdomain=self.request.subdomain if hasattr(self.request, "subdomain") else None,
+            domain=request.domain,
+            subdomain=request.subdomain,
         )
         context["site_name"] = self.domain_repository.get_site_name()
         context["partner_domain"] = self.domain_repository.get_partners_domain_string()
@@ -44,3 +45,6 @@ class SettingsMixin(TemplateView):
         context["year"] = str(datetime.now().year)
 
         return context
+
+    def get_context_data(self, *args, **kwargs) -> dict[str, Any]:
+        return super().get_context_data(**kwargs) | self.get_settings_context_data()

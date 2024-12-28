@@ -1,15 +1,21 @@
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 
 from domain.common.screen import FileInterface
+from domain.user.entities import UserInterface
 from domain.user.repository import UserRepositoryInterface
-from domain.user.user import UserInterface
 from infrastructure.persistence.models.account import UserMessanger
 from infrastructure.persistence.models.user.user import User
 
 
 class UserRepository(UserRepositoryInterface):
-    def get(self, phone: str = None, email: str = None, id: int = None, supersponsor: bool = None) -> UserInterface:
+    def __filter_query(
+        self,
+        phone: str | None = None,
+        email: str | None = None,
+        id: int | None = None,
+        supersponsor: bool | None = None,
+    ) -> QuerySet[User]:
         query = Q()
         if phone:
             query &= Q(phone=phone)
@@ -20,12 +26,18 @@ class UserRepository(UserRepositoryInterface):
         if supersponsor:
             query &= Q(supersponsor=supersponsor)
 
-        try:
-            return User.objects.filter(query).first()
-        except User.DoesNotExist:
-            return None
+        return User.objects.filter(query)
 
-    def create(self, email: str, phone: str, **kwargs) -> UserInterface:
+    def get(
+        self,
+        phone: str | None = None,
+        email: str | None = None,
+        id: int | None = None,
+        supersponsor: bool | None = None,
+    ) -> UserInterface:
+        return self.__filter_query(phone=phone, email=email, id=id, supersponsor=supersponsor).first()
+
+    def create(self, email: str, phone: str, **kwargs) -> UserInterface | None:
         try:
             with transaction.atomic():
                 User.objects.filter(email=email).update(email=None)
@@ -35,23 +47,32 @@ class UserRepository(UserRepositoryInterface):
 
                 return user
         except Exception as e:
-            print(e, "error_while create user")
+            print(e)
             return None
 
     def verify_password(self, user_id: int, password: str) -> bool:
-        return self.get(id=user_id).verify_password(password)
+        return self.__filter_query(id=user_id).first().verify_password(password)
 
-    def update_or_create_messanger(self, user_id: int, **kwargs) -> None:
-        UserMessanger.objects.update_or_create(user_id=user_id, defaults=kwargs)
+    def update_or_create_messanger(self, user_id: int, messanger_id: int, adress: str) -> None:
+        UserMessanger.objects.update_or_create(
+            user_id=user_id, defaults={"adress": adress, "messanger_id": messanger_id}
+        )
 
     def update(
-        self, id: int, username: str, second_name: str, phone: str, profile_picture: FileInterface = None
+        self,
+        id: int,
+        username: str,
+        second_name: str,
+        phone: str,
+        phone_is_confirmed: bool,
+        profile_picture: FileInterface | None = None,
     ) -> None:
-        user = self.get(id=id)
+        user = self.__filter_query(id=id).first()
 
         user.username = username
         user.second_name = second_name
         user.phone = phone
+        user.phone_is_confirmed = phone_is_confirmed
 
         if profile_picture:
             user.profile_picture = profile_picture
@@ -59,7 +80,7 @@ class UserRepository(UserRepositoryInterface):
         user.save()
 
     def change_email(self, user_id: int, email: str) -> None:
-        user = self.get(id=user_id)
+        user = self.__filter_query(id=user_id).first()
         user.change_email(email)
 
     def set_password(self, user_id: int, new_password: str) -> UserInterface:

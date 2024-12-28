@@ -7,8 +7,8 @@ from domain.common.replacement_pattern import ReplacementPatternInterface
 class DocumentInterface:
     text: str
     name: str
-    title: str = None
-    slug: str = None
+    title: str | None = None
+    slug: str | None = None
 
 
 @dataclass

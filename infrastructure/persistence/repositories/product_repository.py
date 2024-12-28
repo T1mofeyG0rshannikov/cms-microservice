@@ -61,7 +61,10 @@ class ProductRepository(ProductRepositoryInterface):
         return (
             Organization.objects.annotate(
                 count=Count("products", filter=Q(products__status="Опубликовано")),
-                user_products_count=Count("products", filter=Q(products__user_products__user_id=user_id)),
+                user_products_count=Count(
+                    "products",
+                    filter=Q(products__user_products__user_id=user_id) & Q(products__user_products__deleted=False),
+                ),
             )
             .values("name", "id")
             .filter(count__gte=1, user_products_count__lte=0)
@@ -93,7 +96,7 @@ class ProductRepository(ProductRepositoryInterface):
             .order_by("additional_catalog_product_types__my_order")
         )
 
-    def get(self, id: int = None, user_product_id: int = None) -> ProductInterface:
+    def get(self, id: int | None = None, user_product_id: int | None = None) -> ProductInterface | None:
         query = Q()
         if id:
             query &= Q(id=id)
@@ -108,11 +111,12 @@ class ProductRepository(ProductRepositoryInterface):
     def get_product_offers(self, product_id: int) -> Iterable[OfferInterface]:
         return Offer.objects.filter(product_id=product_id)
 
-    def get_unprivate_catalog_offers(self, product_type_slug: str) -> Iterable[OfferInterface]:
-        return self.__get_catalog_offers_query(product_type_slug).filter(product__private=False)
+    def get_catalog_offers(self, product_type_slug: str, private: bool | None = None) -> Iterable[OfferInterface]:
+        query = self.__get_catalog_offers_query(product_type_slug)
+        if private is not None:
+            query = query.filter(product__private=private)
 
-    def get_catalog_offers(self, product_type_slug: str) -> Iterable[OfferInterface]:
-        return self.__get_catalog_offers_query(product_type_slug)
+        return query
 
     def get_offers(self) -> Iterable[OfferInterface]:
         return self.__get_offers_query()

@@ -1,16 +1,9 @@
-from dataclasses import dataclass
-
+from application.dto.change_password import ChangePasswordResponse
 from application.texts.errors import UserErrorsMessages
+from domain.user.entities import UserInterface
 from domain.user.exceptions import IncorrectPassword, InvalidPassword
-from domain.user.user import UserInterface
 from infrastructure.auth.jwt_processor import get_jwt_processor
 from infrastructure.auth.jwt_processor_interface import JwtProcessorInterface
-
-
-@dataclass
-class ChangePasswordResponse:
-    user: UserInterface
-    access_token: str
 
 
 class ChangePassword:

@@ -23,13 +23,13 @@ class AddUserProduct:
         self,
         user_id: int,
         product_id: int,
-        comment: str = None,
-        connected: datetime = None,
-        got: datetime = None,
-        screen: str = None,
-        connected_with_link: str = None,
-        profit: datetime = None,
-        link: str = None,
+        comment: str | None = None,
+        connected: datetime | None = None,
+        got: datetime | None = None,
+        screen: str | None = None,
+        connected_with_link: str | None = None,
+        profit: datetime | None = None,
+        link: str | None = None,
     ) -> tuple[UserProductInterface, bool]:
         if not link and not connected:
             raise LinkOrConnectedRequired("Укажите вашу партнерскую ссылку или дату оформления продукта")

@@ -17,7 +17,7 @@ from infrastructure.persistence.models.site_statistics import (
 
 
 class UserSessionRepository(UserSessionRepositoryInterface):
-    def create_user_action(self, adress: str, text: str, session_id: int, time: datetime = None) -> None:
+    def create_user_action(self, adress: str, text: str, session_id: int, time: datetime | None = None) -> None:
         if time is None:
             time = now()
 
@@ -43,8 +43,7 @@ class UserSessionRepository(UserSessionRepositoryInterface):
 
     def get_searchers(self) -> str:
         session_filters = SessionFilters.objects.values_list("searchers").first()
-        if session_filters:
-            return session_filters[0]
+        return session_filters[0] if session_filters else ""
 
     def is_user_session_exists_by_id(self, id: int) -> bool:
         return UserActivity.objects.filter(id=id).exists()
@@ -55,10 +54,11 @@ class UserSessionRepository(UserSessionRepositoryInterface):
     def create_searcher_log(self, **kwargs) -> None:
         WebSearcherAction.objects.create(**kwargs)
 
-    def create_searcher(self, **kwargs) -> None:
-        WebSearcher.objects.create(**kwargs)
+    def create_searcher(self, **kwargs) -> int:
+        searcher = WebSearcher.objects.create(**kwargs)
+        return searcher.id
 
-    def update_user_session(self, id: int, **kwargs):
+    def update_user_session(self, id: int, **kwargs) -> None:
         UserActivity.objects.filter(id=id).update(**kwargs)
 
     def increment_user_session_field(self, id: int, field_name: str) -> None:
@@ -89,7 +89,7 @@ class UserSessionRepository(UserSessionRepositoryInterface):
     def get_disallowed_host_penalty(self):
         return SessionFilters.objects.values_list("disallowed_host", flat=True).first()
 
-    def delete_hacking_visitors(self, ban_limit: int):
+    def delete_hacking_visitors(self, ban_limit: int) -> None:
         UserActivity.objects.filter(session__ban_rate__gte=ban_limit).delete()
 
     def get_no_cookie_penalty(self) -> int:

@@ -1,7 +1,6 @@
 from typing import Protocol
 
-from domain.user.sites.site import SiteInterface
-from domain.user.user import UserInterface
+from domain.user.entities import SiteInterface, UserInterface
 
 
 class SiteServiceInterface(Protocol):

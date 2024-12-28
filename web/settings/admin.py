@@ -6,6 +6,7 @@ from infrastructure.persistence.models.settings import (
     FormLogo,
     GlobalStyles,
     Icon,
+    LandingDomain,
     Logo,
     Messanger,
     SiteSettings,
@@ -39,6 +40,7 @@ class DomainAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Domain, DomainAdmin)
+admin.site.register(LandingDomain, DomainAdmin)
 admin.site.register(SiteSettings, SettingsAdmin)
 admin.site.register(GlobalStyles, GlobalStylesAdmin)
 admin.site.register(Font, FontAdmin)

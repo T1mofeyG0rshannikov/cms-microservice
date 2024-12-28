@@ -18,7 +18,7 @@ class UserSessionRepositoryInterface(Protocol):
     def is_user_session_exists_by_id(self, user_session_id: int) -> bool:
         raise NotImplementedError
 
-    def update_user_session(self, session_id: int, **kwargs) -> None:
+    def update_user_session(self, id: int, **kwargs) -> None:
         raise NotImplementedError
 
     def create_user_action(self, adress: str, text: str, session_id: int) -> None:
@@ -36,13 +36,13 @@ class UserSessionRepositoryInterface(Protocol):
     def get_ban_limit(self) -> int:
         raise NotImplementedError
 
-    def delete_hacking_visitors(self) -> None:
+    def delete_hacking_visitors(self, ban_limit: int) -> None:
         raise NotImplementedError
 
     def get_disallowed_host_penalty(self) -> int:
         raise NotImplementedError
 
-    def create_searcher(self, **kwargs) -> UserSessionInterface:
+    def create_searcher(self, **kwargs) -> int:
         raise NotImplementedError
 
     def is_searcher_exists_by_id(self, session_id: int) -> bool:

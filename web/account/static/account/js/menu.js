@@ -54,3 +54,5 @@ function loadProfileContent(templateName, url){
         }
     })
 }
+
+document.querySelector("main").style.maxHeight = `calc(100vh - ${nav.getBoundingClientRect().height}px)`;

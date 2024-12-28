@@ -3,7 +3,7 @@ from typing import Any
 from application.email_services.work_email_service.context_processor_interface import (
     WorkEmailContextProcessorInterface,
 )
-from domain.user.user import UserInterface
+from domain.user.entities import UserInterface
 
 
 class WorkEmailContextProcessor(WorkEmailContextProcessorInterface):

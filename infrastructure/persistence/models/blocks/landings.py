@@ -1,10 +1,11 @@
 from django.db import models
 
+from infrastructure.persistence.models.blocks.common import BasePageModel
 from infrastructure.persistence.models.common import BasePageBlock, BlockRelationship
 from infrastructure.persistence.models.settings import LandingDomain
 
 
-class Landing(models.Model):
+class Landing(BasePageModel):
     title = models.CharField(verbose_name="Заголовок", max_length=50)
     url = models.CharField(max_length=50, null=True, blank=True)
     logo = models.ImageField(verbose_name="Лого", upload_to="images/logo", null=True, blank=True)

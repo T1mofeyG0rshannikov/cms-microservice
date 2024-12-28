@@ -25,7 +25,7 @@ class WorkEmailService(BaseEmailService, WorkEmailServiceInterface):
         self.template_generator = template_generator
         self.repository = repository
 
-    def send_email(self, subj: str, html_message: str, emails: list[str] = None, sender: str = None):
+    def send_email(self, subj: str, html_message: str, emails: list[str] | None = None, sender: str | None = None):
         if not emails:
             emails = self.repository.get_system_emails()
 

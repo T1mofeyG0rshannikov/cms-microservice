@@ -5,14 +5,16 @@ from django.db.utils import IntegrityError
 
 from application.texts.errors import SiteErrorsMessages
 from domain.common.screen import FileInterface
+from domain.user.entities import SiteInterface
 from domain.user.sites.exceptions import SiteAdressExists
-from domain.user.sites.site import SiteInterface
 from domain.user.sites.site_repository import SiteRepositoryInterface
 from infrastructure.persistence.models.user.site import Site
 
 
 class SiteRepository(SiteRepositoryInterface):
-    def get(self, subdomain: str = None, user_id: int = None, domain: str = None) -> SiteInterface:
+    def get(
+        self, subdomain: str | None = None, user_id: int | None = None, domain: str | None = None
+    ) -> SiteInterface | None:
         query = Q()
         if subdomain is not None:
             query &= Q(subdomain__iexact=subdomain)
@@ -27,7 +29,13 @@ class SiteRepository(SiteRepositoryInterface):
             return None
 
     def update_or_create(
-        self, user_id: int, subdomain: str, name: str, owner: str = None, logo: FileInterface = None, **kwargs
+        self,
+        user_id: int,
+        subdomain: str,
+        name: str,
+        owner: str | None = None,
+        logo: FileInterface | None = None,
+        **kwargs
     ) -> tuple[SiteInterface, bool]:
         try:
             site, created = Site.objects.update_or_create(

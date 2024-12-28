@@ -20,7 +20,7 @@ class TemplateLoader(TemplateLoaderInterface):
         self.context_processor = context_processor
 
     @staticmethod
-    def load_template(app_name: str, template_name: str, context: dict[str, Any] = None):
+    def load_template(app_name: str, template_name: str, context: dict[str, Any] | None = None) -> str | None:
         if is_template_exists(f"{app_name}/{template_name}.html"):
             return loader.render_to_string(f"{app_name}/{template_name}.html", context, None)
         return None

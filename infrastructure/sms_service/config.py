@@ -1,15 +1,16 @@
-import os
 from functools import lru_cache
 
-from dotenv import load_dotenv
+from pydantic import Extra
 from pydantic_settings import BaseSettings
-
-load_dotenv()
 
 
 class SMSAeroConfig(BaseSettings):
-    sms_api_key: str = os.getenv("SMS_API_KEY")
-    sms_email: str = os.getenv("SMS_EMAIL")
+    sms_api_key: str
+    sms_email: str
+
+    class Config:
+        env_file = ".env"
+        extra = Extra.allow
 
 
 @lru_cache

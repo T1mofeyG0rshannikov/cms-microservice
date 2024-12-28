@@ -18,8 +18,17 @@ class WorkEmailTemplateGeneratorInterface(Protocol):
     def generate_errror_message(self, **kwargs) -> str:
         raise NotImplementedError
 
-    def generate_login_code(self, **kwargs) -> str:
+    def generate_login_code(self, code: int, **kwargs) -> str:
         raise NotImplementedError
 
-    def generate_feedback_email(self, username: str, email: str, phone: str, message: str) -> str:
+    def generate_feedback_email(
+        self,
+        username: str,
+        email: str,
+        phone: str,
+        message: str,
+        site_name: str,
+        site_domain: str,
+        user_id: int | None = None,
+    ) -> str:
         raise NotImplementedError

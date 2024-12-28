@@ -24,13 +24,19 @@ class IdeaRepository(IdeaRepositoryInterface):
     def delete(self, id: int) -> None:
         Idea.objects.get(id=id).delete()
 
-    def get(self, id: int) -> IdeaInterface:
+    def get(self, id: int) -> IdeaInterface | None:
         try:
             return Idea.objects.get(id=id)
         except Idea.DoesNotExist:
             return None
 
-    def get_ideas(self, category=None, sorted_by=None, status=None, user_id: int = None) -> Iterable[IdeaInterface]:
+    def get_ideas(
+        self,
+        category: str | None = None,
+        sorted_by: str | None = None,
+        status: str | None = None,
+        user_id: int | None = None,
+    ) -> Iterable[IdeaInterface]:
         filters = Q()
 
         if user_id:

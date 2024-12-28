@@ -12,7 +12,7 @@
             <a>
                 {% replace document.text '[SITENAME]' site.name as text %}
                 {% replace text '[SITEADRESS]' site.adress as text %}
-                {% replace text '[SITECREATED]' site.created_at as text %}
+                {% replace text '[SITECREATED]' site.created_at|date:"d.m.Y" as text %}
                 {% replace text '[SITEOWNER]' site.owner as text %}
                 {% replace text '[SITECONTACTINFO]' site.contact_info as text %}
                 {{ text|safe }}

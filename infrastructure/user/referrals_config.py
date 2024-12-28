@@ -1,14 +1,15 @@
-import os
 from functools import lru_cache
 
-from dotenv import load_dotenv
+from pydantic import Extra
 from pydantic_settings import BaseSettings
-
-load_dotenv()
 
 
 class ReferralConfig(BaseSettings):
-    total_referral_level: int = os.getenv("TOTAL_REFERRAL_LEVEL")
+    total_referral_level: int
+
+    class Config:
+        env_file = ".env"
+        extra = Extra.allow
 
 
 @lru_cache

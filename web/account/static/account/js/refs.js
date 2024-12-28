@@ -8,7 +8,7 @@ function renderRefs(refs){
                     <img src="${ referral.profile_picture ? referral.profile_picture : '/static/account/images/nophoto.jpg' }" />
                 </div>
 
-                <p>${ referral.username } ${ referral.second_name ? referral.second_name : ""}</p>
+                <p>${ referral.full_name }</p>
             </td>
 
             <td>${ referral.created_at }</td>

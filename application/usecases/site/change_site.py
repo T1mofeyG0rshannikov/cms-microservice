@@ -1,4 +1,5 @@
-from domain.user.sites.site import SiteInterface
+from domain.common.screen import FileInterface
+from domain.user.entities import SiteInterface
 from domain.user.sites.site_repository import SiteRepositoryInterface
 from domain.user.sites.site_validator import SiteValidatorInterface
 from infrastructure.persistence.repositories.site_repository import get_site_repository
@@ -19,17 +20,18 @@ class ChangeSite:
         logo_size: int,
         name: str,
         owner: str,
-        logo: str,
+        logo: FileInterface | None,
         delete_logo: str,
         contact_info: str,
         font_size: int,
     ) -> tuple[SiteInterface, bool]:
         name = self.validator.valid_name(name)
         subdomain = self.validator.valid_site(subdomain)
-        logo = self.validator.valid_logo(logo)
+        if logo is not None:
+            logo = self.validator.valid_logo(logo)
 
-        if delete_logo == "true":
-            logo = None
+            if delete_logo == "true":
+                logo = None
 
         return self.site_repository.update_or_create(
             user_id=user_id,

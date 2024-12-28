@@ -9,8 +9,10 @@ class FormatDocument:
     def __init__(self, repository: DocumentRepositoryInterface) -> None:
         self.repository = repository
 
-    def __call__(self, document_slug: str) -> DocumentInterface:
+    def __call__(self, document_slug: str) -> DocumentInterface | None:
         document = self.repository.get(document_slug)
+        if not document:
+            return None
 
         document_text = document.text
 

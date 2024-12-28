@@ -1,13 +1,18 @@
-from django.db.models import OuterRef, Q, Subquery
+from collections.abc import Iterable
+
+from django.db.models import OuterRef, Q, QuerySet, Subquery
 
 from domain.messanger.entities import ChatUserInterface
 from domain.messanger.repository import MessangerRepositoryInterface
-from domain.user.user import UserInterface
+from domain.referrals.referral import ReferralInterface
 from infrastructure.persistence.models.messanger import Chat, ChatUser, Message
 from infrastructure.persistence.models.user.user import User
 
 
 class MessangerRepository(MessangerRepositoryInterface):
+    def __get_chats_query(self, user_id: int) -> QuerySet[Chat]:
+        return Chat.objects.filter(chat_users__user_id=user_id)
+
     def get_chat_user(self, chat_id: int, user_id: int) -> ChatUserInterface:
         return ChatUser.objects.get(chat_id=chat_id, user_id=user_id)
 
@@ -16,9 +21,11 @@ class MessangerRepository(MessangerRepositoryInterface):
         return Message.objects.filter(chat_user__chat=chat)
 
     def get_chats(self, user_id: int):
-        return Chat.objects.filter(chat_users__user_id=user_id)
+        return self.__get_chats_query(user_id)
 
-    def get_last_chatted_with(self, user: UserInterface, chats):
+    def get_last_chatted_with(self, user: ReferralInterface) -> Iterable[ChatUserInterface]:
+        chats = self.__get_chats_query(user.id)
+
         return (
             ChatUser.objects.filter(chat__in=chats)
             .exclude(Q(user_id=user.id) | Q(user_id=user.sponsor.id))
@@ -58,14 +65,18 @@ class MessangerRepository(MessangerRepositoryInterface):
             id=interlocuter_id
         )
 
-    def get_messages(self, chats, user_id):
+    def get_messages(self, user_id: int):
         messages_qs = Message.objects.filter(chat_user__chat__id=OuterRef("chat_users__chat__id")).order_by("-time")
 
         users_qs = ChatUser.objects.filter(chat=OuterRef("id")).exclude(user_id=user_id)
 
-        chats = chats.annotate(
-            last_message=Subquery(messages_qs.values("id")[:1]), interlocutor=Subquery(users_qs.values("id")[:1])
-        ).distinct()
+        chats = (
+            self.__get_chats_query(user_id)
+            .annotate(
+                last_message=Subquery(messages_qs.values("id")[:1]), interlocutor=Subquery(users_qs.values("id")[:1])
+            )
+            .distinct()
+        )
 
         id_list = [x.last_message for x in chats if x.last_message is not None]
 

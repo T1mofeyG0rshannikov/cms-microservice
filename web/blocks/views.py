@@ -1,13 +1,14 @@
 import json
+from typing import Any
 
 from django.db.utils import IntegrityError
-from django.http import HttpRequest, HttpResponse, HttpResponseNotFound
+from django.http import HttpRequest, HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
-from application.adapters.page_adapter import PageAdapter, get_page_adapter
 from application.services.pages_service import get_page_service
+from domain.page_blocks.entities.page import PageInterface
 from domain.page_blocks.page_repository import PageRepositoryInterface
 from domain.page_blocks.page_service_interface import PageServiceInterface
 from infrastructure.files.files import find_class_in_directory
@@ -15,59 +16,37 @@ from infrastructure.persistence.models.settings import SiteSettings
 from infrastructure.persistence.repositories.page_repository import get_page_repository
 from infrastructure.requests.request_interface import RequestInterface
 from web.blocks.serializers import PageSerializer
-from web.settings.views.mixins import SubdomainMixin
+from web.settings.views.settings_mixin import SettingsMixin
 from web.user.views.base_user_view import UserFormsView
 
 
-class IndexPage(SubdomainMixin):
+class BasePageView(SettingsMixin):
     template_name = "blocks/page.html"
+
     page_repository: PageRepositoryInterface = get_page_repository()
 
+    def get_context_data(self, page: PageInterface, **kwargs) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context |= UserFormsView.get_context_data()
+
+        context["page"] = PageSerializer(page).data
+
+        return context
+
+
+class IndexPage(BasePageView):
     def get(self, request: RequestInterface, *args, **kwargs):
         partner_domain = self.domain_repository.get_partners_domain_string()
 
         if request.domain == partner_domain and SiteSettings.objects.first().disable_partners_sites:
             return HttpResponse("<h1>Привет :)</h1>")
 
-        if not self.page_repository.get(url=None):
-            return HttpResponseNotFound()
-
         return super().get(request, *args, **kwargs)
 
-    def get_context_data(self, page_adapter=get_page_adapter(), **kwargs):
-        context = super().get_context_data(**kwargs)
-        context |= UserFormsView.get_context_data()
-
+    def get_context_data(self, **kwargs):
         page = self.page_repository.get(url=None)
-        page = page_adapter(page)
 
-        page = PageSerializer(page).data
-
-        context["page"] = page
-
-        return context
-
-
-class ShowPage(SubdomainMixin):
-    template_name = "blocks/page.html"
-
-    def get_context_data(
-        self,
-        page_url: str,
-        page_repository: PageRepositoryInterface = get_page_repository(),
-        page_adapter: PageAdapter = get_page_adapter(),
-        **kwargs,
-    ):
-        context = super().get_context_data(**kwargs)
-        context |= UserFormsView.get_context_data()
-
-        page = page_repository.get(url=page_url)
-        page = page_adapter(page)
-        page = PageSerializer(page).data
-
-        context["page"] = page
-
-        return context
+        return super().get_context_data(page=page, **kwargs)
 
 
 @method_decorator(csrf_exempt, name="dispatch")

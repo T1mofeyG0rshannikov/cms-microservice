@@ -14,5 +14,8 @@ class DomainRepositoryInterface(Protocol):
     def get_site_name(self) -> str | None:
         raise NotImplementedError
 
-    def get_domain(self, domain: str) -> DomainInterface:
+    def get_domain(self, domain: str | None = None, is_partners: bool | None = None) -> DomainInterface:
+        raise NotImplementedError
+
+    def landing_domain_exists(self, domain: str) -> bool:
         raise NotImplementedError

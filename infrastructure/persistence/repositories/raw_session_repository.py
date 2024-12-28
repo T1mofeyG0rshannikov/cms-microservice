@@ -6,6 +6,7 @@ from django.utils import timezone
 from domain.user_sessions.repositories.raw_session_repository import (
     RawSessionRepositoryInterface,
 )
+from domain.user_sessions.session import SessionInterface
 from infrastructure.persistence.models.site_statistics import (
     SessionAction,
     SessionModel,
@@ -16,13 +17,13 @@ class RawSessionRepository(RawSessionRepositoryInterface):
     def is_exists_by_id(self, id: int) -> bool:
         return SessionModel.objects.filter(id=id).exists()
 
-    def create(self, **kwargs) -> int:
+    def create(self, **kwargs) -> SessionInterface:
         return SessionModel.objects.create(**kwargs)
 
-    def update(self, id, **kwargs) -> None:
+    def update(self, id: int, **kwargs) -> None:
         SessionModel.objects.filter(id=id).update(**kwargs)
 
-    def bulk_create_raw_session_logs(self, logs):
+    def bulk_create_logs(self, logs):
         new_logs = [log for log in logs if log["session_id"] in SessionModel.objects.values_list("id", flat=True)]
         SessionAction.objects.bulk_create([SessionAction(**log) for log in new_logs])
 

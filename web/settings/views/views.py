@@ -1,9 +1,10 @@
 from django.http import HttpResponse
-from django.views.generic import View
 
+from domain.user.sites.exceptions import SiteDoesNotExists
 from infrastructure.requests.request_interface import RequestInterface
 from web.settings.views.settings_mixin import SettingsMixin
 from web.user.forms import LoginForm, ResetPasswordForm
+from web.user.views.base_user_view import APIUserRequiredGenerics
 
 
 class PartnerIndexPage(SettingsMixin):
@@ -17,21 +18,19 @@ class PartnerIndexPage(SettingsMixin):
         return context
 
 
-class StopSite(View):
+class StopSite(APIUserRequiredGenerics):
     def get(self, request: RequestInterface) -> HttpResponse:
-        if request.user.is_authenticated:
-            request.user.site.deactivate()
+        if not request.user.site:
+            raise SiteDoesNotExists()
 
-            return HttpResponse(status=200)
+        request.user.site.deactivate()
+        return HttpResponse(status=200)
 
-        return HttpResponse(status=401)
 
-
-class ActivateSite(View):
+class ActivateSite(APIUserRequiredGenerics):
     def get(self, request: RequestInterface) -> HttpResponse:
-        if request.user.is_authenticated:
-            request.user.site.activate()
+        if not request.user.site:
+            raise SiteDoesNotExists()
 
-            return HttpResponse(status=200)
-
-        return HttpResponse(status=401)
+        request.user.site.activate()
+        return HttpResponse(status=200)

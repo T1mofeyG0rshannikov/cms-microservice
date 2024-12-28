@@ -1,16 +1,17 @@
-import os
 from functools import lru_cache
 
-from dotenv import load_dotenv
+from pydantic import Extra
 from pydantic_settings import BaseSettings
-
-load_dotenv()
 
 
 class JwtSettings(BaseSettings):
-    secret_key: str = os.getenv("SECRET_KEY")
-    algorithm: str = os.getenv("ALGORITHM")
-    expires_in: str = os.getenv("EXPIRES_IN")
+    secret_key: str
+    algorithm: str
+    expires_in: int
+
+    class Config:
+        env_file = ".env"
+        extra = Extra.allow
 
 
 @lru_cache

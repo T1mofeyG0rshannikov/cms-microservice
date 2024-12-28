@@ -50,7 +50,7 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
         self.user_product_repository = user_product_repository
         self.get_ideas_interactor = get_ideas_interactor
 
-    def get_context(self, request: HttpRequest):
+    def get_context(self, request: HttpRequest) -> dict[str, Any]:
         context = super().get_context(request)
         context["site_name"] = self.domain_repository.get_site_name()
 
@@ -68,11 +68,13 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
         level = request.GET.get("level")
         sorted_by = request.GET.get("sorted_by", "created_at")
 
-        referrals = self.referral_service.get_referrals(level=level, user_id=request.user.id, sorted_by=sorted_by)
-
         pagination = Pagination(request)
 
-        referrals = pagination.paginate(referrals, "referrals", ReferralsSerializer)
+        referrals = pagination.paginate(
+            self.referral_service.get_referrals(level=level, user_id=request.user.id, sorted_by=sorted_by),
+            "referrals",
+            ReferralsSerializer,
+        )
 
         context |= referrals
 
@@ -107,11 +109,14 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
 
         product_category = request.GET.get("product_category")
 
-        products = self.user_product_repository.filter(category_id=product_category, user_id=request.user.id)
-
         pagination = Pagination(request)
 
-        products = pagination.paginate(products, "products", UserProductsSerializer)
+        products = pagination.paginate(
+            self.user_product_repository.filter(category_id=product_category, user_id=request.user.id),
+            "products",
+            UserProductsSerializer,
+        )
+
         context |= products
 
         return context
@@ -133,8 +138,6 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
         chat_id = request.GET.get("chat_id")
         if chat_id:
             context |= get_chat_body_context(request)
-
-        print(serialized_chats)
 
         context["chats"] = serialized_chats
         return context

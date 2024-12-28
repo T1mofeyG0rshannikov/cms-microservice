@@ -1,3 +1,5 @@
+from typing import Any
+
 from domain.account.socials_repository import SocialsRepositoryInterface
 from domain.user.exceptions import SocialChannelAlreadyExists
 from infrastructure.persistence.repositories.socials_repositry import (
@@ -9,7 +11,7 @@ class ChangeSocials:
     def __init__(self, repository: SocialsRepositoryInterface) -> None:
         self.repository = repository
 
-    def __call__(self, site_id: int, user_social_networks: dict[str, str]):
+    def __call__(self, site_id: int, user_social_networks: list[dict[str, Any]]) -> None:
         if len({social_network["social"] for social_network in user_social_networks}) < len(user_social_networks):
             raise SocialChannelAlreadyExists("Вы можете указать только один канал для каждой соц. сети")
 

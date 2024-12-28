@@ -5,7 +5,6 @@ from application.usecases.notifications.create_notification import (
 )
 from domain.user.notifications.error import CantSendNotification
 from domain.user.notifications.trigger_enum import TriggerNames
-from domain.user.sites.site import SiteInterface
 from infrastructure.persistence.models.user.site import Site
 from infrastructure.persistence.repositories.notification_repository import (
     get_notification_repository,
@@ -16,7 +15,7 @@ from web.notifications.serializers import UserNotificationSerializer
 
 def site_created_handler(
     sender,
-    instance: SiteInterface,
+    instance: Site,
     created,
     *args,
     create_user_notification=CreateUserNotification(get_notification_repository()),

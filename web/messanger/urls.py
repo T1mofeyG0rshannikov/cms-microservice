@@ -1,5 +1,5 @@
 from django.urls import path
 
-from .views import GetChatsView, SendMessageView
+from .views import SendMessageView
 
-urlpatterns = [path("get-chats", GetChatsView.as_view()), path("send-message", SendMessageView.as_view())]
+urlpatterns = [path("send-message", SendMessageView.as_view())]

@@ -1,6 +1,7 @@
-import logging
+# import logging
 import os
-import sys
+
+# import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -82,6 +83,8 @@ MIDDLEWARE = [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "web.settings.domains_middleware.DomainMiddleware",
+    "web.settings.landing_middleware.LandingMiddleware",
     "web.user.middleware.JwtAuthMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -294,8 +297,7 @@ CORS_ORIGIN_WHITELIST = [
 ]
 CORS_ALLOW_CREDENTIALS = True
 
-
-SESSION_COOKIE_AGE = 60 * int(os.getenv("SESSION_EXPIRES_IN"))
+SESSION_COOKIE_AGE = 60 * int(os.getenv("EXPIRES_IN"))  # type: ignore
 
 USE_TZ = False
 
@@ -380,3 +382,6 @@ MIGRATION_MODULES = {
     "system": "infrastructure.persistence.migrations.system",
     "messanger": "infrastructure.persistence.migrations.messanger",
 }
+
+
+REST_FRAMEWORK = {"EXCEPTION_HANDLER": "web.site_tests.exc_handler.my_exception_handler"}

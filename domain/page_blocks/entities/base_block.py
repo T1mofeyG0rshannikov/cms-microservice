@@ -18,7 +18,7 @@ class BaseBlockInterface:
     template: TemplateInterface
     ancor: str | None
 
-    def get_styles():
+    def get_styles(self):
         pass
 
 

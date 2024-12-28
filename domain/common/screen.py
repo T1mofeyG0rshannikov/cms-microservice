@@ -10,3 +10,8 @@ class FileInterface:
 @dataclass
 class ScreenInterface(FileInterface):
     pass
+
+
+@dataclass
+class ImageInterface(FileInterface):
+    url: str

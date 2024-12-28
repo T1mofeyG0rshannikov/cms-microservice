@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from domain.common.screen import ScreenInterface
-from domain.user.user import UserInterface
+from domain.user.entities import UserInterface
 
 
 @dataclass

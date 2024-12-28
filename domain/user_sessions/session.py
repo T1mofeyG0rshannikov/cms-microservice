@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from domain.user.user import UserInterface
+from domain.user.entities import UserInterface
 
 
 @dataclass
@@ -15,10 +15,10 @@ class SessionInterface:
     show_capcha: bool = False
     ban_rate: int = 0
     banks_count: int = 0
-    auth: str = None
-    user_id: int = None
+    auth: str | None = None
+    user_id: int | None = None
     hacking: bool = False
-    headers: str = None
+    headers: str | None = None
 
 
 @dataclass
@@ -31,6 +31,6 @@ class UserSessionInterface:
     session: SessionInterface
     banks_count: int = 0
     pages_count: int = 0
-    auth: str = None
+    auth: str | None = None
     profile_actions_count: int = 0
-    user: UserInterface = None
+    user: UserInterface | None = None

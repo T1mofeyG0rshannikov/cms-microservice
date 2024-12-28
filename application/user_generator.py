@@ -6,10 +6,9 @@ from russian_names import RussianNames
 from domain.domains.domain import DomainInterface
 from domain.domains.domain_repository import DomainRepositoryInterface
 from domain.tests.test_user_set import TestUserSetInterface
+from domain.user.entities import SiteInterface, UserInterface
 from domain.user.repository import UserRepositoryInterface
-from domain.user.sites.site import SiteInterface
 from domain.user.sites.site_repository import SiteRepositoryInterface
-from domain.user.user import UserInterface
 from infrastructure.persistence.repositories.domain_repository import (
     get_domain_repository,
 )
@@ -67,7 +66,7 @@ class UserGenerator(UserGeneratorInterface):
     def create_test_site(self, user: UserInterface, partner_domain: DomainInterface) -> SiteInterface:
         subdomain = self.ger_user_english_slug(user.username, user.second_name)
 
-        self.site_repository.update_or_create(
+        site, _ = self.site_repository.update_or_create(
             domain=partner_domain,
             subdomain=subdomain,
             is_active=True,
@@ -77,9 +76,11 @@ class UserGenerator(UserGeneratorInterface):
             name=subdomain,
         )
 
+        return site
+
     def create_test_user(
         self, name: str, second_name: str, partner_domain: DomainInterface, site: SiteInterface
-    ) -> UserInterface:
+    ) -> UserInterface | None:
         user_slug = self.ger_user_english_slug(name, second_name)
         email = self.generate_email(user_slug)
         phone = self.generate_phone()

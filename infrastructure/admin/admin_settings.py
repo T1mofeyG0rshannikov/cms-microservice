@@ -1,15 +1,16 @@
-import os
 from functools import lru_cache
 
-from dotenv import load_dotenv
+from pydantic import Extra
 from pydantic_settings import BaseSettings
-
-load_dotenv()
 
 
 class AdminSettings(BaseSettings):
-    admin_domain: str = os.getenv("ADMIN_DOMAIN")
-    admin_url: str = os.getenv("ADMIN_URL")
+    admin_domain: str
+    admin_url: str
+
+    class Config:
+        env_file = ".env"
+        extra = Extra.allow
 
 
 @lru_cache

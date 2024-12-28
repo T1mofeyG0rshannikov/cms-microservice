@@ -7,7 +7,12 @@ from web.blocks.template_exist import is_template_exists
 from web.blocks.validators import validate_html_filename
 
 
-class Page(models.Model):
+class BasePageModel(models.Model):
+    class Meta:
+        abstract = True
+
+
+class Page(BasePageModel):
     title = models.CharField(verbose_name="Заголовок", max_length=50)
     url = models.CharField(max_length=50, null=True, blank=True)
 

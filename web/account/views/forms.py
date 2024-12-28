@@ -93,7 +93,10 @@ class ChangeSocialsView(FormView, APIUserRequired):
         try:
             user_social_networks = json.loads(form.cleaned_data.get("socials"))
 
-            self.change_socials_interactor(request.user.site.id, user_social_networks)
+            if request.user.site is not None:
+                self.change_socials_interactor(request.user.site.id, user_social_networks)
+            else:
+                return JsonResponse({"errors": {"socials": ["You has no site"]}}, status=400)
         except SocialChannelAlreadyExists as e:
             form.add_error("socials", str(e))
             return JsonResponse({"errors": form.errors}, status=400)
@@ -111,7 +114,7 @@ class ChangeUserView(FormView, APIUserRequired):
         try:
             email_changed = self.change_user_interactor(request.user, **form.cleaned_data).changed_email
 
-            self.increment_session_profile_action(request=request, text=UserActions.changed_profile_data)
+            self.increment_session_profile_action(request=request)
             self.create_user_session_log(request=request, text=UserActions.changed_profile_data)
 
             if email_changed:

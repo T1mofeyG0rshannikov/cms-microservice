@@ -4,9 +4,10 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.views.generic import View
+from rest_framework import generics
 
 from domain.domains.domain_repository import DomainRepositoryInterface
-from domain.user.user import UserInterface
+from domain.user.entities import UserInterface
 from infrastructure.auth.jwt_processor import get_jwt_processor
 from infrastructure.auth.jwt_processor_interface import JwtProcessorInterface
 from infrastructure.logging.user_activity.create_session_log import (
@@ -17,11 +18,11 @@ from infrastructure.persistence.repositories.domain_repository import (
     get_domain_repository,
 )
 from web.common.forms import FeedbackForm
-from web.settings.views.mixins import SubdomainMixin
+from web.settings.views.settings_mixin import SettingsMixin
 from web.user.forms import LoginForm, RegistrationForm, ResetPasswordForm
 
 
-class BaseUserView(SubdomainMixin):
+class BaseUserView(SettingsMixin):
     jwt_processor: JwtProcessorInterface = get_jwt_processor()
     login_url = "/user/login"
     account_url = "/my/"
@@ -73,6 +74,14 @@ class UserFormsView:
 
 
 class APIUserRequired(View):
+    def dispatch(self, request: HttpRequest, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponse(status=401)
+
+        return super().dispatch(request, *args, **kwargs)
+
+
+class APIUserRequiredGenerics(generics.GenericAPIView):
     def dispatch(self, request: HttpRequest, *args, **kwargs):
         if not request.user.is_authenticated:
             return HttpResponse(status=401)

@@ -16,3 +16,9 @@ class SystemRepositoryInterface(Protocol):
 
     def delete_user_confirm_phone_code(self, user_id: int) -> None:
         raise NotImplementedError
+
+    def code_exists(self, email: str, code: int) -> bool:
+        raise NotImplementedError
+
+    def delete_user_code(self, email: str) -> None:
+        raise NotImplementedError

@@ -14,5 +14,5 @@ class SMSService(SMSServiceInterface):
         return api.send_sms(phone, f"""{site_name}. Код для подтверждения телефона: {code}""")
 
 
-def get_sms_service(config: SMSAeroConfig = get_sms_config()) -> SMSAeroConfig:
+def get_sms_service(config: SMSAeroConfig = get_sms_config()) -> SMSServiceInterface:
     return SMSService(config)

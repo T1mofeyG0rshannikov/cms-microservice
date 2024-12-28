@@ -3,7 +3,7 @@ from django.db.utils import OperationalError, ProgrammingError
 
 from domain.domains.domain import DomainInterface
 from domain.domains.domain_repository import DomainRepositoryInterface
-from infrastructure.persistence.models.settings import Domain
+from infrastructure.persistence.models.settings import Domain, LandingDomain
 
 
 class DomainRepository(DomainRepositoryInterface):
@@ -17,9 +17,9 @@ class DomainRepository(DomainRepositoryInterface):
             if domain:
                 return domain[0]
 
-            return None
+            return ""
         except (OperationalError, ProgrammingError):
-            return None
+            return ""
 
     def get_site_name(self) -> str | None:
         try:
@@ -31,17 +31,17 @@ class DomainRepository(DomainRepositoryInterface):
         except (OperationalError, ProgrammingError):
             return None
 
-    def get_domain(self, domain: str = None, is_partners: bool = None) -> DomainInterface:
+    def get_domain(self, domain: str | None = None, is_partners: bool | None = None) -> DomainInterface:
         query = Q()
         if domain:
             query &= Q(domain=domain)
         if is_partners is not None:
             query &= Q(is_partners=is_partners)
 
-        try:
-            return Domain.objects.get(query)
-        except Domain.DoesNotExist:
-            pass
+        return Domain.objects.filter(query).first()
+
+    def landing_domain_exists(self, domain) -> bool:
+        return LandingDomain.objects.filter(domain__iexact=domain).exists()
 
 
 def get_domain_repository() -> DomainRepositoryInterface:

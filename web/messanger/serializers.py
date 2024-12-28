@@ -22,23 +22,19 @@ class InterlocutorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["username", "second_name", "profile_picture", "last_login", "id"]
+        fields = ["full_name", "profile_picture", "last_login", "id"]
 
 
 class ChatInterlocutorSerializer(serializers.ModelSerializer):
-    username = serializers.SerializerMethodField()
-    second_name = serializers.SerializerMethodField()
+    full_name = serializers.SerializerMethodField()
     profile_picture = serializers.SerializerMethodField()
 
     class Meta:
         model = ChatUser
-        fields = ["username", "second_name", "profile_picture", "chat_id"]
+        fields = ["full_name", "profile_picture", "chat_id"]
 
-    def get_username(self, chatuser):
-        return chatuser.user.username
-
-    def get_second_name(self, chatuser):
-        return chatuser.user.second_name
+    def get_full_name(self, chatuser):
+        return chatuser.user.full_name
 
     def get_profile_picture(self, chatuser):
         return chatuser.user.profile_picture

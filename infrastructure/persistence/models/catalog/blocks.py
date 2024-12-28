@@ -1,9 +1,10 @@
 from django.db import models
 
+from infrastructure.persistence.models.blocks.common import BasePageModel
 from infrastructure.persistence.models.common import BasePageBlock, BlockRelationship
 
 
-class CatalogPageTemplate(models.Model):
+class CatalogPageTemplate(BasePageModel):
     title = models.CharField(verbose_name="Заголовок", max_length=50)
 
     class Meta:

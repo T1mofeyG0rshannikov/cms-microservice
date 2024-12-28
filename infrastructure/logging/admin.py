@@ -3,7 +3,7 @@ from application.email_services.work_email_service.email_service_interface impor
 )
 from application.services.request_service_interface import RequestServiceInterface
 from domain.logging.admin import AdminLogRepositoryInterface
-from domain.user.user import UserInterface
+from domain.user.entities import UserInterface
 from infrastructure.email_services.work_email_service.email_service import (
     get_work_email_service,
 )
@@ -40,7 +40,7 @@ class AdminLoginLogger:
     def fake_admin_panel(self, user: UserInterface, **kwargs) -> None:
         ip_address = self.request_service.get_client_ip()
 
-        log = self.repository.create_logg_fake_admin(ip=ip_address, login=user)
+        log = self.repository.create_logg_fake_admin(ip=ip_address, login=str(user))
 
         self.email_service.send_fake_admin_login_message(**kwargs, ip=ip_address, user=user, time=log.date)
 

@@ -17,14 +17,14 @@ class GetSettings:
         self.settings_repository = settings_repository
         self.site_repository = site_repository
 
-    def __call__(self, domain: str = None, subdomain: str = None) -> dict:
+    def __call__(self, domain: str | None = None, subdomain: str | None = None) -> SiteSettingsInterface:
         settings_model = self.settings_repository.get_settings()
         form_logo_model = self.settings_repository.get_form_logo()
         logo_model = self.settings_repository.get_logo()
         icon_model = self.settings_repository.get_icon()
 
         form_logo = SiteLogoInterface(
-            image=form_logo_model.image.url,
+            image=form_logo_model.image,
             width=form_logo_model.width,
             height=form_logo_model.height,
             width_mobile=form_logo_model.width_mobile,
@@ -32,7 +32,7 @@ class GetSettings:
         )
 
         logo = SiteLogoInterface(
-            image=logo_model.image.url,
+            image=logo_model.image,
             width=logo_model.width,
             height=logo_model.height,
             width_mobile=logo_model.width_mobile,
@@ -44,7 +44,7 @@ class GetSettings:
             form_logo=form_logo,
             disable_partners_sites=settings_model.disable_partners_sites,
             default_users_font_size=settings_model.default_users_font_size,
-            icon=icon_model.image.url,
+            icon=icon_model.image,
         )
 
         if domain:
@@ -62,14 +62,14 @@ class GetSettings:
 
                 if site.logo:
                     settings.logo = SiteLogoInterface(
-                        image=site.logo.url,
+                        image=site.logo,
                         width=site.logo_width,
                         width_mobile=site.logo_width_mobile,
                     )
 
                 if site.logo2:
                     settings.form_logo = SiteLogoInterface(
-                        image=site.logo2.url,
+                        image=site.logo2,
                         width=site.logo_width,
                         width_mobile=site.logo_width_mobile,
                     )

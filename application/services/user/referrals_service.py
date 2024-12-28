@@ -43,7 +43,9 @@ class ReferralService(ReferralServiceInterface):
 
         return referral
 
-    def get_referrals(self, user_id: int, level: int = None, sorted_by="created_at") -> Iterable[ReferralInterface]:
+    def get_referrals(
+        self, user_id: int, level: int | None = None, sorted_by: str = "created_at"
+    ) -> Iterable[ReferralInterface]:
         if sorted_by:
             sorted_by = self.validator.validate_sorted_by(sorted_by)
 

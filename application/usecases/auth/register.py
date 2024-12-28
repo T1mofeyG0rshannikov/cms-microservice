@@ -1,16 +1,15 @@
-from dataclasses import dataclass
-
-from application.texts.errors import UserErrorsMessages
+from application.dto.register import TokenToSetPasswordResponse
+from application.texts.errors import ErrorsMessages, UserErrorsMessages
 from domain.domains.domain import DomainInterface
 from domain.domains.domain_repository import DomainRepositoryInterface
+from domain.user.entities import SiteInterface, UserInterface
 from domain.user.exceptions import (
+    UserCreatingError,
     UserWithEmailAlreadyExists,
     UserWithPhoneAlreadyExists,
 )
 from domain.user.repository import UserRepositoryInterface
-from domain.user.sites.site import SiteInterface
 from domain.user.sites.site_repository import SiteRepositoryInterface
-from domain.user.user import UserInterface
 from infrastructure.auth.jwt_processor import get_jwt_processor
 from infrastructure.auth.jwt_processor_interface import JwtProcessorInterface
 from infrastructure.persistence.repositories.domain_repository import (
@@ -20,11 +19,6 @@ from infrastructure.persistence.repositories.site_repository import get_site_rep
 from infrastructure.persistence.repositories.user_repository import get_user_repository
 from infrastructure.url_parser.base_url_parser import UrlParserInterface
 from infrastructure.url_parser.url_parser import get_url_parser
-
-
-@dataclass
-class TokenToSetPasswordResponse:
-    token_to_set_password: str
 
 
 class Register:
@@ -60,25 +54,25 @@ class Register:
             phone=phone, email=email, register_on_site=site, register_on_domain=domain, sponsor=sponsor
         )
 
-        if user:
-            token_to_set_password = self.jwt_processor.create_set_password_token(user.id)
+        if not user:
+            raise UserCreatingError(ErrorsMessages.something_went_wrong)
 
-            return TokenToSetPasswordResponse(token_to_set_password=token_to_set_password)
+        token_to_set_password = self.jwt_processor.create_set_password_token(user.id)
 
-        return None
+        return TokenToSetPasswordResponse(token_to_set_password=token_to_set_password)
 
     def get_domain_model_from_request(self, host: str) -> DomainInterface:
         domain = self.url_parser.get_domain_from_host(host)
         return self.domain_repository.get_domain(domain)
 
-    def get_site_model(self, host: str) -> SiteInterface:
+    def get_site_model(self, host: str) -> SiteInterface | None:
         subdomain = self.url_parser.get_subdomain_from_host(host)
         if not subdomain:
             return None
 
         return self.site_repository.get(subdomain=subdomain)
 
-    def get_user_from_site(self, site: SiteInterface, domain: DomainInterface) -> UserInterface:
+    def get_user_from_site(self, site: SiteInterface | None, domain: DomainInterface | None) -> UserInterface | None:
         if domain == self.domain_repository.get_domain(is_partners=False):
             return self.user_repository.get(supersponsor=True)
 

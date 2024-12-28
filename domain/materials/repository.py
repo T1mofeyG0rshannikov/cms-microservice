@@ -5,7 +5,7 @@ from domain.materials.document import DocumentInterface, DocumentPatternInterfac
 
 
 class DocumentRepositoryInterface(Protocol):
-    def get(self, document_slug: str) -> DocumentInterface:
+    def get(self, document_slug: str) -> DocumentInterface | None:
         raise NotImplementedError
 
     def get_document_patterns(self, document_slug: str) -> Iterable[DocumentPatternInterface]:

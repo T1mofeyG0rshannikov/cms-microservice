@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from domain.common.replacement_pattern import ReplacementPatternInterface
-from domain.user.user import UserInterface
+from domain.user.entities import UserInterface
 
 
 @dataclass

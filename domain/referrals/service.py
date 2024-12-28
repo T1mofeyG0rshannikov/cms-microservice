@@ -2,11 +2,11 @@ from collections.abc import Iterable
 from typing import Protocol
 
 from domain.referrals.referral import ReferralInterface
-from domain.user.user import UserInterface
+from domain.user.entities import UserInterface
 
 
 class ReferralServiceInterface(Protocol):
-    def get_referral_level(self, referral: UserInterface, user: UserInterface):
+    def get_referral_level(self, referral: ReferralInterface, user: UserInterface):
         raise NotImplementedError
 
     def get_referral(self, user_id: int, user: UserInterface) -> ReferralInterface:

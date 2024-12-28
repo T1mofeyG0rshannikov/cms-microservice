@@ -22,5 +22,5 @@ class RawSessionRepositoryInterface(Protocol):
     def get(self, session_id: int) -> SessionInterface:
         raise NotImplementedError
 
-    def update(self, session_id: int, **kwargs) -> None:
+    def update(self, id: int, **kwargs) -> None:
         raise NotImplementedError

@@ -1,14 +1,14 @@
 {% load static %}
 
 <div class="title">
-    <p>{{ interlocutor.username }} {% if interlocutor.second_name %}{{ interlocutor.second_name }}{% endif %}</p>
+    <p>{{ interlocutor.full_name }}</p>
     <span>был(а) {{ interlocutor.last_login }}</span>
 </div>
 
 <div class="messages">
     {% for message in messages %}
-        <div class="message-container {% if message.user_id == interlocutor.id %}left{% endif %}">
-            <div class="message">
+        <div class="message-container">
+            <div class="message {% if message.user_id == interlocutor.id %}left{% endif %}">
                 <a>{{ message.text }}</a>
 
                 <div class="message-bottom">

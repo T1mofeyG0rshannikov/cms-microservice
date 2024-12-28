@@ -2,6 +2,10 @@ class UserWithEmailAlreadyExists(Exception):
     pass
 
 
+class UserCreatingError(Exception):
+    pass
+
+
 class UserWithPhoneAlreadyExists(Exception):
     pass
 

@@ -13,7 +13,6 @@ from infrastructure.email_services.work_email_service.email_service import (
 from infrastructure.requests.request_interface import RequestInterface
 from infrastructure.security import get_link_encryptor
 from web.common.forms import FeedbackForm
-from web.settings.views.mixins import SubdomainMixin
 
 
 class RedirectToLink(View):
@@ -48,7 +47,7 @@ class FormView(View):
             form.add_error(error_field, str(exception))
 
 
-class SendFeedbackView(SubdomainMixin, FormView):
+class SendFeedbackView(FormView):
     email_service: WorkEmailServiceInterface = get_work_email_service()
     form_class = FeedbackForm
 

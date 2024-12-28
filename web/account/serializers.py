@@ -1,24 +1,23 @@
-from datetime import datetime
-
 from rest_framework import serializers
 
 from application.formats.date_russian import get_date_in_russian
 from infrastructure.persistence.models.user.user import User
+from web.common.serializers import DateFieldDot
+from web.user.serializers import UserSerializer
 
 
-class ReferralsSerializer(serializers.ModelSerializer):
+class ReferralsSerializer(UserSerializer):
     referrals = serializers.SerializerMethodField()
     channel = serializers.SerializerMethodField()
     level = serializers.IntegerField()
     redirections = serializers.SerializerMethodField()
-    created_at = serializers.SerializerMethodField()
+    created_at = DateFieldDot()
 
     class Meta:
         model = User
         fields = [
             "id",
-            "username",
-            "second_name",
+            "full_name",
             "created_at",
             "profile_picture",
             "referrals",
@@ -37,9 +36,6 @@ class ReferralsSerializer(serializers.ModelSerializer):
 
     def get_channel(self, referral):
         return "Телеграм"
-
-    def get_created_at(self, referral):
-        return datetime.strftime(referral.created_at, "%d.%m.%Y")
 
 
 class ReferralSerializer(serializers.ModelSerializer):

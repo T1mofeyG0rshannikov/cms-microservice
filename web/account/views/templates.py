@@ -31,7 +31,6 @@ from infrastructure.requests.request_interface import RequestInterface
 from web.account.forms import ChangePasswordForm
 from web.common.views import FormView
 from web.notifications.serializers import UserNotificationSerializer
-from web.settings.views.mixins import SubdomainMixin
 from web.settings.views.settings_mixin import SettingsMixin
 from web.template.profile_template_loader.context_processor.context_processor import (
     get_profile_context_processor,
@@ -46,7 +45,7 @@ from web.user.views.base_user_view import (
 )
 
 
-class BaseProfileView(MyLoginRequiredMixin, SubdomainMixin):
+class BaseProfileView(MyLoginRequiredMixin, SettingsMixin):
     context_processor: ProfileTemplateContextProcessorInterface = get_profile_context_processor()
     notifications_repository: NotificationRepositoryInterface = get_notification_repository()
     messanger_repository: MessangerRepositoryInterface = get_messanger_repository()
@@ -125,7 +124,7 @@ class Profile(BaseProfileView, BaseUserView):
     template_name = "account/profile.html"
 
     def dispath(self, request: RequestInterface, *args, **kwargs):
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             return super().dispatch(request, *args, **kwargs)
         if request.user_from_header:
             self.login(request.user_from_header)
@@ -133,7 +132,7 @@ class Profile(BaseProfileView, BaseUserView):
         return super().dispatch(request, *args, **kwargs)
 
 
-class PageNotFound(SubdomainMixin):
+class PageNotFound(SettingsMixin):
     template_name = "account/404.html"
 
     def get(self, request, *args, **kwargs):

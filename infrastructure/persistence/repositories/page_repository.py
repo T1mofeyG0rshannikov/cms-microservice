@@ -2,16 +2,19 @@ from collections.abc import Iterable
 
 from django.db.models import Case, Q, When
 
-from domain.page_blocks.entities.base_block import (
-    CatalogBlockInterface,
-    PageBlockInterface,
-)
+from application.mappers.page import from_orm_to_block, from_orm_to_page
+from domain.page_blocks.entities.base_block import PageBlockInterface
 from domain.page_blocks.entities.page import PageInterface
 from domain.page_blocks.page_repository import PageRepositoryInterface
 from infrastructure.files.files import find_class_in_directory
 from infrastructure.persistence.models.blocks.blocks import Cover
 from infrastructure.persistence.models.blocks.catalog_block import CatalogBlock
-from infrastructure.persistence.models.blocks.common import BaseBlock, Block, Page
+from infrastructure.persistence.models.blocks.common import (
+    BaseBlock,
+    BasePageModel,
+    Block,
+    Page,
+)
 from infrastructure.persistence.models.blocks.landings import Landing, LandingBlock
 from infrastructure.persistence.models.catalog.blocks import Block as CatalogPageBlock
 from infrastructure.persistence.models.catalog.blocks import CatalogPageTemplate
@@ -19,10 +22,10 @@ from infrastructure.persistence.models.common import BlockRelationship
 
 
 class PageRepository(PageRepositoryInterface):
-    def get_catalog_block(self, slug: str) -> CatalogBlockInterface:
-        return CatalogBlock.objects.get(product_type__slug=slug)
+    def get_catalog_block(self, slug: str) -> PageBlockInterface:
+        return from_orm_to_block(CatalogBlock.objects.get(product_type__slug=slug))
 
-    def get(self, id: int = None, url: str = None) -> PageInterface:
+    def get(self, id: int | None = None, url: str | None = None) -> PageInterface | None:
         query = Q()
         if id:
             query &= Q(id=id)
@@ -30,21 +33,28 @@ class PageRepository(PageRepositoryInterface):
             query &= Q(url=url)
 
         try:
-            return Page.objects.get(query)
+            page = Page.objects.get(query)
+            return from_orm_to_page(page=page, blocks=self.__get_page_blocks(page))
+
         except Page.DoesNotExist:
             return None
 
-    def get_page_blocks(self, page_model) -> Iterable[BaseBlock]:
+    def __get_page_blocks(self, page_model: BasePageModel) -> Iterable[BaseBlock]:
         if isinstance(page_model, Page):
-            block_class = Block
+            page_block_class = Block
 
         elif isinstance(page_model, CatalogPageTemplate):
-            block_class = CatalogPageBlock
+            page_block_class = CatalogPageBlock
 
         elif isinstance(page_model, Landing):
-            block_class = LandingBlock
+            page_block_class = LandingBlock
 
-        block_names = block_class.objects.filter(page=page_model).order_by("my_order").values_list("name", flat=True)
+        else:
+            raise ValueError("page_model must be 'Page', 'CatalogPageTemplate' or 'Landing' instance")
+
+        block_names = (
+            page_block_class.objects.filter(page=page_model).order_by("my_order").values_list("name", flat=True)
+        )
 
         blocks = (
             BlockRelationship.objects.filter(id__in=block_names)
@@ -67,25 +77,50 @@ class PageRepository(PageRepositoryInterface):
 
         return block_models
 
-    def clone_page(self, page_id: int) -> None:
-        page = self.get(id=page_id)
-        blocks = page.blocks.all()
-        print(blocks)
+    def clone_page(self, id: int) -> None:
+        page = Page.objects.get(id=id)
+
+        related_objects_to_copy = []
+        relations_to_set = {}
+
+        for field in page._meta.get_fields():
+            if field.one_to_many:
+                if hasattr(page, field.name):
+                    related_object_manager = getattr(page, field.name)
+                    related_objects = list(related_object_manager.all())
+                    if related_objects:
+                        related_objects_to_copy += related_objects
+
+            elif field.many_to_many:
+                related_object_manager = getattr(page, field.name)
+                relations = list(related_object_manager.all())
+                if relations:
+                    relations_to_set[field.name] = relations
 
         page.pk = None
-
         page.save()
 
-        for block in blocks:
-            block.pk = None
-            block.page = page
-            block.save()
+        for related_object in related_objects_to_copy:
+            for related_object_field in related_object._meta.fields:
+                if related_object_field.related_model == page.__class__:
+                    related_object.pk = None
+                    setattr(related_object, related_object_field.name, page)
+                    related_object.save()
+
+        for field_name, relations in relations_to_set.items():
+            field = getattr(page, field_name)
+            field.set(relations)
 
     def get_catalog_page_template(self) -> PageInterface:
-        return CatalogPageTemplate.objects.first()
+        page = CatalogPageTemplate.objects.first()
+        return from_orm_to_page(page, blocks=self.__get_page_blocks(page))
 
     def get_catalog_cover(self, slug: str) -> PageBlockInterface:
-        return Cover.objects.get(producttype__slug=slug)
+        return from_orm_to_block(Cover.objects.get(producttype__slug=slug))
+
+    def get_landing(self, url: str) -> PageInterface:
+        page = Landing.objects.get(url=url)
+        return from_orm_to_page(page=page, blocks=self.__get_page_blocks(page))
 
 
 def get_page_repository() -> PageRepositoryInterface:

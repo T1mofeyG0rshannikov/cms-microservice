@@ -45,7 +45,14 @@ class WorkEmailTemplateGenerator(WorkEmailTemplateGeneratorInterface):
         return self.generate_template("login_code.html", context)
 
     def generate_feedback_email(
-        self, username: str, email: str, phone: str, message: str, site_name: str, site_domain: str, user_id: int = None
+        self,
+        username: str,
+        email: str,
+        phone: str,
+        message: str,
+        site_name: str,
+        site_domain: str,
+        user_id: int | None = None,
     ) -> str:
         if user_id:
             user_link = f"https://{self.admin_settings.admin_domain}/{self.admin_settings.admin_url}/user/user/{user_id}/change/"

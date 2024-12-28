@@ -29,9 +29,11 @@ class SystemRepository(SystemRepositoryInterface):
         ConfirmPhoneCode.objects.get(user_id=user_id).delete()
 
     def update_or_create_confirm_phone_code(self, user_id: int, code: str, phone: str) -> str:
-        code, _ = ConfirmPhoneCode.objects.update_or_create(user_id=user_id, defaults={"code": code, "phone": phone})
+        code_obj, _ = ConfirmPhoneCode.objects.update_or_create(
+            user_id=user_id, defaults={"code": code, "phone": phone}
+        )
 
-        return code.code
+        return code_obj.code
 
 
 def get_system_repository() -> SystemRepositoryInterface:

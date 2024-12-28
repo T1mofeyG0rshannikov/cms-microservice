@@ -34,16 +34,10 @@ class ProductRepositoryInterface(Protocol):
     def get_product_name_from_catalog(self, product_type_slug: str, product_index: int) -> str:
         raise NotImplementedError
 
-    def get(self, id: int = None, user_product_id: int = None) -> ProductInterface:
+    def get(self, id: int | None = None, user_product_id: int | None = None) -> ProductInterface | None:
         raise NotImplementedError
 
-    def filter_enabled_products(self, organization_id: int, user_id: int) -> Iterable[ProductInterface]:
-        raise NotImplementedError
-
-    def get_catalog_offers(self, products_slug: str) -> Iterable[OfferInterface]:
-        raise NotImplementedError
-
-    def get_unprivate_catalog_offers(self, products_slug: str) -> Iterable[OfferInterface]:
+    def get_catalog_offers(self, products_slug: str, private: bool | None = None) -> Iterable[OfferInterface]:
         raise NotImplementedError
 
     def get_product_categories(self, user_id: int) -> Iterable[ProductCategoryInterface]:

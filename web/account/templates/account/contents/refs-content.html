@@ -53,7 +53,7 @@
                         <img src="{% if referral.profile_picture %}{{ referral.profile_picture }}{% else %}{% static 'account/images/nophoto.jpg' %}{% endif %}" />
                     </div>
 
-                    <p>{{ referral.username }} {% if referral.second_name %}{{ referral.second_name }}{% endif %}</p>
+                    <p>{{ referral.full_name }}</p>
                 </td>
 
                 <td>{{ referral.created_at }}</td>

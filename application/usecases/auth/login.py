@@ -1,7 +1,7 @@
 from application.texts.errors import UserErrorsMessages
+from domain.user.entities import UserInterface
 from domain.user.exceptions import UserDoesNotExist
 from domain.user.repository import UserRepositoryInterface
-from domain.user.user import UserInterface
 from domain.user.validator import UserValidatorInterface
 from infrastructure.auth.jwt_processor import get_jwt_processor
 from infrastructure.auth.jwt_processor_interface import JwtProcessorInterface
@@ -20,7 +20,7 @@ class Login:
         self.validator = validator
         self.jwt_processor = jwt_processor
 
-    def __call__(self, phone_or_email: str, password: str) -> tuple[dict, UserInterface]:
+    def __call__(self, phone_or_email: str, password: str) -> tuple[str, UserInterface]:
         if self.validator.is_valid_phone(phone_or_email):
             user = self.user_repository.get(phone=phone_or_email)
             if user is None:

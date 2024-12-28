@@ -1,13 +1,9 @@
-import os
-
 from django import forms
 from django.conf import settings
 from django.contrib import admin
 from django.utils.html import mark_safe
-from dotenv import load_dotenv
 
-from application.services.site_service import get_domain_service
-from domain.user.sites.site_service import SiteServiceInterface
+from domain.user.repository import UserRepositoryInterface
 from infrastructure.persistence.models.user.idea import Idea, IdeaScreen
 from infrastructure.persistence.models.user.product import UserProduct
 from infrastructure.persistence.models.user.roles import Roles, SuperUserRole
@@ -22,11 +18,9 @@ class UserAdmin(admin.ModelAdmin):
     list_display = ["username", "phone", "email", "register_on", "email_is_confirmed"]
     exclude = ["password", "staff", "is_superuser"]
 
-    def register_on(self, obj, domain_service: SiteServiceInterface = get_domain_service()):
-        return domain_service.get_register_on_site(obj)
-
-    register_on.short_description = "зарегистрирован на"
-    register_on.allow_tags = True
+    @admin.display(description="зарегистрирован на")
+    def register_on(self, obj):
+        return obj.register_on
 
 
 class UserRoleInlineForm(forms.ModelForm):
@@ -35,8 +29,6 @@ class UserRoleInlineForm(forms.ModelForm):
     class Meta:
         model = SuperUserRole
         fields = ["email"]
-
-    repository = get_user_repository()
 
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -80,15 +72,14 @@ class AddSuperUserRoleInline(BaseInline):
 class RolesAdmin(admin.ModelAdmin):
     inlines = [SuperUserRoleInline, AddSuperUserRoleInline]
 
-    repository = get_user_repository()
+    repository: UserRepositoryInterface = get_user_repository()
 
     def save_related(self, request, form, formsets, change):
         try:
-            # Ваша кастомная логика сохранения
             for formset in formsets:
                 for obj_ind, obj in enumerate(formset.save(commit=False)):
                     email = formset.cleaned_data[0].get("email")
-                    user = self.repository.get_user_by_email(email)
+                    user = self.repository.get(email=email)
 
                     if user:
                         obj.user = user
@@ -104,6 +95,7 @@ class RolesAdmin(admin.ModelAdmin):
 class IdeaScreenInline(BaseInline):
     model = IdeaScreen
 
+    @admin.display(description="Скрин")
     def image_tag(self, screen):
         return mark_safe(
             '<a href="#" class="open-image-popup" data-image="%s"><img src="%s" width="100" /></a>'
@@ -111,33 +103,30 @@ class IdeaScreenInline(BaseInline):
         )
 
     image_tag.allow_tags = True
-    image_tag.short_description = "Скрин"
 
     fields = ["image_tag"]
     readonly_fields = fields
 
 
-load_dotenv()
-
-
 class IdeaAdmin(admin.ModelAdmin):
-    model = Idea
     list_display = ["status_img", "created_at_tag", "title_tag", "user", "status", "finishe_date_tag", "rating"]
 
-    admin_site_url = os.getenv("ADMIN_URL")
-
+    @admin.display(description="Тема")
     def title_tag(self, idea):
         return redirect_to_change_page_tag(idea, idea.title)
 
+    @admin.display(description="Срок")
     def finishe_date_tag(self, idea):
         if idea.finishe_date:
             return idea.finishe_date.strftime("%d.%m.%Y")
 
         return "---"
 
+    @admin.display(description="Дата")
     def created_at_tag(self, idea):
         return idea.created_at.strftime("%d.%m.%Y")
 
+    @admin.display(description="")
     def status_img(self, idea):
         if idea.category == "errors":
             src = f"{settings.STATIC_URL}account/images/bugs/icobug_error.png"
@@ -150,19 +139,13 @@ class IdeaAdmin(admin.ModelAdmin):
 
         return mark_safe(f'<img width="15" src="{src}" />')
 
-    title_tag.short_description = "Тема"
-    status_img.short_description = ""
-    created_at_tag.short_description = "Дата"
-    finishe_date_tag.short_description = "Срок"
-
     readonly_fields = ["title", "description", "rating"]
 
     change_form_template = "common/screen_inline.html"
 
+    @admin.display(description="Рейтинг")
     def rating(self, idea):
         return idea.likes.count()
-
-    rating.short_description = "Рейтинг"
 
     inlines = [IdeaScreenInline]
 

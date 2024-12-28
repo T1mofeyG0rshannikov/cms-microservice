@@ -1,7 +1,7 @@
 from django.db.models import Q
 from django.http import HttpRequest, HttpResponseNotFound, HttpResponseRedirect
 
-from application.services.site_service import get_domain_service
+from application.services.site_service import get_site_service
 from domain.domains.domain_repository import DomainRepositoryInterface
 from domain.user.sites.site_service import SiteServiceInterface
 from infrastructure.admin.admin_settings import get_admin_settings
@@ -12,26 +12,31 @@ from infrastructure.persistence.repositories.domain_repository import (
 )
 from infrastructure.url_parser.base_url_parser import UrlParserInterface
 from infrastructure.url_parser.url_parser import get_url_parser
-from web.settings.views.settings_mixin import SettingsMixin
 from web.settings.views.views import PartnerIndexPage
+from web.site_statistics.base_session_middleware import BaseSessionMiddleware
 from web.template.views.base_page_not_found import BaseNotFoundPage
 
 
-class SubdomainMixin(SettingsMixin):
-    domain_service: SiteServiceInterface = get_domain_service()
+class DomainMiddleware(BaseSessionMiddleware):
+    site_service: SiteServiceInterface = get_site_service()
     url_parser: UrlParserInterface = get_url_parser()
     admin_settings = get_admin_settings()
     domain_repository: DomainRepositoryInterface = get_domain_repository()
 
-    def dispatch(self, request: HttpRequest, *args, **kwargs):
-        subdomain = self.url_parser.get_subdomain_from_host(request.get_host())
-        domain = self.url_parser.get_domain_from_host(request.get_host())
+    def __init__(self, get_response) -> None:
+        self.get_response = get_response
 
-        if self.admin_settings.admin_domain in request.get_host():
+    def __call__(self, request: HttpRequest):
+        host = request.get_host()
+
+        subdomain = self.url_parser.get_subdomain_from_host(host)
+        domain = self.url_parser.get_domain_from_host(host)
+
+        if self.admin_settings.admin_domain in host:
             if not request.path.startswith(self.admin_settings.admin_url):
                 return HttpResponseNotFound()
 
-        if not self.domain_service.valid_subdomain(subdomain):
+        if not self.site_service.valid_subdomain(subdomain):
             return BaseNotFoundPage.as_view()(request)
 
         if (
@@ -58,4 +63,7 @@ class SubdomainMixin(SettingsMixin):
         request.domain = domain
         request.subdomain = subdomain
 
-        return super().dispatch(request, *args, **kwargs)
+        return self.get_response(request)
+
+
+# 63

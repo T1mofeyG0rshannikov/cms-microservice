@@ -2,7 +2,7 @@
 
 <form onsubmit="submitLoginForm(this, event, '{{domain}}')" class="user-form" id="login-form">
     {% if settings.form_logo %}
-        <img class="logo" src="{{ settings.form_logo.image }}" />
+        <img class="logo" src="{{ settings.form_logo.image.url }}" />
     {% else %}
         <div class="logo">
             <a style="font-family: {{settings.site_font}}; color: var(--main-color); font-size: {{settings.site_font_size}};">{{ site_name }}</a>

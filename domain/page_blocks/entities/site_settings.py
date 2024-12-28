@@ -1,24 +1,28 @@
 from dataclasses import dataclass
+from datetime import datetime
+
+from domain.common.screen import ImageInterface
 
 
 @dataclass
 class SiteLogoInterface:
-    image: str
-    width: str
-    width_mobile: str
+    image: ImageInterface
 
-    height: str = None
-    height_mobile: str = None
+    width_mobile: int | None | None
+    width: int | None = None
+    height: str | None = None
+    height_mobile: str | None = None
 
 
 @dataclass
 class SiteSettingsInterface:
     disable_partners_sites: bool
     default_users_font_size: int
-    logo: SiteLogoInterface = None
-    form_logo: SiteLogoInterface = None
-    site_font: str = None
-    icon: str = None
-    site_font_size: str = None
-    owner: str = None
-    contact_info: str = None
+    created_at: datetime | None = None
+    logo: SiteLogoInterface | None = None
+    form_logo: SiteLogoInterface | None = None
+    site_font: str | None = None
+    icon: str | None = None
+    site_font_size: int | None = None
+    owner: str | None = None
+    contact_info: str | None = None

@@ -8,3 +8,7 @@ class InvalidSiteName(Exception):
 
 class InvalidSiteAddress(Exception):
     pass
+
+
+class SiteDoesNotExists(Exception):
+    pass
