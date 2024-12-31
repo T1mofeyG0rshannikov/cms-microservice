@@ -4,7 +4,7 @@ from django.http import HttpRequest, HttpResponseNotFound, HttpResponseRedirect
 from application.services.site_service import get_site_service
 from domain.domains.domain_repository import DomainRepositoryInterface
 from domain.user.sites.site_service import SiteServiceInterface
-from infrastructure.admin.admin_settings import get_admin_settings
+from infrastructure.admin.admin_settings import AdminSettings, get_admin_settings
 from infrastructure.persistence.models.settings import Domain, SiteSettings
 from infrastructure.persistence.models.user.site import Site
 from infrastructure.persistence.repositories.domain_repository import (
@@ -20,7 +20,7 @@ from web.template.views.base_page_not_found import BaseNotFoundPage
 class DomainMiddleware(BaseSessionMiddleware):
     site_service: SiteServiceInterface = get_site_service()
     url_parser: UrlParserInterface = get_url_parser()
-    admin_settings = get_admin_settings()
+    admin_settings: AdminSettings = get_admin_settings()
     domain_repository: DomainRepositoryInterface = get_domain_repository()
 
     def __init__(self, get_response) -> None:
@@ -28,12 +28,22 @@ class DomainMiddleware(BaseSessionMiddleware):
 
     def __call__(self, request: HttpRequest):
         host = request.get_host()
+        path = request.path[1::]
 
         subdomain = self.url_parser.get_subdomain_from_host(host)
         domain = self.url_parser.get_domain_from_host(host)
 
+        request.domain = domain
+        request.subdomain = subdomain
+
         if self.admin_settings.admin_domain in host:
-            if not request.path.startswith(self.admin_settings.admin_url):
+            valid_url = False
+            for url in self.admin_settings.valid_admin_urls:
+                if path.startswith(url):
+                    valid_url = True
+                    break
+
+            if not valid_url:
                 return HttpResponseNotFound()
 
         if not self.site_service.valid_subdomain(subdomain):
@@ -59,9 +69,6 @@ class DomainMiddleware(BaseSessionMiddleware):
 
             if domain == partner_domain and SiteSettings.objects.first().disable_partners_sites:
                 return HttpResponseRedirect("/")
-
-        request.domain = domain
-        request.subdomain = subdomain
 
         return self.get_response(request)
 

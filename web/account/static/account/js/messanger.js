@@ -15,7 +15,7 @@ function selectChat(chatId){
                 }
             })
 
-            const messageTextarea = document.getElementById("message");
+            messageTextarea = document.getElementById("message");
             messageTextarea.addEventListener("input", () => {
                 if (messageTextarea.value !== ''){
                     document.querySelector(".chat-body button").disabled = false;
@@ -55,3 +55,14 @@ function saveChatInUrl(chatId){
     url.searchParams.set('chat_id', chatId);
     window.history.replaceState(null, '', window.location.pathname + url.search);
 }
+
+let messageTextarea = document.getElementById("message");
+
+messageTextarea.addEventListener("input", () => {
+    if (messageTextarea.value !== ''){
+        document.querySelector(".chat-body button").disabled = false;
+    }
+    else{
+        document.querySelector(".chat-body button").disabled = true;
+    }
+})

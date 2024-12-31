@@ -15,6 +15,9 @@ class ChatUser(models.Model):
     class Meta:
         app_label = "messanger"
 
+    def __str__(self) -> str:
+        return f"{self.chat} - {self.user}"
+
 
 class Message(models.Model):
     chat_user = models.ForeignKey(ChatUser, on_delete=models.CASCADE, related_name="messages")

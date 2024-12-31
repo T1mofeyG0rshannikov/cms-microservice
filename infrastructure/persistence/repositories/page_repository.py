@@ -3,6 +3,7 @@ from collections.abc import Iterable
 from django.db.models import Case, Q, When
 
 from application.mappers.page import from_orm_to_block, from_orm_to_page
+from domain.common.screen import ImageInterface
 from domain.page_blocks.entities.base_block import PageBlockInterface
 from domain.page_blocks.entities.page import PageInterface
 from domain.page_blocks.page_repository import PageRepositoryInterface
@@ -22,8 +23,13 @@ from infrastructure.persistence.models.common import BlockRelationship
 
 
 class PageRepository(PageRepositoryInterface):
-    def get_catalog_block(self, slug: str) -> PageBlockInterface:
-        return from_orm_to_block(CatalogBlock.objects.get(product_type__slug=slug))
+    def get_catalog_block(self, slug: str) -> PageBlockInterface | None:
+        try:
+            block = CatalogBlock.objects.get(product_type__slug=slug)
+        except CatalogBlock.DoesNotExist:
+            return None
+
+        return from_orm_to_block(block)
 
     def get(self, id: int | None = None, url: str | None = None) -> PageInterface | None:
         query = Q()
@@ -121,6 +127,14 @@ class PageRepository(PageRepositoryInterface):
     def get_landing(self, url: str) -> PageInterface:
         page = Landing.objects.get(url=url)
         return from_orm_to_page(page=page, blocks=self.__get_page_blocks(page))
+
+    def get_landing_logo(self, url: str) -> ImageInterface | None:
+        try:
+            landing = Landing.objects.get(url=url)
+        except Landing.DoesNotExist:
+            return None
+
+        return landing.logo
 
 
 def get_page_repository() -> PageRepositoryInterface:

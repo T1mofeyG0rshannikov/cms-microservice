@@ -1,11 +1,12 @@
 from typing import Protocol
 
+from domain.common.screen import ImageInterface
 from domain.page_blocks.entities.base_block import PageBlockInterface
 from domain.page_blocks.entities.page import PageInterface
 
 
 class PageRepositoryInterface(Protocol):
-    def get_catalog_block(self, slug: str) -> PageBlockInterface:
+    def get_catalog_block(self, slug: str) -> PageBlockInterface | None:
         raise NotImplementedError
 
     def get_catalog_cover(self, slug: str) -> PageBlockInterface:
@@ -21,4 +22,7 @@ class PageRepositoryInterface(Protocol):
         raise NotImplementedError
 
     def get_landing(self, url: str) -> PageInterface:
+        raise NotImplementedError
+
+    def get_landing_logo(self, url: str) -> ImageInterface | None:
         raise NotImplementedError

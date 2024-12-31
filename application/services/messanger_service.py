@@ -20,7 +20,10 @@ class MessangerService:
         referral = self.referral_repository.get(sponsors_id=user.id)
 
         chats = self.messanger_repository.get_chats(user.id)
+        chat_dicts = []
+
         if referral:
+            print(chats, 0)
             referral_chat_user = self.messanger_repository.get_referral_chat(user.id, referral.id)
             chatuserss = [
                 referral_chat_user,
@@ -28,11 +31,21 @@ class MessangerService:
             ]
             chats, last_messages = self.messanger_repository.get_messages(user.id)
 
-            chats = []
-            for i in range(len(last_messages)):
-                chats.append({"chat_user": chatuserss[i], "message": last_messages[i]})
+            print(chatuserss)
+            print(last_messages)
 
-        return chats
+            for i in range(len(chats)):
+                chat_dicts.append({"chat_user": chatuserss[i], "message": last_messages[i]})
+            print(chat_dicts, 1)
+            return chat_dicts
+
+        chats, last_messages = self.messanger_repository.get_messages(user.id)
+
+        for i in range(len(chats)):
+            chat_dicts.append({"chat_user": chats[i].chatuser, "message": last_messages[i]})
+
+        print(chat_dicts, 2)
+        return chat_dicts
 
     def get_chat(self, user_id: int, chat_id: int):
         messages = self.messanger_repository.get_chat_messages(user_id=user_id, chat_id=chat_id)

@@ -17,10 +17,13 @@ class GetCatalogPage:
         self.page_repository = page_repository
         self.product_repository = product_repository
 
-    def __call__(self, slug: str) -> PageInterface:
+    def __call__(self, slug: str) -> PageInterface | None:
+        catalog = self.page_repository.get_catalog_block(slug)
+        if catalog is None:
+            return None
+
         page = self.page_repository.get_catalog_page_template()
 
-        catalog = self.page_repository.get_catalog_block(slug)
         page = self.set_catalog_block(page, catalog)
 
         cover = self.page_repository.get_catalog_cover(slug)

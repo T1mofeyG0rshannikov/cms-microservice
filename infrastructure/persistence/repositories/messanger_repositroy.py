@@ -37,8 +37,8 @@ class MessangerRepository(MessangerRepositoryInterface):
 
     def create_chat(self, user_id, interlocuter_id) -> tuple[ChatUser, ChatUser]:
         chat = Chat.objects.create()
-        chat_user = ChatUser.objects.create(user_id=user_id, chat_id=chat.id)
-        chat_interlocuter = ChatUser.objects.create(user_id=interlocuter_id, chat_id=chat.id)
+        chat_user, _ = ChatUser.objects.get_or_create(user_id=user_id, chat_id=chat.id)
+        chat_interlocuter, _ = ChatUser.objects.get_or_create(user_id=interlocuter_id, chat_id=chat.id)
         return chat_user, chat_interlocuter
 
     def count_unreadable(self, user_id) -> int:
@@ -48,10 +48,8 @@ class MessangerRepository(MessangerRepositoryInterface):
             .count()
         )
 
-    def get_referral_chat(self, user_id: int, referral_id):
-        chat = (
-            Chat.objects.filter(Q(chat_users__user_id=user_id) | Q(chat_users__user_id=referral_id)).distinct().first()
-        )
+    def get_referral_chat(self, user_id: int, referral_id: int):
+        chat = Chat.objects.exclude(~Q(chat_users__user_id__in=[user_id, referral_id])).first()
         if chat:
             return ChatUser.objects.get(chat_id=chat.id, user_id=referral_id)
 
@@ -77,6 +75,8 @@ class MessangerRepository(MessangerRepositoryInterface):
             )
             .distinct()
         )
+
+        print(chats, "chats")
 
         id_list = [x.last_message for x in chats if x.last_message is not None]
 
