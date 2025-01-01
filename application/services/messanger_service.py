@@ -39,10 +39,19 @@ class MessangerService:
             print(chat_dicts, 1)
             return chat_dicts
 
+        chatuserss = [
+            *[chatuser for chatuser in self.messanger_repository.get_last_chatted_with(user)],
+        ]
+
         chats, last_messages = self.messanger_repository.get_messages(user.id)
 
         for i in range(len(chats)):
-            chat_dicts.append({"chat_user": chats[i].chatuser, "message": last_messages[i]})
+            chat_dicts.append(
+                {
+                    "chat_user": chatuserss[i],
+                    "message": last_messages[i] if last_messages[i] else "Напишите первое сообщение",
+                }
+            )
 
         print(chat_dicts, 2)
         return chat_dicts

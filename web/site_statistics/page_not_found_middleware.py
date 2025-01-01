@@ -40,8 +40,7 @@ class PageNotFoundMiddleware(BaseSessionMiddleware):
         )
 
         try:
-            session_id = request.raw_session.id
-            raw_session = self.raw_session_repository.get(session_id)
+            raw_session = request.raw_session
         except SessionModel.DoesNotExist:
             return self.get_response(request)
 
@@ -57,11 +56,7 @@ class PageNotFoundMiddleware(BaseSessionMiddleware):
             raw_session.id,
         )
 
-        self.raw_session_repository.update(
-            raw_session.id,
-            hacking=raw_session.hacking,
-            ban_rate=raw_session.ban_rate,
-        )
+        raw_session = self.raw_session_repository.update(raw_session)
 
         if (
             raw_session.show_capcha

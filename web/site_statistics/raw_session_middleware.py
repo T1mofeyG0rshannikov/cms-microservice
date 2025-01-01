@@ -36,51 +36,44 @@ class RawSessionMiddleware(BaseSessionMiddleware):
         cookie = request.COOKIES.get(self.cookie_name)
 
         # cookie = None
-        session_id = None
+        session_data = None
 
         if not cookie or ("/" not in cookie):
             session_data = raw_session_service.get_initial_raw_session(request.user_agent.is_mobile)
-            session_db = self.raw_session_repository.create(**session_data.__dict__)
-            session_id = session_db.id
+            session_data = self.raw_session_repository.create(**session_data.__dict__)
 
-            session_data = raw_session_service.check_headers(session_db)
+            session_data = raw_session_service.check_headers(session_data)
 
-            self.raw_session_repository.update(
-                session_id,
-                ban_rate=session_data.ban_rate,
+            session_data = self.raw_session_repository.update(
+                session_data,
             )
         else:
-            session_id = int(cookie.split("/")[1])
+            session_data = self.raw_session_repository.get(id=int(cookie.split("/")[1]))
 
-        if not self.raw_session_repository.is_exists_by_id(session_id):
+        if not session_data:
             session_data = raw_session_service.get_initial_raw_session(request.user_agent.is_mobile)
-            session_db = self.raw_session_repository.create(**session_data.__dict__)
-            session_id = session_db.id
+            session_data = self.raw_session_repository.create(**session_data.__dict__)
 
-            session_data = raw_session_service.check_headers(session_db)
+            session_data = raw_session_service.check_headers(session_data)
 
-            self.raw_session_repository.update(
-                session_id,
-                ban_rate=session_data.ban_rate,
+            session_data = self.raw_session_repository.update(
+                session_data,
             )
-
-        session_data = self.raw_session_repository.get(session_id)
 
         reject_capcha_penalty = self.user_session_repository.get_reject_capcha_penalty()
 
         if session_data.show_capcha:
             if not self.url_parser.is_source(path) and "submit-capcha" not in path:
                 session_data.ban_rate += reject_capcha_penalty
-                self.penalty_logger(session_id, f"Отказ от капчи, {reject_capcha_penalty}, {path}")
+                session_data = self.raw_session_repository.update(session_data)
+                self.penalty_logger(session_data.id, f"Отказ от капчи, {reject_capcha_penalty}, {path}")
 
-        session_db = self.raw_session_repository.get(session_id)
-
-        request.raw_session = session_db
+        request.raw_session = session_data
 
         response = self.get_response(request)
-        response.set_cookie(self.cookie_name, f"{session_id}/{session_id}", expires=expires)
+        response.set_cookie(self.cookie_name, f"{session_data.id}/{session_data.id}", expires=expires)
 
-        self.logs.append(create_raw_log(session_id, page_adress, path, time=now()))
+        self.logs.append(create_raw_log(session_data.id, page_adress, path, time=now()))
 
         if len(self.logs) > self.logs_array_length:
             create_raw_logs.delay(self.logs)

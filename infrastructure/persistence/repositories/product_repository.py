@@ -23,9 +23,13 @@ from infrastructure.persistence.models.catalog.products import (
 
 class ProductRepository(ProductRepositoryInterface):
     def __get_offers_query(self) -> QuerySet[Offer]:
-        return Offer.objects.filter(
-            status="Опубликовано", product__status="Опубликовано", types__type__status="Опубликовано"
-        ).annotate(count=Count("id"))
+        return (
+            Offer.objects.filter(
+                status="Опубликовано", product__status="Опубликовано", types__type__status="Опубликовано"
+            )
+            .prefetch_related("links")
+            .annotate(count=Count("id"))
+        )
 
     def __get_published_types_query(self) -> QuerySet[ProductType]:
         return ProductType.objects.annotate(
@@ -39,7 +43,7 @@ class ProductRepository(ProductRepositoryInterface):
         return (
             self.__get_offers_query()
             .prefetch_related("catalog_product")
-            .select_related("product")
+            .select_related("product", "category", "organization")
             .filter(types__type__slug=product_type_slug)
             .order_by("catalog_product__my_order")
         )

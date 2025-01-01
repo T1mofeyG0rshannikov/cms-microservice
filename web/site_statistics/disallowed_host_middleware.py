@@ -32,7 +32,7 @@ class DisallowedHostMiddleware(BaseSessionMiddleware):
             self.add_disallowed_host_penalty(request.raw_session.id)
 
         try:
-            request.raw_session = self.raw_session_repository.get(request.raw_session.id)
+            request.raw_session = request.raw_session
         except SessionModel.DoesNotExist:
             pass
 

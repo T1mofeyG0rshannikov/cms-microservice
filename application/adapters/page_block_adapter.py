@@ -18,7 +18,7 @@ class BlockAdapter:
 
         block.template.file = os.path.join(self.config.blocks_templates_folder, block.template.file)
 
-        return PageBlockInterface(content=block, styles=block.get_styles())
+        return PageBlockInterface(content=block, styles=block.styles)
 
 
 def get_block_adapter(template_config: TemplateSettings = get_template_settings()) -> BlockAdapter:

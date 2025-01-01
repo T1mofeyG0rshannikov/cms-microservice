@@ -26,11 +26,11 @@ class MessangerRepository(MessangerRepositoryInterface):
     def get_last_chatted_with(self, user: ReferralInterface) -> Iterable[ChatUserInterface]:
         chats = self.__get_chats_query(user.id)
 
-        return (
-            ChatUser.objects.filter(chat__in=chats)
-            .exclude(Q(user_id=user.id) | Q(user_id=user.sponsor.id))
-            .order_by("messages__time")
-        )
+        exclude_query = Q(user_id=user.id)
+        if user.sponsor:
+            exclude_query |= Q(user_id=user.sponsor.id)
+
+        return ChatUser.objects.filter(chat__in=chats).exclude(exclude_query).order_by("messages__time")
 
     def create_message(self, chat_user_id: int, text: str):
         return Message.objects.create(chat_user_id=chat_user_id, text=text)

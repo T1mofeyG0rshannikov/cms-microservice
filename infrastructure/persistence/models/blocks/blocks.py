@@ -7,6 +7,7 @@ from infrastructure.persistence.models.blocks.mixins import (
     MainTextMixin,
     TitleMixin,
 )
+from infrastructure.persistence.models.common import BlockRelationship
 
 
 class ContentBlock(BaseBlock, ButtonMixin, TitleMixin, MainTextMixin):
@@ -24,6 +25,7 @@ class Navbar(BaseBlock):
     register_button_href = models.CharField(verbose_name="Сслыка кнопки регистрации", max_length=50, null=True)
 
     login_button_text = models.CharField(verbose_name="Текст кнопки входа", max_length=50, null=True)
+    # block_relation = models.ForeignKey(BlockRelationship, related_name="navbar", on_delete=models.SET_NULL, null=True)
 
     class Meta:
         app_label = "blocks"
@@ -45,6 +47,7 @@ class Cover(BaseBlock, ButtonMixin, TitleMixin, MainTextMixin):
 
 class FeaturesBlock(BaseBlock, ButtonMixin, TitleMixin):
     introductory_text = RichTextField(verbose_name="Вводный текст", max_length=300, null=True, blank=True)
+    # block_relation = models.ForeignKey(BlockRelationship, related_name="featuresblock", on_delete=models.SET_NULL, null=True)
 
     class Meta:
         app_label = "blocks"
@@ -69,6 +72,10 @@ class SocialMediaBlock(BaseBlock, TitleMixin):
         app_label = "blocks"
         verbose_name = "Соцсети"
         verbose_name_plural = "Соцсети"
+
+    @property
+    def socials(self):
+        return self.buttons.select_related("social_network").all()
 
 
 class QuestionsBlock(BaseBlock):

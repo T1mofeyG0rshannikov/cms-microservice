@@ -14,14 +14,12 @@ from infrastructure.persistence.models.site_statistics import (
 
 
 class RawSessionRepository(RawSessionRepositoryInterface):
-    def is_exists_by_id(self, id: int) -> bool:
-        return SessionModel.objects.filter(id=id).exists()
-
     def create(self, **kwargs) -> SessionInterface:
         return SessionModel.objects.create(**kwargs)
 
-    def update(self, id: int, **kwargs) -> None:
-        SessionModel.objects.filter(id=id).update(**kwargs)
+    def update(self, session: SessionInterface, **kwargs) -> None:
+        session.save(update_fields=["ban_rate", "hacking", "show_capcha"])
+        return session
 
     def bulk_create_logs(self, logs):
         new_logs = [log for log in logs if log["session_id"] in SessionModel.objects.values_list("id", flat=True)]

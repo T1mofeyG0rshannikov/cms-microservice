@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "web.messanger",
     "django_user_agents",
     "debug_toolbar",
+    "compressor",
 ]
 
 
@@ -231,6 +232,7 @@ STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
     "sass_processor.finders.CssFinder",
+    "compressor.finders.CompressorFinder",
 )
 
 SASS_PROCESSOR_ENABLED = True
@@ -385,3 +387,8 @@ MIGRATION_MODULES = {
 
 
 REST_FRAMEWORK = {"EXCEPTION_HANDLER": "web.site_tests.exc_handler.my_exception_handler"}
+
+
+COMPRESS_ENABLED = True
+# COMPRESS_OFFLINE = True
+COMPRESS_CSS_HASHING_METHOD = "hash"

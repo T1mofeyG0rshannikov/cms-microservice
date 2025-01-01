@@ -32,6 +32,7 @@ class LandingMiddleware:
             return self.get_response(request)
 
         if self.domain_repository.landing_domain_exists(request.domain):
+            request.landing = True
             landing_page = self.page_repository.get_landing(url=path[1::])
             if not landing_page:
                 return HttpResponse(status=503)
@@ -46,5 +47,7 @@ class LandingMiddleware:
                 pass
 
             return response
+
+        request.landing = False
 
         return self.get_response(request)

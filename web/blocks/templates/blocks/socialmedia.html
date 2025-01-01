@@ -6,7 +6,7 @@
         <a>{{ block.text|safe }}</a>
 
         <div class="button-container">
-            {% for social in block.buttons.all %}
+            {% for social in block.socials %}
                 <a style="background-color: {{ social.social_network.button_color }};" class="social-button" target="_blank" href='{{social.ref}}'>
                     <img src="{{social.social_network.icon.url}}" />
                     {{ social.social_network.name }}

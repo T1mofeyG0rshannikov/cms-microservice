@@ -19,6 +19,18 @@ class BlockRelationship(models.Model):
         verbose_name_plural = "Блоки"
         ordering = ["block_name"]
 
+    @property
+    def block_model(self):
+        return self.__getattribute__(self.block[0:-1].lower() + "_set").first()
+
+    @property
+    def block_model_name(self):
+        ind = len(self.block)
+        while self.block[ind - 1].isdigit() and self.block[ind - 2].isdigit():
+            ind -= 1
+
+        return self.block[0 : ind - 1].lower() + "_set"
+
     def __str__(self):
         return self.block_name
 

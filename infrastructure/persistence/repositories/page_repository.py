@@ -7,7 +7,6 @@ from domain.common.screen import ImageInterface
 from domain.page_blocks.entities.base_block import PageBlockInterface
 from domain.page_blocks.entities.page import PageInterface
 from domain.page_blocks.page_repository import PageRepositoryInterface
-from infrastructure.files.files import find_class_in_directory
 from infrastructure.persistence.models.blocks.blocks import Cover
 from infrastructure.persistence.models.blocks.catalog_block import CatalogBlock
 from infrastructure.persistence.models.blocks.common import (
@@ -25,7 +24,7 @@ from infrastructure.persistence.models.common import BlockRelationship
 class PageRepository(PageRepositoryInterface):
     def get_catalog_block(self, slug: str) -> PageBlockInterface | None:
         try:
-            block = CatalogBlock.objects.get(product_type__slug=slug)
+            block = CatalogBlock.objects.select_related("template").get(product_type__slug=slug)
         except CatalogBlock.DoesNotExist:
             return None
 
@@ -62,24 +61,20 @@ class PageRepository(PageRepositoryInterface):
             page_block_class.objects.filter(page=page_model).order_by("my_order").values_list("name", flat=True)
         )
 
-        blocks = (
-            BlockRelationship.objects.filter(id__in=block_names)
-            .order_by(Case(*[When(id=id, then=pos) for pos, id in enumerate(block_names)]))
-            .values("block_name", "block")
+        blocks = BlockRelationship.objects.filter(id__in=block_names).order_by(
+            Case(*[When(id=id, then=pos) for pos, id in enumerate(block_names)])
         )
 
         block_models = []
         for block in blocks:
-            ind = len(block["block"])
-            while block["block"][ind - 1].isdigit() and block["block"][ind - 2].isdigit():
-                ind -= 1
-
-            block_class: BaseBlock = find_class_in_directory(
-                "infrastructure/persistence/models/blocks", block["block"][0 : ind - 1]
+            block_model = (
+                block.__getattribute__(block.block_model_name)
+                .select_related("template")
+                .prefetch_related("styles")
+                .first()
             )
-            block_id = int(block["block"][ind - 1 : :])
 
-            block_models.append(block_class.objects.get(id=block_id))
+            block_models.append(block_model)
 
         return block_models
 
@@ -122,7 +117,7 @@ class PageRepository(PageRepositoryInterface):
         return from_orm_to_page(page, blocks=self.__get_page_blocks(page))
 
     def get_catalog_cover(self, slug: str) -> PageBlockInterface:
-        return from_orm_to_block(Cover.objects.get(producttype__slug=slug))
+        return from_orm_to_block(Cover.objects.select_related("template").get(producttype__slug=slug))
 
     def get_landing(self, url: str) -> PageInterface:
         page = Landing.objects.get(url=url)

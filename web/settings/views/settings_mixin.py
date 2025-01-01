@@ -34,11 +34,10 @@ class SettingsMixin(TemplateView):
         context["domain"] = domain
 
         context["settings"] = self.get_settings_interactor(
-            domain=request.domain,
-            subdomain=request.subdomain,
+            domain=request.domain, subdomain=request.subdomain, path=request.path[1::], request=request
         )
         context["site_name"] = self.domain_repository.get_site_name()
-        context["partner_domain"] = self.domain_repository.get_partners_domain_string()
+        context["partner_domain"] = request.partner_domain
 
         context["privacy"] = self.document_repository.get("privacypolicy")
         context["terms"] = self.document_repository.get("termsofservice")

@@ -149,12 +149,11 @@ class Offer(models.Model):
 
         link_change = []
 
-        for i in range(len(links)):
-            for j in range(links[i].percent):
-                link_change.append(i)
+        for link in links:
+            link_change.append(link.percent / 100)
 
         if link_change:
-            link = links[random.choice(link_change)].text
+            link = random.choices(links, weights=link_change, k=1)[0].text
             link = self.link_encryptor.encrypt(link)
 
             return link

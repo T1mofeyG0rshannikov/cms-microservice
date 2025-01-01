@@ -48,10 +48,9 @@ class MyLoginRequiredMixin(LoginRequiredMixin):
 
         path = request.build_absolute_uri()
 
-        partner_domain_string = self.domain_repository.get_partners_domain_string()
         domain_string = self.domain_repository.get_domain_string()
 
-        if partner_domain_string in path:
+        if request.partner_domain in path:
             path = path.replace(request.get_host(), domain_string)
 
             return HttpResponseRedirect(path)

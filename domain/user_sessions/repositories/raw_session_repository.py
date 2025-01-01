@@ -7,9 +7,6 @@ class RawSessionRepositoryInterface(Protocol):
     def create(self, **kwargs) -> SessionInterface:
         raise NotImplementedError
 
-    def is_exists_by_id(self, session_id: int) -> bool:
-        raise NotImplementedError
-
     def add_penalty_to_single_page_session(self, penalty: int) -> None:
         raise NotImplementedError
 
@@ -22,5 +19,5 @@ class RawSessionRepositoryInterface(Protocol):
     def get(self, session_id: int) -> SessionInterface:
         raise NotImplementedError
 
-    def update(self, id: int, **kwargs) -> None:
+    def update(self, session: SessionInterface, **kwargs) -> SessionInterface:
         raise NotImplementedError

@@ -1,5 +1,10 @@
 from django.db.models import Q
-from django.http import HttpRequest, HttpResponseNotFound, HttpResponseRedirect
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponseNotFound,
+    HttpResponseRedirect,
+)
 
 from application.services.site_service import get_site_service
 from domain.domains.domain_repository import DomainRepositoryInterface
@@ -32,7 +37,9 @@ class DomainMiddleware(BaseSessionMiddleware):
 
         subdomain = self.url_parser.get_subdomain_from_host(host)
         domain = self.url_parser.get_domain_from_host(host)
+        partner_domain = self.domain_repository.get_partners_domain_string()
 
+        request.partner_domain = partner_domain
         request.domain = domain
         request.subdomain = subdomain
 
@@ -56,13 +63,13 @@ class DomainMiddleware(BaseSessionMiddleware):
         ):
             return BaseNotFoundPage.as_view()(request)
 
-        if Domain.objects.filter(is_partners=True).exists():
-            partner_domain = self.domain_repository.get_partners_domain_string()
+        if partner_domain:
+            if domain == partner_domain and SiteSettings.objects.first().disable_partners_sites:
+                return HttpResponse("<h1>Привет :)</h1>")
 
             if domain == partner_domain and subdomain == "":
-                if request.build_absolute_uri().endswith(partner_domain) or request.build_absolute_uri().endswith(
-                    partner_domain + "/"
-                ):
+                uri = request.build_absolute_uri()
+                if uri.endswith(partner_domain) or uri.endswith(partner_domain + "/"):
                     return PartnerIndexPage.as_view()(request)
 
                 return BaseNotFoundPage.as_view()(request)

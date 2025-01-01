@@ -35,14 +35,6 @@ class BasePageView(SettingsMixin):
 
 
 class IndexPage(BasePageView):
-    def get(self, request: RequestInterface, *args, **kwargs):
-        partner_domain = self.domain_repository.get_partners_domain_string()
-
-        if request.domain == partner_domain and SiteSettings.objects.first().disable_partners_sites:
-            return HttpResponse("<h1>Привет :)</h1>")
-
-        return super().get(request, *args, **kwargs)
-
     def get_context_data(self, **kwargs):
         page = self.page_repository.get(url=None)
 

@@ -31,7 +31,7 @@ class SiteService(SiteServiceInterface):
     def valid_subdomain(self, subdomain: str) -> bool:
         if not subdomain:
             return True
-
+        print("valid site")
         site = self.site_repository.get(subdomain=subdomain)
         if site and site.is_active:
             return True

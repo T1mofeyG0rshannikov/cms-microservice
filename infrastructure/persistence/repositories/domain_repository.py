@@ -9,7 +9,7 @@ from infrastructure.persistence.models.settings import Domain, LandingDomain
 class DomainRepository(DomainRepositoryInterface):
     @classmethod
     def get_partners_domain_string(self) -> str:
-        return Domain.objects.values_list("domain").filter(is_partners=True).first()[0]
+        return Domain.objects.values_list("domain").get(is_partners=True)[0]
 
     def get_domain_string(self) -> str:
         try:

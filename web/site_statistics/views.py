@@ -91,7 +91,9 @@ class OpenedUpdateProductFormView(View):
     create_user_session_log: CreateUserSesssionLog = get_create_user_session_log()
 
     def get(self, request: HttpRequest) -> HttpResponse:
-        product_name = self.product_repository.get(id=int(request.GET.get("product"))).name
+        product = self.product_repository.get(id=int(request.GET.get("product")))
+
+        product_name = product.name if product else ""
 
         self.increment_session_profile_action(request=request)
         self.create_user_session_log(request=request, text=f'''Открыл настройку продукта "{product_name}"''')

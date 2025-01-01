@@ -14,6 +14,7 @@ from infrastructure.persistence.repositories.settings_repository import (
     get_settings_repository,
 )
 from infrastructure.persistence.repositories.site_repository import get_site_repository
+from infrastructure.requests.request_interface import RequestInterface
 
 
 class GetSettings:
@@ -29,7 +30,13 @@ class GetSettings:
         self.page_repository = page_repository
         self.domain_repository = domain_repository
 
-    def __call__(self, domain: str | None = None, subdomain: str | None = None) -> SiteSettingsInterface:
+    def __call__(
+        self,
+        domain: str | None = None,
+        subdomain: str | None = None,
+        path: str | None = None,
+        request: RequestInterface | None = None,
+    ) -> SiteSettingsInterface:
         settings_model = self.settings_repository.get_settings()
         form_logo_model = self.settings_repository.get_form_logo()
         logo_model = self.settings_repository.get_logo()
@@ -60,10 +67,10 @@ class GetSettings:
         )
 
         if domain:
-            if domain == "localhost":
+            if subdomain:
                 site = self.site_repository.get(subdomain=subdomain)
             else:
-                site = self.site_repository.get(domain=domain, subdomain=subdomain)
+                site = None
 
             if site:
                 if site.use_default_settings:
@@ -86,11 +93,10 @@ class GetSettings:
                         width_mobile=site.logo_width_mobile,
                     )
 
-            if self.domain_repository.landing_domain_exists(domain):
-                if settings.logo:
-                    landing_logo = self.page_repository.get_landing_logo(domain)
-                    if landing_logo:
-                        settings.logo.image = landing_logo
+            if request.landing:
+                landing_logo = self.page_repository.get_landing_logo(path)
+                if landing_logo:
+                    settings.logo.image = landing_logo
 
         return settings
 
