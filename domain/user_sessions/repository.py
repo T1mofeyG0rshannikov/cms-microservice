@@ -9,16 +9,16 @@ from domain.user_sessions.session_filters import (
 
 
 class UserSessionRepositoryInterface(Protocol):
+    def get(self, id: int) -> UserSessionInterface | None:
+        raise NotImplementedError
+
     def create_searcher_log(self, **kwargs) -> None:
         raise NotImplementedError
 
-    def create_user_session(self, **kwargs) -> UserSessionInterface:
+    def create(self, **kwargs) -> UserSessionInterface:
         raise NotImplementedError
 
-    def is_user_session_exists_by_id(self, user_session_id: int) -> bool:
-        raise NotImplementedError
-
-    def update_user_session(self, id: int, **kwargs) -> None:
+    def update(self, session: UserSessionInterface) -> UserSessionInterface:
         raise NotImplementedError
 
     def create_user_action(self, adress: str, text: str, session_id: int) -> None:

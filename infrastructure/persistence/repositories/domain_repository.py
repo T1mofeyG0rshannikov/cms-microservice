@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.db.models import Q
 from django.db.utils import OperationalError, ProgrammingError
 
@@ -9,27 +10,34 @@ from infrastructure.persistence.models.settings import Domain, LandingDomain
 class DomainRepository(DomainRepositoryInterface):
     @classmethod
     def get_partners_domain_string(self) -> str:
-        return Domain.objects.values_list("domain").get(is_partners=True)[0]
+        domain_string = cache.get("partners_domain_string")
+        if not domain_string:
+            domain_string = Domain.objects.values_list("domain").get(is_partners=True)[0]
+            cache.set("partners_domain_string", domain_string, timeout=60 * 15)
+
+        return domain_string
 
     def get_domain_string(self) -> str:
         try:
-            domain = Domain.objects.values_list("domain").filter(is_partners=False).first()
-            if domain:
-                return domain[0]
+            domain = cache.get("domain_string")
+            if not domain:
+                domain = Domain.objects.values_list("domain").filter(is_partners=False).first()[0]
+                cache.set("domain_string", domain, timeout=60 * 15)
 
-            return ""
+            return domain
         except (OperationalError, ProgrammingError):
             return ""
 
-    def get_site_name(self) -> str | None:
+    def get_site_name(self) -> str:
         try:
-            domain = Domain.objects.values_list("name").filter(is_partners=False).first()
-            if domain:
-                return domain[0]
+            domain = cache.get("site_name")
+            if not domain:
+                domain = Domain.objects.values_list("name").filter(is_partners=False).first()[0]
+                cache.set("site_name", domain, timeout=60 * 15)
 
-            return None
+            return domain
         except (OperationalError, ProgrammingError):
-            return None
+            return ""
 
     def get_domain(self, domain: str | None = None, is_partners: bool | None = None) -> DomainInterface:
         query = Q()

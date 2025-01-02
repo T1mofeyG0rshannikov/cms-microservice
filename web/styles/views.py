@@ -1,5 +1,6 @@
 import json
 
+from django.core.cache import cache
 from django.http import HttpResponse, JsonResponse
 from django.views.generic import View
 
@@ -66,5 +67,59 @@ class GetIconSize(View):
 
 class GetFonts(View):
     def get(self, request):
-        fonts = [*Font.objects.exclude(link=None), *UserFont.objects.exclude(link=None)]
-        return HttpResponse(json.dumps(FontSerializer(fonts, many=True).data))
+        fonts = Font.objects.exclude(link=None)
+        user_fonts = UserFont.objects.exclude(link=None)
+
+        all_fonts = [*fonts, *user_fonts]
+        return HttpResponse(json.dumps(FontSerializer(all_fonts, many=True).data))
+
+
+class StylesMixin:
+    def get_styles_context(self):
+        all_fonts = cache.get("fonts")
+        if not all_fonts:
+            fonts = Font.objects.exclude(link=None).values_list("link", flat=True)
+            user_fonts = UserFont.objects.exclude(link=None).values_list("link", flat=True)
+            all_fonts = [*fonts, *user_fonts]
+            cache.set("fonts", all_fonts, timeout=60 * 15)
+
+        margins = cache.get("margins")
+        if not margins:
+            margins = MarginBlock.objects.first()
+            cache.set("margins", margins, timeout=60 * 15)
+
+        color_styles = cache.get("color_styles")
+        if not color_styles:
+            color_styles = ColorStyles.objects.first()
+            cache.set("color_styles", color_styles, timeout=60 * 15)
+
+        header_styles = cache.get("header_styles")
+        if not header_styles:
+            header_styles = HeaderText.objects.first()
+            cache.set("header_styles", header_styles, timeout=60 * 15)
+
+        main_text_styles = cache.get("main_text_styles")
+        if not main_text_styles:
+            main_text_styles = MainText.objects.first()
+            cache.set("main_text_styles", main_text_styles, timeout=60 * 15)
+
+        explanation_text_styles = cache.get("explanation_text_styles")
+        if not explanation_text_styles:
+            explanation_text_styles = ExplanationText.objects.first()
+            cache.set("explanation_text_styles", explanation_text_styles, timeout=60 * 15)
+
+        icon_size = cache.get("icon_size")
+        if not icon_size:
+            icon_size = IconSize.objects.first()
+            cache.set("icon_size", icon_size, timeout=60 * 15)
+
+        return {
+            "fonts": all_fonts,
+            "margin": MarginBlockSerializer(margins).data,
+            "colors": ColorsSerializer(color_styles).data,
+            "header": TextSerializer(header_styles).data,
+            "maintext": TextSerializer(main_text_styles).data,
+            "subheader": TextSerializer(header_styles).data,
+            "explanationtext": TextSerializer(explanation_text_styles).data,
+            "iconsize": IconSizeSerializer(icon_size).data,
+        }

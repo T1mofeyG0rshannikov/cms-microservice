@@ -20,3 +20,4 @@ class RequestInterface(HttpRequest):
     user: RequestUserInterface
     domain: str
     subdomain: str
+    landing: bool

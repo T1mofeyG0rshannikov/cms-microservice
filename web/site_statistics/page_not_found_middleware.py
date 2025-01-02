@@ -3,7 +3,6 @@ from rest_framework.renderers import JSONRenderer
 
 from application.sessions.raw_session_service import RawSessionService
 from infrastructure.admin.admin_settings import get_admin_settings
-from infrastructure.persistence.models.site_statistics import SessionModel
 from infrastructure.requests.service import get_request_service
 from web.site_statistics.base_session_middleware import BaseSessionMiddleware
 from web.site_statistics.views import CapchaView
@@ -39,16 +38,13 @@ class PageNotFoundMiddleware(BaseSessionMiddleware):
             get_admin_settings(),
         )
 
-        try:
-            raw_session = request.raw_session
-        except SessionModel.DoesNotExist:
-            return self.get_response(request)
+        raw_session = request.raw_session
 
         site = request.get_host()
         host = site.split(":")[0]
         port = site.split(":")[1] if ":" in site else None
 
-        raw_session = raw_session_service.filter_sessions(
+        ban_rate, hacking, show_capcha = raw_session_service.filter_sessions(
             raw_session,
             host,
             path,
@@ -56,7 +52,13 @@ class PageNotFoundMiddleware(BaseSessionMiddleware):
             raw_session.id,
         )
 
-        raw_session = self.raw_session_repository.update(raw_session)
+        if ban_rate != raw_session.ban_rate or hacking != raw_session.hacking or show_capcha != raw_session.show_capcha:
+            raw_session.ban_rate = ban_rate
+            raw_session.hacking = hacking
+            raw_session.show_capcha = show_capcha
+            raw_session = self.raw_session_repository.update(
+                session=raw_session, updated_fields=["ban_rate", "hacking", "show_capcha"]
+            )
 
         if (
             raw_session.show_capcha
@@ -72,7 +74,9 @@ class PageNotFoundMiddleware(BaseSessionMiddleware):
             except:
                 pass
 
-            self.raw_session_repository.update(request.raw_session.id, show_capcha=True)
+            raw_session = request.raw_session
+            raw_session.show_capcha = True
+            request.raw_session = self.raw_session_repository.update(raw_session)
 
             return response
 

@@ -12,21 +12,20 @@ from domain.page_blocks.entities.page import PageInterface
 from domain.page_blocks.page_repository import PageRepositoryInterface
 from domain.page_blocks.page_service_interface import PageServiceInterface
 from infrastructure.files.files import find_class_in_directory
-from infrastructure.persistence.models.settings import SiteSettings
 from infrastructure.persistence.repositories.page_repository import get_page_repository
-from infrastructure.requests.request_interface import RequestInterface
 from web.blocks.serializers import PageSerializer
 from web.settings.views.settings_mixin import SettingsMixin
+from web.styles.views import StylesMixin
 from web.user.views.base_user_view import UserFormsView
 
 
-class BasePageView(SettingsMixin):
+class BasePageView(SettingsMixin, StylesMixin):
     template_name = "blocks/page.html"
 
     page_repository: PageRepositoryInterface = get_page_repository()
 
     def get_context_data(self, page: PageInterface, **kwargs) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs) | self.get_styles_context()
         context |= UserFormsView.get_context_data()
 
         context["page"] = PageSerializer(page).data

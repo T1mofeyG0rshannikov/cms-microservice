@@ -10,7 +10,7 @@ from application.services.site_service import get_site_service
 from domain.domains.domain_repository import DomainRepositoryInterface
 from domain.user.sites.site_service import SiteServiceInterface
 from infrastructure.admin.admin_settings import AdminSettings, get_admin_settings
-from infrastructure.persistence.models.settings import Domain, SiteSettings
+from infrastructure.persistence.models.settings import SiteSettings
 from infrastructure.persistence.models.user.site import Site
 from infrastructure.persistence.repositories.domain_repository import (
     get_domain_repository,
@@ -32,6 +32,9 @@ class DomainMiddleware(BaseSessionMiddleware):
         self.get_response = get_response
 
     def __call__(self, request: HttpRequest):
+        if self.url_parser.is_source(request.path):
+            return self.get_response(request)
+
         host = request.get_host()
         path = request.path[1::]
 
@@ -42,6 +45,7 @@ class DomainMiddleware(BaseSessionMiddleware):
         request.partner_domain = partner_domain
         request.domain = domain
         request.subdomain = subdomain
+        request.landing = self.domain_repository.landing_domain_exists(domain)
 
         if self.admin_settings.admin_domain in host:
             valid_url = False

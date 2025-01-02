@@ -17,6 +17,8 @@ class SessionFiltersInterface:
     headers: Iterable[SessionFIltersHeader]
     ip_penalty: int
     ports_penalty: int
-    disable_urls: list[str]
+    disable_urls: str
     disable_urls_penalty: int
-    disable_urls_sites: list[str]
+    disable_urls_sites: str
+    ban_limit: int
+    capcha_limit: int

@@ -20,10 +20,6 @@ class BlockRelationship(models.Model):
         ordering = ["block_name"]
 
     @property
-    def block_model(self):
-        return self.__getattribute__(self.block[0:-1].lower() + "_set").first()
-
-    @property
     def block_model_name(self):
         ind = len(self.block)
         while self.block[ind - 1].isdigit() and self.block[ind - 2].isdigit():

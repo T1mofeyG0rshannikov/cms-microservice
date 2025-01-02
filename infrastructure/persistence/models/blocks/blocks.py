@@ -7,7 +7,6 @@ from infrastructure.persistence.models.blocks.mixins import (
     MainTextMixin,
     TitleMixin,
 )
-from infrastructure.persistence.models.common import BlockRelationship
 
 
 class ContentBlock(BaseBlock, ButtonMixin, TitleMixin, MainTextMixin):
@@ -25,7 +24,6 @@ class Navbar(BaseBlock):
     register_button_href = models.CharField(verbose_name="Сслыка кнопки регистрации", max_length=50, null=True)
 
     login_button_text = models.CharField(verbose_name="Текст кнопки входа", max_length=50, null=True)
-    # block_relation = models.ForeignKey(BlockRelationship, related_name="navbar", on_delete=models.SET_NULL, null=True)
 
     class Meta:
         app_label = "blocks"

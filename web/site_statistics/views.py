@@ -66,7 +66,7 @@ class OpenedProductPromoView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         product = int(request.GET.get("product_id")) - 1
 
-        product_name = self.product_repository.get_offers()[product]
+        product_name = self.product_repository.get_offers()[product]  # type: ignore
 
         self.increment_banks_count(request=request)
         self.create_user_session_log(request=request, text=f'''Перешел по баннеру "{product_name}"''')
@@ -119,9 +119,7 @@ class CapchaView(SettingsMixin):
 class SubmitCapcha(View):
     def post(self, request: RequestInterface) -> HttpResponse:
         if request.raw_session:
-            session_id = request.raw_session.id
-
             raw_session_service = get_raw_session_service(get_request_service(request))
-            raw_session_service.success_capcha(session_id)
+            raw_session_service.success_capcha(request.raw_session)
 
         return HttpResponse(status=200)

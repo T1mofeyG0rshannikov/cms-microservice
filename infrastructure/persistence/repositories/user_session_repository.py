@@ -17,6 +17,12 @@ from infrastructure.persistence.models.site_statistics import (
 
 
 class UserSessionRepository(UserSessionRepositoryInterface):
+    def get(self, id: int) -> UserSessionInterface | None:
+        try:
+            return UserActivity.objects.get(id=id)
+        except UserActivity.DoesNotExist:
+            return None
+
     def create_user_action(self, adress: str, text: str, session_id: int, time: datetime | None = None) -> None:
         if time is None:
             time = now()
@@ -35,7 +41,7 @@ class UserSessionRepository(UserSessionRepositoryInterface):
 
         return []
 
-    def create_user_session(self, **kwargs) -> UserSessionInterface:
+    def create(self, **kwargs) -> UserSessionInterface:
         return UserActivity.objects.create(**kwargs)
 
     def get_session_filters(self):
@@ -44,9 +50,6 @@ class UserSessionRepository(UserSessionRepositoryInterface):
     def get_searchers(self) -> str:
         session_filters = SessionFilters.objects.values_list("searchers").first()
         return session_filters[0] if session_filters else ""
-
-    def is_user_session_exists_by_id(self, id: int) -> bool:
-        return UserActivity.objects.filter(id=id).exists()
 
     def is_searcher_exists_by_id(self, id: int) -> bool:
         return WebSearcher.objects.filter(id=id).exists()
@@ -58,8 +61,10 @@ class UserSessionRepository(UserSessionRepositoryInterface):
         searcher = WebSearcher.objects.create(**kwargs)
         return searcher.id
 
-    def update_user_session(self, id: int, **kwargs) -> None:
-        UserActivity.objects.filter(id=id).update(**kwargs)
+    def update(self, session: UserSessionInterface) -> UserSessionInterface:
+        if hasattr(session, "save"):
+            session.save()
+        return session
 
     def increment_user_session_field(self, id: int, field_name: str) -> None:
         UserActivity.objects.filter(id=id).update(**{field_name: F(field_name) + 1})

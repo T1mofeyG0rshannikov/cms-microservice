@@ -26,10 +26,9 @@ class UserActionInline(BaseInline):
     fields = ["action"]
     readonly_fields = fields
 
+    @admin.display(description="")
     def action(self, obj):
         return f"""{obj.time.strftime('%d.%m %H:%M:%S')}:{r"     "}{obj.adress} - {obj.text}"""
-
-    action.short_description = ""
 
     def has_delete_permission(self, *args, **kwargs) -> bool:
         return False
@@ -41,12 +40,11 @@ class UserActionInline(BaseInline):
 class BaseSessionAdmin(admin.ModelAdmin):
     admin_url = get_admin_settings().admin_url
 
+    @admin.display(description="Дата", ordering="-start_time")
     def start_time_tag(self, obj):
         return obj.start_time.strftime("%d.%m %H:%M:%S")
 
-    start_time_tag.short_description = "Дата"
-    start_time_tag.admin_order_field = "-start_time"
-
+    @admin.display(description="Время")
     def time_tag(self, obj):
         last_action = obj.actions.first()
         if last_action:
@@ -56,27 +54,21 @@ class BaseSessionAdmin(admin.ModelAdmin):
 
         return str(end_time - obj.start_time).split(".")[0]
 
-    time_tag.short_description = "Время"
-
+    @admin.display(description="")
     def device_tag(self, obj):
         src = f"""{settings.STATIC_URL}site_statistics/images/{"icoadm_desktop.png" if not obj.device else "icoadm_smart.png"}"""
 
         return mark_safe(f"""<img height="15" src={src} />""")
 
-    device_tag.short_description = ""
-
+    @admin.display(description="ip")
     def ip_tag(self, obj):
         return redirect_to_change_page_tag(obj, obj.ip)
 
-    ip_tag.short_description = "ip"
-
+    @admin.display(description="Последнее действие", ordering="last_action")
     def last_action_tag(self, obj):
         last_action = obj.actions.first()
         if last_action:
             return last_action.time.strftime("%d.%m %H:%M:%S")
-
-    last_action_tag.short_description = "Последнее действие"
-    last_action_tag.admin_order_field = "last_action"
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -91,7 +83,7 @@ class UserActivityAdmin(BaseSessionAdmin):
 
     fields = [
         "device_tag",
-        "site",
+        "site_tag",
         "ip_tag",
         "user_tag",
         "start_time_tag",
@@ -103,14 +95,25 @@ class UserActivityAdmin(BaseSessionAdmin):
         "session_tag",
     ]
 
+    def ip_tag(self, obj):
+        return redirect_to_change_page_tag(obj, obj.session.ip)
+
+    def device_tag(self, obj):
+        src = f"""{settings.STATIC_URL}site_statistics/images/{"icoadm_desktop.png" if not obj.session.device else "icoadm_smart.png"}"""
+
+        return mark_safe(f"""<img height="15" src={src} />""")
+
+    def site_tag(self, obj):
+        return obj.session.site
+
+    @admin.display(description="сессия")
     def session_tag(self, obj):
         if obj.session:
             return redirect_to_change_page_tag(obj.session, obj.session.ban_rate)
 
         return "-"
 
-    session_tag.short_description = "сессия"
-
+    @admin.display(description="Пользователь")
     def user_tag(self, obj):
         if not obj.user:
             return "-"
@@ -124,12 +127,9 @@ class UserActivityAdmin(BaseSessionAdmin):
 
         return mark_safe(tag)
 
-    user_tag.short_description = "Пользователь"
-
+    @admin.display(description="Стр.")
     def pages_count(self, session):
         return session.actions.filter(is_page=True).count()
-
-    pages_count.short_description = "Стр."
 
     readonly_fields = fields
 
@@ -141,10 +141,9 @@ class SessionActionInline(BaseInline):
     fields = ["action"]
     readonly_fields = fields
 
+    @admin.display(description="")
     def action(self, obj):
         return f"""{obj.time.strftime('%d.%m %H:%M:%S')}:{obj.adress}"""
-
-    action.short_description = ""
 
     def has_delete_permission(self, *args, **kwargs) -> bool:
         return False
@@ -181,15 +180,13 @@ class SessionModelAdmin(BaseSessionAdmin):
         "last_action_tag",
     ]
 
+    @admin.display(description="Стр.")
     def pages_count(self, session):
         return session.actions.filter(is_page=True).count()
 
-    pages_count.short_description = "Стр."
-
+    @admin.display(description="Ресурсы")
     def source_count(self, session):
         return session.actions.filter(is_source=True).count()
-
-    source_count.short_description = "Ресурсы"
 
     readonly_fields = fields
 

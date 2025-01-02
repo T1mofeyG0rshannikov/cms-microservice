@@ -93,9 +93,9 @@ class GetSettings:
                         width_mobile=site.logo_width_mobile,
                     )
 
-            if request.landing:
+            if request and request.landing and path:
                 landing_logo = self.page_repository.get_landing_logo(path)
-                if landing_logo:
+                if landing_logo and settings.logo:
                     settings.logo.image = landing_logo
 
         return settings

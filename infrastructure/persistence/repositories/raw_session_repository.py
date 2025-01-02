@@ -17,8 +17,12 @@ class RawSessionRepository(RawSessionRepositoryInterface):
     def create(self, **kwargs) -> SessionInterface:
         return SessionModel.objects.create(**kwargs)
 
-    def update(self, session: SessionInterface, **kwargs) -> None:
-        session.save(update_fields=["ban_rate", "hacking", "show_capcha"])
+    def update(self, session: SessionInterface, updated_fields: list[str] | None = None) -> SessionInterface:
+        if hasattr(session, "save"):
+            if not updated_fields:
+                session.save()
+            else:
+                session.save(updated_fields=updated_fields)
         return session
 
     def bulk_create_logs(self, logs):
@@ -26,7 +30,10 @@ class RawSessionRepository(RawSessionRepositoryInterface):
         SessionAction.objects.bulk_create([SessionAction(**log) for log in new_logs])
 
     def get(self, id: int):
-        return SessionModel.objects.get(id=id)
+        try:
+            return SessionModel.objects.get(id=id)
+        except SessionModel.DoesNotExist:
+            return None
 
     def change_ban_rate(self, session_id: int, increase_value: int):
         SessionModel.objects.filter(id=session_id).update(ban_rate=F("ban_rate") + increase_value)

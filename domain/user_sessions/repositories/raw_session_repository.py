@@ -16,8 +16,8 @@ class RawSessionRepositoryInterface(Protocol):
     def change_ban_rate(self, session_id: int, penalty: int) -> None:
         raise NotImplementedError
 
-    def get(self, session_id: int) -> SessionInterface:
+    def get(self, id: int) -> SessionInterface:
         raise NotImplementedError
 
-    def update(self, session: SessionInterface, **kwargs) -> SessionInterface:
+    def update(self, session: SessionInterface, updated_fields: list[str] | None = None) -> SessionInterface:
         raise NotImplementedError

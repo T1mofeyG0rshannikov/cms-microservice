@@ -11,6 +11,12 @@
     {% block additional_styles %}
     {% endblock %}
 
+    <style>
+        {% for font in fonts %}
+            @import url('{{ font }}');
+        {% endfor %}
+    </style>
+
     <!-- Подключение библиотеки jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <!-- Подключение jQuery плагина Masked Input -->
@@ -18,19 +24,52 @@
 
     <meta name="viewport" content="width=device-width">
     <link rel="icon" href="{{ settings.icon }}">
-    <script src="{% static "common/js/base.js" %}"></script>
-    <script src="{% static 'styles/js/load-styles.js'%}"></script>
-    <script src="{% static 'styles/js/import-fonts.js'%}"></script>
-    <script src="{% static "user/js/set_error.js" %}"></script>
-    <script src="{% static "user/js/validators/email_validator.js" %}"></script>
-    <script src="{% static "user/js/validators/username_validator.js" %}"></script>
-    <script src="{% static "user/js/validators/phone_validator.js" %}"></script>
-    <script src="{% static "user/js/token.js" %}"></script>
-    <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+    <style>
+        :root{
+            --padding-block-top: {{ margin.margin_top}};
+            --padding-block-bottom: {{ margin.margin_bottom }};
+            --background-color: {{ colors.background_color }};
+            --second-background-color: {{ colors.second_background_color }};
+            --main-color: {{ colors.main_color }};
+
+            --secondary-color: {{ colors.secondary_color }};
+
+            --header-color: {{ header.color }};
+            --header-inverted-color: {{ header.fontColorInverted }};
+            --header-font-family: {{ header.font.name }};
+            --header-font-weight: {{ header.fontWeight }};
+            --header-font-weight-mobile: {{ header.fontWeightMobile }};
+            --header-font-size: {{ header.fontSize }};
+            --header-font-size-mobile: {{ header.fontSizeMobile }};
+
+            --main-text-color: {{ maintext.color }};
+            --main-text-inverted-color: {{ maintext.fontColorInverted }};
+            --main-text-font-family: {{ maintext.font.name }};
+            --main-text-font-weight: {{ maintext.fontWeight }};
+            --main-text-font-weight-mobile: {{ maintext.fontWeightMobile }};
+            --main-text-font-size: {{ maintext.fontSize }};
+            --main-text-font-size-mobile: {{ maintext.fontSizeMobile }};
+
+            --subheader-color: {{ subheader.color }};
+            --subheader-inverted-color: {{ subheader.fontColorInverted }};
+            --subheader-font-family: {{ subheader.font.name }};
+            --subheader-font-weight: {{ subheader.fontWeight }};
+            --subheader-font-weight-mobile: {{ subheader.fontWeightMobile }};
+            --subheader-font-size: {{ subheader.fontSize }};
+            --subheader-font-size-mobile: {{ subheader.fontSizeMobile }};
+
+            --explanation-text-color: {{ explanationtext.color }};
+            --explanation-text-inverted-color: {{ explanationtext.fontColorInverted }};
+            --explanation-text-font-family: {{ explanationtext.font.name }};
+            --explanation-text-font-weight: {{ explanationtext.fontWeight }};
+            --explanation-text-font-weight-mobile: {{ explanationtext.fontWeightMobile }};
+            --explanation-text-font-size: {{ explanationtext.fontSize }};
+            --explanation-text-font-size-mobile: {{ explanationtext.fontSizeMobile }};
+
+            --icon-width: {{ iconsize.width }};
+            --icon-height: {{ iconsize.height }};
+        }
+    </style>
 </head>
 <body>
     {% block content %}
@@ -41,5 +80,16 @@
 
     {% block additional_scripts %}
     {% endblock %}
+    <script src="{% static "common/js/base.js" %}"></script>
+    <script src="{% static "user/js/set_error.js" %}"></script>
+    <script src="{% static "user/js/validators/email_validator.js" %}"></script>
+    <script src="{% static "user/js/validators/username_validator.js" %}"></script>
+    <script src="{% static "user/js/validators/phone_validator.js" %}"></script>
+    <script src="{% static "user/js/token.js" %}"></script>
+    <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
 </body>
 </html>

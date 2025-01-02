@@ -1,10 +1,10 @@
-fetch("/styles/margin-block").
+/*fetch("/styles/margin-block").
 then(response => response.json()).
 then(response => {
     document.documentElement.style.setProperty("--padding-block-top", response.margin_top)
     document.documentElement.style.setProperty("--padding-block-bottom", response.margin_bottom)
-})
-
+})*/
+/*
 fetch("/styles/colors").
 then(response => response.json()).
 then(response => {
@@ -68,3 +68,4 @@ then(response => {
     document.documentElement.style.setProperty("--icon-width", response.width)
     document.documentElement.style.setProperty("--icon-height", response.height)
 })
+*/

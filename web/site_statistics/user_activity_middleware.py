@@ -1,22 +1,23 @@
 from datetime import datetime, timedelta
+from typing import Any
 
 from django.conf import settings
 from django.http import HttpRequest, HttpResponse
 from django.utils.timezone import now
 
-from application.sessions.user_activity_service import UserActivitySessionService
+from application.sessions.user_activity_service import get_user_session_service
 from domain.user_sessions.session import SessionInterface
 from infrastructure.logging.tasks import create_user_activity_logs
 from infrastructure.logging.user_activity.config import get_user_active_settings
 from infrastructure.logging.user_activity.create_json_logs import create_user_log
-from infrastructure.requests.service import RequestService
 from web.site_statistics.base_session_middleware import BaseSessionMiddleware
 
 
 class UserActivityMiddleware(BaseSessionMiddleware):
-    logs = []
+    logs: list[dict[str, Any]] = []
     logs_array_length = 5
     cookie_name = settings.USER_ACTIVITY_COOKIE_NAME
+    user_activity_service = get_user_session_service()
 
     def __init__(self, get_response) -> None:
         self.get_response = get_response
@@ -42,8 +43,6 @@ class UserActivityMiddleware(BaseSessionMiddleware):
         raw_session: SessionInterface = request.raw_session
 
         if raw_session.ban_rate < ban_limit:
-            user_activity_service = UserActivitySessionService(RequestService(request))
-
             site = raw_session.site
             page_adress = site + path
 
@@ -53,49 +52,32 @@ class UserActivityMiddleware(BaseSessionMiddleware):
 
             cookie = request.COOKIES.get(self.cookie_name)
 
-            session_id = None
+            session_data = None
 
             if not cookie or ("/" not in cookie):
-                session_data = user_activity_service.get_initial_data(
+                session_data = self.user_activity_service.create(
                     user_id=user_id,
-                    device=request.user_agent.is_mobile,
                     session_id=raw_session.id,
                 )
-
-                session_id = self.user_session_repository.create_user_session(**session_data.__dict__).id
-
             else:
                 session_id = int(cookie.split("/")[1])
+                session_data = self.user_session_repository.get(id=session_id)
 
-                auth = "login" if user_id else None
-                if auth:
-                    session_data = user_activity_service.get_initial_data(
-                        user_id=user_id,
-                        device=request.user_agent.is_mobile,
-                        auth=auth,
-                        session_id=raw_session.id,
-                    )
-                else:
-                    session_data = user_activity_service.get_initial_data(
-                        user_id=user_id,
-                        device=request.user_agent.is_mobile,
-                        session_id=raw_session.id,
-                    )
+                if not session_data:
+                    session_data = self.user_activity_service.create(user_id=user_id, session_id=raw_session.id)
 
-                if not self.user_session_repository.is_user_session_exists_by_id(session_id):
-                    session_id = self.user_session_repository.create_user_session(**session_data.__dict__).id
+                if user_id and not session_data.user_id:
+                    session_data.auth = "auth"
+                    session_data.user_id = user_id
+                    session_data = self.user_session_repository.update(session_data)
 
-                else:
-                    if session_data.auth:
-                        self.user_session_repository.update_user_session(session_id, auth=auth, user_id=user_id)
-
-            request.user_session_id = session_id
+            request.user_session_id = session_data.id
             response = self.get_response(request)
 
-            response.set_cookie(self.cookie_name, f"{session_id}/{session_id}", expires=expires)
+            response.set_cookie(self.cookie_name, f"{session_data.id}/{session_data.id}", expires=expires)
 
             if not self.is_disable_url_to_log(path) and self.is_enable_url_to_log(path):
-                self.logs.append(create_user_log(session_id, page_adress, "Перешёл на страницу", time=now()))
+                self.logs.append(create_user_log(session_data.id, page_adress, "Перешёл на страницу", time=now()))
 
             if len(self.logs) > self.logs_array_length:
                 create_user_activity_logs.delay(self.logs)

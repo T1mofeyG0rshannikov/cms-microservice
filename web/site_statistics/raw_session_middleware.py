@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from typing import Any
 
 from django.conf import settings
 from django.http import HttpRequest
@@ -13,7 +14,7 @@ from web.site_statistics.base_session_middleware import BaseSessionMiddleware
 
 class RawSessionMiddleware(BaseSessionMiddleware):
     logs_array_length = 100
-    logs = []
+    logs: list[dict[str, Any]] = []
     cookie_name = settings.RAW_SESSION_COOKIE_NAME
 
     def __init__(self, get_response) -> None:
@@ -39,26 +40,12 @@ class RawSessionMiddleware(BaseSessionMiddleware):
         session_data = None
 
         if not cookie or ("/" not in cookie):
-            session_data = raw_session_service.get_initial_raw_session(request.user_agent.is_mobile)
-            session_data = self.raw_session_repository.create(**session_data.__dict__)
-
-            session_data = raw_session_service.check_headers(session_data)
-
-            session_data = self.raw_session_repository.update(
-                session_data,
-            )
+            session_data = raw_session_service.create(request.user_agent.is_mobile)
         else:
             session_data = self.raw_session_repository.get(id=int(cookie.split("/")[1]))
 
         if not session_data:
-            session_data = raw_session_service.get_initial_raw_session(request.user_agent.is_mobile)
-            session_data = self.raw_session_repository.create(**session_data.__dict__)
-
-            session_data = raw_session_service.check_headers(session_data)
-
-            session_data = self.raw_session_repository.update(
-                session_data,
-            )
+            session_data = raw_session_service.create(request.user_agent.is_mobile)
 
         reject_capcha_penalty = self.user_session_repository.get_reject_capcha_penalty()
 

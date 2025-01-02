@@ -47,9 +47,11 @@ class RawSessionService(RawSessionServiceInterface):
             headers=self.request_service.get_all_headers_to_string(),
         )
 
-    def check_headers(self, session_data: SessionInterface) -> SessionInterface:
+    def check_headers(self) -> tuple[int, list[str]]:
         headers = self.request_service.get_all_headers()
         session_filter_headers = self.user_session_repository.get_session_filter_headers()
+        ban_rate = 0
+        penalty_logs = []
 
         for session_filter_header in session_filter_headers:
             contain = session_filter_header.contain
@@ -60,11 +62,10 @@ class RawSessionService(RawSessionServiceInterface):
             for header_name, header_content in headers.items():
                 if contain == HeaderContainEnum.have:
                     if header_name == session_header_name:
-                        session_data.ban_rate += penalty
+                        ban_rate += penalty
 
-                        self.penalty_logger(
-                            session_data.id,
-                            text=f"{contain}({session_header_content}) - {header_name}: {header_content}, {penalty}",
+                        penalty_logs.append(
+                            f"{contain}({session_header_content}) - {header_name}: {header_content}, {penalty}",
                         )
 
                 if header_name == session_header_name:
@@ -72,11 +73,10 @@ class RawSessionService(RawSessionServiceInterface):
                         for content in session_header_content.lower().split(","):
                             content = content.strip()
                             if content in header_content.lower():
-                                session_data.ban_rate += penalty
+                                ban_rate += penalty
 
-                                self.penalty_logger(
-                                    session_data.id,
-                                    text=f"{contain}({content}) - {header_name}: {header_content}, {penalty}",
+                                penalty_logs.append(
+                                    f"{contain}({content}) - {header_name}: {header_content}, {penalty}",
                                 )
                                 break
 
@@ -84,51 +84,50 @@ class RawSessionService(RawSessionServiceInterface):
                         for content in session_header_content.lower().split(","):
                             content = content.strip()
                             if content not in header_content.lower():
-                                session_data.ban_rate += penalty
+                                ban_rate += penalty
 
-                                self.penalty_logger(
-                                    session_data.id,
-                                    text=f"{contain}({content}) - {header_name}: {header_content}, {penalty}",
+                                penalty_logs.append(
+                                    f"{contain}({content}) - {header_name}: {header_content}, {penalty}",
                                 )
 
                     if contain == HeaderContainEnum.not_match:
                         if session_header_content.lower() != header_content.lower():
-                            session_data.ban_rate += penalty
+                            ban_rate += penalty
 
-                            self.penalty_logger(
-                                session_data.id,
-                                text=f"{contain}({content}) - {header_name}: {header_content}, {penalty}",
+                            penalty_logs.append(
+                                f"{contain}({content}) - {header_name}: {header_content}, {penalty}",
                             )
 
                     if contain == HeaderContainEnum.match:
                         if session_header_content.lower() == header_content.lower():
-                            session_data.ban_rate += penalty
+                            ban_rate += penalty
 
-                            self.penalty_logger(
-                                session_data.id,
-                                text=f"{contain}({content}) - {header_name}: {header_content}, {penalty}",
+                            penalty_logs.append(
+                                f"{contain}({content}) - {header_name}: {header_content}, {penalty}",
                             )
 
             if contain == HeaderContainEnum.miss:
                 if session_header_name not in headers.keys():
-                    session_data.ban_rate += penalty
+                    ban_rate += penalty
 
-                    self.penalty_logger(
-                        session_data.id,
-                        text=f"{contain} - {session_header_name}, {penalty}",
+                    penalty_logs.append(
+                        f"{contain} - {session_header_name}, {penalty}",
                     )
 
-        return session_data
+        return ban_rate, penalty_logs
 
     def filter_sessions(
         self, session_data: SessionInterface, host: str, path: str, port: str, session_id: int
-    ) -> SessionInterface:
+    ) -> tuple[int, bool, bool]:
         session_filters = self.user_session_repository.get_session_filters()
+        ban_rate = session_data.ban_rate
+        hacking = session_data.hacking
+        show_capcha = session_data.show_capcha
 
         if session_filters:
             if host != "127.0.0.1" and host != "localhost":
                 if self.url_parser.is_ip(host):
-                    session_data.ban_rate += session_filters.ip_penalty
+                    ban_rate += session_filters.ip_penalty
 
                     self.penalty_logger(
                         session_id,
@@ -136,7 +135,7 @@ class RawSessionService(RawSessionServiceInterface):
                     )
 
                 if port:
-                    session_data.ban_rate += session_filters.ports_penalty
+                    ban_rate += session_filters.ports_penalty
 
                     self.penalty_logger(
                         session_id,
@@ -146,7 +145,7 @@ class RawSessionService(RawSessionServiceInterface):
             for disable_url in session_filters.disable_urls.splitlines():
                 disable_url = disable_url.strip()
                 if disable_url in path:
-                    session_data.ban_rate += session_filters.disable_urls_penalty
+                    ban_rate += session_filters.disable_urls_penalty
 
                     self.penalty_logger(
                         session_id,
@@ -159,29 +158,42 @@ class RawSessionService(RawSessionServiceInterface):
                 for disable_url in session_filters.disable_urls_sites.splitlines():
                     disable_url = disable_url.strip()
                     if disable_url in path:
-                        session_data.ban_rate += session_filters.disable_urls_penalty
+                        ban_rate += session_filters.disable_urls_penalty
 
                         self.penalty_logger(
                             session_id,
-                            text=f"Запрещенный адрес(для сайтов), {session_filters.session_filters.disable_urls_penalty}",
+                            text=f"Запрещенный адрес(для сайтов), {session_filters.disable_urls_penalty}",
                         )
 
                         break
 
-            if session_data.ban_rate >= session_filters.ban_limit:
-                session_data.hacking = True
+            if ban_rate >= session_filters.ban_limit:
+                hacking = True
 
-            if session_data.ban_rate >= session_filters.capcha_limit:
-                session_data.show_capcha = True
+            if ban_rate >= session_filters.capcha_limit:
+                show_capcha = True
+
+        return ban_rate, hacking, show_capcha
+
+    def success_capcha(self, session: SessionInterface) -> None:
+        increase_value = -self.user_session_repository.get_success_capcha_increase()
+        self.raw_session_repository.change_ban_rate(session.id, increase_value)
+        session.show_capcha = False
+        self.raw_session_repository.update(session)
+
+        self.penalty_logger(session.id, text=f"Успешная капча, {-increase_value}")
+
+    def create(self, device: bool) -> SessionInterface:
+        session_initial_data = self.get_initial_raw_session(device)
+
+        ban_rate, penalty_logs = self.check_headers()
+        session_initial_data.ban_rate += ban_rate
+
+        session_data = self.raw_session_repository.create(**session_initial_data.__dict__)
+        for penalty_log in penalty_logs:
+            self.penalty_logger(session_id=session_data.id, text=penalty_log)
 
         return session_data
-
-    def success_capcha(self, session_id: int) -> None:
-        increase_value = -self.user_session_repository.get_success_capcha_increase()
-        self.raw_session_repository.change_ban_rate(session_id, increase_value)
-        self.raw_session_repository.update(session_id, show_capcha=False)
-
-        self.penalty_logger(session_id, text=f"Успешная капча, {-increase_value}")
 
 
 def get_raw_session_service(

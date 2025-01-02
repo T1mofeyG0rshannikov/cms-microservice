@@ -43,7 +43,7 @@ class ProductRepository(ProductRepositoryInterface):
         return (
             self.__get_offers_query()
             .prefetch_related("catalog_product")
-            .select_related("product", "category", "organization")
+            .select_related("product__category", "product__organization")
             .filter(types__type__slug=product_type_slug)
             .order_by("catalog_product__my_order")
         )

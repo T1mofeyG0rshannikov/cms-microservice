@@ -16,15 +16,20 @@ from infrastructure.persistence.repositories.domain_repository import (
     get_domain_repository,
 )
 from infrastructure.requests.request_interface import RequestInterface
+from infrastructure.url_parser.base_url_parser import UrlParserInterface
+from infrastructure.url_parser.url_parser import get_url_parser
 
 
 class SettingsMixin(TemplateView):
     domain_repository: DomainRepositoryInterface = get_domain_repository()
     get_settings_interactor: GetSettings = get_get_settings_interactor()
     document_repository: DocumentRepositoryInterface = get_document_repository()
+    url_parser: UrlParserInterface = get_url_parser()
 
     def get_settings_context_data(self):
         request: RequestInterface = self.request
+        if self.url_parser.is_source(request.path):
+            return {}
         context = {}
         domain = self.domain_repository.get_domain_string()
 
@@ -46,4 +51,6 @@ class SettingsMixin(TemplateView):
         return context
 
     def get_context_data(self, *args, **kwargs) -> dict[str, Any]:
-        return super().get_context_data(**kwargs) | self.get_settings_context_data()
+        context = super().get_context_data(**kwargs)
+        settings_context = self.get_settings_context_data()
+        return context | settings_context
