@@ -14,9 +14,10 @@ class DetectSinglePageSession:
         self.raw_session_repository = raw_session_repository
 
     def __call__(self) -> None:
-        penalty = self.user_session_repository.get_no_cookie_penalty()
+        session_filters = self.user_session_repository.get_session_filters()
+        penalty = session_filters.no_cookie
 
         self.raw_session_repository.add_penalty_to_single_page_session(penalty)
 
-        limit = self.user_session_repository.get_ban_limit()
+        limit = session_filters.ban_limit
         self.user_session_repository.delete_hacking_visitors(limit)

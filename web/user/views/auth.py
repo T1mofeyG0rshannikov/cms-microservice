@@ -17,18 +17,19 @@ from domain.user.repository import UserRepositoryInterface
 from infrastructure.persistence.repositories.user_repository import get_user_repository
 from infrastructure.requests.request_interface import RequestInterface
 from web.common.views import FormView
+from web.styles.views import StylesMixin
 from web.user.forms import LoginForm, RegistrationForm, ResetPasswordForm
 from web.user.views.base_user_view import BaseUserView
 
 
-class RegisterUser(BaseUserView, FormView):
+class RegisterUser(BaseUserView, FormView, StylesMixin):
     template_name = "user/register.html"
     form_class = RegistrationForm
 
     register_interactor: Register = get_register_interactor()
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs) | self.get_styles_context()
         context["register_form"] = RegistrationForm()
 
         return context
@@ -81,13 +82,13 @@ class RegisterUser(BaseUserView, FormView):
         return JsonResponse({"token_to_set_password": token_to_set_password})
 
 
-class LoginView(BaseUserView, FormView):
+class LoginView(BaseUserView, FormView, StylesMixin):
     template_name = "user/login.html"
     form_class = LoginForm
     login_interactor: Login = get_login_interactor()
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs) | self.get_styles_context()
         context["login_form"] = LoginForm()
         context["register_form"] = RegistrationForm()
         context["reset_password_form"] = ResetPasswordForm()

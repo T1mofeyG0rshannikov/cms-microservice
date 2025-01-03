@@ -38,9 +38,9 @@ class GetSettings:
         request: RequestInterface | None = None,
     ) -> SiteSettingsInterface:
         settings_model = self.settings_repository.get_settings()
-        form_logo_model = self.settings_repository.get_form_logo()
-        logo_model = self.settings_repository.get_logo()
-        icon_model = self.settings_repository.get_icon()
+        form_logo_model = settings_model.form_logo
+        logo_model = settings_model.logo
+        icon_model = settings_model.icon
 
         form_logo = SiteLogoInterface(
             image=form_logo_model.image,
@@ -63,7 +63,7 @@ class GetSettings:
             form_logo=form_logo,
             disable_partners_sites=settings_model.disable_partners_sites,
             default_users_font_size=settings_model.default_users_font_size,
-            icon=icon_model.image,
+            icon=icon_model.image if icon_model else None,
         )
 
         if domain:

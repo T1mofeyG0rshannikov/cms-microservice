@@ -47,7 +47,7 @@ class RawSessionMiddleware(BaseSessionMiddleware):
         if not session_data:
             session_data = raw_session_service.create(request.user_agent.is_mobile)
 
-        reject_capcha_penalty = self.user_session_repository.get_reject_capcha_penalty()
+        reject_capcha_penalty = self.user_session_repository.get_session_filters().reject_capcha
 
         if session_data.show_capcha:
             if not self.url_parser.is_source(path) and "submit-capcha" not in path:

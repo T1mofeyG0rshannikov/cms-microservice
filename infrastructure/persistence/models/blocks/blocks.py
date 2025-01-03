@@ -30,6 +30,10 @@ class Navbar(BaseBlock):
         verbose_name = "навбар"
         verbose_name_plural = "навбары"
 
+    @property
+    def items(self):
+        return self.menu_items.all()
+
 
 class Cover(BaseBlock, ButtonMixin, TitleMixin, MainTextMixin):
     image_desctop = models.ImageField(verbose_name="Картинка(десктоп)", upload_to="images/covers/")

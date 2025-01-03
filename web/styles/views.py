@@ -95,17 +95,17 @@ class StylesMixin:
 
         header_styles = cache.get("header_styles")
         if not header_styles:
-            header_styles = HeaderText.objects.first()
+            header_styles = HeaderText.objects.select_related("font").first()
             cache.set("header_styles", header_styles, timeout=60 * 15)
 
         main_text_styles = cache.get("main_text_styles")
         if not main_text_styles:
-            main_text_styles = MainText.objects.first()
+            main_text_styles = MainText.objects.select_related("font").first()
             cache.set("main_text_styles", main_text_styles, timeout=60 * 15)
 
         explanation_text_styles = cache.get("explanation_text_styles")
         if not explanation_text_styles:
-            explanation_text_styles = ExplanationText.objects.first()
+            explanation_text_styles = ExplanationText.objects.select_related("font").first()
             cache.set("explanation_text_styles", explanation_text_styles, timeout=60 * 15)
 
         icon_size = cache.get("icon_size")

@@ -36,7 +36,7 @@ class UserActivityMiddleware(BaseSessionMiddleware):
         if request.searcher:
             return self.get_response(request)
 
-        ban_limit = self.user_session_repository.get_ban_limit()
+        ban_limit = self.user_session_repository.get_session_filters().ban_limit
         if not ban_limit:
             ban_limit = 10**10
 

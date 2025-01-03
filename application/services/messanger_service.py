@@ -17,7 +17,8 @@ class MessangerService:
         self.messanger_repository = messanger_repository
 
     def get_chats(self, user: ReferralInterface):
-        referral = self.referral_repository.get(sponsors_id=user.id)
+        # referral = self.referral_repository.get(sponsors_id=user.id)
+        referral = user.sponsor
 
         chats = self.messanger_repository.get_chats(user.id)
         chat_dicts = []
@@ -49,7 +50,7 @@ class MessangerService:
             chat_dicts.append(
                 {
                     "chat_user": chatuserss[i],
-                    "message": last_messages[i] if last_messages[i] else "Напишите первое сообщение",
+                    "message": last_messages[i],
                 }
             )
 

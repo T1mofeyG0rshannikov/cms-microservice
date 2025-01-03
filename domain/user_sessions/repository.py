@@ -30,12 +30,6 @@ class UserSessionRepositoryInterface(Protocol):
     def get_searchers(self) -> str:
         raise NotImplementedError
 
-    def get_no_cookie_penalty(self) -> int:
-        raise NotImplementedError
-
-    def get_ban_limit(self) -> int:
-        raise NotImplementedError
-
     def delete_hacking_visitors(self, ban_limit: int) -> None:
         raise NotImplementedError
 
@@ -48,19 +42,10 @@ class UserSessionRepositoryInterface(Protocol):
     def is_searcher_exists_by_id(self, session_id: int) -> bool:
         raise NotImplementedError
 
-    def get_page_not_found_penalty(self) -> int:
-        raise NotImplementedError
-
     def get_session_filters(self) -> SessionFiltersInterface:
         raise NotImplementedError
 
     def get_session_filter_headers(self) -> Iterable[SessionFIltersHeader]:
-        raise NotImplementedError
-
-    def get_reject_capcha_penalty(self) -> int:
-        raise NotImplementedError
-
-    def get_success_capcha_increase(self) -> int:
         raise NotImplementedError
 
     def increment_user_session_field(self, session_id: int, session_field_name: str) -> None:

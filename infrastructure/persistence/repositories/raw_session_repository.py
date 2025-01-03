@@ -22,7 +22,7 @@ class RawSessionRepository(RawSessionRepositoryInterface):
             if not updated_fields:
                 session.save()
             else:
-                session.save(updated_fields=updated_fields)
+                session.save(update_fields=updated_fields)
         return session
 
     def bulk_create_logs(self, logs):
@@ -35,7 +35,7 @@ class RawSessionRepository(RawSessionRepositoryInterface):
         except SessionModel.DoesNotExist:
             return None
 
-    def change_ban_rate(self, session_id: int, increase_value: int):
+    def change_ban_rate(self, session_id: int, increase_value: int) -> None:
         SessionModel.objects.filter(id=session_id).update(ban_rate=F("ban_rate") + increase_value)
 
     def add_penalty_to_single_page_session(self, penalty: int):

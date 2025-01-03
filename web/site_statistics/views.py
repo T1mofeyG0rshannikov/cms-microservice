@@ -18,6 +18,7 @@ from infrastructure.persistence.repositories.product_repository import (
 from infrastructure.requests.request_interface import RequestInterface
 from infrastructure.requests.service import get_request_service
 from web.settings.views.settings_mixin import SettingsMixin
+from web.styles.views import StylesMixin
 
 
 class OpenedProductPopupView(View):
@@ -112,14 +113,18 @@ class IncrementBanksCountView(View):
         return HttpResponse(status=200)
 
 
-class CapchaView(SettingsMixin):
+class CapchaView(SettingsMixin, StylesMixin):
     template_name = "common/capcha.html"
+
+    def get_context_data(self, *args, **kwargs):
+        return super().get_context_data(*args, **kwargs) | self.get_styles_context()
 
 
 class SubmitCapcha(View):
     def post(self, request: RequestInterface) -> HttpResponse:
         if request.raw_session:
             raw_session_service = get_raw_session_service(get_request_service(request))
+            print(request.raw_session)
             raw_session_service.success_capcha(request.raw_session)
 
         return HttpResponse(status=200)

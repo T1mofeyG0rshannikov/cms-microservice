@@ -176,8 +176,8 @@ class RawSessionService(RawSessionServiceInterface):
         return ban_rate, hacking, show_capcha
 
     def success_capcha(self, session: SessionInterface) -> None:
-        increase_value = -self.user_session_repository.get_success_capcha_increase()
-        self.raw_session_repository.change_ban_rate(session.id, increase_value)
+        increase_value = -self.user_session_repository.get_session_filters().capcha_success
+        session.ban_rate += increase_value
         session.show_capcha = False
         self.raw_session_repository.update(session)
 

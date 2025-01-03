@@ -32,6 +32,7 @@ from web.account.forms import ChangePasswordForm
 from web.common.views import FormView
 from web.notifications.serializers import UserNotificationSerializer
 from web.settings.views.settings_mixin import SettingsMixin
+from web.styles.views import StylesMixin
 from web.template.profile_template_loader.context_processor.context_processor import (
     get_profile_context_processor,
 )
@@ -45,13 +46,13 @@ from web.user.views.base_user_view import (
 )
 
 
-class BaseProfileView(MyLoginRequiredMixin, SettingsMixin):
+class BaseProfileView(MyLoginRequiredMixin, SettingsMixin, StylesMixin):
     context_processor: ProfileTemplateContextProcessorInterface = get_profile_context_processor()
     notifications_repository: NotificationRepositoryInterface = get_notification_repository()
     messanger_repository: MessangerRepositoryInterface = get_messanger_repository()
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs) | self.get_styles_context()
         user = self.request.user
 
         context["notifications"] = UserNotificationSerializer(

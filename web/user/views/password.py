@@ -25,11 +25,12 @@ from infrastructure.logging.user_activity.create_session_log import (
 from infrastructure.persistence.repositories.user_repository import get_user_repository
 from infrastructure.requests.request_interface import RequestInterface
 from web.common.views import FormView
+from web.styles.views import StylesMixin
 from web.user.forms import ResetPasswordForm, SetPasswordForm
 from web.user.views.base_user_view import BaseUserView
 
 
-class ResetPasswordView(BaseUserView, FormView):
+class ResetPasswordView(BaseUserView, FormView, StylesMixin):
     form_class = SetPasswordForm
     valid_reset_password_token_interactor: ValidResetPasswordToken = get_valid_reset_pass_token_interactor()
     reset_password_interactor: ResetPassword = get_reset_password_interactor()
@@ -41,7 +42,7 @@ class ResetPasswordView(BaseUserView, FormView):
         except InvalidJwtToken as e:
             return HttpResponseRedirect(f"/?error={str(e)}")
 
-        context = super().get_context_data()
+        context = super().get_context_data() | self.get_styles_context()
         context |= {"form": SetPasswordForm(), "token": token}
 
         return render(request, "user/set-password.html", context)
@@ -60,7 +61,7 @@ class ResetPasswordView(BaseUserView, FormView):
             return JsonResponse({"message": str(e)}, status=404)
 
 
-class SetPassword(BaseUserView, FormView):
+class SetPassword(BaseUserView, FormView, StylesMixin):
     template_name = "user/set-password.html"
     form_class = SetPasswordForm
 
@@ -74,7 +75,7 @@ class SetPassword(BaseUserView, FormView):
         return super().get(request)
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs) | self.get_styles_context()
         context["form"] = SetPasswordForm()
 
         return context
@@ -100,7 +101,7 @@ class SetPassword(BaseUserView, FormView):
         )
 
 
-class SendMailToResetPassword(FormView):
+class SendMailToResetPassword(FormView, StylesMixin):
     template_name = "user/reset-password.html"
     email_service: EmailServiceInterface = get_email_service()
     form_class = ResetPasswordForm
@@ -108,7 +109,7 @@ class SendMailToResetPassword(FormView):
     create_user_session_log: CreateUserSesssionLog = get_create_user_session_log()
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs) | self.get_styles_context()
         context["reset_password_form"] = ResetPasswordForm()
 
         return context

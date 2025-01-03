@@ -15,6 +15,7 @@ class UrlParser(UrlParserInterface):
     def is_source(path: str) -> bool:
         static_patterns = [
             ".png",
+            "__debug__",
             ".jpg",
             ".js",
             ".css",

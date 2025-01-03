@@ -22,3 +22,5 @@ class SessionFiltersInterface:
     disable_urls_sites: str
     ban_limit: int
     capcha_limit: int
+    page_not_found_penalty: int
+    reject_capcha: int

@@ -23,10 +23,10 @@ class PageNotFoundMiddleware(BaseSessionMiddleware):
         response = self.get_response(request)
 
         if response.status_code == 404 and not self.url_parser.is_source(request.path):
-            session_id = request.raw_session.id
-            page_not_found_penalty = self.user_session_repository.get_page_not_found_penalty()
-            self.raw_session_repository.change_ban_rate(session_id, page_not_found_penalty)
-            self.penalty_logger(session_id, f"Несуществующий адрес, {page_not_found_penalty}, {path}")
+            raw_session = request.raw_session
+            page_not_found_penalty = self.user_session_repository.get_session_filters().page_not_found_penalty
+            request.raw_session = self.raw_session_repository.update(raw_session)
+            self.penalty_logger(raw_session.id, f"Несуществующий адрес, {page_not_found_penalty}, {path}")
 
         request_service = get_request_service(request)
         raw_session_service = RawSessionService(

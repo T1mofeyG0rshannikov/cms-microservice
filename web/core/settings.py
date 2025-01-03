@@ -379,7 +379,6 @@ MIGRATION_MODULES = {
     "styles": "infrastructure.persistence.migrations.styles",
     "notifications": "infrastructure.persistence.migrations.notifications",
     "site_tests": "infrastructure.persistence.migrations.site_tests",
-    "emails": "infrastructure.persistence.migrations.emails",
     "materials": "infrastructure.persistence.migrations.materials",
     "system": "infrastructure.persistence.migrations.system",
     "messanger": "infrastructure.persistence.migrations.messanger",

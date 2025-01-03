@@ -2,8 +2,9 @@
 
 
 <header id="{{ block.ancor }}">
+    {% with block.items as items %}
     <aside id="aside-menu">
-        {% for item in block.menu_items.all %}
+        {% for item in items %}
             <a onclick="smoothScroll('{{ item.button_ref }}')">{{ item.button_text }}</a>
         {% endfor %}
 
@@ -29,7 +30,7 @@
 
         <div class="nav-content">
             <nav>
-                {% for item in block.menu_items.all %}
+                {% for item in items %}
                     <a onclick="smoothScroll('{{ item.button_ref }}')">{{ item.button_text }}</a>
                 {% endfor %}
             </nav>
@@ -47,6 +48,7 @@
             <img src={% static 'blocks/images/menu.png' %} />
         </div>
     </div>
+    {% endwith %}
     <style>
         header{
             background-color: {{styles.background_color}};

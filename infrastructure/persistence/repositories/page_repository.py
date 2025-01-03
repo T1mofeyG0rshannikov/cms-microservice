@@ -1,5 +1,6 @@
 from collections.abc import Iterable
 
+from django.core.cache import cache
 from django.db.models import Case, Q, When
 
 from application.mappers.page import from_orm_to_block, from_orm_to_page
@@ -35,8 +36,14 @@ class PageRepository(PageRepositoryInterface):
         if id:
             query &= Q(id=id)
         else:
-            query &= Q(url=url)
-
+            page = cache.get(f"page-{url}")
+            if not page:
+                query &= Q(url=url)
+                page_db = Page.objects.get(query)
+                page = from_orm_to_page(page=page_db, blocks=self.__get_page_blocks(page_db))
+                cache.set(f"page-{url}", page, timeout=60 * 15)
+                return page
+            return page
         try:
             page = Page.objects.get(query)
             return from_orm_to_page(page=page, blocks=self.__get_page_blocks(page))

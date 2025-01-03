@@ -17,7 +17,7 @@ from infrastructure.persistence.models.settings import (
 
 class SettingsRepository(SettingsRepositoryInterface):
     def get_settings(self):
-        return SiteSettings.objects.first()
+        return SiteSettings.objects.prefetch_related("logo", "form_logo", "icon").first()
 
     def get_form_logo(self):
         return FormLogo.objects.first()

@@ -1,23 +1,4 @@
 {% load static %}
-
-<div id="{{ block.ancor }}" class="cover">
-    <div class="inner">
-        <h1>{{ block.title }}</h1>
-
-        <a style="line-height: 140%">{{ block.text|safe }}</a>
-
-        <div class="button-wrapper">
-            <button onclick="smoothScroll('{{block.button_ref}}')"><a>{{ block.button_text }}</a></button>
-            <button onclick="smoothScroll('{{block.second_button_ref}}')" id="white-button"><a>{{ block.second_button_text }}</a></button>
-        </div>
-    </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", async function() {
-            setCoverDarkness("{{block.ancor}}", "{{styles.photo_darkness}}")
-        })
-    </script>
-</div>
-
 <style>
     .cover{
         background: url("{{block.image_desctop.url}}") no-repeat 50% 50%/cover;
@@ -43,3 +24,20 @@
         }
     }
 </style>
+<div id="{{ block.ancor }}" class="cover">
+    <div class="inner">
+        <h1>{{ block.title }}</h1>
+
+        <a style="line-height: 140%">{{ block.text|safe }}</a>
+
+        <div class="button-wrapper">
+            <button onclick="smoothScroll('{{block.button_ref}}')"><a>{{ block.button_text }}</a></button>
+            <button onclick="smoothScroll('{{block.second_button_ref}}')" id="white-button"><a>{{ block.second_button_text }}</a></button>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", async function() {
+            setCoverDarkness("{{block.ancor}}", "{{styles.photo_darkness}}")
+        })
+    </script>
+</div>
