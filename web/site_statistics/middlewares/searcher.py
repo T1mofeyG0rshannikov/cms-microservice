@@ -6,7 +6,7 @@ from application.sessions.searcher_service import SearcherService
 from application.usecases.user_activity.searchers import DetectSearcherSession
 from infrastructure.admin.admin_settings import get_admin_settings
 from infrastructure.requests.service import get_request_service
-from web.site_statistics.base_session_middleware import BaseSessionMiddleware
+from web.site_statistics.middlewares.base import BaseSessionMiddleware
 
 
 class SearcherMiddleware(BaseSessionMiddleware):

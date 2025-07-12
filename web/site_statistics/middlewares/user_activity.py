@@ -6,16 +6,15 @@ from django.http import HttpRequest, HttpResponse
 from django.utils.timezone import now
 
 from application.sessions.user_activity_service import get_user_session_service
-from domain.user_sessions.session import SessionInterface
 from infrastructure.logging.tasks import create_user_activity_logs
 from infrastructure.logging.user_activity.config import get_user_active_settings
 from infrastructure.logging.user_activity.create_json_logs import create_user_log
-from web.site_statistics.base_session_middleware import BaseSessionMiddleware
+from web.site_statistics.middlewares.base import BaseSessionMiddleware
 
 
 class UserActivityMiddleware(BaseSessionMiddleware):
     logs: list[dict[str, Any]] = []
-    logs_array_length = 5
+    logs_array_length = 1
     cookie_name = settings.USER_ACTIVITY_COOKIE_NAME
     user_activity_service = get_user_session_service()
 
@@ -33,14 +32,15 @@ class UserActivityMiddleware(BaseSessionMiddleware):
         if "get-user-info" in path:
             return self.get_response(request)
 
-        if request.searcher:
-            return self.get_response(request)
-
         ban_limit = self.user_session_repository.get_session_filters().ban_limit
         if not ban_limit:
             ban_limit = 10**10
 
-        raw_session: SessionInterface = request.raw_session
+        raw_session = request.raw_session
+        cookie = request.COOKIES.get(self.cookie_name)
+
+        if cookie and "/" in cookie:
+            cookie = None
 
         if raw_session.ban_rate < ban_limit:
             site = raw_session.site
@@ -48,19 +48,15 @@ class UserActivityMiddleware(BaseSessionMiddleware):
 
             user_id = request.user.id if request.user.is_authenticated else None
 
-            expires = datetime.utcnow() + timedelta(days=365 * 10)
-
-            cookie = request.COOKIES.get(self.cookie_name)
-
             session_data = None
 
-            if not cookie or ("/" not in cookie):
+            if not cookie:
                 session_data = self.user_activity_service.create(
                     user_id=user_id,
                     session_id=raw_session.id,
                 )
             else:
-                session_id = int(cookie.split("/")[1])
+                session_id = int(cookie)
                 session_data = self.user_session_repository.get(id=session_id)
 
                 if not session_data:
@@ -73,8 +69,8 @@ class UserActivityMiddleware(BaseSessionMiddleware):
 
             request.user_session_id = session_data.id
             response = self.get_response(request)
-
-            response.set_cookie(self.cookie_name, f"{session_data.id}/{session_data.id}", expires=expires)
+            expires = datetime.utcnow() + timedelta(days=365 * 10)
+            response.set_cookie(self.cookie_name, str(session_data.id), expires=expires)
 
             if not self.is_disable_url_to_log(path) and self.is_enable_url_to_log(path):
                 self.logs.append(create_user_log(session_data.id, page_adress, "Перешёл на страницу", time=now()))
@@ -85,13 +81,8 @@ class UserActivityMiddleware(BaseSessionMiddleware):
 
             return response
         else:
-            cookie = request.COOKIES.get(self.cookie_name)
-
-            if not cookie or ("/" not in cookie):
-                pass
-
-            else:
-                session_id = int(cookie.split("/")[1])
+            if cookie:
+                session_id = int(cookie)
                 self.user_session_repository.delete_user_session(session_id)
 
             response = HttpResponse(status=503)

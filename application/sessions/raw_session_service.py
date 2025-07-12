@@ -125,7 +125,7 @@ class RawSessionService(RawSessionServiceInterface):
         show_capcha = session_data.show_capcha
 
         if session_filters:
-            if host != "127.0.0.1" and host != "localhost":
+            if host not in ["127.0.0.1", "localhost"]:
                 if self.url_parser.is_ip(host):
                     ban_rate += session_filters.ip_penalty
 

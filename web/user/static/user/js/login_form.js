@@ -51,7 +51,7 @@ function submitLoginForm(element, event, domain){
         body: data
     }).then(response => {
         if (response.status === 200){
-            response.json().then((response) => {
+            response.json().then(response => {
                 const token = response.acess_token;
                 setToken(token);
 

@@ -19,11 +19,12 @@ class CreateUserSesssionLog:
 
         adress = self.url_parser.remove_protocol(path)
 
-        self.repository.create_user_action(
-            adress=adress,
-            text=text,
-            session_id=request.user_session_id,
-        )
+        if hasattr(request, "user_session_id"):
+            self.repository.create_user_action(
+                adress=adress,
+                text=text,
+                session_id=request.user_session_id,
+            )
 
 
 def get_create_user_session_log(

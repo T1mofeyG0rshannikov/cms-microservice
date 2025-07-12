@@ -6,3 +6,4 @@ prod_settings.py
 celerybeat-schedule.*
 bankomag_cache
 env
+.env-prod

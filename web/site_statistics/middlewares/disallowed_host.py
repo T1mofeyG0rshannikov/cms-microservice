@@ -2,14 +2,13 @@ from django.core.exceptions import DisallowedHost
 from django.http import HttpRequest
 
 from application.usecases.user_activity.disallowed_host import AddDisallowedHostPenalty
-from infrastructure.persistence.models.site_statistics import SessionModel
 from infrastructure.persistence.repositories.raw_session_repository import (
     get_raw_session_repository,
 )
 from infrastructure.persistence.repositories.user_session_repository import (
     get_user_session_repository,
 )
-from web.site_statistics.base_session_middleware import BaseSessionMiddleware
+from web.site_statistics.middlewares.base import BaseSessionMiddleware
 
 
 class DisallowedHostMiddleware(BaseSessionMiddleware):
@@ -30,10 +29,5 @@ class DisallowedHostMiddleware(BaseSessionMiddleware):
             request.get_host()
         except DisallowedHost:
             self.add_disallowed_host_penalty(request.raw_session.id)
-
-        try:
-            request.raw_session = request.raw_session
-        except SessionModel.DoesNotExist:
-            pass
 
         return self.get_response(request)
