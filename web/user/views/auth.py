@@ -20,6 +20,8 @@ from web.common.views import FormView
 from web.styles.views import StylesMixin
 from web.user.forms import LoginForm, RegistrationForm, ResetPasswordForm
 from web.user.views.base_user_view import BaseUserView
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 
 class RegisterUser(BaseUserView, FormView, StylesMixin):
@@ -114,7 +116,7 @@ class LoginView(BaseUserView, FormView, StylesMixin):
         )
 
         return JsonResponse({
-            "acess_token": access_token,
+            "access_token": access_token,
             "refresh_token": refresh_token
         })
 
@@ -139,6 +141,7 @@ class SetToken(BaseUserView):
         return HttpResponse(status=401)
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class RefreshTokensView(BaseUserView):
     user_repository: UserRepositoryInterface = get_user_repository()
 
@@ -154,7 +157,7 @@ class RefreshTokensView(BaseUserView):
                 refresh_token = self.jwt_processor.create_token(token_data, 24*30)
 
                 return JsonResponse({
-                    "acess_token": access_token,
+                    "access_token": access_token,
                     "refresh_token": refresh_token
                 })
             

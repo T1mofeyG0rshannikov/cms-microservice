@@ -27,3 +27,16 @@ async function getUserAPI(domain){
 
     return await getData(response)
 }
+
+async function loginAPI(data){
+    const response = await fetch(`/user/login`, {
+        method: "POST",
+        withCredentials: true,
+        headers: {
+            'Accept': 'application/json',
+        },
+        body: data
+    })
+    
+    return await getData(response)
+}
