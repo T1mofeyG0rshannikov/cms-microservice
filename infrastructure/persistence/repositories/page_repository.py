@@ -36,20 +36,14 @@ class PageRepository(PageRepositoryInterface):
         if id:
             query &= Q(id=id)
         else:
-            page = cache.get(f"page-{url}")
-            if not page:
-                query &= Q(url=url)
-                page_db = Page.objects.get(query)
-                page = from_orm_to_page(page=page_db, blocks=self.__get_page_blocks(page_db))
-                cache.set(f"page-{url}", page, timeout=60 * 15)
-                return page
-            return page
+            query &= Q(url=url)
+
         try:
             page = Page.objects.get(query)
-            return from_orm_to_page(page=page, blocks=self.__get_page_blocks(page))
-
         except Page.DoesNotExist:
             return None
+        
+        return from_orm_to_page(page=page, blocks=self.__get_page_blocks(page))
 
     def __get_page_blocks(self, page_model: BasePageModel) -> Iterable[BaseBlock]:
         if isinstance(page_model, Page):

@@ -32,15 +32,12 @@ async function openLoginForm(domain){
     if (response.status === 200){
         const accessToken = getToken()
         const refreshToken = getRefreshToken()
-        console.log(accessToken)
-        console.log(refreshToken)
         window.location.replace(`${window.location.protocol}//${domain}/user/set-token/${accessToken}/${refreshToken}`);
     }
     else if (response.status === 401){
         if (isRememberMe()){
             const r = await refreshTokensAPI()
             if (r.status === 200){
-                console.log(r)
                 const accessToken  = r.data.access_token
                 const refreshToken = r.data.refresh_token
                 window.location.replace(`${window.location.protocol}//${domain}/user/set-token/${accessToken}/${refreshToken}`);
