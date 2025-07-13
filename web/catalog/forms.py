@@ -16,8 +16,8 @@ def get_offer_types():
 
 
 class OfferAdminForm(forms.ModelForm):
-    offers_types_choices = get_offer_types()
-
+    #offers_types_choices = get_offer_types()
+    offers_types_choices=[]
     type1 = forms.ChoiceField(label="Тип", choices=offers_types_choices, required=False)
     type2 = forms.ChoiceField(label="", choices=offers_types_choices, required=False)
     type3 = forms.ChoiceField(label="", choices=offers_types_choices, required=False)

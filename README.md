@@ -106,7 +106,6 @@ user
     /user/confirm-email/<token> - подтверждение почты
     /user/confirm-new-email/<token> - подтверждение новой почты
     /user/reset-password - сброс пароля
-    /user/set-token/<token> - сохранение токена авторизации в браузере
     /user/delete-user-product - удаление пользовательского продукта
     /user/logout - выход из аккаунта
     /user/idea - добавить предложение

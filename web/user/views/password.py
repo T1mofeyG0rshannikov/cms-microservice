@@ -87,12 +87,12 @@ class SetPassword(BaseUserView, FormView, StylesMixin):
         user.set_password(password)
         self.login(user)
 
-        access_token = self.jwt_processor.create_access_token(user.username, user.id)
-
         self.create_user_session_log(
             request=request,
             text=UserActions.set_password,
         )
+
+        access_token = self.jwt_processor.create_token(data={"sub": user.username, "id": user.id})
 
         return JsonResponse(
             {

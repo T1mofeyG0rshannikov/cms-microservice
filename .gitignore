@@ -7,3 +7,4 @@ celerybeat-schedule.*
 bankomag_cache
 env
 .env-prod
+*.json

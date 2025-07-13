@@ -1,8 +1,8 @@
 from application.texts.errors import UserErrorsMessages
+from domain.user.entities import UserInterface
 from domain.user.exceptions import IncorrectPassword, UserDoesNotExist
 from domain.user.repository import UserRepositoryInterface
 from domain.user.service import UserServiceInterface
-from domain.user.user import UserInterface
 
 
 class UserService(UserServiceInterface):

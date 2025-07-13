@@ -37,9 +37,11 @@ class Login:
         if not self.r.verify_password(user.id, password):
             raise UserDoesNotExist(UserErrorsMessages.incorrect_password)
 
-        access_token = self.jwt_processor.create_access_token(user.username, user.id)
+        token_data = {"sub": user.username, "id": user.id}
+        access_token = self.jwt_processor.create_token(token_data)
+        refresh_token = self.jwt_processor.create_token(token_data, 24*30)
 
-        return access_token, user
+        return access_token, refresh_token, user
 
 
 def get_login_interactor(

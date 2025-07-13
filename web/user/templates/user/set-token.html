@@ -3,7 +3,7 @@
 {% block content %}
 
 <script>
-    setToken('{{ token }}');
+    setTokens('{{ access_token }}', '{{ refresh_token }}');
     window.location.replace(`/my/`)
 </script>
 

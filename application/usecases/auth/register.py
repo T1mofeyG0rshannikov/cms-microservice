@@ -57,7 +57,7 @@ class Register:
         if not user:
             raise UserCreatingError(ErrorsMessages.something_went_wrong)
 
-        token_to_set_password = self.jwt_processor.create_set_password_token(user.id)
+        token_to_set_password = self.jwt_processor.create_token(data={"id": user.id})
 
         return TokenToSetPasswordResponse(token_to_set_password=token_to_set_password)
 

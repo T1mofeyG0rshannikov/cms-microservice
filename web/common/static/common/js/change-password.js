@@ -18,12 +18,16 @@ function onSubmitChangePasswordForm(domain, element, event){
         if (response.status === 200){
             setErrors({}, element)
             console.log("success");
-            const access_token = response.json().access_token;
-            setToken(access_token);
-            closeForm(changePasswordForm);
+            response.json().then(response => {
+                const access_token = response.access_token;
+                const refresh_token = isRememberMe() ? response.refresh_token : null;
+                setTokens(access_token, refresh_token);
+                closeForm(changePasswordForm);
 
-            window.location.replace(`${window.location.protocol}//${domain}/user/set-token/${token}`);
-            return;
+                window.location.replace(`${window.location.protocol}//${domain}/my`);
+            })
+
+            return
         }
         return response.json();
     }).then(response => {

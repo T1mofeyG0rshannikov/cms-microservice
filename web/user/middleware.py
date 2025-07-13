@@ -22,7 +22,7 @@ class JwtAuthMiddleware:
             user = self.user_repository.get(id=payload["id"])
         else:
             user = None
-
+        print(user, "USER FROM HEADER")
         request.user_from_header = user
 
         return self.get_response(request)

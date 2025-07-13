@@ -70,7 +70,7 @@ class SiteView(BaseProfileView):
     template_name = "account/site.html"
 
     def get_context_data(self, **kwargs):
-        return self.context_processor.get_site_context(self.request)
+        return super().get_context_data(**kwargs) | self.context_processor.get_site_context(self.request)
 
 
 class RefsView(BaseProfileView):
@@ -93,18 +93,17 @@ class ManualsView(BaseProfileView):
     template_name = "account/manuals.html"
 
     def get_context_data(self, **kwargs):
-        return self.context_processor.get_manuals_context(self.request)
+        return super().get_context_data(**kwargs) | self.context_processor.get_manuals_context(self.request)
 
 
 class ChangePasswordView(BaseUserView, FormView, APIUserRequired):
     form_class = ChangePasswordForm
-    change_password_inteactor: ChangePassword = get_change_password_interactor()
+    inteactor: ChangePassword = get_change_password_interactor()
 
     def form_valid(self, request: HttpRequest, form: ChangePasswordForm) -> JsonResponse:
         try:
-            change_pass_response = self.change_password_inteactor(**form.cleaned_data, user=request.user)
-            user = change_pass_response.user
-            access_token = change_pass_response.access_token
+            response = self.inteactor(**form.cleaned_data, user=request.user)
+            user = response.user
         except IncorrectPassword as e:
             form.add_error("current_password", str(e))
             return JsonResponse({"errors": form.errors}, status=400)
@@ -118,7 +117,10 @@ class ChangePasswordView(BaseUserView, FormView, APIUserRequired):
 
         self.create_user_session_log(request=request, text=UserActions.changed_password)
 
-        return JsonResponse({"access_token": access_token}, status=200)
+        return JsonResponse({
+            "access_token": response.access_token,
+            "refresh_token": response.refresh_token
+        }, status=200)
 
 
 class Profile(BaseProfileView, BaseUserView):

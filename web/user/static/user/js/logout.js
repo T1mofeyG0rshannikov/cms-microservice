@@ -1,5 +1,5 @@
 function logout(){
-    deleteToken();
+    deleteTokens();
     window.location.replace("/user/logout");
     fetch("/user/logout")
 }

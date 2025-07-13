@@ -7,6 +7,7 @@ from django.http import (
 )
 
 from application.services.site_service import get_site_service
+from web.site_statistics.middlewares.base import BaseSessionMiddleware
 from domain.domains.domain_repository import DomainRepositoryInterface
 from domain.user.sites.site_service import SiteServiceInterface
 from infrastructure.admin.admin_settings import AdminSettings, get_admin_settings
@@ -18,7 +19,6 @@ from infrastructure.persistence.repositories.domain_repository import (
 from infrastructure.url_parser.base_url_parser import UrlParserInterface
 from infrastructure.url_parser.url_parser import get_url_parser
 from web.settings.views.views import PartnerIndexPage
-from web.site_statistics.base_session_middleware import BaseSessionMiddleware
 from web.template.views.base_page_not_found import BaseNotFoundPage
 
 

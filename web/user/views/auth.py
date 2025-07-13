@@ -97,12 +97,7 @@ class LoginView(BaseUserView, FormView, StylesMixin):
 
     def form_valid(self, request: RequestInterface, form: LoginForm) -> JsonResponse:
         try:
-            access_token, user = self.login_interactor(**form.cleaned_data)
-            self.login(user)
-
-            self.create_user_session_log(request, text=f'''Вход в ЛК "{form.cleaned_data.get("phone_or_email")}"''')
-
-            return JsonResponse({"acess_token": access_token})
+            access_token, refresh_token, user = self.login_interactor(**form.cleaned_data)
         except UserDoesNotExist as e:
             form.add_error("phone_or_email", str(e))
 
@@ -112,24 +107,58 @@ class LoginView(BaseUserView, FormView, StylesMixin):
 
             return JsonResponse({"errors": form.errors}, status=400)
 
-        return JsonResponse({"errors": form.errors}, status=400)
+        self.login(user)
+
+        self.create_user_session_log(
+            request, text=f'''Вход в ЛК "{form.cleaned_data.get("phone_or_email")}"'''
+        )
+
+        return JsonResponse({
+            "acess_token": access_token,
+            "refresh_token": refresh_token
+        })
 
 
 class SetToken(BaseUserView):
     template_name = "user/set-token.html"
     user_repository: UserRepositoryInterface = get_user_repository()
 
-    def get(self, request: HttpRequest, token: str) -> HttpResponse:
-        payload = self.jwt_processor.validate_token(token)
+    def get(self, request: HttpRequest, access_token: str, refresh_token: str) -> HttpResponse:
+        print(access_token, refresh_token, "tokens")
+        payload = self.jwt_processor.validate_token(access_token)
+        if payload:
+            user = self.user_repository.get(id=payload["id"])
+            if user:
+                self.login(user)
+            print(access_token)
+            return render(request, "user/set-token.html", {
+                "access_token": access_token,
+                "refresh_token": refresh_token
+            })
+
+        return HttpResponse(status=401)
+
+
+class RefreshTokensView(BaseUserView):
+    user_repository: UserRepositoryInterface = get_user_repository()
+
+    def post(self, request: HttpRequest, refresh_token: str) -> HttpResponse:
+        payload = self.jwt_processor.validate_token(refresh_token)
         if payload:
             user = self.user_repository.get(id=payload["id"])
             if user:
                 self.login(user)
 
-            return render(request, "user/set-token.html", {"token": token})
+                token_data = {"sub": user.username, "id": user.id}
+                access_token = self.jwt_processor.create_token(token_data)
+                refresh_token = self.jwt_processor.create_token(token_data, 24*30)
 
+                return JsonResponse({
+                    "acess_token": access_token,
+                    "refresh_token": refresh_token
+                })
+            
         return HttpResponse(status=401)
-
 
 class Logout(View):
     def get(self, request: HttpRequest):

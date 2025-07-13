@@ -28,7 +28,7 @@ class ConfirmEmail(BaseUserView):
         )
 
         if not user.password:
-            token_to_set_password = self.jwt_processor.create_set_password_token(user.id)
+            token_to_set_password = self.jwt_processor.create_token(data={"id": user.id})
 
             return HttpResponseRedirect(f"/user/password/{token_to_set_password}")
 

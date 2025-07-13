@@ -26,25 +26,29 @@ burger.addEventListener("click", openAsideMenu);
 
 const loginForm = document.getElementById("login-form");
 
-function openLoginForm(domain){
-    const token = getToken();
-
-    fetch(`${window.location.protocol}//${domain}/user/get-user-info`, {
-        credentials: 'include',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': `${token}`
-        }
-    }).then(response => {
-        if (response.status === 200){
-            window.location.replace(`${window.location.protocol}//${domain}/my/`)
-        }
-        else if (response.status === 401){
+async function openLoginForm(domain){
+    const response = await getUserAPI(domain)
+    console.log(response)
+    if (response.status === 200){
+        accessToken = getToken()
+        refreshToken = getRefreshToken()
+        window.location.replace(`${window.location.protocol}//${domain}/user/set-token/${accessToken}/${refreshToken}`);
+    }
+    else if (response.status === 401){
+        if (isRememberMe()){
+            response = await refreshTokensAPI()
+            if (response.status === 200){
+                accessToken, refreshToken = await refreshTokensAPI()
+                window.location.replace(`${window.location.protocol}//${domain}/user/set-token/${accessToken}/${refreshToken}`);
+            } else{
+                compliteLoginForm();
+                loginFormContainer.style.animation = "showPopup .3s";
+                loginFormContainer.style.display = "flex";
+            }
+        } else{
             compliteLoginForm();
             loginFormContainer.style.animation = "showPopup .3s";
             loginFormContainer.style.display = "flex";
         }
-        return response.status;
-    })
+    }
 }

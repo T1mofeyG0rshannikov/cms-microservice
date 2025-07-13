@@ -24,9 +24,15 @@ class ChangePassword:
 
         user.set_password(password)
 
-        access_token = self.jwt_processor.create_access_token(user.username, user.id)
+        token_data={"sub": user.username, "id": user.id}
+        access_token = self.jwt_processor.create_token(data=token_data)
+        refresh_token = self.jwt_processor.create_token(data=token_data, hours=24*30)
 
-        return ChangePasswordResponse(user=user, access_token=access_token)
+        return ChangePasswordResponse(
+            user=user, 
+            access_token=access_token,
+            refresh_token=refresh_token
+        )
 
 
 def get_change_password_interactor(jwt_processor: JwtProcessorInterface = get_jwt_processor()) -> ChangePassword:

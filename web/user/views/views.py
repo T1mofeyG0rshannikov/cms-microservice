@@ -29,6 +29,8 @@ from web.user.views.base_user_view import APIUserRequired
 
 class IsUserAuth(View):
     def get(self, request: RequestInterface) -> HttpResponse:
+        print(request.user)
+        print(request.user_from_header)
         status = 200 if (request.user.is_authenticated or request.user_from_header) else 401
         return HttpResponse(status=status)
 

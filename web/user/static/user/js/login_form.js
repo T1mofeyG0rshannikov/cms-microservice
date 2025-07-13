@@ -46,21 +46,22 @@ function submitLoginForm(element, event, domain){
         withCredentials: true,
         headers: {
             'Accept': 'application/json',
-            'X-CSRFToken': data.get("csrfmiddlewaretoken"),
         },
         body: data
     }).then(response => {
         if (response.status === 200){
             response.json().then(response => {
-                const token = response.acess_token;
-                setToken(token);
+                const access_token = response.access_token;
+                const refresh_token = isAgreeToRememberMe() ? response.refresh_token : null;
+
+                setTokens(access_token, refresh_token);
 
                 if (isAgreeToRememberMe()){
                     rememberMe();
                     rememberUserInfo(data.get("phone_or_email"), data.get("password"));
                 }
 
-                window.location.replace(`${window.location.protocol}//${domain}/user/set-token/${token}`);
+                window.location.replace(`${window.location.protocol}//${domain}/my`);
             })
         }
         else if (response.status === 400){

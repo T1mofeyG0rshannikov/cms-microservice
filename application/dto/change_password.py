@@ -7,3 +7,4 @@ from domain.user.entities import UserInterface
 class ChangePasswordResponse:
     user: UserInterface
     access_token: str
+    refresh_token: str

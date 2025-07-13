@@ -12,7 +12,6 @@ class UserActivitySettings:
         settings.STATIC_URL,
         settings.MEDIA_URL,
         "/styles/",
-        "set-token",
         "site_statistics/opened-product-popup",
         "site_statistics/opened-product-link",
         "site_statistics/opened-product-promo",

@@ -32,7 +32,11 @@ class UserActivityMiddleware(BaseSessionMiddleware):
         if "get-user-info" in path:
             return self.get_response(request)
 
-        ban_limit = self.user_session_repository.get_session_filters().ban_limit
+        session_filters = self.user_session_repository.get_session_filters()
+        if not session_filters:
+            return self.get_response(request)
+        
+        ban_limit = session_filters.ban_limit
         if not ban_limit:
             ban_limit = 10**10
 

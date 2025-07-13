@@ -92,11 +92,11 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django_user_agents.middleware.UserAgentMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "web.site_statistics.searcher_middleware.SearcherMiddleware",
-    "web.site_statistics.raw_session_middleware.RawSessionMiddleware",
-    "web.site_statistics.page_not_found_middleware.PageNotFoundMiddleware",
-    "web.site_statistics.disallowed_host_middleware.DisallowedHostMiddleware",
-    "web.site_statistics.user_activity_middleware.UserActivityMiddleware",
+    "web.site_statistics.middlewares.searcher.SearcherMiddleware",
+    "web.site_statistics.middlewares.raw_session.RawSessionMiddleware",
+    "web.site_statistics.middlewares.penalty.PenaltySessionMiddleware",
+    "web.site_statistics.middlewares.disallowed_host.DisallowedHostMiddleware",
+    "web.site_statistics.middlewares.user_activity.UserActivityMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "web.admin.middleware.AdminMiddleware",
@@ -133,11 +133,15 @@ WSGI_APPLICATION = "web.core.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR.parent.parent / "db.sqlite3",
-        "OPTIONS": {
-            "timeout": 100,
-        },
+        "ENGINE": "django.db.backends.mysql",  # <-- UPDATED line
+        "NAME": "bankomag",  # <-- UPDATED line
+        "USER": "root",  # <-- UPDATED line
+        "PASSWORD": "root",  # <-- UPDATED line
+        "HOST": "localhost",  # <-- UPDATED line
+        "PORT": "3306",
+         'OPTIONS': {
+               'charset': 'utf8mb4',
+           },
     }
 }
 

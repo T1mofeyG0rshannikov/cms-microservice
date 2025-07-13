@@ -16,16 +16,30 @@ class LinkGenerator(LinkGeneratorInterface):
         self.host = host
 
     def get_url_to_confirm_email(self, user_id: int) -> str:
-        token_to_confirm_email = self.jwt_processor.create_confirm_email_token(user_id)
-        return f"{self.protocol}://{self.host}/user/confirm-email/{token_to_confirm_email}"
+        token = self.jwt_processor.create_token(
+            data={
+                "user_id": user_id
+            }
+        )
+
+        return f"{self.protocol}://{self.host}/user/confirm-email/{token}"
 
     def get_url_to_confirm_new_email(self, user_id: int) -> str:
-        token_to_confirm_new_email = self.jwt_processor.create_confirm_email_token(user_id)
-        return f"{self.protocol}://{self.host}/user/confirm-new-email/{token_to_confirm_new_email}"
+        token = self.jwt_processor.create_token(
+            data={
+                "user_id": user_id
+            }
+        )
+
+        return f"{self.protocol}://{self.host}/user/confirm-new-email/{token}"
 
     def get_url_to_reset_password(self, user_id: int) -> str:
-        token_to_reset_password = self.jwt_processor.create_set_password_token(user_id)
-        return f"{self.protocol}://{self.host}/user/password/{token_to_reset_password}"
+        token = self.jwt_processor.create_token(
+            data={
+                "id": user_id
+            }
+        )
+        return f"{self.protocol}://{self.host}/user/password/{token}"
 
 
 def get_link_generator(

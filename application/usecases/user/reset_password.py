@@ -38,7 +38,7 @@ class ResetPassword:
 
         user = self.user_repository.set_password(payload["id"], new_password)
 
-        access_token = self.jwt_processor.create_access_token(user.username, user.id)
+        access_token = self.jwt_processor.create_token(data={"sub": user.username, "id": user.id})
 
         return user, access_token
 

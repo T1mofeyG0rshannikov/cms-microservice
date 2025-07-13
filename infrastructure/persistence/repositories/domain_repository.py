@@ -25,7 +25,7 @@ class DomainRepository(DomainRepositoryInterface):
                 cache.set("domain_string", domain, timeout=60 * 15)
 
             return domain
-        except (OperationalError, ProgrammingError):
+        except (OperationalError, ProgrammingError, TypeError):
             return ""
 
     def get_site_name(self) -> str:
