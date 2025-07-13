@@ -11,14 +11,6 @@ function rememberUserInfo(username, password){
     localStorage.setItem("bankomagPassword", password);
 }
 
-function isRememberMe(){
-    if (localStorage.getItem("bankomagRememberMe")){
-        return true;
-    }
-
-    return false;
-}
-
 function compliteLoginForm(){
     if (isRememberMe()){
         const form = document.getElementById("login-form");

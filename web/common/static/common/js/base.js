@@ -3,6 +3,14 @@ function openLink(url, product_id, type="link"){
     fetch(`/site_statistics/opened-product-${type}?product_id=${product_id}`)
 }
 
+function isRememberMe(){
+    if (localStorage.getItem("bankomagRememberMe")){
+        return true;
+    }
+
+    return false;
+}
+
 function displayPhotoOnload(element) {
     const imageLoader = element.querySelector("input[type=file]");
     const file = imageLoader.files[0];
