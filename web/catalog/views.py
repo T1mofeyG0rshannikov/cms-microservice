@@ -1,6 +1,5 @@
 from django.http import HttpRequest, JsonResponse
 
-from domain.page_blocks.entities.page import PageInterface
 from domain.products.repository import ProductRepositoryInterface
 from domain.user.user_product_repository import UserProductRepositoryInterface
 from infrastructure.persistence.models.catalog.products import (
@@ -12,7 +11,6 @@ from infrastructure.persistence.repositories.product_repository import (
 from infrastructure.persistence.repositories.user_product_repository import (
     get_user_product_repository,
 )
-from web.blocks.views import BasePageView
 from web.catalog.serializers import ProductsSerializer
 from web.common.pagination import Pagination
 from web.user.serializers import UserProductsSerializer

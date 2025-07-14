@@ -1,6 +1,7 @@
 from django.http import HttpRequest
 
 from application.services.user.referrals_service import get_referral_service
+from application.mappers.site import from_orm_to_site
 from domain.domains.domain_repository import DomainRepositoryInterface
 from domain.page_blocks.settings_repository import SettingsRepositoryInterface
 from domain.products.repository import ProductRepositoryInterface
@@ -48,7 +49,7 @@ class TemplateContextProcessor(TemplateContextProcessorInterface):
         self, request: RequestInterface, settings_repository: SettingsRepositoryInterface = get_settings_repository()
     ):
         return {
-            "site": request.user.site,
+            "site": from_orm_to_site(request.user.site),
             "fonts": settings_repository.get_user_fonts(),
             "default_user_size": settings_repository.get_settings().default_users_font_size,
             "domains": settings_repository.get_partner_domains(),

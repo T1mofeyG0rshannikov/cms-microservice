@@ -1,3 +1,4 @@
+from application.mappers.site import from_orm_to_site
 from domain.domains.domain_repository import DomainRepositoryInterface
 from domain.page_blocks.settings_repository import SettingsRepositoryInterface
 from domain.referrals.referral import UserInterface
@@ -56,15 +57,7 @@ class SiteService(SiteServiceInterface):
         if subdomain:
             site = self.site_repository.get(subdomain=subdomain)
             if site:
-                return SiteInterface(
-                    id=site.id,
-                    name=site.name,
-                    domain=site.domain,
-                    owner=site.owner,
-                    contact_info=site.contact_info,
-                    created_at=site.created_at,
-                    user=site.user,
-                )
+                return from_orm_to_site(site)
 
         domain = self.domain_repository.get_domain(is_partners=False)
         settings = self.settings_repository.get_settings()

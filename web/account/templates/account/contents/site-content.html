@@ -14,20 +14,20 @@
 <hr />
 
 <div class="container">
-    {% if user.site %}
+    {% if site %}
         <div class="container-child">
             <div class="site-container">
                 <p class="left">Адрес сайта</p>
 
                 <div class="right">
                     <div class="site">
-                        <p>{{ request.user.full_site_name }}</p>
+                        <p>{{ site.adress }}</p>
 
-                        <a style="cursor: pointer; margin: 0px;" onclick="openLink('${window.location.protocol}//{{ request.user.full_site_name }}')">
+                        <a style="cursor: pointer; margin: 0px;" onclick="openLink('${window.location.protocol}//{{ site.adress }}')">
                             <object class="link" data="/static/account/images/external-link.svg"></object>
                         </a>
                     </div>
-                    <p style="margin: 10px 0px; color: rgb(40, 200, 40);">Онлайн с {{ user.site.online_from|date:"d.m.Y" }}</p>
+                    <p style="margin: 10px 0px; color: rgb(40, 200, 40);">Онлайн с {{ site.online_from|date:"d.m.Y" }}</p>
 
                     <p class="stop-site" onclick="stopSite(this)">Остановить</p>
                 </div>
@@ -38,12 +38,12 @@
                 <p class="left">Логотип:</p>
 
                 <div class="right">
-                    {% if user.site.logo %}
+                    {% if site.logo %}
                     <div class="logo-container">
-                        <img class="site-logo" style="min-width: {{ user.site.logo_width }}; min-height: {{ user.site.logo_height }}; max-width: {{ user.site.logo_width }}; max-height: {{ user.site.logo_height }};" src="{{ user.site.logo.url }}" />
+                        <img class="site-logo" style="min-width: {{ site.logo_width }}; min-height: {{ site.logo_height }}; max-width: {{ site.logo_width }}; max-height: {{ site.logo_height }};" src="{{ site.logo.url }}" />
                     </div>
 
-                    <p style="margin: 10px 0px;">{{ user.site.logo_size }}</p>
+                    <p style="margin: 10px 0px;">{{ site.logo_size }}</p>
                     {% else %}
                         <p style="margin: 0px;">Логотип не загружен</p>
                     {% endif %}
@@ -54,15 +54,15 @@
                 <p class="left">Название:</p>
 
                 <div class="right">
-                    {% if user.site.name %}
+                    {% if site.name %}
                         <div class="site-name">
-                            <p style="margin: 0px; font-family: {{ user.site.font }}; font-size: {{user.site.font_size}};">{{ user.site.name }}</p>
+                            <p style="margin: 0px; font-family: {{ site.font }}; font-size: {{ site.font_size}};">{{ site.name }}</p>
                         </div>
                     {% else %}
                         <p style="margin: 0px;">Задайте название сайта</p>
                     {% endif %}
 
-                    <p style="margin: 0px; margin-top: 10px;">{% if user.site.font %}{{ user.site.font }}{% endif %}, {% if user.site.font_size %}{{ user.site.font_size }}pt{% endif %}</p>
+                    <p style="margin: 0px; margin-top: 10px;">{% if site.font %}{{ site.font }}{% endif %}, {% if site.font_size %}{{ site.font_size }}pt{% endif %}</p>
                 </div>
             </div>
 
@@ -70,8 +70,8 @@
                 <p class="left">Владелец:</p>
 
                 <div class="right">
-                    {% if user.site.owner %}
-                        <p style="margin: 0px;">{{ user.site.owner }}</p>
+                    {% if site.owner %}
+                        <p style="margin: 0px;">{{ site.owner }}</p>
                     {% else %}
                         <p style="margin: 0px;">Нет информации о владельце</p>
                     {% endif %}
@@ -84,8 +84,8 @@
 
                 <div class="right">
                     <p style="margin: 0px;">
-                        {% if user.site.contact_info %}
-                            {{ user.site.contact_info }}
+                        {% if site.contact_info %}
+                            {{ site.contact_info }}
                         {% else %}
                             нет контактной информации
                         {% endif %}
@@ -97,7 +97,7 @@
         <div class="container-child">
             <p>QR код сайта:</p>
             <div class="qrcode">
-                {% qr_from_text request.user.full_site_name size="T" %}
+                {% qr_from_text site.adress size="T" %}
             </div>
 
             <a class="adds-link" href="/">Рекламные материалы</a>
@@ -108,8 +108,8 @@
                 <p>Социальные сети</p>
 
                 <div style="display: flex; flex-direction: column;">
-                    {% if user.site.socials.all %}
-                        {% for user_social_network in user.site.socials.all %}
+                    {% if site.socials %}
+                        {% for user_social_network in site.socials %}
                         <div class="user-social">
                             <div class="content">
                                 <div class="icon-wrapper" style="background-color: {{ user_social_network.social_network.button_color }}">

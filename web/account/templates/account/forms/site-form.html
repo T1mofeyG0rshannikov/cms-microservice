@@ -48,7 +48,7 @@
             <p>Шрифт</p>
             <select name="font_id" id="font_id">
                 {% for font in fonts %}
-                    <option value="{{ font.id }}" {% if site.font.id == font.id %}selected{% endif %}>{{ font.name }}</option>
+                    <option value="{{ font.id }}" {% if site.font == font.name %}selected{% endif %}>{{ font.name }}</option>
                 {% endfor %}
             </select>
         </div>

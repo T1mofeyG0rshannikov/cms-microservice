@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.utils.html import mark_safe
 
+from application.services.site_service import get_site_service
 from domain.user.repository import UserRepositoryInterface
 from infrastructure.persistence.models.user.idea import Idea, IdeaScreen
 from infrastructure.persistence.models.user.product import UserProduct
@@ -20,7 +21,8 @@ class UserAdmin(admin.ModelAdmin):
 
     @admin.display(description="зарегистрирован на")
     def register_on(self, obj):
-        return obj.register_on
+        site_service = get_site_service()
+        return site_service.get_register_on_site(obj)
 
 
 class UserRoleInlineForm(forms.ModelForm):

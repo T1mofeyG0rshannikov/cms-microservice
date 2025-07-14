@@ -5,6 +5,7 @@ from django.http import HttpRequest
 from application.services.messanger_service import get_messanger_service
 from application.services.user.referrals_service import get_referral_service
 from application.usecases.ideas.get_ideas import GetIdeas, get_get_ideas_interactor
+from application.mappers.site import from_orm_to_site
 from domain.domains.domain_repository import DomainRepositoryInterface
 from domain.materials.repository import DocumentRepositoryInterface
 from domain.products.repository import ProductRepositoryInterface
@@ -60,7 +61,14 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
         return self.get_context(request)
 
     def get_site_context(self, request: HttpRequest):
-        return self.get_context(request)
+        context = self.get_context(request)
+        site = request.user.site
+
+        if site:
+            site = from_orm_to_site(site)
+
+        context["site"] = site
+        return context
 
     def get_refs_context(self, request: HttpRequest):
         context = self.get_context(request)

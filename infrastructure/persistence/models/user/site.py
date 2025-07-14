@@ -45,21 +45,3 @@ class Site(models.Model):
     def deactivate(self) -> None:
         self.is_active = False
         self.save()
-
-    @property
-    def logo_size(self) -> str:
-        width = int(self.logo_width)
-
-        return f"{width}x{self.logo_height}px"
-
-    @property
-    def logo_height(self) -> int:
-        coeff = self.logo.height / self.logo.width
-
-        width = int(self.logo_width)
-
-        return int(width * coeff)
-
-    @property
-    def width_percent(self) -> int:
-        return int((int(self.logo_width) / 260) * 100)

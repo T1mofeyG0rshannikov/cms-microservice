@@ -35,9 +35,6 @@ class ProductRepositoryInterface(Protocol):
     def get_product_offers(self, product_id: int) -> Iterable[OfferInterface]:
         raise NotImplementedError
 
-    def get_type(self, slug: str) -> ProductTypeInterface:
-        raise NotImplementedError
-
     def get_product_name_from_catalog(self, product_type_slug: str, product_index: int) -> str:
         raise NotImplementedError
 

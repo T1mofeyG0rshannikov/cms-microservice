@@ -22,9 +22,9 @@ class NotificationSerializer(serializers.ModelSerializer):
         user = self.context.get("user")
 
         notification_message = notification_formatter(notification.id)
-        if user:
-            if user.full_site_name:
-                notification_message = notification_message.replace("[user.site]", user.full_site_name)
+        #if user:
+        #    if user.full_site_name:
+        #        notification_message = notification_message.replace("[user.site]", user.full_site_name)
         return notification_message
 
 

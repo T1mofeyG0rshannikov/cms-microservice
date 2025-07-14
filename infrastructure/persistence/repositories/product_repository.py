@@ -136,10 +136,7 @@ class ProductRepository(ProductRepositoryInterface):
 
     def get_product_name_from_catalog(self, product_type_slug: str, product_index: int) -> str:
         return self.__get_catalog_offers_query(product_type_slug)[product_index].product.name
-
-    def get_type(self, slug: str) -> ProductTypeInterface:
-        return ProductType.objects.get(slug=slug)
-
+ 
     def get_product_categories(self, user_id: int) -> Iterable[ProductCategoryInterface]:
         return ProductCategory.objects.annotate(
             count=Count("products", filter=Q(products__user_products__user_id=user_id))
