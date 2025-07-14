@@ -30,11 +30,6 @@ class TemplateLoader(TemplateLoaderInterface):
 
         return self.load_template(app_name="common", template_name="change-user-form", context=context)
 
-    def load_change_site_form(self, request: HttpRequest):
-        context = self.context_processor.get_change_site_form_context(request)
-
-        return self.load_template(app_name="account", template_name="forms/site-form", context=context)
-
     def load_change_socials_form(self, request: HttpRequest):
         context = self.context_processor.get_change_socials_form_context(request)
 

@@ -1,6 +1,9 @@
+from dataclasses import asdict
+import json
 from django.http import HttpRequest, JsonResponse
 
 from application.services.user.referrals_service import get_referral_service
+from application.mappers.site import from_orm_to_site
 from domain.referrals.service import ReferralServiceInterface
 from web.account.serializers import ReferralsSerializer
 from web.common.pagination import Pagination
@@ -19,3 +22,10 @@ class GetReferals(APIUserRequiredGenerics):
         pagination = Pagination(request)
 
         return JsonResponse(pagination.paginate(referrals, "referrals", ReferralsSerializer))
+
+
+class GetUserSiteView(APIUserRequiredGenerics):
+    def get(self, request: HttpRequest) -> JsonResponse:
+        return JsonResponse({
+            "site": asdict(from_orm_to_site(request.user.site))
+        })

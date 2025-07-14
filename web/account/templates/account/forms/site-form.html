@@ -96,7 +96,7 @@
             <p>Логотип</p>
             <div id="logo" class="logo">
                 <img
-                    src="{% if site.logo %}{{ site.logo.url }}{% else %}{% static 'account/images/baselogo.png' %}{% endif %}"
+                    src="{% if site.logo %}{{ site.logo }}{% else %}{% static 'account/images/baselogo.png' %}{% endif %}"
                     style="{% if site.logo %}width: {{ site.logo_width }}; {% endif %}"
                 />
                 <input name="file" type="file" accept="image/*" id="file" />

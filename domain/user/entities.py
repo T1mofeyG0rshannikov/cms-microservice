@@ -60,6 +60,7 @@ class SiteInterface:
     owner: str | None = None
     contact_info: str | None = None
     user: Optional["UserInterface"] = None
+    user_id: int | None = None
 
     advertising_channel: str | None = None
     use_default_settings: bool | None = None
@@ -77,8 +78,8 @@ class SiteInterface:
     @property
     def adress(self) -> str:
         if self.subdomain:
-            return f"{self.subdomain}.{self.domain.domain}"
-        return self.domain.domain
+            return f"{self.subdomain}.{self.domain}"
+        return self.domain
     
     @property
     def logo_height(self) -> int:

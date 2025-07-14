@@ -40,3 +40,13 @@ async function loginAPI(data){
     
     return await getData(response)
 }
+
+async function getSiteAPI(){
+    const response = await fetch(`/api/site/get`, {
+        headers: {
+            'Authorization': getToken()
+        }
+    })
+    
+    return getData(response)
+}

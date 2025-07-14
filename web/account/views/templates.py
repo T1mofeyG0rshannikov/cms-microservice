@@ -9,6 +9,8 @@ from application.usecases.user.change_password import (
     ChangePassword,
     get_change_password_interactor,
 )
+from domain.page_blocks.settings_repository import SettingsRepositoryInterface
+from infrastructure.persistence.repositories.settings_repository import get_settings_repository
 from domain.materials.repository import DocumentRepositoryInterface
 from domain.messanger.repository import MessangerRepositoryInterface
 from domain.user.exceptions import (
@@ -70,6 +72,8 @@ class SiteView(BaseProfileView):
     template_name = "account/site.html"
 
     def get_context_data(self, **kwargs):
+        settings_repository: SettingsRepositoryInterface = get_settings_repository()
+
         return super().get_context_data(**kwargs) | self.context_processor.get_site_context(self.request)
 
 

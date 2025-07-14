@@ -6,6 +6,8 @@ from application.services.messanger_service import get_messanger_service
 from application.services.user.referrals_service import get_referral_service
 from application.usecases.ideas.get_ideas import GetIdeas, get_get_ideas_interactor
 from application.mappers.site import from_orm_to_site
+from domain.page_blocks.settings_repository import SettingsRepositoryInterface
+from infrastructure.persistence.repositories.settings_repository import get_settings_repository
 from domain.domains.domain_repository import DomainRepositoryInterface
 from domain.materials.repository import DocumentRepositoryInterface
 from domain.products.repository import ProductRepositoryInterface
@@ -60,7 +62,7 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
     def get_profile_context(self, request: HttpRequest):
         return self.get_context(request)
 
-    def get_site_context(self, request: HttpRequest):
+    def get_site_context(self, request: HttpRequest, settings_repository: SettingsRepositoryInterface = get_settings_repository()):
         context = self.get_context(request)
         site = request.user.site
 
@@ -68,6 +70,11 @@ class ProfileTemplateContextProcessor(BaseContextProcessor, ProfileTemplateConte
             site = from_orm_to_site(site)
 
         context["site"] = site
+        
+        context["fonts"] = settings_repository.get_user_fonts()
+        context["default_user_size"] = settings_repository.get_settings().default_users_font_size
+        context["domains"] = settings_repository.get_partner_domains()
+
         return context
 
     def get_refs_context(self, request: HttpRequest):

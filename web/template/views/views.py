@@ -75,15 +75,15 @@ class GetChangeUserFormTemplate(BaseTemplateLoadView):
         return self.template_loader.load_change_user_form(request)
 
 
-class GetChangeSiteFormTemplate(BaseTemplateLoadView):
+class GetChangeSiteFormTemplate(View):
     increment_session_profile_action: IncrementSessionCount = get_increment_session_count("profile_actions_count")
     create_user_session_log: CreateUserSesssionLog = get_create_user_session_log()
 
-    def get_content(self, request: HttpRequest):
+    def get(self, request: HttpRequest):
         self.increment_session_profile_action(request=request)
         self.create_user_session_log(request=request, text=UserActions.opened_site_settings)
 
-        return self.template_loader.load_change_site_form(request)
+        return HttpResponse(status=200)
 
 
 class GetChangeSocialsFormTemplate(BaseTemplateLoadView):

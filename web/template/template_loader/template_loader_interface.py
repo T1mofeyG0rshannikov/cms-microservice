@@ -11,9 +11,6 @@ class TemplateLoaderInterface(Protocol):
     def load_change_user_form(self, request: HttpRequest) -> str | None:
         raise NotImplementedError
 
-    def load_change_site_form(self, request: HttpRequest) -> str | None:
-        raise NotImplementedError
-
     def load_change_socials_form(self, request: HttpRequest) -> str | None:
         raise NotImplementedError
 
