@@ -1,64 +1,8 @@
 from rest_framework import serializers
 
-from application.formats.date_russian import get_date_in_russian
 from infrastructure.persistence.models.catalog.products import (
-    Offer,
-    OfferTypeRelation,
     Product,
 )
-
-
-class CatalogProductSerializer(serializers.ModelSerializer):
-    cover = serializers.SerializerMethodField()
-    end_promotion = serializers.SerializerMethodField()
-    links = serializers.SerializerMethodField()
-    profit = serializers.SerializerMethodField()
-    organization = serializers.SerializerMethodField()
-    private = serializers.SerializerMethodField()
-    name = serializers.SerializerMethodField()
-    category = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Offer
-        fields = (
-            "organization",
-            "links",
-            "link",
-            "cover",
-            "description",
-            "annotation",
-            "name",
-            "private",
-            "promotion",
-            "profit",
-            "end_promotion",
-            "category",
-        )
-
-    def get_category(self, offer):
-        return offer.product.category.short
-
-    def get_name(self, offer):
-        return offer.product.name
-
-    def get_profit(self, offer):
-        type = self.context["type"]
-        return OfferTypeRelation.objects.get(type=type, offer=offer).profit
-
-    def get_private(self, offer):
-        return offer.product.private
-
-    def get_organization(self, offer):
-        return offer.product.organization
-
-    def get_links(self, offer):
-        return offer.links.all()
-
-    def get_end_promotion(self, product):
-        return get_date_in_russian(product.get_end_promotion)
-
-    def get_cover(self, offer):
-        return offer.product.cover.url
 
 
 class ProductsSerializer(serializers.ModelSerializer):

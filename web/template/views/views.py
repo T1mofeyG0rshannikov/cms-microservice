@@ -21,7 +21,6 @@ from infrastructure.persistence.repositories.product_repository import (
 from infrastructure.requests.request_interface import RequestInterface
 from web.account.views.templates import Profile
 from web.blocks.views import BasePageView
-from web.catalog.views import ShowCatalogPageView
 from web.settings.views.settings_mixin import SettingsMixin
 from web.template.profile_template_loader.profile_template_loader import (
     get_profile_template_loader,
@@ -46,9 +45,10 @@ def slug_router(
     if page:
         return BasePageView.as_view()(request, page=page)
 
-    page = get_catalog_page(slug=slug)
+    user_is_authenticated = request.user.is_authenticated
+    page = get_catalog_page(slug=slug, user_is_authenticated=user_is_authenticated)
     if page:
-        return ShowCatalogPageView.as_view()(request, page=page, products_slug=slug)
+        return BasePageView.as_view()(request, page=page)
 
     if slug == "my":
         return Profile.as_view()(request)

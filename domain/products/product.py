@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+from domain.common.screen import ImageInterface
+
 
 @dataclass
 class OrganizationInterface:
@@ -39,3 +41,39 @@ class OfferInterface:
     name: str
     status: str
     product: ProductInterface
+
+    '''
+    cover
+    end_promotion
+    links
+    profit
+    organization
+    private
+    name
+    category
+
+    class Meta:
+        model = Offer
+        fields = (
+            "organization",
+            "links",
+            "link",
+            "cover",
+            "description",
+            "annotation",
+            "name",
+            "private",
+            "promotion",
+            "profit",
+            "end_promotion",
+            "category",'''
+
+
+@dataclass
+class ExclusiveCardInterface:
+    button_text: str
+    button_ref: str
+    image: ImageInterface
+    bonus: str
+
+    annotation: str

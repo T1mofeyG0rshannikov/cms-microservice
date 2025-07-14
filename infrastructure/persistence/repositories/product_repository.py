@@ -4,6 +4,7 @@ from typing import Any
 from django.db.models import Count, Q, QuerySet
 
 from domain.products.product import (
+    ExclusiveCardInterface,
     OfferInterface,
     ProductCategoryInterface,
     ProductInterface,
@@ -15,7 +16,9 @@ from infrastructure.persistence.models.catalog.product_type import (
     ProductType,
 )
 from infrastructure.persistence.models.catalog.products import (
+    ExclusiveCard,
     Offer,
+    OfferTypeRelation,
     Organization,
     Product,
 )
@@ -47,6 +50,12 @@ class ProductRepository(ProductRepositoryInterface):
             .filter(types__type__slug=product_type_slug)
             .order_by("catalog_product__my_order")
         )
+    
+    def get_exclusive_card(self) -> ExclusiveCardInterface:
+        return ExclusiveCard.objects.first()
+    
+    def get_offer_type_relation(self, type_id: int, offer_id: int):
+        return OfferTypeRelation.objects.get(type_id=type_id, offer_id=offer_id)
 
     def get_enabled_products_to_create(self, user_id: int, organization_id: int) -> Iterable[ProductInterface]:
         products = (
@@ -128,8 +137,8 @@ class ProductRepository(ProductRepositoryInterface):
     def get_product_name_from_catalog(self, product_type_slug: str, product_index: int) -> str:
         return self.__get_catalog_offers_query(product_type_slug)[product_index].product.name
 
-    def get_product_type_name(self, slug: str) -> str:
-        return ProductType.objects.values("name").get(slug=slug)["name"]
+    def get_type(self, slug: str) -> ProductTypeInterface:
+        return ProductType.objects.get(slug=slug)
 
     def get_product_categories(self, user_id: int) -> Iterable[ProductCategoryInterface]:
         return ProductCategory.objects.annotate(

@@ -1,5 +1,4 @@
 import datetime
-import random
 
 from ckeditor.fields import RichTextField
 from dateutil.relativedelta import relativedelta  # type: ignore
@@ -12,7 +11,6 @@ from infrastructure.persistence.models.catalog.product_type import (
     ProductType,
 )
 from infrastructure.persistence.models.common import OneInstanceModel
-from infrastructure.security import get_link_encryptor
 
 
 class OrganizationType(models.Model):
@@ -133,8 +131,6 @@ class Offer(models.Model):
     )
     verification_of_registration = models.BooleanField(default=False, verbose_name="Верификация оформления")
 
-    link_encryptor = get_link_encryptor()
-
     @property
     def get_end_promotion(self):
         date = self.end_promotion
@@ -142,23 +138,6 @@ class Offer(models.Model):
             date = datetime.date.today() + relativedelta(years=+1)
 
         return date
-
-    @property
-    def link(self):
-        links = self.links.all()
-
-        link_change = []
-
-        for link in links:
-            link_change.append(link.percent / 100)
-
-        if link_change:
-            link = random.choices(links, weights=link_change, k=1)[0].text
-            link = self.link_encryptor.encrypt(link)
-
-            return link
-
-        return ""
 
     class Meta:
         app_label = "catalog"

@@ -6,7 +6,7 @@
         <a style="margin-top: 0px;">{{ block.introductory_text|safe }}</a>
 
         <div class="products">
-            {% for product in products %}
+            {% for product in block.products %}
                 {% with forloop.counter as product_id %}
                     <div class="product" style="display: flex; justify-content: space-between; flex-direction: column;">
                         <div>
@@ -45,18 +45,18 @@
                 {% endwith %}
             {% endfor %}
 
-            {% if block.add_exclusive %}
+            {% if block.exclusive_card %}
                 <div class="product exclusive">
                     <div>
-                        <img src="{{ exclusive_card.image.url }}" />
+                        <img src="{{ block.exclusive_card.image.url }}" />
                         <h3 style="color: rgb(250, 50, 50);">Наш эксклюзив</h3>
                     </div>
 
-                    <span style="margin: 15px 0px;">{{ exclusive_card.annotation }}</span>
+                    <span style="margin: 15px 0px;">{{ block.exclusive_card.annotation }}</span>
 
                     <div>
-                        <a class="bonus">Бонус: {{ exclusive_card.bonus }}</a>
-                        <button><a href="{{ exclusive_card.button_ref }}">{{ exclusive_card.button_text }}</a></button>
+                        <a class="bonus">Бонус: {{ block.exclusive_card.bonus }}</a>
+                        <button><a href="{{ block.exclusive_card.button_ref }}">{{ block.exclusive_card.button_text }}</a></button>
                     </div>
                 </div>
             {% endif %}

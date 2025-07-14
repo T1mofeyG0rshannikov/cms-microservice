@@ -1,7 +1,8 @@
-from application.dto.blocks import AdditionalCatalogBlockDTO, MainPageCatalogBlockDTO, PromoCatalogDTO
+from application.dto.blocks import AdditionalCatalogBlockDTO, CatalogDTO, MainPageCatalogBlockDTO, PromoCatalogDTO
+from application.dto_builders.catalog_offer import CatalogOfferAssembler, get_catalog_offer_assembler
 from infrastructure.persistence.repositories.product_repository import get_product_repository
 from domain.products.repository import ProductRepositoryInterface
-from infrastructure.persistence.models.blocks.catalog_block import AdditionalCatalogBlock, MainPageCatalogBlock, PromoCatalog
+from infrastructure.persistence.models.blocks.catalog_block import AdditionalCatalogBlock, CatalogBlock, MainPageCatalogBlock, PromoCatalog
 
 
 class MainPageCatalogToBlockAssembler:
@@ -60,3 +61,46 @@ class PromoCatalogAssembler:
 
 def get_promo_catalog_assembler(product_repository: ProductRepositoryInterface = get_product_repository()):
     return PromoCatalogAssembler(product_repository)
+
+
+class CatalogAssembler:
+    def __init__(
+        self,
+        product_repository: ProductRepositoryInterface,
+        product_assembler: CatalogOfferAssembler
+    ) -> None:
+        self.pr = product_repository
+        self.product_assembler = product_assembler
+
+    def build_data(self, block: CatalogBlock) -> CatalogDTO:
+        type = block.product_type
+
+        print(hasattr(block, "user_is_authenticated"))
+        if hasattr(block, "user_is_authenticated") and block.user_is_authenticated:
+            products = self.pr.get_catalog_offers(type.slug)
+        else:
+            products = self.pr.get_catalog_offers(type.slug, private=False)
+
+        products = [
+            self.product_assembler.build_data(offer, type) for offer in products
+        ]
+
+        return CatalogDTO(
+            name=block.name,
+            template=block.template,
+            ancor=block.ancor,
+            button_text=block.button_text,
+            button_ref=block.button_ref,
+            title=block.title,
+            introductory_text=block.introductory_text,
+            add_category=block.add_category,
+            exclusive_card=self.pr.get_exclusive_card() if block.add_exclusive else None,
+            products=products
+        )
+
+
+def get_catalog_assembler(
+    product_repository: ProductRepositoryInterface = get_product_repository(),
+    product_assembler: CatalogOfferAssembler = get_catalog_offer_assembler()
+) -> CatalogAssembler:
+    return CatalogAssembler(product_repository, product_assembler)

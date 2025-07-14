@@ -1,9 +1,8 @@
 from collections.abc import Iterable
 
-from django.core.cache import cache
 from django.db.models import Case, Q, When
 
-from application.mappers.page import from_orm_to_block, from_orm_to_page
+from application.mappers.page import from_orm_to_page
 from domain.common.screen import ImageInterface
 from domain.page_blocks.entities.base_block import PageBlockInterface
 from domain.page_blocks.entities.page import PageInterface
@@ -23,13 +22,11 @@ from infrastructure.persistence.models.common import BlockRelationship
 
 
 class PageRepository(PageRepositoryInterface):
-    def get_catalog_block(self, slug: str) -> PageBlockInterface | None:
+    def get_catalog_block(self, slug: str) -> CatalogBlock | None:
         try:
-            block = CatalogBlock.objects.select_related("template").get(product_type__slug=slug)
+            return CatalogBlock.objects.select_related("template").get(product_type__slug=slug)
         except CatalogBlock.DoesNotExist:
             return None
-
-        return from_orm_to_block(block)
 
     def get(self, id: int | None = None, url: str | None = None) -> PageInterface | None:
         query = Q()
@@ -113,12 +110,12 @@ class PageRepository(PageRepositoryInterface):
             field = getattr(page, field_name)
             field.set(relations)
 
-    def get_catalog_page_template(self) -> PageInterface:
+    def get_catalog_page_template(self):
         page = CatalogPageTemplate.objects.first()
-        return from_orm_to_page(page, blocks=self.__get_page_blocks(page))
+        return page, self.__get_page_blocks(page)
 
     def get_catalog_cover(self, slug: str) -> PageBlockInterface:
-        return from_orm_to_block(Cover.objects.select_related("template").get(producttype__slug=slug))
+        return Cover.objects.select_related("template").get(producttype__slug=slug)
 
     def get_landing(self, url: str) -> PageInterface:
         page = Landing.objects.get(url=url)

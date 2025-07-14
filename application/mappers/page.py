@@ -2,8 +2,8 @@ import os
 
 from django.db.models import QuerySet
 
-from application.dto_builders.blocks import get_main_page_catalog_assembler, get_promo_catalog_assembler, get_additional_catalog_assembler
-from infrastructure.persistence.models.blocks.catalog_block import AdditionalCatalogBlock, MainPageCatalogBlock, PromoCatalog
+from application.dto_builders.blocks import get_catalog_assembler, get_main_page_catalog_assembler, get_promo_catalog_assembler, get_additional_catalog_assembler
+from infrastructure.persistence.models.blocks.catalog_block import AdditionalCatalogBlock, CatalogBlock, MainPageCatalogBlock, PromoCatalog
 from domain.page_blocks.entities.base_block import PageBlockInterface
 from domain.page_blocks.entities.page import PageInterface
 from infrastructure.persistence.models.blocks.common import BaseBlock, BasePageModel
@@ -15,10 +15,14 @@ from infrastructure.public.template_settings import (
 DTOBUILDERS = {
     MainPageCatalogBlock: get_main_page_catalog_assembler,
     PromoCatalog: get_promo_catalog_assembler,
-    AdditionalCatalogBlock: get_additional_catalog_assembler
+    AdditionalCatalogBlock: get_additional_catalog_assembler,
+    CatalogBlock: get_catalog_assembler
 }
 
-def from_orm_to_block(block: BaseBlock, config: TemplateSettings = get_template_settings()) -> PageBlockInterface:
+def from_orm_to_block(
+    block: BaseBlock,
+    config: TemplateSettings = get_template_settings()
+) -> PageBlockInterface:
     if block is None:
         return PageBlockInterface(content=None, styles=None)
     

@@ -2,6 +2,7 @@ from collections.abc import Iterable
 from typing import Any, Protocol
 
 from domain.products.product import (
+    ExclusiveCardInterface,
     OfferInterface,
     ProductCategoryInterface,
     ProductInterface,
@@ -10,6 +11,12 @@ from domain.products.product import (
 
 
 class ProductRepositoryInterface(Protocol):
+    def get_exclusive_card(self) -> ExclusiveCardInterface:
+        raise NotImplementedError
+
+    def get_offer_type_relation(self, type_id: int, offer_id: int):
+        raise NotImplementedError
+    
     def get_enabled_products_to_create(self, user_id: int, organization_id: int) -> Iterable[ProductInterface]:
         raise NotImplementedError
 
@@ -28,7 +35,7 @@ class ProductRepositoryInterface(Protocol):
     def get_product_offers(self, product_id: int) -> Iterable[OfferInterface]:
         raise NotImplementedError
 
-    def get_product_type_name(self, slug: str) -> str:
+    def get_type(self, slug: str) -> ProductTypeInterface:
         raise NotImplementedError
 
     def get_product_name_from_catalog(self, product_type_slug: str, product_index: int) -> str:
