@@ -96,20 +96,6 @@ class Icon(OneInstanceModel):
         verbose_name_plural = "Иконка"
 
 
-class Domain(models.Model):
-    domain = models.CharField(max_length=50, verbose_name="домен")
-    is_partners = models.BooleanField(default=True, verbose_name="партнёрский сайт")
-    name = models.CharField(max_length=50, verbose_name="Название", null=True, blank=True)
-
-    def __str__(self):
-        return self.domain
-
-    class Meta:
-        app_label = "settings"
-        verbose_name = "домен"
-        verbose_name_plural = "домены"
-
-
 class LandingDomain(models.Model):
     domain = models.CharField(max_length=50, verbose_name="домен")
 
