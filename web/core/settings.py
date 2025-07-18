@@ -27,9 +27,7 @@ ALLOWED_HOSTS: list[str] = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
-    "daphne",
     "web.admin",
-    "web.user",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -40,27 +38,14 @@ INSTALLED_APPS = [
     "colorfield",
     "ckeditor",
     "web.blocks",
-    "web.site_statistics",
     "web.catalog",
     "web.common",
-    "web.account",
     "web.settings",
     "web.styles",
-    "web.notifications",
-    "web.site_tests",
     "django_hosts",
-    "qr_code",
-    "sass_processor",
-    "channels",
     "rest_framework",
-    "web.emails",
     "corsheaders",
-    "web.materials",
-    "web.system",
-    "web.messanger",
-    "django_user_agents",
     "debug_toolbar",
-    "compressor",
 ]
 
 
@@ -76,31 +61,19 @@ CHANNEL_LAYERS = {
     },
 }
 
-AUTH_USER_MODEL = "user.User"
-
 MIDDLEWARE = [
     "django_hosts.middleware.HostsRequestMiddleware",
     "django_hosts.middleware.HostsResponseMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    "web.settings.domains_middleware.DomainMiddleware",
-    "web.settings.landing_middleware.LandingMiddleware",
-    "web.user.middleware.JwtAuthMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django_user_agents.middleware.UserAgentMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "web.site_statistics.middlewares.searcher.SearcherMiddleware",
-    "web.site_statistics.middlewares.raw_session.RawSessionMiddleware",
-    "web.site_statistics.middlewares.penalty.PenaltySessionMiddleware",
-    "web.site_statistics.middlewares.disallowed_host.DisallowedHostMiddleware",
-    "web.site_statistics.middlewares.user_activity.UserActivityMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "web.admin.middleware.AdminMiddleware",
-    "web.site_tests.middleware.ExceptionLoggingMiddleware",
 ]
 
 INTERNAL_IPS = [
@@ -134,7 +107,7 @@ WSGI_APPLICATION = "web.core.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",  # <-- UPDATED line
-        "NAME": "bankomag",  # <-- UPDATED line
+        "NAME": "bankomag_cms",  # <-- UPDATED line
         "USER": "root",  # <-- UPDATED line
         "PASSWORD": "root",  # <-- UPDATED line
         "HOST": "localhost",  # <-- UPDATED line
@@ -312,7 +285,6 @@ RAW_SESSION_SESSION_KEY = os.getenv("RAW_SESSION_SESSION_KEY")
 
 SESSION_SAVE_EVERY_REQUEST = True
 
-SESSION_ENGINE = "web.site_statistics.session_backend"
 USER_ACTIVITY_COOKIE_NAME = "user_activity"
 RAW_SESSION_COOKIE_NAME = "raw_session"
 SEARCHER_COOKIE_NAME = "searcher_session"

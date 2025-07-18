@@ -4,14 +4,11 @@ from django.db import models
 from django.utils.safestring import mark_safe
 
 from infrastructure.admin.admin_settings import get_admin_settings
-from web.admin.forms import CustomAuthenticationAdminForm
 
 
 class MyAdminSite(AdminSite):
     site_header = "Bankomag"
     index_title = "bankomag"
-    login_form = CustomAuthenticationAdminForm
-    login_template = "admin/login_form.html"
 
     def get_app_list(self, request, app_label=None):
         app_order = [

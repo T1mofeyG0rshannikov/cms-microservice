@@ -14,7 +14,6 @@ from infrastructure.persistence.models.settings import (
     Trackers,
     UserFont,
 )
-from web.account.admin import MessangerAdmin, UserFontAdmin
 from web.common.admin import SocialNetworkAdmin
 from web.styles.admin import FontAdmin, GlobalStylesAdmin
 
@@ -45,6 +44,4 @@ admin.site.register(SiteSettings, SettingsAdmin)
 admin.site.register(GlobalStyles, GlobalStylesAdmin)
 admin.site.register(Font, FontAdmin)
 admin.site.register(SocialNetwork, SocialNetworkAdmin)
-admin.site.register(Messanger, MessangerAdmin)
-admin.site.register(UserFont, UserFontAdmin)
 admin.site.register(Trackers)

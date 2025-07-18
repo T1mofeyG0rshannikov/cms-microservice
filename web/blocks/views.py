@@ -1,44 +1,36 @@
 import json
-from typing import Any
 
 from django.db.utils import IntegrityError
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
 from application.services.pages_service import get_page_service
-from domain.page_blocks.entities.page import PageInterface
-from domain.page_blocks.page_repository import PageRepositoryInterface
+from application.usecases.public.catalog_page import get_catalog_page
+from web.blocks.serializers import PageSerializer
 from domain.page_blocks.page_service_interface import PageServiceInterface
 from infrastructure.files.files import find_class_in_directory
 from infrastructure.persistence.repositories.page_repository import get_page_repository
-from web.blocks.serializers import PageSerializer
-from web.settings.views.settings_mixin import SettingsMixin
-from web.styles.views import StylesMixin
-from web.user.views.base_user_view import UserFormsView
 
 
-class BasePageView(SettingsMixin, StylesMixin):
-    template_name = "blocks/page.html"
+class PageView(View):
+    def get(self, request):
+        page_repository = get_page_repository()
+        page_url = request.GET.get("url")
+        print(page_url)
+        page = page_repository.get(url=None)
+        print(page)
 
-    page_repository: PageRepositoryInterface = get_page_repository()
-
-    def get_context_data(self, page: PageInterface, **kwargs) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs) | self.get_styles_context()
-        context |= UserFormsView.get_context_data()
-
-        context["page"] = PageSerializer(page).data
-
-        return context
+        return JsonResponse({"page": PageSerializer(page).data})
 
 
-class IndexPage(BasePageView):
-    def get_context_data(self, **kwargs):
-        page = self.page_repository.get(url=None)
-
-        return super().get_context_data(page=page, **kwargs)
-
+class GetCatalogPageView(View):
+    def get(self, request):
+        slug = request.GET.get("url")
+        user_is_authenticated = request.user.is_authenticated
+        page = get_catalog_page(slug=slug, user_is_authenticated=user_is_authenticated)
+        return JsonResponse({"page": PageSerializer(page).data})
 
 @method_decorator(csrf_exempt, name="dispatch")
 class ClonePage(View):

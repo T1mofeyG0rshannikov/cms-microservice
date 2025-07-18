@@ -1,8 +1,5 @@
-from collections.abc import Iterable
 from typing import Protocol
 
-from domain.account.social_network import SocialNetworkInterface
-from domain.domains.domain import DomainInterface
 from domain.page_blocks.entities.site_settings import (
     SiteLogoInterface,
     SiteSettingsInterface,
@@ -23,13 +20,4 @@ class SettingsRepositoryInterface(Protocol):
         raise NotImplementedError
 
     def get_messangers(self):
-        raise NotImplementedError
-
-    def get_user_fonts(self):
-        raise NotImplementedError
-
-    def get_social_networks(self) -> Iterable[SocialNetworkInterface]:
-        raise NotImplementedError
-
-    def get_partner_domains(self) -> Iterable[DomainInterface]:
         raise NotImplementedError

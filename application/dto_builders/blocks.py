@@ -1,5 +1,8 @@
-from application.dto.blocks import AdditionalCatalogBlockDTO, CatalogDTO, MainPageCatalogBlockDTO, PromoCatalogDTO
+import os
+from application.dto.blocks import AdditionalCatalogBlockDTO, CatalogDTO, MainPageCatalogBlockDTO, OfferDTO, PromoCatalogDTO
 from application.dto_builders.catalog_offer import CatalogOfferAssembler, get_catalog_offer_assembler
+from application.mappers.products import from_orm_to_product_type
+from infrastructure.public.template_settings import TemplateSettings, get_template_settings
 from infrastructure.persistence.repositories.product_repository import get_product_repository
 from domain.products.repository import ProductRepositoryInterface
 from infrastructure.persistence.models.blocks.catalog_block import AdditionalCatalogBlock, CatalogBlock, MainPageCatalogBlock, PromoCatalog
@@ -9,15 +12,17 @@ class MainPageCatalogToBlockAssembler:
     def __init__(self, product_repository: ProductRepositoryInterface) -> None:
         self.pr = product_repository
 
-    def build_data(self, block: MainPageCatalogBlock) -> MainPageCatalogBlockDTO:
+    def build_data(self, block: MainPageCatalogBlock, config: TemplateSettings = get_template_settings()) -> MainPageCatalogBlockDTO:
         return MainPageCatalogBlockDTO(
             name=block.name,
-            template=block.template,
+            template=os.path.join(config.blocks_templates_folder, block.template.file),
             ancor=block.ancor,
             title=block.title,
             introductory_text=block.introductory_text,
             button_text=block.button_text,
-            products=self.pr.get_product_types_for_catalog(block.id)
+            products=[
+                from_orm_to_product_type(type) for type in self.pr.get_product_types_for_catalog(block.id)
+            ]
         )
 
 
@@ -29,15 +34,17 @@ class AdditionalCatalogBlockAssembler:
     def __init__(self, product_repository: ProductRepositoryInterface) -> None:
         self.pr = product_repository
 
-    def build_data(self, block: AdditionalCatalogBlock) -> AdditionalCatalogBlockDTO:
+    def build_data(self, block: AdditionalCatalogBlock, config: TemplateSettings = get_template_settings()) -> AdditionalCatalogBlockDTO:
         return AdditionalCatalogBlockDTO(
             name=block.name,
-            template=block.template,
+            template=os.path.join(config.blocks_templates_folder, block.template.file),
             ancor=block.ancor,
             button_text=block.button_text,
             add_annotation=block.add_annotation,
             add_button=block.add_button,
-            products=self.pr.get_proudct_types_for_additional_catalog(block.id)
+            products=[
+                from_orm_to_product_type(type) for type in self.pr.get_proudct_types_for_additional_catalog(block.id)
+            ]
         )
 
 
@@ -49,13 +56,15 @@ class PromoCatalogAssembler:
     def __init__(self, product_repository: ProductRepositoryInterface) -> None:
         self.pr = product_repository
 
-    def build_data(self, block: PromoCatalog) -> PromoCatalogDTO:
+    def build_data(self, block: PromoCatalog, config: TemplateSettings = get_template_settings()) -> PromoCatalogDTO:
         return PromoCatalogDTO(
             name=block.name,
-            template=block.template,
+            template=os.path.join(config.blocks_templates_folder, block.template.file),
             ancor=block.ancor,
             title=block.title,
-            products=self.pr.get_offers()
+            products=[
+                OfferDTO.process(offer) for offer in self.pr.get_offers()
+            ]
         )
 
 
@@ -72,7 +81,7 @@ class CatalogAssembler:
         self.pr = product_repository
         self.product_assembler = product_assembler
 
-    def build_data(self, block: CatalogBlock) -> CatalogDTO:
+    def build_data(self, block: CatalogBlock, config: TemplateSettings = get_template_settings()) -> CatalogDTO:
         type = block.product_type
 
         print(hasattr(block, "user_is_authenticated"))
@@ -87,7 +96,7 @@ class CatalogAssembler:
 
         return CatalogDTO(
             name=block.name,
-            template=block.template,
+            template=os.path.join(config.blocks_templates_folder, block.template.file),
             ancor=block.ancor,
             button_text=block.button_text,
             button_ref=block.button_ref,

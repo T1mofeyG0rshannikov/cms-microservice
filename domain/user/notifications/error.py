@@ -1,2 +1,0 @@
-class CantSendNotification(Exception):
-    pass

@@ -30,10 +30,6 @@ class Navbar(BaseBlock):
         verbose_name = "навбар"
         verbose_name_plural = "навбары"
 
-    @property
-    def items(self):
-        return self.menu_items.all()
-
 
 class Cover(BaseBlock, ButtonMixin, TitleMixin, MainTextMixin):
     image_desctop = models.ImageField(verbose_name="Картинка(десктоп)", upload_to="images/covers/")
@@ -49,7 +45,6 @@ class Cover(BaseBlock, ButtonMixin, TitleMixin, MainTextMixin):
 
 class FeaturesBlock(BaseBlock, ButtonMixin, TitleMixin):
     introductory_text = RichTextField(verbose_name="Вводный текст", max_length=300, null=True, blank=True)
-    # block_relation = models.ForeignKey(BlockRelationship, related_name="featuresblock", on_delete=models.SET_NULL, null=True)
 
     class Meta:
         app_label = "blocks"

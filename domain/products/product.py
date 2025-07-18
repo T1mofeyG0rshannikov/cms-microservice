@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 
 from domain.common.screen import ImageInterface
 
@@ -15,7 +16,13 @@ class ProductCategoryInterface:
 
 @dataclass
 class ProductTypeInterface:
+    status: str
     name: str
+    slug: str
+    title: str
+    image: str
+    description: str
+    profit: str
 
 
 @dataclass
@@ -42,31 +49,25 @@ class OfferInterface:
     status: str
     product: ProductInterface
 
-    '''
-    cover
-    end_promotion
-    links
-    profit
-    organization
-    private
-    name
-    category
+    annotation: str
+    description: str
 
-    class Meta:
-        model = Offer
-        fields = (
-            "organization",
-            "links",
-            "link",
-            "cover",
-            "description",
-            "annotation",
-            "name",
-            "private",
-            "promotion",
-            "profit",
-            "end_promotion",
-            "category",'''
+    banner: str
+    promote: datetime
+
+    promotion: bool
+
+    start_promotion: datetime
+    end_promotion: datetime
+
+    created_at: datetime
+
+    status: str
+
+    terms_of_the_promotion: str
+
+    partner_program: str
+    verification_of_registration: str
 
 
 @dataclass
