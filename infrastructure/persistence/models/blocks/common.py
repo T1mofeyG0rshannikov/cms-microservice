@@ -1,8 +1,9 @@
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
 
 from application.texts.errors import ErrorsMessages
-from infrastructure.persistence.models.common import BasePageBlock, BlockRelationship
 from web.blocks.template_exist import is_template_exists
 from web.blocks.validators import validate_html_filename
 
@@ -10,30 +11,6 @@ from web.blocks.validators import validate_html_filename
 class BasePageModel(models.Model):
     class Meta:
         abstract = True
-
-
-class Page(BasePageModel):
-    title = models.CharField(verbose_name="Заголовок", max_length=50)
-    url = models.CharField(max_length=50, null=True, blank=True)
-
-    class Meta:
-        app_label = "blocks"
-        verbose_name = "Страница"
-        verbose_name_plural = "Страницы"
-        ordering = ["url"]
-
-    def __str__(self):
-        return self.title
-
-
-class Block(BasePageBlock):
-    name = models.ForeignKey(
-        BlockRelationship, verbose_name="Блок", on_delete=models.CASCADE, related_name="page_block"
-    )
-    page = models.ForeignKey(Page, related_name="blocks", verbose_name="Страница", on_delete=models.CASCADE)
-
-    class Meta(BasePageBlock.Meta):
-        app_label = "blocks"
 
 
 class Template(models.Model):
@@ -60,7 +37,6 @@ class BaseBlock(models.Model):
     name = models.CharField(verbose_name="Имя", max_length=50, unique=True)
     template = models.ForeignKey(Template, verbose_name="html шаблон", on_delete=models.CASCADE)
     ancor = models.CharField(verbose_name="Якорь", max_length=50, null=True, blank=True)
-    block_relation = models.ForeignKey(BlockRelationship, on_delete=models.SET_NULL, null=True)
 
     class Meta:
         app_label = "blocks"
@@ -75,13 +51,60 @@ class BaseBlock(models.Model):
         except ObjectDoesNotExist:
             return None
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
 
-        block_relation, _ = BlockRelationship.objects.update_or_create(
-            block=f"{type(self).__name__}{self.id}", defaults={"block_name": self.name}
-        )
+class Sortable(models.Model):
+    my_order = models.PositiveIntegerField(
+        default=0,
+        blank=False,
+        null=False,
+    )
 
-        self.block_relation = block_relation
+    class Meta:
+        abstract = True
+        ordering = ["my_order"]
 
-        super().save(*args, **kwargs)
+
+class BasePageBlock(Sortable):
+    class Meta(Sortable.Meta):
+        abstract = True
+        verbose_name = "Блок"
+        verbose_name_plural = "Блоки"
+
+
+class BaseFont(models.Model):
+    name = models.CharField(verbose_name="Имя шрифта", max_length=50)
+    link = models.CharField(verbose_name="Ссылка для подключения", max_length=250, null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return self.name
+
+
+class Page(BasePageModel):
+    title = models.CharField(verbose_name="Заголовок", max_length=50)
+    url = models.CharField(max_length=50, null=True, blank=True)
+
+    class Meta:
+        app_label = "blocks"
+        verbose_name = "Страница"
+        verbose_name_plural = "Страницы"
+        ordering = ["url"]
+
+    def __str__(self):
+        return self.title
+
+
+class Block(BasePageBlock):
+    page = models.ForeignKey(Page, related_name="blocks", verbose_name="Страница", on_delete=models.CASCADE)
+
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True)
+    block_id = models.PositiveIntegerField(null=True)
+    block = GenericForeignKey("content_type", "block_id")
+
+    class Meta(BasePageBlock.Meta):
+        app_label = "blocks"
+
+    def __str__(self):
+        return str(self.block)

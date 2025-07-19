@@ -31,17 +31,13 @@ from infrastructure.persistence.models.blocks.catalog_block import (
     MainPageCatalogBlock,
     PromoCatalog,
 )
-from infrastructure.persistence.models.blocks.common import (
-    Block,
-    BlockRelationship,
-    Page,
-    Template,
-)
+from infrastructure.persistence.models.blocks.common import Block, Page, Template
 from infrastructure.persistence.models.blocks.landings import Landing, LandingBlock
 from infrastructure.persistence.repositories.product_repository import (
     get_product_repository,
 )
-from web.common.admin import BaseInline
+from web.admin.admin import BaseInline
+from web.blocks.forms import PageBlockInlineForm
 from web.styles.admin import (
     AdditionalCatalogCustomStylesInline,
     CatalogCustomStylesInline,
@@ -85,6 +81,7 @@ class StageInline(BaseInline):
 
 class PageBlockInline(SortableStackedInline, BaseInline):
     model = Block
+    form = PageBlockInlineForm
 
 
 class LandingBlockInline(SortableStackedInline, BaseInline):
@@ -127,12 +124,6 @@ class BaseBlockAdmin(admin.ModelAdmin):
         )
 
     clone_button.short_description = ""
-
-    def delete_queryset(self, request, queryset):
-        for block in queryset:
-            relation_id = block.block_relation.id
-            BlockRelationship.objects.filter(id=relation_id).delete()
-        queryset.delete()
 
 
 class NavbarAdmin(BaseBlockAdmin):

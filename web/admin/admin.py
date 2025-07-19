@@ -3,7 +3,9 @@ from django.contrib.admin import AdminSite
 from django.db import models
 from django.utils.safestring import mark_safe
 
-from infrastructure.admin.admin_settings import get_admin_settings
+
+class BaseInline(admin.StackedInline):
+    extra = 0
 
 
 class MyAdminSite(AdminSite):
@@ -36,7 +38,6 @@ admin.site = MyAdminSite()
 
 
 def redirect_to_change_page_tag(model_instance: models.Model, value: str) -> str:
-    settings = get_admin_settings()
     return mark_safe(
-        f"""<a href="/{settings.admin_url}/{model_instance._meta.app_label}/{model_instance._meta.model_name}/{model_instance.pk}/change/">{value}</a>"""
+        f"""<a href="/{'admin'}/{model_instance._meta.app_label}/{model_instance._meta.model_name}/{model_instance.pk}/change/">{value}</a>"""
     )

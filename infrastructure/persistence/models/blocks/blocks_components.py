@@ -14,10 +14,10 @@ from infrastructure.persistence.models.blocks.catalog_block import (
     CatalogBlock,
     MainPageCatalogBlock,
 )
+from infrastructure.persistence.models.blocks.common import Sortable
 from infrastructure.persistence.models.blocks.mixins import ButtonMixin, TitleMixin
 from infrastructure.persistence.models.catalog.product_type import ProductType
 from infrastructure.persistence.models.catalog.products import Offer
-from infrastructure.persistence.models.common import Sortable
 from infrastructure.persistence.models.settings import SocialNetwork
 
 

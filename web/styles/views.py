@@ -74,8 +74,8 @@ class GetFonts(View):
         return HttpResponse(json.dumps(FontSerializer(all_fonts, many=True).data))
 
 
-class StylesMixin:
-    def get_styles_context(self):
+class GetStyles(View):
+    def get(self, request):
         all_fonts = cache.get("fonts")
         if not all_fonts:
             fonts = Font.objects.exclude(link=None).values_list("link", flat=True)
@@ -113,13 +113,15 @@ class StylesMixin:
             icon_size = IconSize.objects.first()
             cache.set("icon_size", icon_size, timeout=60 * 15)
 
-        return {
-            "fonts": all_fonts,
-            "margin": MarginBlockSerializer(margins).data,
-            "colors": ColorsSerializer(color_styles).data,
-            "header": TextSerializer(header_styles).data,
-            "maintext": TextSerializer(main_text_styles).data,
-            "subheader": TextSerializer(header_styles).data,
-            "explanationtext": TextSerializer(explanation_text_styles).data,
-            "iconsize": IconSizeSerializer(icon_size).data,
-        }
+        return JsonResponse(
+            {
+                "fonts": all_fonts,
+                "margin": MarginBlockSerializer(margins).data,
+                "colors": ColorsSerializer(color_styles).data,
+                "header": TextSerializer(header_styles).data,
+                "maintext": TextSerializer(main_text_styles).data,
+                "subheader": TextSerializer(header_styles).data,
+                "explanationtext": TextSerializer(explanation_text_styles).data,
+                "iconsize": IconSizeSerializer(icon_size).data,
+            }
+        )

@@ -1,7 +1,8 @@
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
-from infrastructure.persistence.models.blocks.common import BasePageModel
-from infrastructure.persistence.models.common import BasePageBlock, BlockRelationship
+from infrastructure.persistence.models.blocks.common import BasePageBlock, BasePageModel
 
 
 class CatalogPageTemplate(BasePageModel):
@@ -17,9 +18,11 @@ class CatalogPageTemplate(BasePageModel):
 
 
 class Block(BasePageBlock):
-    name = models.ForeignKey(
-        BlockRelationship, verbose_name="Блок", on_delete=models.CASCADE, related_name="catalog_block"
+    content_type = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE, related_name="catalog_content_type", null=True
     )
+    block_id = models.PositiveIntegerField(null=True)
+    block = GenericForeignKey("content_type", "block_id")
     page = models.ForeignKey(
         CatalogPageTemplate, related_name="blocks", verbose_name="Страница", on_delete=models.CASCADE
     )

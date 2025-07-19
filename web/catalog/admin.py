@@ -20,9 +20,8 @@ from infrastructure.persistence.models.catalog.products import (
     OrganizationType,
     Product,
 )
-from web.admin.admin import redirect_to_change_page_tag
+from web.admin.admin import BaseInline, redirect_to_change_page_tag
 from web.catalog.forms import OfferAdminForm
-from web.common.admin import BaseInline
 
 
 class BlockInline(SortableStackedInline, BaseInline):

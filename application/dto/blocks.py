@@ -1,14 +1,23 @@
-from dataclasses import dataclass
 import os
-from typing import Iterable
+from collections.abc import Iterable
+from dataclasses import dataclass
 
-from infrastructure.persistence.models.catalog.products import Offer
-from domain.page_blocks.entities.social import SocialNetworkInterface
-from infrastructure.public.template_settings import TemplateSettings, get_template_settings
-from infrastructure.persistence.models.blocks.common import BaseBlock
-from domain.products.product import ExclusiveCardInterface, OfferInterface, ProductTypeInterface
-from django.db import models
 from ckeditor.fields import RichTextField
+from django.db import models
+
+from domain.page_blocks.entities.social import SocialNetworkInterface
+from domain.products.product import (
+    ExclusiveCardInterface,
+    OfferInterface,
+    ProductTypeInterface,
+)
+from infrastructure.persistence.models.blocks.common import BaseBlock
+from infrastructure.persistence.models.catalog.products import Offer
+from infrastructure.public.template_settings import (
+    TemplateSettings,
+    get_template_settings,
+)
+
 
 @dataclass
 class BaseDTO:
@@ -35,9 +44,6 @@ class BaseBlockDTO:
     @classmethod
     def process(cls, block: BaseBlock, config: TemplateSettings = get_template_settings()):
         data = {}
-        print(block)
-        print(block._meta.fields)
-        print(block.__dict__)
         for field in block._meta.fields:
             if isinstance(field, models.CharField) or isinstance(field, RichTextField):
                 data[field.name] = getattr(block, field.name)
@@ -45,7 +51,7 @@ class BaseBlockDTO:
                 data[field.name] = getattr(block, field.name).url
             elif field.name == "template":
                 data["template"] = os.path.join(config.blocks_templates_folder, block.template.file)
-        print(data)
+
         return cls(**data)
 
 
@@ -54,6 +60,7 @@ class SocialMediaButtonDTO:
     ref: str
 
     social_network: SocialNetworkInterface
+
 
 @dataclass
 class SocialMediaBlockDTO(BaseBlockDTO):
@@ -114,8 +121,10 @@ class AdditionalCatalogBlockDTO(BaseBlockDTO):
 class OfferDTO(OfferInterface, BaseDTO):
     pass
 
+
 def orm_to_offer(offer: Offer):
     return OfferDTO.process(offer)
+
 
 @dataclass
 class PromoCatalogDTO(BaseBlockDTO):
@@ -153,6 +162,7 @@ class CoverDTO(BaseBlockDTO):
 
     text: str
 
+
 @dataclass
 class RegisterBlockDTO(BaseBlockDTO):
     title: str
@@ -162,9 +172,9 @@ class RegisterBlockDTO(BaseBlockDTO):
 
 @dataclass
 class ContentBlockDTO(BaseBlockDTO):
-    button_text:str
+    button_text: str
     button_ref: str
-    title: str 
+    title: str
     text: str
     image1: str
     image2: str
@@ -172,9 +182,9 @@ class ContentBlockDTO(BaseBlockDTO):
 
 @dataclass
 class FeaturesBlockDTO(BaseBlockDTO):
-    button_text:str
+    button_text: str
     button_ref: str
-    title: str 
+    title: str
     introductory_text: str
 
 

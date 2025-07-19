@@ -18,6 +18,9 @@ class PageRepositoryInterface(Protocol):
     def clone_page(self, page_id: int) -> None:
         raise NotImplementedError
 
+    def clone_block(self, block_id: int, block_class: type) -> None:
+        raise NotImplementedError
+
     def get_catalog_page_template(self) -> PageInterface:
         raise NotImplementedError
 

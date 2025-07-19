@@ -23,14 +23,14 @@ class GetCatalogPage:
 
         cover = self.page_repository.get_catalog_cover(slug)
         
-        self.set_catalog_block(blocks, catalog)
-        self.set_catalog_block(blocks, cover)
+        self.set_block(blocks, catalog)
+        self.set_block(blocks, cover)
 
         page.title = catalog.product_type.name
 
         return from_orm_to_page(page, blocks)
 
-    def set_catalog_block(self, blocks, block: BaseBlock) -> None:
+    def set_block(self, blocks, block: BaseBlock) -> None:
         for ind, page_block in enumerate(blocks):
             if isinstance(page_block, type(block)):
                 blocks[ind] = block

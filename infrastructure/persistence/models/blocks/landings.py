@@ -1,7 +1,6 @@
 from django.db import models
 
-from infrastructure.persistence.models.blocks.common import BasePageModel
-from infrastructure.persistence.models.common import BasePageBlock, BlockRelationship
+from infrastructure.persistence.models.blocks.common import BasePageBlock, BasePageModel
 from infrastructure.persistence.models.settings import LandingDomain
 
 
@@ -17,9 +16,9 @@ class Landing(BasePageModel):
 
 
 class LandingBlock(BasePageBlock):
-    name = models.ForeignKey(
-        BlockRelationship, verbose_name="Блок", on_delete=models.CASCADE, related_name="landing_block"
-    )
+    # name = models.ForeignKey(
+    #    BlockRelationship, verbose_name="Блок", on_delete=models.CASCADE, related_name="landing_block"
+    # )
     page = models.ForeignKey(Landing, related_name="blocks", verbose_name="Страница", on_delete=models.CASCADE)
 
     class Meta(BasePageBlock.Meta):

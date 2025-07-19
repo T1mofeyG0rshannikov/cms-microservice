@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     "web.common",
     "web.settings",
     "web.styles",
-    "django_hosts",
     "rest_framework",
     "corsheaders",
     "debug_toolbar",
@@ -51,19 +50,8 @@ INSTALLED_APPS = [
 
 ASGI_APPLICATION = "web.core.asgi.application"
 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("localhost", 6379)],
-            # "hosts": [("localhost", 6379), ("bankomag.ru", 6379), ("idri.ru", 6379)],
-        },
-    },
-}
 
 MIDDLEWARE = [
-    "django_hosts.middleware.HostsRequestMiddleware",
-    "django_hosts.middleware.HostsResponseMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
@@ -112,9 +100,9 @@ DATABASES = {
         "PASSWORD": "root",  # <-- UPDATED line
         "HOST": "localhost",  # <-- UPDATED line
         "PORT": "3306",
-         'OPTIONS': {
-               'charset': 'utf8mb4',
-           },
+        "OPTIONS": {
+            "charset": "utf8mb4",
+        },
     }
 }
 
@@ -182,9 +170,6 @@ EMAIL_PORT = 587
 CELERY_BROKER_URL = str(os.getenv("CELERY_BROKER_URL"))
 
 # domains
-
-ROOT_HOSTCONF = "web.core.hosts"
-DEFAULT_HOST = "www"
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 20_971_520
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
@@ -345,11 +330,9 @@ CACHES = {
 
 MIGRATION_MODULES = {
     "user": "infrastructure.persistence.migrations.user",
-    "admin": "infrastructure.persistence.migrations.admin",
     "blocks": "infrastructure.persistence.migrations.blocks",
     "site_statistics": "infrastructure.persistence.migrations.site_statistics",
     "catalog": "infrastructure.persistence.migrations.catalog",
-    "common": "infrastructure.persistence.migrations.common",
     "account": "infrastructure.persistence.migrations.account",
     "settings": "infrastructure.persistence.migrations.settings",
     "styles": "infrastructure.persistence.migrations.styles",

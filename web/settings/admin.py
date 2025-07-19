@@ -11,7 +11,6 @@ from infrastructure.persistence.models.settings import (
     SocialNetwork,
     Trackers,
 )
-from web.common.admin import SocialNetworkAdmin
 from web.styles.admin import FontAdmin, GlobalStylesAdmin
 
 
@@ -35,5 +34,5 @@ admin.site.register(LandingDomain)
 admin.site.register(SiteSettings, SettingsAdmin)
 admin.site.register(GlobalStyles, GlobalStylesAdmin)
 admin.site.register(Font, FontAdmin)
-admin.site.register(SocialNetwork, SocialNetworkAdmin)
+admin.site.register(SocialNetwork)
 admin.site.register(Trackers)
