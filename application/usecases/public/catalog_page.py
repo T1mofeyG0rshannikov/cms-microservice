@@ -10,18 +10,18 @@ class GetCatalogPage:
         self,
         page_repository: PageRepositoryInterface,
     ) -> None:
-        self.page_repository = page_repository
+        self.r = page_repository
 
     def __call__(self, slug: str, user_is_authenticated: bool) -> PageInterface | None:
-        catalog = self.page_repository.get_catalog_block(slug)
+        catalog = self.r.get_catalog_block(slug)
         if catalog is None:
             return None
 
         catalog.user_is_authenticated = user_is_authenticated
 
-        page, blocks = self.page_repository.get_catalog_page_template()
+        page, blocks = self.r.get_catalog_page_template()
 
-        cover = self.page_repository.get_catalog_cover(slug)
+        cover = self.r.get_catalog_cover(slug)
         
         self.set_block(blocks, catalog)
         self.set_block(blocks, cover)
