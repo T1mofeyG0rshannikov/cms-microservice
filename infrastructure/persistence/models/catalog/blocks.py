@@ -29,3 +29,6 @@ class Block(BasePageBlock):
 
     class Meta(BasePageBlock.Meta):
         app_label = "catalog"
+
+    def __str__(self):
+        return str(self.block)

@@ -1,30 +1,45 @@
+from dataclasses import asdict
+
 from django.http import HttpRequest, JsonResponse
 from django.views import View
 
-from domain.products.repository import ProductRepositoryInterface
-from infrastructure.persistence.models.catalog.products import (
-    Organization,
+from application.usecases.catalog.get_organizations import get_organizations_interactor
+from application.usecases.catalog.get_products import get_products_interactor
+from domain.products.repository import (
+    OrganizationFilterInterface,
+    ProductFiltersInterface,
+    ProductRepositoryInterface,
 )
 from infrastructure.persistence.repositories.product_repository import (
     get_product_repository,
 )
-from web.catalog.serializers import ProductsSerializer
+from web.catalog.serializers import ProductCategorySerializer
+from web.common.get_filters_from_request import get_db_filters_from_request
 
 
-class GetProducts(View):
+class GetProductCategoriesView(View):
     def get(
         self, request: HttpRequest, products_repository: ProductRepositoryInterface = get_product_repository()
     ) -> JsonResponse:
-        organization = request.GET.get("organization")
+        categories = products_repository.get_categories(request.GET.get("product_ids"))
+        return JsonResponse({"categories": ProductCategorySerializer(categories, many=True).data})
 
-        try:
-            products = ProductsSerializer(
-                products_repository.get_enabled_products_to_create(
-                    organization_id=organization, user_id=request.user.id
-                ),
-                many=True,
-            ).data
-        except Organization.DoesNotExist:
-            return JsonResponse({"error": f"no organization with id '{organization}'"})
 
-        return JsonResponse({"products": products})
+class GetProductsView(View):
+    interactor = get_products_interactor()
+
+    def get(self, request: HttpRequest) -> JsonResponse:
+        filters = get_db_filters_from_request(ProductFiltersInterface, request)
+        products = self.interactor(filters)
+
+        return JsonResponse({"products": [asdict(p) for p in products]})
+
+
+class GetOrganizationsView(View):
+    interactor = get_organizations_interactor()
+
+    def get(self, request: HttpRequest) -> JsonResponse:
+        filters = get_db_filters_from_request(OrganizationFilterInterface, request)
+        organizations = self.interactor(filters)
+
+        return JsonResponse({"organizations": [asdict(o) for o in organizations]})

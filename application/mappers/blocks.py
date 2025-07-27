@@ -16,17 +16,16 @@ from infrastructure.public.template_settings import (
 )
 
 
-def orm_to_navbar(navbar: Navbar, config: TemplateSettings = get_template_settings()):
+def orm_to_navbar(block: Navbar, config: TemplateSettings = get_template_settings()):
     return NavbarDTO(
-        name=navbar.name,
-        template=os.path.join(config.blocks_templates_folder, navbar.template.file),
-        ancor=navbar.ancor,
-        register_button_text=navbar.register_button_text,
-        register_button_href=navbar.register_button_href,
-        login_button_text=navbar.login_button_text,
-        items=[
-            NavItemDTO(button_ref=item.button_ref, button_text=item.button_text) for item in navbar.menu_items.all()
-        ],
+        id=block.id,
+        name=block.name,
+        template=os.path.join(config.blocks_templates_folder, block.template.file),
+        ancor=block.ancor,
+        register_button_text=block.register_button_text,
+        register_button_href=block.register_button_href,
+        login_button_text=block.login_button_text,
+        items=[NavItemDTO(button_ref=item.button_ref, button_text=item.button_text) for item in block.menu_items.all()],
     )
 
 
@@ -42,12 +41,8 @@ def orm_to_social_button(social: SocialMediaButton):
     )
 
 
-def orm_to_social_media_block(block: SocialMediaBlock, config: TemplateSettings = get_template_settings()):
-    return SocialMediaBlockDTO(
-        name=block.name,
-        template=os.path.join(config.blocks_templates_folder, block.template.file),
-        ancor=block.ancor,
-        text=block.text,
-        title=block.title,
+def orm_to_social_media_block(block: SocialMediaBlock):
+    return SocialMediaBlockDTO.process(
+        block,
         socials=[orm_to_social_button(social) for social in block.socials.select_related("social_network").all()],
     )

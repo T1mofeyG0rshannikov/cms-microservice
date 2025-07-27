@@ -95,6 +95,7 @@ class CatalogProductInline(SortableStackedInline, BaseInline):
     def get_formset(self, request, obj=None, **kwargs):
         formset = super().get_formset(request, obj, **kwargs)
         if obj:
+            # "product__organization__name"
             formset.form.base_fields["offer"].queryset = self.repository.get_published_offers(obj.product_type_id)
         return formset
 

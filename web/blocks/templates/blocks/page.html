@@ -1,26 +1,9 @@
 {% extends "common/base.html" %}
 {% load template_exist %}
 {% load static %}
-{% load sass_tags %}
 
 {% block title %}
     {{ page.title }}
-{% endblock %}
-
-{% block additional_styles %}
-    <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/text2photos.scss' %}">
-    <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/base.scss' %}">
-    <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/nav.scss' %}">
-    <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/cover.scss' %}">
-    <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/features.scss' %}">
-    <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/register.scss' %}">
-    <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/socialmedia.scss' %}">
-    <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/questions.scss' %}">
-    <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/stages.scss' %}">
-    <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/stages.scss' %}">
-    <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/catalog.scss' %}">
-    <link type="text/css" rel="stylesheet" href="{% sass_src 'blocks/css/footer.scss' %}">
-    <link type="text/css" rel="stylesheet" href="{% sass_src 'user/css/main.scss' %}">
 {% endblock %}
 
 {% block content %}

@@ -1,6 +1,7 @@
 import json
 
 from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
@@ -23,11 +24,10 @@ class PageView(View):
         return JsonResponse({"page": PageSerializer(page).data})
 
 
-class GetCatalogPageView(View):
-    def get(self, request: HttpRequest):
-        slug = request.GET.get("url")
+class CatalogView(View):
+    def get(self, request: HttpRequest, slug: str):
         user_is_authenticated = request.user.is_authenticated
-        page = get_catalog_page(slug=slug, user_is_authenticated=user_is_authenticated)
+        page = get_catalog_page()(slug=slug, user_is_authenticated=user_is_authenticated)
         return JsonResponse({"page": PageSerializer(page).data})
 
 

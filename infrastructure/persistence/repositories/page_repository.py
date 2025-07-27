@@ -1,4 +1,4 @@
-from collections.abc import Iterable
+from typing import List
 
 from django.db.models import Model, Q
 
@@ -15,7 +15,8 @@ from infrastructure.persistence.models.blocks.common import (
     Block,
     Page,
 )
-from infrastructure.persistence.models.blocks.landings import Landing
+from infrastructure.persistence.models.blocks.landings import Landing, LandingBlock
+from infrastructure.persistence.models.catalog.blocks import Block as CatalogPageBlock
 from infrastructure.persistence.models.catalog.blocks import CatalogPageTemplate
 
 
@@ -35,17 +36,29 @@ class PageRepository(PageRepositoryInterface):
 
         try:
             page = Page.objects.get(query)
+            return from_orm_to_page(page=page, blocks=self.__get_page_blocks(page))
+
         except Page.DoesNotExist:
             return None
 
-        return from_orm_to_page(page=page, blocks=self.__get_page_blocks(page))
+    def __get_page_blocks(self, page: BasePageModel) -> list[BaseBlock]:
+        BLOCKCLASSES = {Page: Block, CatalogPageTemplate: CatalogPageBlock, Landing: LandingBlock}
 
-    def __get_page_blocks(self, page: BasePageModel) -> Iterable[BaseBlock]:
-        blocks = Block.objects.filter(page=page).order_by("my_order")
+        try:
+            block_class = BLOCKCLASSES[type(page)]
+        except KeyError:
+            raise ValueError("page_model must be 'Page', 'CatalogPageTemplate' or 'Landing' instance")
 
-        return [block.block for block in blocks]
+        blocks = block_class.objects.filter(page=page).select_related("content_type").order_by("my_order")
+        return [
+            block.content_type.model_class()
+            .objects.select_related("template")
+            .prefetch_related("styles")
+            .get(id=block.block_id)
+            for block in blocks
+        ]
 
-    def get_catalog_page_template(self):
+    def get_catalog_page_template(self) -> tuple[PageInterface, list[BaseBlock]]:
         page = CatalogPageTemplate.objects.first()
         return page, self.__get_page_blocks(page)
 

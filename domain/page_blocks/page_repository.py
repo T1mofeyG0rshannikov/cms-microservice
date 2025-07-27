@@ -1,7 +1,10 @@
-from typing import Protocol
+from typing import List, Protocol
 
 from domain.common.screen import ImageInterface
-from domain.page_blocks.entities.base_block import PageBlockInterface
+from domain.page_blocks.entities.base_block import (
+    BaseBlockInterface,
+    PageBlockInterface,
+)
 from domain.page_blocks.entities.page import PageInterface
 
 
@@ -21,7 +24,7 @@ class PageRepositoryInterface(Protocol):
     def clone_block(self, block_id: int, block_class: type) -> None:
         raise NotImplementedError
 
-    def get_catalog_page_template(self) -> PageInterface:
+    def get_catalog_page_template(self) -> tuple[PageInterface, list[BaseBlockInterface]]:
         raise NotImplementedError
 
     def get_landing(self, url: str) -> PageInterface:

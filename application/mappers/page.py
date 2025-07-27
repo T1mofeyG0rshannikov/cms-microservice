@@ -36,10 +36,10 @@ from infrastructure.persistence.models.blocks.catalog_block import (
 from infrastructure.persistence.models.blocks.common import BaseBlock, BasePageModel
 
 DTOBUILDERS = {
-    MainPageCatalogBlock: get_main_page_catalog_assembler().build_data,
-    PromoCatalog: get_promo_catalog_assembler().build_data,
-    AdditionalCatalogBlock: get_additional_catalog_assembler().build_data,
-    CatalogBlock: get_catalog_assembler().build_data,
+    MainPageCatalogBlock: get_main_page_catalog_assembler().process,
+    PromoCatalog: get_promo_catalog_assembler().process,
+    AdditionalCatalogBlock: get_additional_catalog_assembler().process,
+    CatalogBlock: get_catalog_assembler().process,
     Navbar: orm_to_navbar,
     Cover: CoverDTO.process,
     RegisterBlock: RegisterBlockDTO.process,

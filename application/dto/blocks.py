@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from ckeditor.fields import RichTextField
 from django.db import models
 
+from application.dto.base import BaseDTO
 from domain.page_blocks.entities.social import SocialNetworkInterface
 from domain.products.product import (
     ExclusiveCardInterface,
@@ -20,39 +21,29 @@ from infrastructure.public.template_settings import (
 
 
 @dataclass
-class BaseDTO:
-    @classmethod
-    def process(cls, obj: models.Model):
-        data = {}
-        for field in obj._meta.fields:
-            if isinstance(field, models.CharField) or isinstance(field, RichTextField):
-                data[field.name] = getattr(obj, field.name)
-            elif isinstance(field, models.ImageField):
-                data[field.name] = getattr(obj, field.name).url
-            elif isinstance(field, models.DateTimeField):
-                data[field.name] = getattr(obj, field.name)
-
-        return cls(**data)
-
-
-@dataclass
-class BaseBlockDTO:
+class BaseBlockDTO(BaseDTO):
+    id: int
     name: str
     template: str
     ancor: str
 
     @classmethod
-    def process(cls, block: BaseBlock, config: TemplateSettings = get_template_settings()):
-        data = {}
+    def process(cls, block: BaseBlock, config: TemplateSettings = get_template_settings(), **kwargs):
+        data = {**kwargs}
         for field in block._meta.fields:
-            if isinstance(field, models.CharField) or isinstance(field, RichTextField):
+            if (
+                isinstance(field, models.CharField)
+                or isinstance(field, RichTextField)
+                or isinstance(field, models.IntegerField)
+                or isinstance(field, models.BooleanField)
+            ):
                 data[field.name] = getattr(block, field.name)
             elif isinstance(field, models.ImageField):
                 data[field.name] = getattr(block, field.name).url
             elif field.name == "template":
                 data["template"] = os.path.join(config.blocks_templates_folder, block.template.file)
 
-        return cls(**data)
+        return cls.from_dict(data)
 
 
 @dataclass
@@ -73,7 +64,6 @@ class SocialMediaBlockDTO(BaseBlockDTO):
 class CatalogOfferPresenterDTO:
     cover: str
     end_promotion: str
-    links: str
     organization: str
     private: str
     name: str
@@ -118,18 +108,22 @@ class AdditionalCatalogBlockDTO(BaseBlockDTO):
     products: Iterable[ProductTypeInterface]
 
 
+@dataclass
 class OfferDTO(OfferInterface, BaseDTO):
     pass
 
 
-def orm_to_offer(offer: Offer):
-    return OfferDTO.process(offer)
+@dataclass
+class PromoOfferDTO(BaseDTO):
+    id: int
+    banner: str
+    link: str
 
 
 @dataclass
-class PromoCatalogDTO(BaseBlockDTO):
+class PromoCatalogDTO(BaseDTO):
     title: str
-    products: Iterable[OfferDTO]
+    products: Iterable[PromoOfferDTO]
 
 
 @dataclass

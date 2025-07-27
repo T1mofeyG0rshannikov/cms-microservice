@@ -39,7 +39,6 @@ class PageBlockInlineForm(forms.ModelForm):
         initial = None
         for r in results:
             try:
-                print(r["name"], str(self.instance))
                 if r["name"] == str(self.instance):
                     initial = (r["value"], r["name"])
             except:
@@ -52,8 +51,6 @@ class PageBlockInlineForm(forms.ModelForm):
 
     def save(self, commit=True):
         obj = super().save(commit=commit)
-        # print(self.instance, type(self.instance))
-        # print(self.instance.block, type(self.instance.block))
         block_class = None
         block_class_name, block_id = self.cleaned_data["custom_name"].split(";")
         block_class = get_model_class_by_str(block_class_name)

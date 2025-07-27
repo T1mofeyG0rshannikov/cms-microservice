@@ -21,11 +21,13 @@ from infrastructure.persistence.models.catalog.products import (
     Product,
 )
 from web.admin.admin import BaseInline, redirect_to_change_page_tag
+from web.blocks.forms import PageBlockInlineForm
 from web.catalog.forms import OfferAdminForm
 
 
 class BlockInline(SortableStackedInline, BaseInline):
     model = Block
+    form = PageBlockInlineForm
 
 
 class CatalogPageTemplateAdmin(SortableAdminBase, admin.ModelAdmin):
