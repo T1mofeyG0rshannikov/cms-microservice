@@ -12,6 +12,16 @@ from infrastructure.persistence.repositories.product_repository import (
 )
 
 
+class GetProduct:
+    def __init__(self, product_repository: ProductRepositoryInterface, dto_builder: ProductAssembler) -> None:
+        self.r = product_repository
+        self.builder = dto_builder
+
+    def __call__(self, product_id: int) -> ProductDTO:
+        product = self.r.get(product_id)
+        return self.builder.process(product)
+
+
 class GetProducts:
     def __init__(self, product_repository: ProductRepositoryInterface, dto_builder: ProductAssembler) -> None:
         self.r = product_repository
@@ -28,3 +38,10 @@ def get_products_interactor(
     dto_builder: ProductAssembler = get_product_dto_builder(),
 ) -> GetProducts:
     return GetProducts(product_repository=product_repositopry, dto_builder=dto_builder)
+
+
+def get_product_interactor(
+    product_repositopry: ProductRepositoryInterface = get_product_repository(),
+    dto_builder: ProductAssembler = get_product_dto_builder(),
+) -> GetProduct:
+    return GetProduct(product_repository=product_repositopry, dto_builder=dto_builder)

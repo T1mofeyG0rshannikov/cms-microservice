@@ -1,19 +1,26 @@
+from abc import abstractmethod
+
 from application.mappers.page import from_orm_to_page
-from infrastructure.persistence.models.blocks.common import BaseBlock
 from domain.page_blocks.entities.page import PageInterface
 from domain.page_blocks.page_repository import PageRepositoryInterface
-from infrastructure.persistence.repositories.page_repository import get_page_repository
+from infrastructure.persistence.models.blocks.common import BaseBlock
 
 
-class GetCatalogPage:
+class GetPageStrategy:
+    @abstractmethod
+    def execute(self, url: str | None = None, user_is_authenticated: bool = False) -> PageInterface | None:
+        ...
+
+
+class GetCatalogPageStrategy(GetPageStrategy):
     def __init__(
         self,
         page_repository: PageRepositoryInterface,
     ) -> None:
         self.r = page_repository
 
-    def __call__(self, slug: str, user_is_authenticated: bool) -> PageInterface | None:
-        catalog = self.r.get_catalog_block(slug)
+    def execute(self, url: str, user_is_authenticated: bool) -> PageInterface | None:
+        catalog = self.r.get_catalog_block(url)
         if catalog is None:
             return None
 
@@ -21,8 +28,8 @@ class GetCatalogPage:
 
         page, blocks = self.r.get_catalog_page_template()
 
-        cover = self.r.get_catalog_cover(slug)
-        
+        cover = self.r.get_catalog_cover(url)
+
         self.set_block(blocks, catalog)
         self.set_block(blocks, cover)
 
@@ -36,7 +43,12 @@ class GetCatalogPage:
                 blocks[ind] = block
 
 
-def get_catalog_page(
-    page_repository: PageRepositoryInterface = get_page_repository(),
-) -> GetCatalogPage:
-    return GetCatalogPage(page_repository=page_repository)
+class GetDefaultPageStrategy(GetPageStrategy):
+    def __init__(
+        self,
+        page_repository: PageRepositoryInterface,
+    ) -> None:
+        self.r = page_repository
+
+    def execute(self, url: str | None = None, **kwargs) -> PageInterface | None:
+        return self.r.get(url=url)

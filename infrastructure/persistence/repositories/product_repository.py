@@ -53,7 +53,6 @@ class ProductRepository(ProductRepositoryInterface):
 
     def filter(self, filters: ProductFilters) -> list[ProductInterface]:
         query = filters._build_query()
-
         return Product.objects.select_related("category", "organization").prefetch_related("offers").filter(query)
 
     def get_exclusive_card(self) -> ExclusiveCardInterface:

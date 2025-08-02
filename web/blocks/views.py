@@ -1,33 +1,31 @@
 import json
 
 from django.http import HttpRequest, HttpResponse, JsonResponse
-from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
-from application.usecases.public.catalog_page import get_catalog_page
 from application.usecases.public.clone_block import get_clone_block
 from application.usecases.public.clone_page import get_clone_page
+from application.usecases.public.get_page.get_page import GetPage, get_page
 from infrastructure.persistence.repositories.page_repository import get_page_repository
 from web.blocks.serializers import PageSerializer
 
 
 class PageView(View):
+    interactor: GetPage = get_page()
+
     def get(self, request: HttpRequest):
         page_repository = get_page_repository()
         page_url = request.GET.get("url")
+        if page_url == "":
+            page_url = None
+
+        user_is_authenticated = request.user.is_authenticated
         print(page_url)
 
-        page = page_repository.get(url=None)
+        page = self.interactor(url=page_url, user_is_authenticated=user_is_authenticated)
 
-        return JsonResponse({"page": PageSerializer(page).data})
-
-
-class CatalogView(View):
-    def get(self, request: HttpRequest, slug: str):
-        user_is_authenticated = request.user.is_authenticated
-        page = get_catalog_page()(slug=slug, user_is_authenticated=user_is_authenticated)
         return JsonResponse({"page": PageSerializer(page).data})
 
 

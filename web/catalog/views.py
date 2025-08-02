@@ -4,7 +4,11 @@ from django.http import HttpRequest, JsonResponse
 from django.views import View
 
 from application.usecases.catalog.get_organizations import get_organizations_interactor
-from application.usecases.catalog.get_products import get_products_interactor
+from application.usecases.catalog.get_products import (
+    GetProducts,
+    get_product_interactor,
+    get_products_interactor,
+)
 from domain.products.repository import (
     OrganizationFilterInterface,
     ProductFiltersInterface,
@@ -21,18 +25,27 @@ class GetProductCategoriesView(View):
     def get(
         self, request: HttpRequest, products_repository: ProductRepositoryInterface = get_product_repository()
     ) -> JsonResponse:
-        categories = products_repository.get_categories(request.GET.get("product_ids"))
+        categories = products_repository.get_categories(request.GET.getlist("product_ids"))
         return JsonResponse({"categories": ProductCategorySerializer(categories, many=True).data})
 
 
 class GetProductsView(View):
-    interactor = get_products_interactor()
+    interactor: GetProducts = get_products_interactor()
 
     def get(self, request: HttpRequest) -> JsonResponse:
         filters = get_db_filters_from_request(ProductFiltersInterface, request)
         products = self.interactor(filters)
 
         return JsonResponse({"products": [asdict(p) for p in products]})
+
+
+class GetProductView(View):
+    interactor = get_product_interactor()
+
+    def get(self, request: HttpRequest, product_id: int) -> JsonResponse:
+        product = self.interactor(product_id)
+
+        return JsonResponse({"product": asdict(product)})
 
 
 class GetOrganizationsView(View):
